@@ -7,7 +7,7 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
 
   override def compileOptions : Seq[CompileOption] = List(Deprecation)
 
-  override def mainClass : Option[String] = Some("Tuner")
+  override def mainClass : Option[String] = Some("tuner.Tuner")
   
 }
 
