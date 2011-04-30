@@ -3,6 +3,8 @@ package tuner
 import scala.swing._
 import scala.swing.event._
 
+import tuner.gui.ProjectWindow
+
 object Tuner extends SimpleSwingApplication {
 
   override def main(args:Array[String]) = {
@@ -12,6 +14,8 @@ object Tuner extends SimpleSwingApplication {
     super.main(args)
   }
 
+  def top = ProjectWindow
+  /*
   def top = new MainFrame {
     title = "Swing App"
 
@@ -46,6 +50,7 @@ object Tuner extends SimpleSwingApplication {
         label.text = "Num clicks " + clicks
     }
   }
+  */
   
 }
 

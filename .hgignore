@@ -1,5 +1,7 @@
 syntax: glob
 
+*.swp
+
 target/
 lib_managed/
 src_managed/
