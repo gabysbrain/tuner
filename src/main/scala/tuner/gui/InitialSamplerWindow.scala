@@ -24,20 +24,20 @@ class InitialSamplerWindow(project:Project) extends MainFrame {
 
   val samplerPanel = new SamplerPanel
 
-  val titlePanel = new BoxPanel(Orientation.Horizontal) {
-    contents += Swing.HGlue
-    contents += new Label("Step 2 of 2: Initial Sampling")
-    contents += Swing.HGlue
-  }
-
-  val buttonPanel = new BoxPanel(Orientation.Horizontal) {
-    contents += prevButton
-    contents += Swing.HGlue
-    contents += clusterButton
-    contents += runButton
-  }
-
   contents = new BorderPanel {
+    val titlePanel = new BoxPanel(Orientation.Horizontal) {
+      contents += Swing.HGlue
+      contents += new Label("Step 2 of 2: Initial Sampling")
+      contents += Swing.HGlue
+    }
+
+    val buttonPanel = new BoxPanel(Orientation.Horizontal) {
+      contents += prevButton
+      contents += Swing.HGlue
+      contents += clusterButton
+      contents += runButton
+    }
+
     layout(titlePanel) = BorderPanel.Position.North
     layout(samplerPanel) = BorderPanel.Position.Center
     layout(buttonPanel) = BorderPanel.Position.South

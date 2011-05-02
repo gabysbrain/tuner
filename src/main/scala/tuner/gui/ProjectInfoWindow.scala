@@ -44,18 +44,38 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
 
   val contentPanel = new BoxPanel(Orientation.Vertical) {
     val projectInfoPanel = new GridBagPanel {
-      layout(new Label("Project Name")) = (0,0)
-      layout(new Label("Save Location")) = (0,1)
+      val c = new Constraints
+      c.fill = GridBagPanel.Fill.Horizontal
 
-      layout(projectNameField) = (1,0)
-      layout(locationChooser) = (1,1)
+      c.weightx = 0.0 // Don't change width
+      c.anchor = GridBagPanel.Anchor.LineEnd
+      c.gridx = 0; c.gridy = 0
+      layout(new Label("Project Name")) = c
+
+      c.gridx = 0; c.gridy = 1
+      layout(new Label("Save Location")) = c
+
+      c.weightx = 1
+      c.gridx = 1; c.gridy = 0
+      layout(projectNameField) = c
+
+      c.gridx = 1; c.gridy = 1
+      layout(locationChooser) = c
 
       border = Swing.TitledBorder(border, "Project Info")
     }
 
     val scriptPanel = new GridBagPanel {
-      layout(new Label("Script")) = (0,0)
-      layout(scriptChooser) = (1,0)
+      val c = new Constraints
+      c.fill = GridBagPanel.Fill.Horizontal
+
+      c.weightx = 0.0 // Don't change label size
+      c.gridx = 0; c.gridy = 0
+      layout(new Label("Script")) = c
+
+      c.weightx = 1.0
+      c.gridx = 1; c.gridy = 0
+      layout(scriptChooser) = c
 
       border = Swing.TitledBorder(border, "Black Box Interface")
     }

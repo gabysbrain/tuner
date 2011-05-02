@@ -17,7 +17,12 @@ abstract class ControlTable(header0:List[String]) extends GridBagPanel {
 
   // add the header row
   header0.zipWithIndex foreach {case (hdr, i) =>
-    layout(new Label(hdr)) = (i,0)
+    val c = new Constraints
+    c.fill = GridBagPanel.Fill.Horizontal
+    c.weightx = 1.0
+    c.anchor = GridBagPanel.Anchor.PageEnd
+    c.gridx = i; c.gridy = 0
+    layout(new Label(hdr)) = c
   }
 
   // now set up the first row
@@ -28,14 +33,26 @@ abstract class ControlTable(header0:List[String]) extends GridBagPanel {
 
     // We might need to change the plus to a minus button
     if(numRows > 0) {
-      layout(new Button("-")) = (controls.length, numRows)
+      val c = new Constraints
+      c.weightx = 0.0
+      c.anchor = GridBagPanel.Anchor.LineStart
+      c.gridx = controls.length; c.gridy = numRows
+      layout(new Button("-")) = c
     }
 
     val row = numRows + 1
-    controls.zipWithIndex foreach {case (c, i) =>
-      layout(c) = (i, row)
+    val c = new Constraints
+    c.fill = GridBagPanel.Fill.Horizontal
+    //c.anchor = GridBagPanel.Anchor.LineStart
+    c.weightx = 1.0
+    controls.zipWithIndex foreach {case (control, i) =>
+      c.gridx = i; c.gridy = row
+      layout(control) = c
     }
-    layout(plusButton) = (controls.length, row)
+    c.weightx = 0.0
+    c.gridx = controls.length; c.gridy = row
+    c.anchor = GridBagPanel.Anchor.LineEnd
+    layout(plusButton) = c
 
     numRows += 1
   }
