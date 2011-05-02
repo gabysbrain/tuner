@@ -3,12 +3,14 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
+import scala.swing.FlowPanel
 import scala.swing.MainFrame
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.Table
 import scala.swing.event.ButtonClicked
 
+import tuner.Config
 import tuner.Tuner
 
 /**
@@ -37,6 +39,13 @@ object ProjectChooser extends MainFrame {
   val projectTable = new Table
 
   // Set up the rest of the UI
+  val tablePanel = new FlowPanel {
+    contents += projectTable
+
+    border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize),
+                                "Recent Projects")
+  }
+
   val buttonPanel = new BoxPanel(Orientation.Horizontal) {
     contents += newProjectButton
     contents += Swing.HGlue
@@ -46,7 +55,7 @@ object ProjectChooser extends MainFrame {
   }
 
   contents = new BorderPanel {
-    layout(projectTable) = BorderPanel.Position.Center
+    layout(tablePanel) = BorderPanel.Position.Center
     layout(buttonPanel) = BorderPanel.Position.South
   }
 
