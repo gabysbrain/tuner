@@ -10,7 +10,6 @@ import scala.swing.Swing
 import scala.swing.Table
 import scala.swing.event.ButtonClicked
 
-import tuner.Config
 import tuner.Tuner
 
 /**
@@ -42,8 +41,7 @@ object ProjectChooser extends MainFrame {
   val tablePanel = new FlowPanel {
     contents += projectTable
 
-    border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize),
-                                "Recent Projects")
+    border = Swing.TitledBorder(border, "Recent Projects")
   }
 
   val buttonPanel = new BoxPanel(Orientation.Horizontal) {

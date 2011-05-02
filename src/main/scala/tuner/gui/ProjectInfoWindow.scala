@@ -50,23 +50,20 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
       layout(projectNameField) = (1,0)
       layout(locationChooser) = (1,1)
 
-      border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize),
-                                  "Project Info")
+      border = Swing.TitledBorder(border, "Project Info")
     }
 
     val scriptPanel = new GridBagPanel {
       layout(new Label("Script")) = (0,0)
       layout(scriptChooser) = (1,0)
 
-      border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize),
-                                  "Black Box Interface")
+      border = Swing.TitledBorder(border, "Black Box Interface")
     }
 
     val inputsPanel = new FlowPanel {
       contents += inputTable
 
-      border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize),
-                                  "Inputs")
+      border = Swing.TitledBorder(border, "Inputs")
     }
 
     contents += projectInfoPanel

@@ -32,8 +32,7 @@ class SamplerPanel extends BoxPanel(Orientation.Vertical) {
     layout(shapeSelector) = (1,3)
     layout(methodSelector) = (1,4)
 
-    border = Swing.TitledBorder(Swing.EmptyBorder(Config.borderSize), 
-                                "Sampling")
+    border = Swing.TitledBorder(border, "Sampling")
   }
 
   val splomPanel = new BorderPanel
