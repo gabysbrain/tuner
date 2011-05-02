@@ -5,6 +5,7 @@ import scala.swing.event._
 
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
+import tuner.gui.ProjectViewer
 
 object Tuner extends SimpleSwingApplication {
 
@@ -20,7 +21,13 @@ object Tuner extends SimpleSwingApplication {
 
   def startNewProject = {
     println("Starting new project")
-    val projWindow = new ProjectInfoWindow
+    val window = new ProjectInfoWindow(new Project)
+    window.visible = true
+  }
+
+  def openProject(proj:Project) = {
+    println("opening project")
+    val projWindow = new ProjectViewer(proj)
     projWindow.visible = true
   }
 }
