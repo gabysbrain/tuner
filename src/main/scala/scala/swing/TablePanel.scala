@@ -38,8 +38,17 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
 
   private def layoutManager = peer.getLayout.asInstanceOf[TableLayout]
 
-  def this(nCol:Int,nRow:Int) = this(List.fill(nCol)(1.0/nCol), 
-                                     List.fill(nRow)(1.0/nRow))
+  /** 
+   * Creates a table with the specified number of rows and columns equally
+   * sized
+   */
+  def this(nCol:Int,nRow:Int) = this(List.fill(nCol)(TablePanel.Size.Fill),
+                                     List.fill(nRow)(TablePanel.Size.Fill))
+
+  /**
+   * Default empty table layout
+   */
+  //def this() = this(0, 0)
 
   // Let user specify layout with just a column,row pair
   implicit def pair2Constraints(p:(Int,Int)) : Constraints = {
@@ -64,10 +73,18 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
     def this() = this(new TableLayoutConstraints)
 
     def ulCol = peer.col1
-    def ulCol_=(c:Int) {peer.col1 = c}
+    def ulCol_=(c:Int) = {
+      peer.col1 = c
+      if(peer.col2 < c)
+        peer.col2 = c
+    }
 
     def ulRow = peer.row1
-    def ulRow_=(r:Int) {peer.row1 = r}
+    def ulRow_=(r:Int) = {
+      peer.row1 = r
+      if(peer.row2 < r)
+        peer.row2 = r
+    }
 
     def lrCol = peer.col2
     def lrCol_=(c:Int) {peer.col2 = c}
@@ -86,6 +103,8 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
     new Constraints(layoutManager.getConstraints(comp.peer))
 
   protected def areValid(c:Constraints) : (Boolean,String) = (true,"")
-  protected def add(c:Component, l:Constraints) {peer.add(c.peer, l.peer)}
+  protected def add(c:Component, l:Constraints) = {
+    peer.add(c.peer, l.peer)
+  }
 }
 
