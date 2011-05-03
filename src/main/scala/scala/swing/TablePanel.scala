@@ -120,6 +120,15 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
 
   def addRow(sz:Double) = {
     layoutManager.insertRow(rows, sz)
+    layoutManager.layoutContainer(peer)
+    peer.repaint()
+  }
+
+  def dropRow(r:Int) = {
+    println("dropping row " + r)
+    layoutManager.deleteRow(r)
+    layoutManager.layoutContainer(peer)
+    peer.repaint()
   }
 
   protected def constraintsFor(comp:Component) =
