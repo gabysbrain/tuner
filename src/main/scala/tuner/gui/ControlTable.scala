@@ -1,66 +1,48 @@
 package tuner.gui
 
+import scala.swing.Action
 import scala.swing.Button
 import scala.swing.Component
-import scala.swing.GridBagPanel
 import scala.swing.Label
+import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 
-abstract class ControlTable(header0:List[String]) extends GridBagPanel {
+abstract class ControlTable(header0:List[String]) 
+    extends TablePanel(header0.length+1, 1) {
 
   def controlRow : List[Component]
-
-  // need to track the number of rows
-  var numRows = 0
 
   val plusButton = new Button("+")
 
   // add the header row
   header0.zipWithIndex foreach {case (hdr, i) =>
-    val c = new Constraints
-    c.fill = GridBagPanel.Fill.Horizontal
-    c.weightx = 1.0
-    c.anchor = GridBagPanel.Anchor.PageEnd
-    c.gridx = i; c.gridy = 0
-    layout(new Label(hdr)) = c
+    layout(new Label(hdr)) = (i, 0)
   }
 
   // now set up the first row
-  addRow
+  addControlRow
 
-  protected def addRow = {
+  protected def addControlRow = {
     val controls = controlRow
 
     // We might need to change the plus to a minus button
-    if(numRows > 0) {
-      val c = new Constraints
-      c.weightx = 0.0
-      c.anchor = GridBagPanel.Anchor.LineStart
-      c.gridx = controls.length; c.gridy = numRows
-      layout(new Button("-")) = c
+    if(rows > 1) {
+      val curRow = rows - 1
+      val minusButton = new Button(Action("-") {dropRow(curRow)})
+      layout(minusButton) = (controls.length, curRow)
     }
 
-    val row = numRows + 1
-    val c = new Constraints
-    c.fill = GridBagPanel.Fill.Horizontal
-    //c.anchor = GridBagPanel.Anchor.LineStart
-    c.weightx = 1.0
+    addRow(TablePanel.Size.Fill)
     controls.zipWithIndex foreach {case (control, i) =>
-      c.gridx = i; c.gridy = row
-      layout(control) = c
+      layout(control) = (i, rows-1)
     }
-    c.weightx = 0.0
-    c.gridx = controls.length; c.gridy = row
-    c.anchor = GridBagPanel.Anchor.LineEnd
-    layout(plusButton) = c
-
-    numRows += 1
+    layout(plusButton) = (controls.length, rows-1)
   }
 
   listenTo(plusButton)
 
   reactions += {
-    case ButtonClicked(`plusButton`) => addRow
+    case ButtonClicked(`plusButton`) => addControlRow
   }
 }
 

@@ -3,12 +3,12 @@ package tuner.gui
 import scala.swing.BoxPanel
 import scala.swing.ButtonGroup
 import scala.swing.FlowPanel
-import scala.swing.GridBagPanel
 import scala.swing.Label
 import scala.swing.MainFrame
 import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
+import scala.swing.TablePanel
 
 import tuner.Project
 
@@ -23,7 +23,8 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  contents = new GridBagPanel {
+  contents = new TablePanel(List(305,TablePanel.Size.Fill), 
+                            List(TablePanel.Size.Fill)) {
     val paretoPanel = new FlowPanel {
       border = Swing.TitledBorder(border, "Pareto")
     }
@@ -66,7 +67,6 @@ class ProjectViewer(project:Project) extends MainFrame {
 
     layout(leftPanel) = (0,0)
     layout(rightPanel) = (1,0)
-
   }
 }
 

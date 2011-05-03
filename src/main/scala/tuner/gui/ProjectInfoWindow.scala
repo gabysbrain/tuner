@@ -5,10 +5,10 @@ import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.Label
 import scala.swing.FlowPanel
-import scala.swing.GridBagPanel
 import scala.swing.MainFrame
 import scala.swing.Orientation
 import scala.swing.Swing
+import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
 
@@ -43,39 +43,21 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   }
 
   val contentPanel = new BoxPanel(Orientation.Vertical) {
-    val projectInfoPanel = new GridBagPanel {
-      val c = new Constraints
-      c.fill = GridBagPanel.Fill.Horizontal
+    val projectInfoPanel = new TablePanel(2,2) {
+      // Labels in the left column
+      layout(new Label("Project Name")) = (0,0, TablePanel.HorizAlign.Right)
+      layout(new Label("Save Location")) = (0,1, TablePanel.HorizAlign.Right)
 
-      c.weightx = 0.0 // Don't change width
-      c.anchor = GridBagPanel.Anchor.LineEnd
-      c.gridx = 0; c.gridy = 0
-      layout(new Label("Project Name")) = c
-
-      c.gridx = 0; c.gridy = 1
-      layout(new Label("Save Location")) = c
-
-      c.weightx = 1
-      c.gridx = 1; c.gridy = 0
-      layout(projectNameField) = c
-
-      c.gridx = 1; c.gridy = 1
-      layout(locationChooser) = c
+      // Fields in the right column
+      layout(projectNameField) = (1,0, TablePanel.HorizAlign.Left)
+      layout(locationChooser) = (1,1, TablePanel.HorizAlign.Left)
 
       border = Swing.TitledBorder(border, "Project Info")
     }
 
-    val scriptPanel = new GridBagPanel {
-      val c = new Constraints
-      c.fill = GridBagPanel.Fill.Horizontal
-
-      c.weightx = 0.0 // Don't change label size
-      c.gridx = 0; c.gridy = 0
-      layout(new Label("Script")) = c
-
-      c.weightx = 1.0
-      c.gridx = 1; c.gridy = 0
-      layout(scriptChooser) = c
+    val scriptPanel = new TablePanel(2,1) {
+      layout(new Label("Script")) = (0,0, TablePanel.HorizAlign.Right)
+      layout(scriptChooser) = (1,0, TablePanel.HorizAlign.Left)
 
       border = Swing.TitledBorder(border, "Black Box Interface")
     }

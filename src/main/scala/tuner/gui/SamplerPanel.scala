@@ -3,7 +3,7 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.ComboBox
-import scala.swing.GridBagPanel
+import scala.swing.TablePanel
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.Swing
@@ -19,42 +19,20 @@ class SamplerPanel extends BoxPanel(Orientation.Vertical) {
   val shapeSelector = new ComboBox(List("Ellipse", "Box"))
   val methodSelector = new ComboBox(List("LHS", "Cartesian"))
 
-  val controlPane = new GridBagPanel {
-    val c = new Constraints
-    c.fill = GridBagPanel.Fill.Horizontal
+  val controlPane = new TablePanel(2, 5) {
+    // Labels in left column
+    layout(new Label("Number of Samples")) = (0,0)
+    layout(new Label("x Time per Sample")) = (0,1)
+    layout(new Label("= Total Run Time")) = (0,2)
+    layout(new Label("Shape")) = (0,3)
+    layout(new Label("Method")) = (0,4)
 
-    c.weightx = 0.0 // Don't change size
-    c.anchor = GridBagPanel.Anchor.LineEnd
-    c.gridx = 0; c.gridy = 0
-    layout(new Label("Number of Samples")) = c
-
-    c.gridx = 0; c.gridy = 1
-    layout(new Label("x Time per Sample")) = c
-
-    c.gridx = 0; c.gridy = 2
-    layout(new Label("= Total Run Time")) = c
-
-    c.gridx = 0; c.gridy = 3
-    layout(new Label("Shape")) = c
-
-    c.gridx = 0; c.gridy = 4
-    layout(new Label("Method")) = c
-
-    c.weightx = 1
-    c.gridx = 1; c.gridy = 0
-    layout(sampleNumField) = c
-
-    c.gridx = 1; c.gridy = 1
-    layout(sampleTimeField) = c
-
-    c.gridx = 1; c.gridy = 2
-    layout(ttlRunTimeField) = c
-
-    c.gridx = 1; c.gridy = 3
-    layout(shapeSelector) = c
-
-    c.gridx = 1; c.gridy = 4
-    layout(methodSelector) = c
+    // Fields in left column
+    layout(sampleNumField) = (1,0)
+    layout(sampleTimeField) = (1,1)
+    layout(ttlRunTimeField) = (1,2)
+    layout(shapeSelector) = (1,3)
+    layout(methodSelector) = (1,4)
 
     border = Swing.TitledBorder(border, "Sampling")
   }
