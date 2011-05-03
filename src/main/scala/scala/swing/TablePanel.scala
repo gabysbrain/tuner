@@ -38,6 +38,9 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
 
   private def layoutManager = peer.getLayout.asInstanceOf[TableLayout]
 
+  def this(nCol:Int,nRow:Int) = this(List.fill(nCol)(1.0/nCol), 
+                                     List.fill(nRow)(1.0/nRow))
+
   // Let user specify layout with just a column,row pair
   implicit def pair2Constraints(p:(Int,Int)) : Constraints = {
     val c = new Constraints
