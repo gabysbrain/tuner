@@ -7,7 +7,7 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
 
   val lift_json = "net.liftweb" % "lift-json" % "2.0"
 
-  //val tablelayout = "tablelayout" % "TableLayout" % "20050920"
+  val tablelayout = "tablelayout" % "TableLayout" % "20050920"
 
   override def compileOptions : Seq[CompileOption] = List(Deprecation)
 
