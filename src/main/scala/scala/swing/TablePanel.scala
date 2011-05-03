@@ -51,19 +51,35 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
   //def this() = this(0, 0)
 
   // Let user specify layout with just a column,row pair
-  implicit def pair2Constraints(p:(Int,Int)) : Constraints = {
+  implicit def p2c(p:(Int,Int)) : Constraints = {
     val c = new Constraints
     c.ulCol = p._1
     c.ulRow = p._2
     c
   }
 
-  implicit def cellSpec2Constraints(p:(Int,Int,HorizAlign.Value,VertAlign.Value)) : Constraints = {
+  implicit def fs2c(p:(Int,Int,HorizAlign.Value,VertAlign.Value)) : Constraints = {
     val c = new Constraints
     c.ulCol = p._1
     c.ulRow = p._2
     c.hAlign = p._3
     c.vAlign = p._4
+    c
+  }
+
+  implicit def ph2c(p:(Int,Int,HorizAlign.Value)) : Constraints = {
+    val c = new Constraints
+    c.ulCol = p._1
+    c.ulRow = p._2
+    c.hAlign = p._3
+    c
+  }
+
+  implicit def pv2c(p:(Int,Int,VertAlign.Value)) : Constraints = {
+    val c = new Constraints
+    c.ulCol = p._1
+    c.ulRow = p._2
+    c.vAlign = p._3
     c
   }
 
