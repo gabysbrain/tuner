@@ -115,6 +115,13 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
     def vAlign_=(a:VertAlign.Value) {peer.vAlign = a.id}
   }
 
+  def cols : Int = layoutManager.getNumColumn
+  def rows : Int = layoutManager.getNumRow
+
+  def addRow(sz:Double) = {
+    layoutManager.insertRow(rows, sz)
+  }
+
   protected def constraintsFor(comp:Component) =
     new Constraints(layoutManager.getConstraints(comp.peer))
 
