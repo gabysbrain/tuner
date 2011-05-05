@@ -8,11 +8,12 @@ import scala.swing.MainFrame
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.event.ButtonClicked
+import scala.swing.event.ValueChanged
 
 import tuner.Project
 import tuner.Tuner
 
-class InitialSamplerWindow(project:Project) extends MainFrame {
+class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
   
   title = "Select Samples"
 
@@ -44,11 +45,19 @@ class InitialSamplerWindow(project:Project) extends MainFrame {
   }
 
   listenTo(runButton)
+  listenTo(samplerPanel)
 
   reactions += {
     case ButtonClicked(`runButton`) =>
+      project.save(saveDir + "/" + project.name.getOrElse("proj"))
       close
       Tuner.openProject(project)
+    case ValueChanged(`samplerPanel`) =>
+      val numSamples = samplerPanel.numSamples
+      //val shape = samplerPanel.shape
+      //val method = samplerPanel.method
+      //println(shape + " " + method)
+      project.newSamples(numSamples)
   }
 }
 

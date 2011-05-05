@@ -8,6 +8,7 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.TextField
+import scala.swing.event.ValueChanged
 
 import tuner.Config
 
@@ -41,5 +42,20 @@ class SamplerPanel extends BoxPanel(Orientation.Vertical) {
 
   contents += controlPane
   contents += splomPanel
+
+  // Set up the events
+  listenTo(sampleNumField)
+  //listenTo(shapeSelector)
+  //listenTo(methodSelector)
+
+  reactions += {
+    case ValueChanged(`sampleNumField`) => publish(new ValueChanged(this))
+  }
+
+  def numSamples : Int = sampleNumField.text.toInt
+
+  //def shape : String = shapeSelector.toString
+
+  //def method : String = methodSelector.toString
 }
 

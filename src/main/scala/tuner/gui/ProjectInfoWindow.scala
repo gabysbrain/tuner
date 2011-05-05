@@ -11,6 +11,7 @@ import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
+import scala.swing.event.ValueChanged
 
 import tuner.Config
 import tuner.Project
@@ -23,8 +24,8 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   menuBar = MainMenu
 
   val projectNameField = new TextField
-  val locationChooser = new FileChooser
-  val scriptChooser = new FileChooser
+  val locationChooser = new PathPanel
+  val scriptChooser = new PathPanel
   val nextButton = new Button("Next")
   val cancelButton = new Button("Cancel")
 
@@ -88,15 +89,22 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   // Set up the interactions
   listenTo(nextButton)
   listenTo(cancelButton)
+  listenTo(projectNameField)
+  listenTo(scriptChooser)
 
   reactions += {
     case ButtonClicked(`nextButton`) =>
-      val samplerWindow = new InitialSamplerWindow(project)
+      val samplerWindow = 
+        new InitialSamplerWindow(project, locationChooser.path)
       close
       samplerWindow.visible = true
     case ButtonClicked(`cancelButton`) => 
       close
       Tuner.top
+    case ValueChanged(`projectNameField`) =>
+      project.name = Some(projectNameField.text)
+    case ValueChanged(`scriptChooser`) =>
+      project.scriptPath = Some(scriptChooser.path)
   }
 }
 

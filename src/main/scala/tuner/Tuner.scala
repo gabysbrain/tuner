@@ -3,6 +3,8 @@ package tuner
 import scala.swing._
 import scala.swing.event._
 
+import java.io.File
+
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
@@ -25,10 +27,15 @@ object Tuner extends SimpleSwingApplication {
     window.visible = true
   }
 
-  def openProject(proj:Project) = {
+  def openProject(proj:Project) : Unit = {
     println("opening project")
     val projWindow = new ProjectViewer(proj)
     projWindow.visible = true
   }
+
+  def openProject(file:File) : Unit = {
+    openProject(Project.fromFile(file.getAbsolutePath))
+  }
+
 }
 

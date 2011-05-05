@@ -3,13 +3,17 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
-import scala.swing.FlowPanel
+import scala.swing.FileChooser
 import scala.swing.MainFrame
 import scala.swing.Orientation
+import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.Table
 import scala.swing.event.ButtonClicked
 
+import javax.swing.table.AbstractTableModel
+
+import tuner.Project
 import tuner.Tuner
 
 /**
@@ -24,22 +28,33 @@ object ProjectChooser extends MainFrame {
 
   // All the buttons
   val newProjectButton = new Button("New Project")
-  val loadFromClusterButton = new Button("Load from Cluster") {
-    enabled = false
-  }
   val openOtherButton = new Button("Open Other") {
-    enabled = false
+    enabled = true
   }
   val openButton = new Button("Open") {
     enabled = false
   }
 
   // The project list table
-  val projectTable = new Table
+  val projectTable = new Table {
+    val columnNames = List("Name", "Last Modified", "Status")
+    val rows = Project.recent
+
+    model = new AbstractTableModel {
+      override def getColumnName(col:Int) = columnNames(col)
+      def getColumnCount = columnNames.length
+      def getRowCount = rows.length
+      def getValueAt(row:Int, col:Int) = col match {
+        case 0 => rows(row).name
+        case 1 => rows(row).modificationDate
+        case 2 => rows(row).status
+      }
+    }
+  }
 
   // Set up the rest of the UI
-  val tablePanel = new FlowPanel {
-    contents += projectTable
+  val tablePanel = new ScrollPane {
+    contents = projectTable
 
     border = Swing.TitledBorder(border, "Recent Projects")
   }
@@ -47,7 +62,6 @@ object ProjectChooser extends MainFrame {
   val buttonPanel = new BoxPanel(Orientation.Horizontal) {
     contents += newProjectButton
     contents += Swing.HGlue
-    contents += loadFromClusterButton
     contents += openOtherButton
     contents += openButton
   }
@@ -61,12 +75,23 @@ object ProjectChooser extends MainFrame {
 
   // Set up the events processing
   listenTo(newProjectButton)
-  listenTo(loadFromClusterButton)
   listenTo(openOtherButton)
   listenTo(openButton)
 
   reactions += {
     case ButtonClicked(`newProjectButton`) => Tuner.startNewProject
+    case ButtonClicked(`openOtherButton`) => openOtherProject
+  }
+
+  def openOtherProject = {
+    val fc = new FileChooser {
+      title = "Select Project"
+      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+    }
+    fc.showOpenDialog(projectTable) match {
+      case FileChooser.Result.Approve => Tuner.openProject(fc.selectedFile)
+      case _ =>
+    }
   }
 
 }
