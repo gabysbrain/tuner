@@ -4,6 +4,7 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
@@ -92,10 +93,18 @@ class Project(val path:Option[String]) {
         ("maxRange" -> i.max(dn))}}
       )
     )
+
+    // Ensure that the project directory exists
+    var pathDir = new File(path).mkdir
+
     val jsonPath = path + "/" + Config.projConfigFilename
     val outFile = new FileWriter(jsonPath)
     outFile.write(pretty(render(json)))
     outFile.close
+
+    // Also save the samples
+    val sampleName = path + "/" + Config.sampleFilename
+    samples.toCsv(sampleName)
   }
 
 }
