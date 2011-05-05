@@ -14,8 +14,10 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
 import tuner.Config
+import tuner.DimRanges
 import tuner.Project
 import tuner.Tuner
+import tuner.gui.event.ControlTableRowChanged
 
 class ProjectInfoWindow(project:Project) extends MainFrame {
 
@@ -91,6 +93,7 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   listenTo(cancelButton)
   listenTo(projectNameField)
   listenTo(scriptChooser)
+  listenTo(inputTable)
 
   reactions += {
     case ButtonClicked(`nextButton`) =>
@@ -101,10 +104,37 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
     case ButtonClicked(`cancelButton`) => 
       close
       Tuner.top
+    case ControlTableRowChanged(`inputTable`, _) =>
+      updateInputDims
     case ValueChanged(`projectNameField`) =>
       project.name = Some(projectNameField.text)
     case ValueChanged(`scriptChooser`) =>
       project.scriptPath = Some(scriptChooser.path)
+  }
+
+  def updateInputDims = {
+    val controlValues = inputTable.controls.map {row =>
+      val nameField = row(0).asInstanceOf[TextField]
+      val minField = row(1).asInstanceOf[TextField]
+      val maxField = row(2).asInstanceOf[TextField]
+      if(nameField.text.length > 0 &&
+         minField.text.length > 0 &&
+         maxField.text.length > 0) {
+        // Any conversion problems we ignore
+        try {
+          Some((nameField.text, (minField.text.toFloat, maxField.text.toFloat)))
+        } catch {
+          case _ => None
+        }
+      } else {
+        None
+      }
+    }
+    val validValues = controlValues.flatten
+    if(validValues.length > 0) {
+      println(validValues)
+      project.inputs = Some(new DimRanges(validValues.toMap))
+    }
   }
 }
 
