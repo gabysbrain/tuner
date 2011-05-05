@@ -40,7 +40,7 @@ abstract class ControlTable(header0:List[String])
 
     addRow(TablePanel.Size.Fill)
     controls.zipWithIndex foreach {case (control, i) =>
-      layout(control) = (i, rows-1)
+      layout(control) = (i, rows-1, TablePanel.HorizAlign.Full)
       listenTo(control)
     }
     layout(plusButton) = (controls.length, rows-1)

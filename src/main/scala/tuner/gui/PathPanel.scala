@@ -14,8 +14,8 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
   val filenameField = new TextField
   val chooseButton = new Button("Browse…")
 
-  val title = ""
-  val fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+  var title = ""
+  var fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
 
   contents += filenameField
   contents += chooseButton
@@ -30,7 +30,7 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
       val ttl = title
       val fc = new FileChooser {
         title = ttl
-        fileSelectionMode = fileSelectionMode
+        fileSelectionMode = sm
       }
       fc.showOpenDialog(filenameField) match {
         case FileChooser.Result.Approve => 

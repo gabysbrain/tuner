@@ -3,14 +3,16 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
+import scala.swing.FileChooser
 import scala.swing.Label
-import scala.swing.FlowPanel
 import scala.swing.MainFrame
 import scala.swing.Orientation
+import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
+import scala.swing.event.UIElementResized
 import scala.swing.event.ValueChanged
 
 import tuner.Config
@@ -25,13 +27,17 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
 
   menuBar = MainMenu
 
+  resizable = false
+
   val projectNameField = new TextField
   val locationChooser = new PathPanel
-  val scriptChooser = new PathPanel
+  val scriptChooser = new PathPanel {
+    fileSelectionMode = FileChooser.SelectionMode.FilesOnly
+  }
   val nextButton = new Button("Next")
   val cancelButton = new Button("Cancel")
 
-  val inputTable = new ControlTable(List("Name", "Lower", "Upper")) {
+  val inputDimTable = new ControlTable(List("Name", "Lower", "Upper")) {
     def controlRow = List(
       new TextField,
       new TextField,
@@ -46,27 +52,29 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   }
 
   val contentPanel = new BoxPanel(Orientation.Vertical) {
-    val projectInfoPanel = new TablePanel(2,2) {
+    val projectInfoPanel = new TablePanel(List(90, TablePanel.Size.Fill),
+                                          List(TablePanel.Size.Fill,TablePanel.Size.Fill)) {
       // Labels in the left column
       layout(new Label("Project Name")) = (0,0, TablePanel.HorizAlign.Right)
       layout(new Label("Save Location")) = (0,1, TablePanel.HorizAlign.Right)
 
       // Fields in the right column
-      layout(projectNameField) = (1,0, TablePanel.HorizAlign.Left)
-      layout(locationChooser) = (1,1, TablePanel.HorizAlign.Left)
+      layout(projectNameField) = (1,0, TablePanel.HorizAlign.Full)
+      layout(locationChooser) = (1,1, TablePanel.HorizAlign.Full)
 
       border = Swing.TitledBorder(border, "Project Info")
     }
 
-    val scriptPanel = new TablePanel(2,1) {
+    val scriptPanel = new TablePanel(List(90, TablePanel.Size.Fill),
+                                     List(TablePanel.Size.Fill)) {
       layout(new Label("Script")) = (0,0, TablePanel.HorizAlign.Right)
-      layout(scriptChooser) = (1,0, TablePanel.HorizAlign.Left)
+      layout(scriptChooser) = (1,0, TablePanel.HorizAlign.Full)
 
       border = Swing.TitledBorder(border, "Black Box Interface")
     }
 
-    val inputsPanel = new FlowPanel {
-      contents += inputTable
+    val inputsPanel = new ScrollPane {
+      contents = inputDimTable
 
       border = Swing.TitledBorder(border, "Inputs")
     }
@@ -93,7 +101,7 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
   listenTo(cancelButton)
   listenTo(projectNameField)
   listenTo(scriptChooser)
-  listenTo(inputTable)
+  listenTo(inputDimTable)
 
   reactions += {
     case ButtonClicked(`nextButton`) =>
@@ -104,16 +112,18 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
     case ButtonClicked(`cancelButton`) => 
       close
       Tuner.top
-    case ControlTableRowChanged(`inputTable`, _) =>
+    case ControlTableRowChanged(`inputDimTable`, _) =>
       updateInputDims
     case ValueChanged(`projectNameField`) =>
       project.name = Some(projectNameField.text)
     case ValueChanged(`scriptChooser`) =>
       project.scriptPath = Some(scriptChooser.path)
+    case UIElementResized(`inputDimTable`) =>
+      this.pack
   }
 
   def updateInputDims = {
-    val controlValues = inputTable.controls.map {row =>
+    val controlValues = inputDimTable.controls.map {row =>
       val nameField = row(0).asInstanceOf[TextField]
       val minField = row(1).asInstanceOf[TextField]
       val maxField = row(2).asInstanceOf[TextField]

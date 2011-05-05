@@ -4,6 +4,8 @@ import info.clearthought.layout.TableLayout
 import info.clearthought.layout.TableLayoutConstants
 import info.clearthought.layout.TableLayoutConstraints
 
+import scala.swing.event.UIElementResized
+
 object TablePanel {
   object Size {
     val Fill = TableLayoutConstants.FILL
@@ -120,15 +122,17 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
 
   def addRow(sz:Double) = {
     layoutManager.insertRow(rows, sz)
-    layoutManager.layoutContainer(peer)
-    peer.repaint()
+    //layoutManager.layoutContainer(peer)
+    //peer.repaint()
+    publish(new UIElementResized(this))
   }
 
   def dropRow(r:Int) = {
     println("dropping row " + r)
     layoutManager.deleteRow(r)
-    layoutManager.layoutContainer(peer)
-    peer.repaint()
+    //layoutManager.layoutContainer(peer)
+    //peer.repaint()
+    publish(new UIElementResized(this))
   }
 
   protected def constraintsFor(comp:Component) =
