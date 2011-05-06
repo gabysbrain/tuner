@@ -25,6 +25,7 @@ object ProjectChooser extends MainFrame {
   title = "Select Project"
 
   menuBar = MainMenu
+  centerOnScreen
 
   // All the buttons
   val newProjectButton = new Button("New Project")
