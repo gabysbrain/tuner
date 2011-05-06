@@ -11,5 +11,10 @@ object Config {
   
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
+
+  val errorField = "stddev"
+  val gainField = "estgain"
+
+  val estimateSampleDensity = 20
 }
 
