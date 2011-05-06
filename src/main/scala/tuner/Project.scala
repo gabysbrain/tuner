@@ -13,7 +13,7 @@ import scala.io.Source
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
 case class ProjConfig(
-  name:String, 
+  name:String,
   scriptPath:String,
   inputs:List[InputSpecification]
 )
@@ -24,12 +24,7 @@ object Project {
   }
 
   def fromFile(path:String) = {
-    val p = new Project(Some(path))
-
-    // Only add this project if the loading worked out
-    Config.recentProjects += path
-
-    p
+    new Project(Some(path))
   }
 
   object Status extends Enumeration {
@@ -37,7 +32,7 @@ object Project {
   }
 }
 
-class Project(val path:Option[String]) {
+class Project(var path:Option[String]) {
 
   def this() = this(None)
 
@@ -46,7 +41,7 @@ class Project(val path:Option[String]) {
 
   var config = path map {p =>
     val projConfigPath = p + "/" + Config.projConfigFilename
-    val json = parse(Source.fromFile(projConfigPath).toString)
+    val json = parse(Source.fromFile(projConfigPath).mkString)
     json.extract[ProjConfig]
   }
 
@@ -58,14 +53,13 @@ class Project(val path:Option[String]) {
     new DimRanges(x.inputs map {x => 
       (x.name, (x.minRange, x.maxRange))
     } toMap)
+    new DimRanges(Nil.toMap)
   }
 
-  val samples = if(path.isDefined) {
-    val sampleFilename = path + "/" + Config.sampleFilename
+  val samples = path.map({p =>
+    val sampleFilename = p + "/" + Config.sampleFilename
     Table.fromCsv(sampleFilename)
-  } else {
-    new Table
-  }
+  }).getOrElse(new Table)
 
   def addSamples(n:Int) = {
     // TODO: find a better solution than just ignoring the missing inputs
@@ -83,7 +77,9 @@ class Project(val path:Option[String]) {
     addSamples(n)
   }
 
-  def save(path:String) = {
+  def save(savePath:String) = {
+    path = Some(savePath)
+
     val json = (
       ("name" -> name) ~
       ("scriptPath" -> scriptPath) ~
@@ -95,15 +91,15 @@ class Project(val path:Option[String]) {
     )
 
     // Ensure that the project directory exists
-    var pathDir = new File(path).mkdir
+    var pathDir = new File(savePath).mkdir
 
-    val jsonPath = path + "/" + Config.projConfigFilename
+    val jsonPath = savePath + "/" + Config.projConfigFilename
     val outFile = new FileWriter(jsonPath)
     outFile.write(pretty(render(json)))
     outFile.close
 
     // Also save the samples
-    val sampleName = path + "/" + Config.sampleFilename
+    val sampleName = savePath + "/" + Config.sampleFilename
     samples.toCsv(sampleName)
   }
 

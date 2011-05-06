@@ -29,6 +29,9 @@ object Tuner extends SimpleSwingApplication {
 
   def openProject(proj:Project) : Unit = {
     println("opening project")
+    proj.path.foreach {
+      Config.recentProjects += _
+    }
     val projWindow = new ProjectViewer(proj)
     projWindow.visible = true
   }
