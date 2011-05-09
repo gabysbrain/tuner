@@ -19,7 +19,11 @@ object Tuner extends SimpleSwingApplication {
     super.main(args)
   }
 
-  def top = ProjectChooser
+  //def top = ProjectChooser
+  def top = { 
+    openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/test_proj/")))
+    ProjectChooser
+  }
 
   def startNewProject = {
     println("Starting new project")

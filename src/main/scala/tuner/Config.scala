@@ -11,6 +11,7 @@ object Config {
   
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
+  val designFilename = "responses.csv"
 
   val errorField = "stddev"
   val gainField = "estgain"

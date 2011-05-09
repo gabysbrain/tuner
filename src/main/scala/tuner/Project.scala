@@ -12,10 +12,13 @@ import scala.io.Source
 
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
+case class OutputSpecification(name:String, minimize:Boolean)
 case class ProjConfig(
   name:String,
   scriptPath:String,
-  inputs:List[InputSpecification]
+  inputs:List[InputSpecification],
+  outputs:List[OutputSpecification],
+  ignoreFields:List[String]
 )
 
 object Project {
@@ -29,6 +32,7 @@ object Project {
 
   object Status extends Enumeration {
     val Ok = Value("Ok")
+    val BuildingGp = Value("Building GP")
   }
 }
 
@@ -45,15 +49,19 @@ class Project(var path:Option[String]) {
     json.extract[ProjConfig]
   }
 
-  var name : Option[String] = config map {_.name}
+  var name : String = config match {
+    case Some(c) => c.name
+    case None    => "New Project"
+  }
   var scriptPath : Option[String] = config map {_.scriptPath}
   def modificationDate : Date = new Date
   var status : Project.Status.Value = Project.Status.Ok
-  var inputs : Option[DimRanges] = config.map {x =>
-    new DimRanges(x.inputs map {x => 
-      (x.name, (x.minRange, x.maxRange))
-    } toMap)
-    new DimRanges(Nil.toMap)
+  var inputs : DimRanges = config match {
+    case Some(c) => 
+      new DimRanges(c.inputs map {x => 
+        (x.name, (x.minRange, x.maxRange))
+      } toMap)
+    case None    => new DimRanges(Nil.toMap)
   }
 
   val samples = path.map({p =>
@@ -61,12 +69,34 @@ class Project(var path:Option[String]) {
     Table.fromCsv(sampleFilename)
   }).getOrElse(new Table)
 
+  var designSites = path.map {p =>
+    val designSiteFile = p + "/" + Config.designFilename
+    Table.fromCsv(designSiteFile)
+  }
+
+  var responses : List[(String,Boolean)] = config match {
+    case Some(c) => c.outputs map {rf => (rf.name, rf.minimize)}
+    case None => Nil
+  }
+
+  var ignoreFields : List[String] = config match {
+    case Some(c) => c.ignoreFields
+    case None => Nil
+  }
+
+  def inputFields : List[String] = inputs.dimNames
+  def responseFields : List[String] = responses.map(_._1)
+
+  def newFields : List[String] = {
+    val knownFields : Set[String] = 
+      (responseFields ++ ignoreFields ++ inputFields).toSet
+    designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
+  }
+
   def addSamples(n:Int) = {
     // TODO: find a better solution than just ignoring the missing inputs
-    inputs.map {i => 
-      Sampler.regularGrid(i, n, {v => samples.addRow(v)})
-      println(n + " samples generated")
-    }
+    Sampler.regularGrid(inputs, n, {v => samples.addRow(v)})
+    println(n + " samples generated")
   }
 
   /**
@@ -77,17 +107,24 @@ class Project(var path:Option[String]) {
     addSamples(n)
   }
 
+  def savePath : String = path.get
+
   def save(savePath:String) = {
     path = Some(savePath)
 
     val json = (
       ("name" -> name) ~
       ("scriptPath" -> scriptPath) ~
-      ("inputs" -> inputs.map {i => i.dimNames.map {dn =>
+      ("inputs" -> inputs.dimNames.map {dn =>
         ("name" -> dn) ~
-        ("minRange" -> i.min(dn)) ~
-        ("maxRange" -> i.max(dn))}}
-      )
+        ("minRange" -> inputs.min(dn)) ~
+        ("maxRange" -> inputs.max(dn))}
+      ) ~
+      ("outputs" -> responses.map {rf => 
+        ("name" -> rf._1) ~
+        ("minimize" -> rf._2)}
+      ) ~
+      ("ignoreFields" -> ignoreFields)
     )
 
     // Ensure that the project directory exists

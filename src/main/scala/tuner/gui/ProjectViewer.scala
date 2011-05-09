@@ -14,7 +14,7 @@ import tuner.Project
 
 class ProjectViewer(project:Project) extends MainFrame {
   
-  title = "View Project"
+  title = project.name
   menuBar = MainMenu
 
   val mainResponseButton = new RadioButton("Value")
@@ -67,6 +67,16 @@ class ProjectViewer(project:Project) extends MainFrame {
 
     layout(leftPanel) = (0,0)
     layout(rightPanel) = (1,0)
+  }
+
+  override def visible_=(b:Boolean) = {
+    super.visible_=(b)
+    // See if there are new responses we need to deal with
+    if(b && project.newFields.length > 0) {
+      println("new fields detected")
+      val rs = new ResponseSelector(project, this)
+      rs.open
+    }
   }
 }
 

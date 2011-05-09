@@ -115,7 +115,7 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
     case ControlTableRowChanged(`inputDimTable`, _) =>
       updateInputDims
     case ValueChanged(`projectNameField`) =>
-      project.name = Some(projectNameField.text)
+      project.name = projectNameField.text
     case ValueChanged(`scriptChooser`) =>
       project.scriptPath = Some(scriptChooser.path)
     case UIElementResized(`inputDimTable`) =>
@@ -143,7 +143,7 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
     val validValues = controlValues.flatten
     if(validValues.length > 0) {
       println(validValues)
-      project.inputs = Some(new DimRanges(validValues.toMap))
+      project.inputs = new DimRanges(validValues.toMap)
     }
   }
 }

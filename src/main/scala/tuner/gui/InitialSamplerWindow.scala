@@ -49,7 +49,7 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
 
   reactions += {
     case ButtonClicked(`runButton`) =>
-      project.save(saveDir + "/" + project.name.getOrElse("proj"))
+      project.save(saveDir + "/" + project.name)
       close
       Tuner.openProject(project)
     case ValueChanged(`samplerPanel`) =>
