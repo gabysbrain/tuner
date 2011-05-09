@@ -4,12 +4,26 @@ import java.awt.Dimension
 import javax.swing.JInternalFrame
 
 import processing.core.PApplet
+import processing.core.PConstants
 
 import scala.swing.BorderPanel
 import scala.swing.Component
 
-abstract class ProcessingPanel(width:Int, height:Int) extends BorderPanel {
+object ProcessingPanel {
+  sealed trait Renderer {def name : String}
+  case object Java2D extends Renderer {val name = PConstants.JAVA2D}
+  case object P2D extends Renderer {val name = PConstants.P2D}
+  case object P3D extends Renderer {val name = PConstants.P3D}
+  case object OpenGL extends Renderer {val name = PConstants.OPENGL}
+  case object PDF extends Renderer {val name = PConstants.PDF}
+}
+
+abstract class ProcessingPanel(
+    width:Int, height:Int, renderer:ProcessingPanel.Renderer=ProcessingPanel.Java2D) 
+    extends BorderPanel {
   
+  import ProcessingPanel._
+
   val applet = {
     // need to rename these to prevent confusion with P5's 
     // setup and draw functions
@@ -17,7 +31,7 @@ abstract class ProcessingPanel(width:Int, height:Int) extends BorderPanel {
     def _draw = draw
     new PApplet {
       override def setup = {
-        size(width, height)
+        size(width, height, renderer.name)
         _setup
       }
 
