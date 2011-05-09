@@ -84,6 +84,14 @@ class Project(var path:Option[String]) {
     case None => Nil
   }
 
+  val gpModels = path.map {p =>
+    val designSiteFile = p + "/" + Config.designFilename
+    val gp = new Rgp(designSiteFile)
+    responseFields.map {fld =>
+      (fld, gp.buildModel(inputFields, fld, Config.errorField))
+    } toMap
+  }
+
   def inputFields : List[String] = inputs.dimNames
   def responseFields : List[String] = responses.map(_._1)
 

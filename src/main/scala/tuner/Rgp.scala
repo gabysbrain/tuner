@@ -4,10 +4,9 @@ import org.rosuda.REngine.JRI.JRIEngine
 import org.rosuda.REngine.RList
 import org.rosuda.REngine.REXP
 
-object Rgp {
-  // Directory where the program stores all its information
-  val SPARKLERSCRIPT = "dace/sparkle.R"
+import scala.io.Source
 
+object Rgp {
   val DESIGNRVAR = "data.design"
   val ESTIMATERVAR = "data.estimates"
   val MODELRVAR = "gp.fit"
@@ -23,7 +22,14 @@ class Rgp(designFile:String) {
   val (imageDir, sampleFile) = splitFile(designFile)
 
   // Setup the sparkle gp stuff
-  R.runCommand("source('%s')".format(Rgp.SPARKLERSCRIPT))
+  /*
+  val scriptFile = Source.fromURL(getClass.getResource(Config.gpRScript))
+  scriptFile.getLines.foreach{line =>
+    println(line)
+    R.runCommand(line)
+  }
+  */
+  R.runCommand("source('%s')".format(Config.gpRScript))
 
   // Load in the design table and then do any scaling we need
   /*

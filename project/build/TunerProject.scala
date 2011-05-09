@@ -22,5 +22,8 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
 
   override def mainClass : Option[String] = Some("tuner.Tuner")
   
+  // Need to fork to override the java.library.path
+  override def fork = forkRun("-Djava.library.path=%s".format(jriPath)::Nil)
+
 }
 
