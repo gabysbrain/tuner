@@ -60,6 +60,7 @@ class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
   }
 
   listenTo(okButton)
+  listenTo(cancelButton)
 
   contents = new BoxPanel(Orientation.Vertical) {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {

@@ -89,8 +89,10 @@ class ProjectViewer(project:Project) extends MainFrame {
               case ResponseSelector.Maximize => 
                 project.responses = (fld, false) :: project.responses
             }}
-          }
-          project.save(project.savePath)
+            project.save(project.savePath)
+          case Dialog.Result.Cancel =>
+            this.close
+        }
       }
       rs.open
     }

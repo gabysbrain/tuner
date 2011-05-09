@@ -18,5 +18,5 @@
     "name":"Precision",
     "minimize":false
   }],
-  "ignoreFields":["Recall"]
+  "ignoreFields":["test"]
 }
