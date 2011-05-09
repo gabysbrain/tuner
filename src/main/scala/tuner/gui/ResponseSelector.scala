@@ -12,8 +12,16 @@ import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.Window
 import scala.swing.event.ButtonClicked
+import scala.swing.event.DialogClosing
 
 import tuner.Project
+
+object ResponseSelector {
+  abstract class Response 
+  case object Ignore extends Response
+  case object Minimize extends Response
+  case object Maximize extends Response
+}
 
 class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
   title = "Select Responses"
@@ -32,7 +40,7 @@ class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
   }
   */
 
-  val selections = project.newFields.map {fld =>
+  val radioMap = project.newFields.map {fld =>
     val ignoreRadio = new RadioButton("Ignore")
     val minRadio = new RadioButton("Min")
     val maxRadio = new RadioButton("Max")
@@ -43,7 +51,7 @@ class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
 
   val responseTable = new TablePanel(4, project.newFields.length) {
 
-    selections.zipWithIndex.foreach {case ((fld, (ig,min,max)), i) =>
+    radioMap.zipWithIndex.foreach {case ((fld, (ig,min,max)), i) =>
       layout(new Label(fld)) = (0, i)
       layout(ig) = (1, i)
       layout(min) = (2, i)
@@ -66,23 +74,23 @@ class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
 
   reactions += {
     case ButtonClicked(`okButton`) =>
-      processOutputs
+      publish(new DialogClosing(this, Dialog.Result.Ok))
       close
     case ButtonClicked(`cancelButton`) =>
+      publish(new DialogClosing(this, Dialog.Result.Cancel))
       close
   }
 
-  def processOutputs = {
-    selections.foreach {case (fld, (ig, min, max)) =>
-      if(ig.selected) {
-        project.ignoreFields = project.ignoreFields :+ fld
-      } else if(min.selected) {
-        project.responses = project.responses :+ (fld, true)
+  def selections : List[(String,ResponseSelector.Response)] = {
+    radioMap.map {case (fld, (ig, min, max)) =>
+      if(min.selected) {
+        (fld, ResponseSelector.Minimize)
       } else if(max.selected) {
-        project.responses = project.responses :+ (fld, false)
+        (fld, ResponseSelector.Maximize)
+      } else {
+        (fld, ResponseSelector.Ignore)
       }
-    }
-    project.save(project.savePath)
+    } toList
   }
 }
 

@@ -2,6 +2,7 @@ package tuner.gui
 
 import scala.swing.BoxPanel
 import scala.swing.ButtonGroup
+import scala.swing.Dialog
 import scala.swing.FlowPanel
 import scala.swing.Label
 import scala.swing.MainFrame
@@ -9,6 +10,7 @@ import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.event.DialogClosing
 
 import tuner.Project
 
@@ -75,6 +77,21 @@ class ProjectViewer(project:Project) extends MainFrame {
     if(b && project.newFields.length > 0) {
       println("new fields detected")
       val rs = new ResponseSelector(project, this)
+      listenTo(rs)
+      reactions += {
+        case DialogClosing(`rs`, result) => result match {
+          case Dialog.Result.Ok => 
+            rs.selections.foreach {case (fld, sel) => sel match {
+              case ResponseSelector.Ignore => 
+                project.ignoreFields = fld :: project.ignoreFields
+              case ResponseSelector.Minimize => 
+                project.responses = (fld, true) :: project.responses
+              case ResponseSelector.Maximize => 
+                project.responses = (fld, false) :: project.responses
+            }}
+          }
+          project.save(project.savePath)
+      }
       rs.open
     }
   }
