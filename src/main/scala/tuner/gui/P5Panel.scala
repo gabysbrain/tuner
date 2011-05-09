@@ -9,7 +9,7 @@ import processing.core.PConstants
 import scala.swing.BorderPanel
 import scala.swing.Component
 
-object ProcessingPanel {
+object P5Panel {
   sealed trait Renderer {def name : String}
   case object Java2D extends Renderer {val name = PConstants.JAVA2D}
   case object P2D extends Renderer {val name = PConstants.P2D}
@@ -18,11 +18,11 @@ object ProcessingPanel {
   case object PDF extends Renderer {val name = PConstants.PDF}
 }
 
-abstract class ProcessingPanel(
-    width:Int, height:Int, renderer:ProcessingPanel.Renderer=ProcessingPanel.Java2D) 
+abstract class P5Panel (
+    _width:Int, _height:Int, renderer:P5Panel.Renderer=P5Panel.Java2D) 
     extends BorderPanel {
   
-  import ProcessingPanel._
+  import P5Panel._
 
   val applet = {
     // need to rename these to prevent confusion with P5's 
@@ -31,7 +31,7 @@ abstract class ProcessingPanel(
     def _draw = draw
     new PApplet {
       override def setup = {
-        size(width, height, renderer.name)
+        size(_width, _height, renderer.name)
         _setup
       }
 
@@ -52,9 +52,9 @@ abstract class ProcessingPanel(
     peer.setBorder(null)
     // Set up P5's container frame
     peer.add(applet)
-    peer.setSize(width, height)
-    peer.setPreferredSize(new Dimension(width, height))
-    peer.setMaximumSize(new Dimension(width, height))
+    peer.setSize(_width, _height)
+    peer.setPreferredSize(new Dimension(_width, _height))
+    peer.setMaximumSize(new Dimension(_width, _height))
     peer.setResizable(false)
     peer.setVisible(true)
     peer.pack
@@ -70,5 +70,8 @@ abstract class ProcessingPanel(
   def text(stringdata:String, x:Float, y:Float) = {
     applet.text(stringdata, x, y)
   }
+
+  def height = applet.height
+  def width = applet.width
 }
 
