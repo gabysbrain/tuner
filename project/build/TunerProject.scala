@@ -15,9 +15,7 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
 
   override def unmanagedClasspath : PathFinder = {
     super.unmanagedClasspath +++ 
-      Path.fromFile(jriPath + "/JRI.jar") +++
-      Path.fromFile(jriPath + "/JRIEngine.jar") +++
-      Path.fromFile(jriPath + "/REngine.jar")
+      descendents(Path.fromFile(jriPath), "*.jar")
   }
 
   override def mainClass : Option[String] = Some("tuner.Tuner")
