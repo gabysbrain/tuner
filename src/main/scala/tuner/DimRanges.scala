@@ -56,6 +56,6 @@ class DimRanges(r:Map[String,DimRanges.Range]) {
 
   def dimNames : List[String] = ranges.keys.toList
 
-  def numDim : Int = ranges.size
+  def length : Int = ranges.size
 }
 

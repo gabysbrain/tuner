@@ -23,5 +23,11 @@ object Config {
   val gainField = "estgain"
 
   val estimateSampleDensity = 20
+
+  val mainPlotDims = (800, 600)
+  val plotSpacing = 5
+
+  val response1ColorMap = OrangeColorMap
+  val response2ColorMap = PurpleColorMap
 }
 

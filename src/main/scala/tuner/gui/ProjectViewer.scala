@@ -25,11 +25,7 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  val plot = new ProcessingPanel(400, 400) {
-    def draw = {
-      text("Hello", 40, 40)
-    }
-  }
+  val plot = new MainPlotPanel(project, Some("Precision"), Some("Precision"))
 
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
@@ -43,10 +39,6 @@ class ProjectViewer(project:Project) extends MainFrame {
       contents += gainResponseButton
   
       border = Swing.TitledBorder(border, "View")
-    }
-  
-    val relativeValuePanel = new FlowPanel {
-      border = Swing.TitledBorder(border, "Relative Value")
     }
   
     val histogramPanel = new FlowPanel {
@@ -67,7 +59,6 @@ class ProjectViewer(project:Project) extends MainFrame {
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
       contents += responseControlPanel
-      contents += relativeValuePanel
       contents += histogramPanel
     }
 

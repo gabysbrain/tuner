@@ -16,6 +16,29 @@ object P5Panel {
   case object P3D extends Renderer {val name = PConstants.P3D}
   case object OpenGL extends Renderer {val name = PConstants.OPENGL}
   case object PDF extends Renderer {val name = PConstants.PDF}
+
+  object Shape extends Enumeration {
+    val TriangleStrip = Value(PConstants.TRIANGLE_STRIP)
+  }
+
+  object ColorSpace extends Enumeration {
+    val RGB = Value(PConstants.RGB)
+    val HSB = Value(PConstants.HSB)
+  }
+
+  type Color = Int
+
+  def map(value:Float, low1:Float, high1:Float, low2:Float, high2:Float) =
+    PApplet.map(value, low1, high1, low2, high2)
+
+  def constrain(value:Float, low:Float, high:Float) = 
+    PApplet.constrain(value, low, high)
+
+  def norm(value:Float, low:Float, high:Float) = 
+    PApplet.norm(value, low, high)
+  
+  def lerpColor(c1:Color, c2:Color, amt:Float, method:ColorSpace.Value) =
+    PApplet.lerpColor(c1, c2, amt, method.id)
 }
 
 abstract class P5Panel (
@@ -73,5 +96,20 @@ abstract class P5Panel (
 
   def height = applet.height
   def width = applet.width
+
+  def pushMatrix = applet.pushMatrix
+  def popMatrix = applet.popMatrix
+  def translate(x:Float, y:Float) = applet.translate(x, y)
+
+  def stroke(color:Color) = applet.stroke(color)
+  def noStroke = applet.noStroke
+
+  def fill(color:Color) = applet.fill(color)
+  def noFill = applet.noFill
+
+  def beginShape(shape:Shape.Value) = applet.beginShape(shape.id)
+  def endShape = applet.endShape
+  def vertex(x:Float, y:Float) = applet.vertex(x, y)
+
 }
 
