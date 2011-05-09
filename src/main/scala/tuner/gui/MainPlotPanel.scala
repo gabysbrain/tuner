@@ -8,7 +8,7 @@ import tuner.Project
 import tuner.SpecifiedColorMap
 
 class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String]) 
-    extends P5Panel(Config.mainPlotDims._1, Config.mainPlotDims._2) {
+    extends P5Panel(Config.mainPlotDims._1, Config.mainPlotDims._2, P5Panel.OpenGL) {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
 
@@ -54,6 +54,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   }
 
   def draw = {
+    val startTime = System.currentTimeMillis
     // response1 goes in the lower left
     resp1Info foreach {case (field, model, plots) =>
       drawResponse(field, model, plots, {(x,y) => x < y})
@@ -63,6 +64,8 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     resp2Info foreach {case (field, model, plots) =>
       drawResponse(field, model, plots, {(x,y) => x > y})
     }
+    val endTime = System.currentTimeMillis
+    println("draw time: " + (endTime - startTime) + "ms")
   }
 
   def drawResponse(field:String, model:GpModel, plots:PlotInfoMap, compare:(String,String) => Boolean) = {

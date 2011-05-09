@@ -58,7 +58,6 @@ class ContinuousPlot(var minX:Float, var maxX:Float,
   def colorMap(value:Float) : Int = colorMap.color(value)
 
   def drawPoint(applet:P5Panel, r:Int, c:Int, w:Float, h:Float, data:Matrix2D) = {
-    val startTime = System.currentTimeMillis
     val x = data.rowVal(r)
     val y = data.colVal(c)
     val cc = data.get(r, c)

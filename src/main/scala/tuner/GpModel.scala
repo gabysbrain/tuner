@@ -75,6 +75,9 @@ class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double,
                   numSamples:Int = Config.estimateSampleDensity)
       : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
     
+    val filteredSlice = slices.filter {x =>
+      x._1 != rowDim._1 && x._1 != colDim._1
+    }
     // generate one matrix from scratch and then copy the rest
     val startTime = System.currentTimeMillis
     val response = Sampler.regularSlice(rowDim, colDim, numSamples)
@@ -84,7 +87,7 @@ class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double,
       val (xval,x) = tmpx
       response.colIds.zipWithIndex.foreach {tmpy =>
         val (yval, y) = tmpy
-        val pt = (rowDim._1, xval) :: (colDim._1, yval) :: slices
+        val pt = (rowDim._1, xval) :: (colDim._1, yval) :: filteredSlice
         val (est, err) = runSample(pt)
         response.set(x, y, est.toFloat)
         errors.set(x, y, err.toFloat)
