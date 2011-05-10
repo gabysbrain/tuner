@@ -13,12 +13,24 @@ import scala.io.Source
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
 case class OutputSpecification(name:String, minimize:Boolean)
+case class GpSpecification(
+  responseDim:String,
+  dimNames:List[String],
+  thetas:List[Double],
+  alphas:List[Double],
+  mean:Double,
+  sigma2:Double,
+  designMatrix:List[List[Double]],
+  responses:List[Double],
+  invCorMtx:List[List[Double]]
+)
 case class ProjConfig(
   name:String,
   scriptPath:String,
   inputs:List[InputSpecification],
   outputs:List[OutputSpecification],
-  ignoreFields:List[String]
+  ignoreFields:List[String],
+  gpModels:List[GpSpecification]
 )
 
 object Project {
@@ -84,13 +96,13 @@ class Project(var path:Option[String]) {
     case None => Nil
   }
 
-  val gpModels = path.map {p =>
+  val gpModels : Option[Map[String,GpModel]] = path.map {p =>
     val designSiteFile = p + "/" + Config.designFilename
     val gp = new Rgp(designSiteFile)
-    responseFields.map {fld =>
-      (fld, gp.buildModel(inputFields, fld, Config.errorField))
-    } toMap
+    responseFields.map {fld => (fld, loadGpModel(gp, fld))} toMap
   }
+  // Save any gp models that got updated
+  save(savePath)
 
   def inputFields : List[String] = inputs.dimNames
   def responseFields : List[String] = responses.map(_._1)
@@ -132,7 +144,21 @@ class Project(var path:Option[String]) {
         ("name" -> rf._1) ~
         ("minimize" -> rf._2)}
       ) ~
-      ("ignoreFields" -> ignoreFields)
+      ("ignoreFields" -> ignoreFields) ~
+      ("gpModels" -> (gpModels match {
+        case Some(models) => models.map {case (fld, model) =>
+          ("responseDim" -> fld) ~
+          ("dimNames" -> model.dims) ~
+          ("thetas" -> model.thetas) ~
+          ("alphas" -> model.alphas) ~
+          ("mean" -> model.mean) ~
+          ("sigma2" -> model.sig2) ~
+          ("designMatrix" -> model.design.map(_.toList).toList) ~
+          ("responses" -> model.responses.toList) ~
+          ("invCorMtx" -> model.rInverse.map(_.toList).toList)
+        } toList
+        case None         => Nil
+      }))
     )
 
     // Ensure that the project directory exists
@@ -146,6 +172,23 @@ class Project(var path:Option[String]) {
     // Also save the samples
     val sampleName = savePath + "/" + Config.sampleFilename
     samples.toCsv(sampleName)
+  }
+
+  private def loadGpModel(factory:Rgp, field:String) : GpModel = {
+    val gpConfig:Option[GpSpecification] = config match {
+      case Some(c) => c.gpModels.find(_.responseDim==field)
+      case None    => None
+    }
+    gpConfig match {
+      case Some(c) => 
+        new GpModel(c.thetas, c.alphas, c.mean, c.sigma2,
+                    c.designMatrix.map {_.toArray} toArray, 
+                    c.responses.toArray,
+                    c.invCorMtx.map {_.toArray} toArray, 
+                    c.dimNames, c.responseDim, Config.errorField)
+      case None    => 
+        factory.buildModel(inputFields, field, Config.errorField)
+    }
   }
 
 }

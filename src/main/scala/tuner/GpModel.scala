@@ -9,27 +9,32 @@ import org.rosuda.REngine.RList
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
 //type Model = Int => String
-class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double, 
-              d:Array[Array[Double]], res:Array[Double], 
-              rinv:Array[Array[Double]], 
-              dms:List[String], rd:String, ed:String) {
+class GpModel(val thetas:List[Double], val alphas:List[Double], 
+              val mean:Double, val sig2:Double, 
+              val design:Array[Array[Double]], val responses:Array[Double], 
+              val rInverse:Array[Array[Double]], 
+              val dims:List[String], val respDim:String, val errDim:String) {
 
-  def this(t:List[Double], a:List[Double], m:Double, 
-           d:Array[Array[Double]], res:Array[Double], 
-           rinv:Array[Array[Double]], 
+  def this(thetas:List[Double], alphas:List[Double], mean:Double, 
+           design:Array[Array[Double]], responses:Array[Double], 
+           rInverse:Array[Array[Double]], 
            dims:List[String], respDim:String, errDim:String) =
-    this(t, a, m, LinAlg.dotProd(LinAlg.dotProd(rinv, res.map({_ - m})), 
-                                 res.map({_ - m})) / res.size,
-         d, res, rinv, dims, respDim, errDim)
+    this(thetas, alphas, mean, 
+         LinAlg.dotProd(LinAlg.dotProd(rInverse, 
+                                       responses.map({_ - mean})), 
+                                       responses.map({_ - mean})) / responses.size,
+         design, responses, rInverse, dims, respDim, errDim)
 
-  def this(t:List[Double], a:List[Double], d:Array[Array[Double]], 
-           res:Array[Double], rinv:Array[Array[Double]], 
+  def this(thetas:List[Double], alphas:List[Double], 
+           design:Array[Array[Double]], 
+           responses:Array[Double], rInverse:Array[Array[Double]], 
            dims:List[String], respDim:String, errDim:String) =
-    this(t, a, 
-         LinAlg.dotProd(LinAlg.dotProd(rinv, res), LinAlg.ones(res.size)) / 
-          LinAlg.dotProd(LinAlg.dotProd(rinv, LinAlg.ones(res.size)), 
-                         LinAlg.ones(res.size)), 
-         d, res, rinv, dims, respDim, errDim)
+    this(thetas, alphas, 
+         LinAlg.dotProd(LinAlg.dotProd(rInverse, responses), 
+                                       LinAlg.ones(responses.size)) / 
+          LinAlg.dotProd(LinAlg.dotProd(rInverse, LinAlg.ones(responses.size)), 
+                         LinAlg.ones(responses.size)), 
+         design, responses, rInverse, dims, respDim, errDim)
 
   def this(fm:RList, dims:List[String], respDim:String, errDim:String) =
     this(fm.at("beta").asDoubles.toList,
@@ -41,6 +46,7 @@ class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double,
          fm.at("invVarMatrix").asDoubleMatrix,
          dims, respDim, errDim)
 
+  /*
   // Dimension names
   val dims = dms
   val respDim = rd
@@ -62,6 +68,7 @@ class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double,
 
   // Inverted correlation matrix
   val rInverse : Array[Array[Double]] = rinv
+  */
 
   // Also precompute rInverse . (responses - mean)
   val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
@@ -304,5 +311,5 @@ class GpModel(t:List[Double], a:List[Double], m:Double, s2:Double,
       }
     }
   }
-  
+
 }
