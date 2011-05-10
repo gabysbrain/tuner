@@ -187,6 +187,7 @@ class Project(var path:Option[String]) {
                     c.invCorMtx.map {_.toArray} toArray, 
                     c.dimNames, c.responseDim, Config.errorField)
       case None    => 
+        println("building model for " + field)
         factory.buildModel(inputFields, field, Config.errorField)
     }
   }

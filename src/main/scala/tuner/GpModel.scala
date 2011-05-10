@@ -46,30 +46,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
          fm.at("invVarMatrix").asDoubleMatrix,
          dims, respDim, errDim)
 
-  /*
-  // Dimension names
-  val dims = dms
-  val respDim = rd
-  val errDim = ed
-
-  // Correlation hyperparameters
-  val thetas = t
-  val alphas = a
-
-  //println("thetas: " + thetas)
-
-  // Global regression model
-  val mean = m
-  val sig2 = s2
-
-  // Original design matrix and outputs
-  val design : Array[Array[Double]] = d
-  val responses : Array[Double] = res
-
-  // Inverted correlation matrix
-  val rInverse : Array[Array[Double]] = rinv
-  */
-
   // Also precompute rInverse . (responses - mean)
   val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
 
