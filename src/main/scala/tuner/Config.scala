@@ -29,5 +29,9 @@ object Config {
 
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
+
+  // Axis configuration stuff
+  val axisTickSize = 5
+  val axisLabelSpace = 3
 }
 

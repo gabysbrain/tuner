@@ -11,6 +11,7 @@ import scala.swing.Component
 
 object P5Panel {
   sealed trait Renderer {def name : String}
+
   case object Java2D extends Renderer {val name = PConstants.JAVA2D}
   case object P2D extends Renderer {val name = PConstants.P2D}
   case object P3D extends Renderer {val name = PConstants.P3D}
@@ -42,7 +43,8 @@ object P5Panel {
 }
 
 abstract class P5Panel (
-    _width:Int, _height:Int, renderer:P5Panel.Renderer=P5Panel.Java2D) 
+    _width:Int, _height:Int, 
+    renderer:P5Panel.Renderer=P5Panel.Java2D) 
     extends BorderPanel {
   
   import P5Panel._
