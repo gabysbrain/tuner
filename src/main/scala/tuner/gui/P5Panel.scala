@@ -5,6 +5,7 @@ import javax.swing.JInternalFrame
 
 import processing.core.PApplet
 import processing.core.PConstants
+import processing.core.PFont
 
 import scala.swing.BorderPanel
 import scala.swing.Component
@@ -89,6 +90,8 @@ abstract class P5Panel (
 
   applet.init
 
+  private var loadedFonts = Map[(String,Int),PFont]()
+
   def setup = {}
   def draw
 
@@ -115,5 +118,13 @@ abstract class P5Panel (
 
   def line(x1:Float, y1:Float, x2:Float, y2:Float) = 
     applet.line(x1, y1, x2, y2)
+  
+  def font(path:String, size:Int) : PFont = {
+    loadedFonts.getOrElse((path, size), {
+      val f = applet.createFont(path, size)
+      loadedFonts += (path, size) -> f
+      f
+    })
+  }
 }
 

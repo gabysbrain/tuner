@@ -31,6 +31,10 @@ object Config {
   val response2ColorMap = PurpleColorMap
   val lineColor = 255
 
+  // Font stuff
+  val fontPath = getClass.getResource("/fonts/Maven Pro.otf").getPath
+  val smallFontSize = 9
+
   // Axis configuration stuff
   val axisSize = 20
   val axisTickSize = 5

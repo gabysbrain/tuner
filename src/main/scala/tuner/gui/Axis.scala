@@ -23,40 +23,39 @@ class Axis(placement:Axis.Placement) {
            dimInfo:(String,(Float,Float))) = {
     val (field, (minVal, maxVal)) = dimInfo
 
-    // Figure out what size to make the text and axes
-    val axisOffset = Config.axisTickSize + Config.axisLabelSpace
-    val (textBox, tickBox) = placement match {
-      case VerticalLeft =>
-        (Rectangle((x,y), (x+w-axisOffset,y+h)), 
-         Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h)))
-      case VerticalRight =>
-        (Rectangle((x+axisOffset,y), (x+w,y+h)), 
-         Rectangle((x,y), (x+Config.axisTickSize, y+h)))
-      case HorizontalTop =>
-        (Rectangle((x,y), (x+w,y+h-axisOffset)), 
-         Rectangle((x,y+h-Config.axisTickSize), (x+w, y+h)))
-      case HorizontalBottom =>
-        (Rectangle((x,y+axisOffset), (x+w,y+h)), 
-         Rectangle((x,y), (x+w, y+Config.axisSize)))
-    }
-
     // Figure out which ticks to draw
     //val ticks = Range.Double(minVal, maxVal, (maxVal-minVal)/3) map {_.toFloat}
     val ticks = List(minVal, (maxVal - minVal)/2, maxVal)
-    drawTicks(applet, tickBox, ticks)
-  }
 
-  def drawTicks(applet:P5Panel, tickBox:Rectangle, ticks:Seq[Float]) = {
+    // set up all the colors and such
+    applet.fill(Config.lineColor)
     applet.stroke(Config.lineColor)
+
+    // Figure out what size to make the text and axes
+    val axisOffset = Config.axisTickSize + Config.axisLabelSpace
     placement match {
-      case VerticalLeft => drawTicksVert(applet, tickBox, ticks)
-      case VerticalRight => drawTicksVert(applet, tickBox, ticks)
-      case HorizontalTop => drawTicksHoriz(applet, tickBox, ticks)
-      case HorizontalBottom => drawTicksHoriz(applet, tickBox, ticks)
+      case VerticalLeft =>
+        val textBox = Rectangle((x,y), (x+w-axisOffset,y+h)) 
+        val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
+        drawTicksVert(applet, tickBox, ticks)
+      case VerticalRight =>
+        val textBox = Rectangle((x+axisOffset,y), (x+w,y+h))
+        val tickBox = Rectangle((x,y), (x+Config.axisTickSize, y+h))
+        drawTicksVert(applet, tickBox, ticks)
+      case HorizontalTop =>
+        val textBox = Rectangle((x,y), (x+w,y+h-axisOffset))
+        val tickBox = Rectangle((x,y+h-Config.axisTickSize), (x+w, y+h))
+        drawTicksHoriz(applet, tickBox, ticks)
+      case HorizontalBottom =>
+        val textBox = Rectangle((x,y+axisOffset), (x+w,y+h))
+        val tickBox = Rectangle((x,y), (x+w, y+Config.axisTickSize))
+        drawTicksHoriz(applet, tickBox, ticks)
     }
+
   }
 
-  def drawTicksVert(applet:P5Panel, tickBox:Rectangle, ticks:Seq[Float]) = {
+  private def drawTicksVert(applet:P5Panel, tickBox:Rectangle, 
+                            ticks:Seq[Float]) = {
     ticks.foreach {tick =>
       val yy = P5Panel.map(tick, ticks.head, ticks.last, 
                                  tickBox.maxY, tickBox.minY)
@@ -64,7 +63,8 @@ class Axis(placement:Axis.Placement) {
     }
   }
 
-  def drawTicksHoriz(applet:P5Panel, tickBox:Rectangle, ticks:Seq[Float]) = {
+  private def drawTicksHoriz(applet:P5Panel, tickBox:Rectangle, 
+                             ticks:Seq[Float]) = {
     ticks.foreach {tick =>
       val xx = P5Panel.map(tick, ticks.head, ticks.last, 
                                  tickBox.minX, tickBox.maxX)
