@@ -1,6 +1,6 @@
 package tuner.geom
 
-object Rectange {
+object Rectangle {
   
   def apply(topLeft:Point, bottomRight:Point) : Rectangle = 
     new Rectangle(topLeft, bottomRight)
@@ -11,6 +11,11 @@ object Rectange {
 class Rectangle(val topLeft:Point, val bottomRight:Point) {
 
   def width = math.abs(bottomRight.x - topLeft.x)
-  def height = math.abs(bottomRight.y - topLeft.y)
+  def height = math.abs(topLeft.y - bottomRight.y)
+
+  def minX = topLeft.x
+  def maxX = bottomRight.x
+  def minY = bottomRight.y
+  def maxY = topLeft.y
 }
 

@@ -113,5 +113,7 @@ abstract class P5Panel (
   def endShape = applet.endShape
   def vertex(x:Float, y:Float) = applet.vertex(x, y)
 
+  def line(x1:Float, y1:Float, x2:Float, y2:Float) = 
+    applet.line(x1, y1, x2, y2)
 }
 
