@@ -28,6 +28,20 @@ object P5Panel {
     val HSB = Value(PConstants.HSB)
   }
 
+  object TextHAlign extends Enumeration {
+    val Left = Value(PConstants.LEFT)
+    val Center = Value(PConstants.CENTER)
+    val Right = Value(PConstants.RIGHT)
+  }
+
+  object TextVAlign extends Enumeration {
+    val Top = Value(PConstants.TOP)
+    val Center = Value(PConstants.CENTER)
+    val Bottom = Value(PConstants.BOTTOM)
+  }
+
+  val HalfPi = PConstants.HALF_PI
+
   type Color = Int
 
   def map(value:Float, low1:Float, high1:Float, low2:Float, high2:Float) =
@@ -41,6 +55,8 @@ object P5Panel {
   
   def lerpColor(c1:Color, c2:Color, amt:Float, method:ColorSpace.Value) =
     PApplet.lerpColor(c1, c2, amt, method.id)
+  
+  def nfs(num:Float, left:Int, right:Int) = PApplet.nfs(num, left, right)
 }
 
 abstract class P5Panel (
@@ -98,6 +114,12 @@ abstract class P5Panel (
   def text(stringdata:String, x:Float, y:Float) = {
     applet.text(stringdata, x, y)
   }
+  def textFont(path:String, size:Int) = {
+    applet.textFont(font(path, size))
+  }
+  def textAlign(halign:TextHAlign.Value) = applet.textAlign(halign.id)
+  def textAlign(halign:TextHAlign.Value, valign:TextVAlign.Value) = 
+    applet.textAlign(halign.id, valign.id)
 
   def height = applet.height
   def width = applet.width
@@ -105,6 +127,7 @@ abstract class P5Panel (
   def pushMatrix = applet.pushMatrix
   def popMatrix = applet.popMatrix
   def translate(x:Float, y:Float) = applet.translate(x, y)
+  def rotate(radians:Float) = applet.rotate(radians)
 
   def stroke(color:Color) = applet.stroke(color)
   def noStroke = applet.noStroke
@@ -121,6 +144,7 @@ abstract class P5Panel (
   
   def font(path:String, size:Int) : PFont = {
     loadedFonts.getOrElse((path, size), {
+      println("loading font `" + path + "' (" + size + ")")
       val f = applet.createFont(path, size)
       loadedFonts += (path, size) -> f
       f

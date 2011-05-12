@@ -17,5 +17,10 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
   def maxX = bottomRight.x
   def minY = bottomRight.y
   def maxY = topLeft.y
+
+  def center : (Float,Float) = (
+    (topLeft.x+bottomRight.x) / 2,
+    (topLeft.y+bottomRight.y) / 2
+  )
 }
 

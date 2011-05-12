@@ -61,6 +61,8 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   }
 
   def draw = {
+    applet.background(Config.backgroundColor)
+
     // Compute the spacing of everything
     val startTime = System.currentTimeMillis
     val responseSize = height - 
@@ -115,7 +117,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     responseInfo foreach {case (field, model, xAxes, yAxes, plots) =>
       val data = plotData(model, xRange, yRange, currentSlice)
       val plot = plots((xFld, yFld))
-      plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
+      //plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
       // See if we should draw the axes
       if(yFld == sortedDims.last) {
         //println(xFld + ": " + xPos + " " + xAxisStart)
