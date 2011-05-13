@@ -65,25 +65,48 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
 
     // Compute the spacing of everything
     val startTime = System.currentTimeMillis
-    val responseSize = height - 
-                       ((zoomDims.length-1) * Config.plotSpacing) -
-                       (Config.axisSize * 2) -
-                       (Config.plotSpacing * 2)
+    val maxResponseWidth = width -
+      ((zoomDims.length-1) * Config.plotSpacing) -
+      (Config.axisSize * 2) -
+      (Config.plotSpacing * 2) -
+      (Config.colorbarSpacing * 4) -
+      (Config.colorbarWidth * 2)
+    val maxResponseHeight = height - 
+      ((zoomDims.length-1) * Config.plotSpacing) -
+      (Config.axisSize * 2) -
+      (Config.plotSpacing * 2)
+    val responseSize = math.min(maxResponseWidth, maxResponseHeight)
     val sliceSize = responseSize / zoomDims.length - Config.plotSpacing
-    val slicesStartX = Config.plotSpacing + Config.axisSize
-    val slicesStartY = Config.plotSpacing + Config.axisSize
-    // Bottom, top
-    val xAxesStart = (slicesStartY + responseSize - Config.plotSpacing, 
-                      Config.plotSpacing)
-    // Left, right
-    val yAxesStart = (Config.plotSpacing, 
-                      slicesStartX + responseSize - Config.plotSpacing)
 
-    def drawResp1(xf:String, yf:String, x:Float, y:Float) = {
+    // Bottom, top
+    val xAxesStart:(Float,Float) = 
+      (Config.plotSpacing + Config.axisSize + 
+          responseSize - Config.plotSpacing,
+       Config.plotSpacing)
+    // Left, right
+    val yAxesStart:(Float,Float) = {
+      val colorbarOffset = Config.colorbarSpacing * 2 + Config.colorbarWidth
+      (colorbarOffset + Config.plotSpacing, 
+       colorbarOffset + Config.plotSpacing + Config.axisSize + 
+         responseSize - Config.plotSpacing)
+    }
+    val slicesStartX = yAxesStart._1 + Config.axisSize
+    val slicesStartY = xAxesStart._2 + Config.axisSize
+    
+    // left, right
+    val colorbarStartX = 
+      (Config.colorbarSpacing, 
+       yAxesStart._2 + Config.axisSize + 
+         Config.plotSpacing + Config.colorbarSpacing)
+    val colorbarStartY = slicesStartY
+
+    def drawResp1(xf:String, yf:String, 
+                  x:Float, y:Float) = {
       drawResponse(resp1Info, xf, yf, x, y, 
                    sliceSize, xAxesStart._1, yAxesStart._1)
     }
-    def drawResp2(xf:String, yf:String, x:Float, y:Float) = {
+    def drawResp2(xf:String, yf:String, 
+                  x:Float, y:Float) = {
       drawResponse(resp2Info, xf, yf, x, y, 
                    sliceSize, xAxesStart._2, yAxesStart._2)
     }
@@ -109,7 +132,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   }
 
   private def drawResponse(responseInfo:Option[ResponseInfo], 
-                           xFld:String, yFld:String,
+                           xFld:String, yFld:String, 
                            xPos:Float, yPos:Float, sliceSize:Float,
                            xAxisStart:Float, yAxisStart:Float) = {
     val xRange = (xFld, zoomDims.range(xFld))
@@ -117,7 +140,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     responseInfo foreach {case (field, model, xAxes, yAxes, plots) =>
       val data = plotData(model, xRange, yRange, currentSlice)
       val plot = plots((xFld, yFld))
-      //plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
+      plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
       // See if we should draw the axes
       if(yFld == sortedDims.last) {
         //println(xFld + ": " + xPos + " " + xAxisStart)
