@@ -45,16 +45,9 @@ class ProjectViewer(project:Project) extends MainFrame {
       border = Swing.TitledBorder(border, "Response Histograms")
     }
   
-    /*
-    val mainPlotPanel = new FlowPanel {
-      contents += new Label("Main Plot")
-    }
-    */
     val mainPlotPanel = plot
   
-    val controlPanel = new FlowPanel {
-      contents += new Label("Controls")
-    }
+    val controlPanel = new ControlPanel
 
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
