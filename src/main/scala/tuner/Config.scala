@@ -22,7 +22,7 @@ object Config {
   val errorField = "stddev"
   val gainField = "estgain"
 
-  val estimateSampleDensity = 20
+  val estimateSampleDensity = 50
 
   val mainPlotDims = (800, 600)
   val plotSpacing = 5
@@ -34,7 +34,7 @@ object Config {
 
   // Font stuff
   val fontPath = getClass.getResource("/fonts/MavenPro.otf").getPath
-  val smallFontSize = 9
+  val smallFontSize = 10
 
   // Axis configuration stuff
   // Make sure the is big enough to accomodate the labels
@@ -47,6 +47,10 @@ object Config {
   // Colorbar configuration stuff
   // TODO: do the width automatically
   val colorbarSpacing = 10
-  val colorbarWidth = 20
+  val colorbarWidth = 70
+  val colorbarTickSize = 5
+  // vertical, horizontal
+  val colorbarLabelSpace = (5, 3)
+  val colorbarTickDigits = (1,3)
 }
 

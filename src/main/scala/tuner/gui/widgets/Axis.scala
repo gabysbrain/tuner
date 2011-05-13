@@ -1,6 +1,7 @@
-package tuner.gui
+package tuner.gui.widgets
 
 import tuner.Config
+import tuner.gui.P5Panel
 import tuner.geom.Rectangle
 
 object Axis {

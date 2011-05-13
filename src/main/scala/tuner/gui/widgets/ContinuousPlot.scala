@@ -1,7 +1,8 @@
-package tuner.gui
+package tuner.gui.widgets
 
 import tuner.Matrix2D
 import tuner.SpecifiedColorMap
+import tuner.gui.P5Panel
 
 class ContinuousPlot(var minX:Float, var maxX:Float, 
                      var minY:Float, var maxY:Float, 

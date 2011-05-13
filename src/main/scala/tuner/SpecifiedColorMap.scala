@@ -19,15 +19,21 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float) {
   }
 
   def colors = cm.colors
-  def breaks = cm.breaks
+  def breaks = {
+    if(minVal < filterVal) {
+      List(minVal, filterVal, maxVal)
+    } else {
+      List(minVal, maxVal)
+    }
+  }
 
   def color(v:Float) : Int = {
-    val constVal = P5Panel.constrain(v, minVal, maxVal)
-    if(constVal < filterVal) {
+    val cv = P5Panel.constrain(v, minVal, maxVal)
+    if(cv < filterVal) {
       if(colors.head < 128) 255
       else                  0
     } else {
-      val pct = P5Panel.norm(constVal, filterVal, maxVal)
+      val pct = P5Panel.norm(cv, filterVal, maxVal)
       cm.lerp(pct)
     }
   }

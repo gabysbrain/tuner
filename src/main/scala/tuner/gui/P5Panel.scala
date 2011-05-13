@@ -20,6 +20,7 @@ object P5Panel {
   case object PDF extends Renderer {val name = PConstants.PDF}
 
   object Shape extends Enumeration {
+    val QuadStrip = Value(PConstants.QUAD_STRIP)
     val TriangleStrip = Value(PConstants.TRIANGLE_STRIP)
   }
 
@@ -120,6 +121,7 @@ abstract class P5Panel (
   def textAlign(halign:TextHAlign.Value) = applet.textAlign(halign.id)
   def textAlign(halign:TextHAlign.Value, valign:TextVAlign.Value) = 
     applet.textAlign(halign.id, valign.id)
+  def textWidth(text:String) = applet.textWidth(text)
 
   def height = applet.height
   def width = applet.width

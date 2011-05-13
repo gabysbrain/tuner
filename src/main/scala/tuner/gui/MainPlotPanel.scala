@@ -6,6 +6,9 @@ import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
 import tuner.SpecifiedColorMap
+import tuner.gui.widgets.Axis
+import tuner.gui.widgets.Colorbar
+import tuner.gui.widgets.ContinuousPlot
 
 class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String]) 
     extends P5Panel(Config.mainPlotDims._1, Config.mainPlotDims._2, P5Panel.OpenGL) {
@@ -13,7 +16,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
   // This is the response field, gp model, x axes, y axes, and plots
-  type ResponseInfo = (String,GpModel,AxisMap,AxisMap,PlotInfoMap)
+  type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
 
   var zoomDims = new DimRanges(project.inputs.ranges)
   var currentSlice:Map[String,Float] = project.inputFields.map {fld =>
@@ -28,8 +31,10 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         val cm = new SpecifiedColorMap(Config.response1ColorMap, 
                                        model.funcMin, 
                                        model.funcMax)
+        println("cm1: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r1, model, createAxes(Axis.HorizontalBottom),
                          createAxes(Axis.VerticalLeft),
+                         new Colorbar(cm, r1),
                          createPlots(cm)))
       case None      => None
     }
@@ -43,8 +48,10 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         val cm = new SpecifiedColorMap(Config.response2ColorMap, 
                                        model.funcMin, 
                                        model.funcMax)
+        println("cm2: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r2, model, createAxes(Axis.HorizontalTop),
                          createAxes(Axis.VerticalRight),
+                         new Colorbar(cm, r2),
                          createPlots(cm)))
       case None      => None
     }
@@ -103,12 +110,16 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     def drawResp1(xf:String, yf:String, 
                   x:Float, y:Float) = {
       drawResponse(resp1Info, xf, yf, x, y, 
-                   sliceSize, xAxesStart._1, yAxesStart._1)
+                   sliceSize, xAxesStart._1, yAxesStart._1,
+                   colorbarStartX._1, colorbarStartY,
+                   responseSize)
     }
     def drawResp2(xf:String, yf:String, 
                   x:Float, y:Float) = {
       drawResponse(resp2Info, xf, yf, x, y, 
-                   sliceSize, xAxesStart._2, yAxesStart._2)
+                   sliceSize, xAxesStart._2, yAxesStart._2,
+                   colorbarStartX._2, colorbarStartY,
+                   responseSize)
     }
 
     // Draw the splom itself
@@ -134,10 +145,15 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   private def drawResponse(responseInfo:Option[ResponseInfo], 
                            xFld:String, yFld:String, 
                            xPos:Float, yPos:Float, sliceSize:Float,
-                           xAxisStart:Float, yAxisStart:Float) = {
+                           xAxisStart:Float, yAxisStart:Float,
+                           colorbarStartX:Float, colorbarStartY:Float,
+                           colorbarHeight:Float) = {
     val xRange = (xFld, zoomDims.range(xFld))
     val yRange = (yFld, zoomDims.range(yFld))
-    responseInfo foreach {case (field, model, xAxes, yAxes, plots) =>
+    responseInfo foreach {case (field, model, xAxes, yAxes, legend, plots) =>
+      // Drawing the legends is easy
+      legend.draw(this, colorbarStartX, colorbarStartY, 
+                        Config.colorbarWidth, colorbarHeight)
       val data = plotData(model, xRange, yRange, currentSlice)
       val plot = plots((xFld, yFld))
       plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
