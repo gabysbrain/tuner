@@ -74,9 +74,12 @@ class FloatSlider extends Slider {
   peer.setModel(rangeModel)
 
   def maxFloat : Float = _max
+  def max_=(v:Float) = _max = v
   def minFloat : Float = _min
+  def min_=(v:Float) = _min = v
   def step : Float = (max - min) / steps
-  def floatVal : Float = step * rangeModel.value
+  def floatVal : Float = _min + step * rangeModel.value
+  def floatVal_=(v:Float) = rangeModel.setValue(math.round((v-_min)/step))
 
 }
 

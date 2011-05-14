@@ -1,5 +1,7 @@
 package scala.swing
 
+import scala.swing.event.ValueChanged
+
 import javax.swing.JSpinner
 import javax.swing.SpinnerNumberModel
 
@@ -27,5 +29,11 @@ class Spinner(minVal:Float, maxVal:Float, step:Float)
 
   def max_=(v:Float) = model.setMaximum(float2Float(v))
   def max : Float = model.getMaximum.asInstanceOf[Number].floatValue
+
+  peer.addChangeListener(new javax.swing.event.ChangeListener {
+    def stateChanged(e:javax.swing.event.ChangeEvent) {
+      publish(new ValueChanged(Spinner.this))
+    }
+  })
 }
 
