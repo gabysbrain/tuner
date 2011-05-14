@@ -3,13 +3,15 @@ package tuner.gui
 import scala.swing.Alignment
 import scala.swing.TabbedPane
 
-class ControlPanel extends TabbedPane {
+import tuner.Project
+
+class ControlPanel(project:Project) extends TabbedPane {
   
   tabPlacement(Alignment.Left)
 
   val infoTab = new InfoPanel
   val localTab = new LocalPanel
-  val controlsTab = new PlotControlsPanel
+  val controlsTab = new PlotControlsPanel(project)
   val candidatesTab = new CandidatesPanel
   val historyTab = new HistoryPanel
 

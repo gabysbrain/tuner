@@ -47,7 +47,7 @@ class ProjectViewer(project:Project) extends MainFrame {
   
     val mainPlotPanel = plot
   
-    val controlPanel = new ControlPanel
+    val controlPanel = new ControlPanel(project)
 
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
