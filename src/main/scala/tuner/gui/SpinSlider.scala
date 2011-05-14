@@ -12,9 +12,9 @@ class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int)
     extends BoxPanel(Orientation.Horizontal) {
   
   val spinner = new Spinner(minVal, maxVal, numSteps)
-  val slider = new FloatSlider {
-    min = minVal
-    max = maxVal
+  val slider = new FloatSlider(minVal, maxVal, numSteps) {
+    minFloat = minVal
+    maxFloat = maxVal
     steps = numSteps
   }
 

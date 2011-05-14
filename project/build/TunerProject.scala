@@ -10,6 +10,7 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
   val commonsMath = "org.apache.commons" % "commons-math" % "2.0"
 
   val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
+  val prefuse = "org.prefuse" % "prefuse" % "beta-20060220"
 
   override def compileOptions : Seq[CompileOption] = List(Deprecation)
 

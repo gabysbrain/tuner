@@ -1,85 +1,22 @@
 package scala.swing
 
-import javax.swing.BoundedRangeModel
-import javax.swing.event.ChangeEvent
-import javax.swing.event.ChangeListener
-import javax.swing.event.EventListenerList
-
-class FloatSlider extends Slider {
+class FloatSlider(minVal:Float, maxVal:Float, numSteps:Int) extends Slider {
   
-  var _max = 1f
-  var _min = 0f
-  var steps = 100
-
-  val rangeModel = new BoundedRangeModel {
-    var _isAdj = false
-    var _currentStep = 0
-
-    var listeners:List[ChangeListener] = Nil
-  
-    def getMinimum : Int = 0
-    def getMaximum : Int = steps
-    def getExtent : Int = 0
-    def getValueIsAdjusting : Boolean = _isAdj
-    def setMinimum(m:Int) = {}
-    def setExtent(e:Int) = {}
-    def setMaximum(m:Int) = {
-      val oldMax = max
-      steps = m
-      if(max != oldMax)
-        fireStateChanged
-    }
-    def setValueIsAdjusting(b:Boolean) = {
-      val old = _isAdj
-      _isAdj = b
-      if(old != _isAdj)
-        fireStateChanged
-    }
-
-    def setValue(v:Int) = {
-      _currentStep = v
-    }
-    def getValue : Int = _currentStep
-    def value = getValue
-
-    def setRangeProperties(newVal:Int, newExtent:Int, 
-                           newMin:Int, newMax:Int, 
-                           newAdj:Boolean) = {
-      var hasChanged = false
-      if(newVal != _currentStep)
-        hasChanged = true
-      if(newAdj != _isAdj)
-        hasChanged = true
-      if(steps != newMax)
-        hasChanged = true
-      _currentStep = newVal
-      _isAdj = newAdj
-      steps = newMax
-
-      if(hasChanged)
-        fireStateChanged
-    }
-
-    def addChangeListener(l:ChangeListener) = 
-      listeners = l::listeners
-    def removeChangeListener(l:ChangeListener) = 
-      listeners = listeners.diff(List(l))
-    
-    def fireStateChanged = {
-      val evt = new ChangeEvent(this)
-      listeners.foreach {l => l.stateChanged(evt)}
-    }
-  }
-
+  val rangeModel = new FloatRangeModel(minVal, maxVal, numSteps)
   peer.setModel(rangeModel)
 
-  def maxFloat : Float = _max
-  def max_=(v:Float) = _max = v
-  def minFloat : Float = _min
-  def min_=(v:Float) = _min = v
-  def step : Float = (max - min) / steps
-  def floatVal : Float = _min + step * rangeModel.value
-  def floatVal_=(v:Float) = rangeModel.setValue(math.round((v-_min)/step))
+  def maxFloat : Float = rangeModel.maxFloat
+  def maxFloat_=(v:Float) = {rangeModel.maxFloat = v}
+  def minFloat : Float = rangeModel.minFloat
+  def minFloat_=(v:Float) = {rangeModel.minFloat = v}
+  def step : Float = (maxFloat - minFloat) / steps
+  def steps = rangeModel.getMaximum
+  def steps_=(s:Int) = {
+    rangeModel.setMaximum(s)
+  }
+  def floatVal : Float = rangeModel.minFloat + step * rangeModel.value
+  def floatVal_=(v:Float) = 
+    rangeModel.setValue(math.round((v-rangeModel.minFloat)/step))
 
 }
 
