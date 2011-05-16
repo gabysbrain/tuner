@@ -39,7 +39,7 @@ object Config {
   // Axis configuration stuff
   // Make sure the is big enough to accomodate the labels
   // TODO: do this automatically
-  val axisTickSize = 5
+  val axisTickSize = 3
   val axisLabelSpace = 3
   val axisSize = smallFontSize + axisTickSize + axisLabelSpace * 2 + 35
   val axisTickDigits = (1,3)
@@ -47,8 +47,8 @@ object Config {
   // Colorbar configuration stuff
   // TODO: do the width automatically
   val colorbarSpacing = 10
-  val colorbarWidth = 70
-  val colorbarTickSize = 5
+  val colorbarWidth = 60
+  val colorbarTickSize = 3
   // vertical, horizontal
   val colorbarLabelSpace = (5, 3)
   val colorbarTickDigits = (1,3)
