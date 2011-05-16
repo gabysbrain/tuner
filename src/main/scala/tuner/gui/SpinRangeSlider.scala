@@ -42,6 +42,10 @@ class SpinRangeSlider(minVal:Float, maxVal:Float, numSteps:Int)
   }
 
   def value : (Float,Float) = slider.value
+  def value_=(v:(Float,Float)) = {
+    lowSpinner.value = v._1
+    highSpinner.value = v._2
+  }
   def lowValue : Float = slider.lowValue
   def highValue : Float = slider.highValue
 }

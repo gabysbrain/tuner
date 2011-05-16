@@ -34,5 +34,6 @@ class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int)
   }
 
   def value : Float = spinner.value
+  def value_=(v:Float) = spinner.value = v
 }
 

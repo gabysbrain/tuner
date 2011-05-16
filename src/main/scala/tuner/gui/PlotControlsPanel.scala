@@ -19,6 +19,7 @@ class PlotControlsPanel(project:Project)
   val sliceSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
     val slider = new SpinSlider(minVal, maxVal, Config.sliderResolution)
+    slider.value = project.currentSlice(fld)
     listenTo(slider)
     reactions += {
       case ValueChanged(`slider`) =>
@@ -31,6 +32,7 @@ class PlotControlsPanel(project:Project)
   val zoomSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
     val slider = new SpinRangeSlider(minVal, maxVal, Config.sliderResolution)
+    slider.value = project.currentZoom.range(fld)
     listenTo(slider)
     reactions += {
       case ValueChanged(`slider`) =>
