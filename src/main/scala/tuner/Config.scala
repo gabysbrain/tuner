@@ -53,6 +53,6 @@ object Config {
   val colorbarLabelSpace = (5, 3)
   val colorbarTickDigits = (1,3)
 
-  val sliderResolution = 100
+  val sliderResolution = 1000
 }
 
