@@ -24,13 +24,22 @@ case class GpSpecification(
   responses:List[Double],
   invCorMtx:List[List[Double]]
 )
+case class SliceSpecification(name:String, value:Float)
+case class ZoomSpecification(name:String, lowValue:Float, highValue:Float)
+case class VisInfo(
+  currentSlice:List[SliceSpecification],
+  currentZoom:List[ZoomSpecification],
+  response1:Option[String],
+  response2:Option[String]
+)
 case class ProjConfig(
   name:String,
   scriptPath:String,
   inputs:List[InputSpecification],
   outputs:List[OutputSpecification],
   ignoreFields:List[String],
-  gpModels:List[GpSpecification]
+  gpModels:List[GpSpecification],
+  currentVis:VisInfo
 )
 
 object Project {
@@ -96,6 +105,23 @@ class Project(var path:Option[String]) {
     case None => Nil
   }
 
+  // The visual controls
+  var _currentSlice = config match {
+    case Some(c) => c.currentVis.currentSlice.map {x => 
+      (x.name, x.value)
+    } toMap
+    case None    => Map[String,Float]()
+  }
+  var _currentZoom = config match {
+    case Some(c) => new DimRanges(
+      c.currentVis.currentZoom.map {x => 
+        (x.name, (x.lowValue, x.highValue))
+      } toMap)
+    case None    => new DimRanges(Nil.toMap)
+  }
+  var response1View:Option[String] = config flatMap {_.currentVis.response1}
+  var response2View:Option[String] = config flatMap {_.currentVis.response2}
+
   val gpModels : Option[Map[String,GpModel]] = path.map {p =>
     val designSiteFile = p + "/" + Config.designFilename
     val gp = new Rgp(designSiteFile)
@@ -106,6 +132,30 @@ class Project(var path:Option[String]) {
 
   def inputFields : List[String] = inputs.dimNames
   def responseFields : List[String] = responses.map(_._1)
+
+  def currentSlice : Map[String,Float] = {
+    // Pick defaults for any missing dimensions
+    inputs.dimNames.toSet.diff(_currentSlice.keySet).foreach {k =>
+      val (min, max) = inputs.range(k)
+      _currentSlice += (k -> ((min+max) / 2f))
+    }
+    _currentSlice
+  }
+
+  def currentZoom : DimRanges = {
+    inputs.dimNames.toSet.diff(_currentZoom.ranges.keySet).foreach {k =>
+      _currentZoom.update(k, inputs.min(k), inputs.max(k))
+    }
+    _currentZoom
+  }
+
+  def updateSlice(fld:String, v:Float) = {
+    _currentSlice += (fld -> v)
+  }
+
+  def updateZoom(fld:String, low:Float, high:Float) = {
+    _currentZoom.update(fld, low, high)
+  }
 
   def newFields : List[String] = {
     val knownFields : Set[String] = 

@@ -18,11 +18,13 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   // This is the response field, gp model, x axes, y axes, and plots
   type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
 
+  /*
   var zoomDims = new DimRanges(project.inputs.ranges)
   var currentSlice:Map[String,Float] = project.inputFields.map {fld =>
     val rng = zoomDims.range(fld)
     (fld, (rng._1 + rng._2) / 2f)
   } toMap
+  */
 
   val resp1Info:Option[ResponseInfo] = resp1 match {
     case Some(r1) => project.gpModels match {
@@ -58,7 +60,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     case None     => None
   }
 
-  def sortedDims : List[String] = zoomDims.dimNames.sorted
+  def sortedDims : List[String] = project.currentZoom.dimNames.sorted
 
   def plotData(model:GpModel,
                d1:(String,(Float,Float)), 
@@ -73,17 +75,18 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     // Compute the spacing of everything
     val startTime = System.currentTimeMillis
     val maxResponseWidth = width -
-      ((zoomDims.length-1) * Config.plotSpacing) -
+      ((project.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2) -
       (Config.colorbarSpacing * 4) -
       (Config.colorbarWidth * 2)
     val maxResponseHeight = height - 
-      ((zoomDims.length-1) * Config.plotSpacing) -
+      ((project.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2)
     val responseSize = math.min(maxResponseWidth, maxResponseHeight)
-    val sliceSize = responseSize / zoomDims.length - Config.plotSpacing
+    val sliceSize = responseSize / project.currentZoom.length - 
+                      Config.plotSpacing
 
     // Bottom, top
     val xAxesStart:(Float,Float) = 
@@ -148,13 +151,13 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
                            xAxisStart:Float, yAxisStart:Float,
                            colorbarStartX:Float, colorbarStartY:Float,
                            colorbarHeight:Float) = {
-    val xRange = (xFld, zoomDims.range(xFld))
-    val yRange = (yFld, zoomDims.range(yFld))
+    val xRange = (xFld, project.currentZoom.range(xFld))
+    val yRange = (yFld, project.currentZoom.range(yFld))
     responseInfo foreach {case (field, model, xAxes, yAxes, legend, plots) =>
       // Drawing the legends is easy
       legend.draw(this, colorbarStartX, colorbarStartY, 
                         Config.colorbarWidth, colorbarHeight)
-      val data = plotData(model, xRange, yRange, currentSlice)
+      val data = plotData(model, xRange, yRange, project.currentSlice)
       val plot = plots((xFld, yFld))
       plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
       // See if we should draw the axes
@@ -177,8 +180,10 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       project.inputFields.flatMap({fld2 =>
         if(fld1 < fld2) {
           Some(((fld1, fld2), 
-            new ContinuousPlot(zoomDims.min(fld1), zoomDims.max(fld1),
-                               zoomDims.min(fld2), zoomDims.max(fld2),
+            new ContinuousPlot(project.currentZoom.min(fld1), 
+                               project.currentZoom.max(fld1),
+                               project.currentZoom.min(fld2), 
+                               project.currentZoom.max(fld2),
                                cm)))
         } else {
           None

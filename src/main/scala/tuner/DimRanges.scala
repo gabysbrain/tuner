@@ -31,7 +31,7 @@ object DimRanges {
 
 class DimRanges(r:Map[String,DimRanges.Range]) {
 
-  val ranges = r
+  var ranges = r
 
   def range(dim:String) : (Float,Float) = {
     ranges(dim)
@@ -44,6 +44,10 @@ class DimRanges(r:Map[String,DimRanges.Range]) {
   def max(dim:String) : Float = {
     // Unkown dims get a 0 to 1 range
     ranges(dim)._2
+  }
+
+  def update(dim:String, min:Float, max:Float) = {
+    ranges += (dim -> (min, max))
   }
 
   def merge(dr:DimRanges) : DimRanges = {

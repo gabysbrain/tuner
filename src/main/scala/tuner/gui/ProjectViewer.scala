@@ -1,5 +1,6 @@
 package tuner.gui
 
+import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.ButtonGroup
 import scala.swing.Dialog

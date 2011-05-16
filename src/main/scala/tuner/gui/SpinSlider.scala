@@ -25,8 +25,12 @@ class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int)
   contents += spinner
 
   reactions += {
-    case ValueChanged(`slider`) => spinner.value = slider.floatVal
-    case ValueChanged(`spinner`) => slider.floatVal = spinner.value
+    case ValueChanged(`slider`) => 
+      spinner.value = slider.floatVal
+      publish(new ValueChanged(SpinSlider.this))
+    case ValueChanged(`spinner`) => 
+      slider.floatVal = spinner.value
+      publish(new ValueChanged(SpinSlider.this))
   }
 
   def value : Float = spinner.value

@@ -32,12 +32,17 @@ class SpinRangeSlider(minVal:Float, maxVal:Float, numSteps:Int)
       val (low, high) = slider.value
       lowSpinner.value = low
       highSpinner.value = high
+      publish(new ValueChanged(SpinRangeSlider.this))
     case ValueChanged(`lowSpinner`) => 
       slider.lowValue = lowSpinner.value
+      publish(new ValueChanged(SpinRangeSlider.this))
     case ValueChanged(`highSpinner`) => 
       slider.highValue = highSpinner.value
+      publish(new ValueChanged(SpinRangeSlider.this))
   }
 
   def value : (Float,Float) = slider.value
+  def lowValue : Float = slider.lowValue
+  def highValue : Float = slider.highValue
 }
 

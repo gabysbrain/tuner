@@ -7,6 +7,7 @@ import scala.swing.Orientation
 import scala.swing.FloatRangeSlider
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.event.ValueChanged
 
 import tuner.Config
 import tuner.Project
@@ -18,13 +19,23 @@ class PlotControlsPanel(project:Project)
   val sliceSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
     val slider = new SpinSlider(minVal, maxVal, Config.sliderResolution)
+    listenTo(slider)
+    reactions += {
+      case ValueChanged(`slider`) =>
+        project.updateSlice(fld, slider.value)
+    }
     (fld, slider)
   } toMap
 
   // Create zoom sliders for each input dimension
   val zoomSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
-    val slider = new FloatRangeSlider(minVal, maxVal, Config.sliderResolution)
+    val slider = new SpinRangeSlider(minVal, maxVal, Config.sliderResolution)
+    listenTo(slider)
+    reactions += {
+      case ValueChanged(`slider`) =>
+        project.updateZoom(fld, slider.lowValue, slider.highValue)
+    }
     (fld, slider)
   } toMap
 
