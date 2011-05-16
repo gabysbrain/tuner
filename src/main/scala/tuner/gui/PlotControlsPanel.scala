@@ -46,6 +46,8 @@ class PlotControlsPanel(project:Project)
       layout(new Label(fld)) = (0, i)
       layout(zoomSliders(fld)) = (1, i)
     }
+
+    border = Swing.TitledBorder(border, "Zoom")
   }
 
   val responsePanel = new BoxPanel(Orientation.Horizontal) {
@@ -56,6 +58,8 @@ class PlotControlsPanel(project:Project)
     contents += new Label("Response 2")
     contents += resp2Combo
     contents += Swing.HGlue
+
+    border = Swing.TitledBorder(border, "Response")
   }
 
   contents += new BoxPanel(Orientation.Horizontal) {
