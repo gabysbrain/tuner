@@ -208,7 +208,20 @@ class Project(var path:Option[String]) {
           ("invCorMtx" -> model.rInverse.map(_.toList).toList)
         } toList
         case None         => Nil
-      }))
+      })) ~
+      ("currentVis" -> (
+        ("currentSlice" -> (currentSlice.map {case (fld,v) =>
+          ("name" -> fld) ~
+          ("value" -> v)
+        }).toList) ~
+        ("currentZoom" -> (currentZoom.dimNames.map {fld =>
+          ("name" -> fld) ~
+          ("lowValue" -> currentZoom.min(fld)) ~
+          ("highValue" -> currentZoom.max(fld))
+        }).toList) ~
+        ("response1" -> response1View) ~
+        ("response2" -> response2View)
+      ))
     )
 
     // Ensure that the project directory exists
