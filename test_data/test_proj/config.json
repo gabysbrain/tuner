@@ -53,6 +53,8 @@
       "name":"minCorrelation",
       "lowValue":0.0,
       "highValue":1.0
-    }]
+    }],
+    "response1":"Precision",
+    "response2":"Precision"
   }
 }

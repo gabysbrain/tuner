@@ -9,7 +9,7 @@ class ControlPanel(project:Project) extends TabbedPane {
   
   tabPlacement(Alignment.Left)
 
-  val infoTab = new InfoPanel
+  val infoTab = new InfoPanel(project)
   val localTab = new LocalPanel
   val controlsTab = new PlotControlsPanel(project)
   val candidatesTab = new CandidatesPanel

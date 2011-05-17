@@ -177,6 +177,32 @@ class Project(var path:Option[String]) {
     addSamples(n)
   }
 
+  def closestSample(point:List[(String,Float)]) : List[(String,Float)] = {
+    def ptDist(tpl:Table.Tuple) : Double = {
+      val diffs = point.map {case (fld, v) =>
+        math.pow(tpl.getOrElse(fld, Float.MaxValue) - v, 2)
+      }
+      math.sqrt(diffs.sum)
+    }
+    samples.data.foldLeft(Double.MaxValue, samples.tuple(0))((mi,r) => {
+      val dist = ptDist(r)
+      if(dist < mi._1) (dist, r)
+      else             mi
+    })._2.toList
+  }
+
+  def estimatePoint(point:List[(String,Float)]) 
+        : Map[String,(Float,Float,Float)] = {
+    gpModels match {
+      case Some(models) => models.map {case (fld, model) =>
+        val (est, err) = model.runSample(point)
+        (fld -> (est.toFloat, err.toFloat, 
+                 model.calcExpectedGain(est.toFloat, err.toFloat)))
+      }
+      case None         => Map()
+    }
+  }
+
   def savePath : String = path.get
 
   def save(savePath:String) = {

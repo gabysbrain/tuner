@@ -7,6 +7,7 @@ import scala.swing.Orientation
 import scala.swing.FloatRangeSlider
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
@@ -44,6 +45,27 @@ class PlotControlsPanel(project:Project)
   // Create combo boxes for the 2 possible outputs
   val resp1Combo = new ComboBox("None" :: project.responses.map {_._1})
   val resp2Combo = new ComboBox("None" :: project.responses.map {_._1})
+
+  project.response1View foreach {r =>
+    resp1Combo.selection.item = r
+  }
+  project.response2View foreach {r =>
+    resp2Combo.selection.item = r
+  }
+
+  listenTo(resp1Combo)
+  listenTo(resp2Combo)
+
+  reactions += {
+    case SelectionChanged(`resp1Combo`) => resp1Combo.selection.item match {
+      case "None" => project.response1View = None
+      case x      => project.response1View = Some(x)
+    }
+    case SelectionChanged(`resp2Combo`) => resp2Combo.selection.item match {
+      case "None" => project.response2View = None
+      case x      => project.response2View = Some(x)
+    }
+  }
 
   val slicePanel = new TablePanel(2, sliceSliders.size) {
     project.inputFields.sorted.zipWithIndex.foreach {case (fld,i) =>
