@@ -184,11 +184,14 @@ class Project(var path:Option[String]) {
       }
       math.sqrt(diffs.sum)
     }
-    samples.data.foldLeft(Double.MaxValue, samples.tuple(0))((mi,r) => {
-      val dist = ptDist(r)
-      if(dist < mi._1) (dist, r)
-      else             mi
-    })._2.toList
+    designSites match {
+      case Some(t) => t.data.foldLeft(Double.MaxValue, t.tuple(0))((mi,r) => {
+        val dist = ptDist(r)
+        if(dist < mi._1) (dist, r)
+        else             mi
+      })._2.toList
+      case None => Nil
+    }
   }
 
   def estimatePoint(point:List[(String,Float)]) 

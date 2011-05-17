@@ -17,10 +17,10 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
                       project.responseFields.flatMap({rf =>
                         List(rf, rf + " Error", rf + " Gain")
                       })
-    val initialData = Array(
+    val initialData:Array[Array[Any]] = Array(
       "Estimate" +: Array.fill(columnNames.length)(""),
       "Nearest Sample" +: Array.fill(columnNames.length)(""))
-    new Table(initialData, columnNames)
+    new Table(initialData, "" :: columnNames)
   }
 
   contents += new ScrollPane {
@@ -30,7 +30,7 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
 
   def updateTable = {
     val slice = project.currentSlice
-    val closestSample = project.closestSample(slice.toList)
+    val closestSample = project.closestSample(slice.toList).toMap
     val estimates = project.estimatePoint(slice.toList)
 
     // Update the independent dimensions first
