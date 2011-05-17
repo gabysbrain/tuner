@@ -30,8 +30,7 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float) {
   def color(v:Float) : Int = {
     val cv = P5Panel.constrain(v, minVal, maxVal)
     if(cv < filterVal) {
-      if(colors.head < 128) 255
-      else                  0
+      Config.filterColor
     } else {
       val pct = P5Panel.norm(cv, filterVal, maxVal)
       cm.lerp(pct)

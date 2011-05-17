@@ -31,6 +31,7 @@ object Config {
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
   val lineColor = 255
+  val filterColor = 180
 
   // Font stuff
   val fontPath = getClass.getResource("/fonts/MavenPro.otf").getPath
