@@ -28,6 +28,8 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   val plot = new MainPlotPanel(project, Some("Precision"), Some("Precision"))
 
+  val controlPanel = new ControlPanel(project)
+
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
     val paretoPanel = new FlowPanel {
@@ -48,8 +50,6 @@ class ProjectViewer(project:Project) extends MainFrame {
   
     val mainPlotPanel = plot
   
-    val controlPanel = new ControlPanel(project)
-
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
       contents += responseControlPanel
