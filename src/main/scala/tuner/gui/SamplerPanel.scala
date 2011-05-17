@@ -17,7 +17,7 @@ class SamplerPanel extends BoxPanel(Orientation.Vertical) {
   val sampleNumField = new TextField
   val sampleTimeField = new TextField
   val ttlRunTimeField = new TextField
-  val shapeSelector = new ComboBox(List("Ellipse", "Box"))
+  val shapeSelector = new RegionShapeCombo
   val methodSelector = new ComboBox(List("LHS", "Cartesian"))
 
   val controlPane = new TablePanel(2, 5) {
