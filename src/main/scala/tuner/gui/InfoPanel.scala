@@ -2,12 +2,14 @@ package tuner.gui
 
 import scala.swing.BoxPanel
 import scala.swing.Orientation
+import scala.swing.Panel
 import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.Table
 
 import tuner.Project
 
+import java.awt.Dimension
 import javax.swing.table.AbstractTableModel
 
 class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
@@ -23,9 +25,18 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     new Table(initialData, "" :: columnNames)
   }
 
+  val imagePanel = new Panel {
+    maximumSize = new Dimension(300, 150)
+    preferredSize = new Dimension(300, 150)
+  }
+
   contents += new ScrollPane {
     contents = infoTable
+    maximumSize = new Dimension(800, 70)
+    preferredSize = new Dimension(800, 70)
   }
+  contents += Swing.VGlue
+  contents += imagePanel
   contents += Swing.VGlue
 
   def updateTable = {
