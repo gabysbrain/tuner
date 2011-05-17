@@ -23,6 +23,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val shapeSelector = new RegionShapeCombo
   val sampleButton = new Button("Add Samples")
 
+  contents += Swing.VGlue
   contents += new BoxPanel(Orientation.Horizontal) {
     contents += Swing.HGlue
     contents += new TablePanel(2, radiusSliders.size) {
@@ -45,5 +46,6 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     }
     contents += Swing.HGlue
   }
+  contents += Swing.VGlue
 }
 

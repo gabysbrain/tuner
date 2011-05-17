@@ -22,5 +22,10 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
     (topLeft.x+bottomRight.x) / 2,
     (topLeft.y+bottomRight.y) / 2
   )
+
+  def isInside(x:Float, y:Float) : Boolean = {
+    (x >= topLeft.x && x <= bottomRight.x && 
+     y >= topLeft.y && y <= bottomRight.y)
+  }
 }
 

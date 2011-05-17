@@ -60,6 +60,21 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     case None     => None
   }
 
+  /*
+  // Cache a bunch of statistics on where the plots are for hit detection
+  var responseSize:Float = 0f
+  var sliceSize:Float = 0f
+  // Bottom, top
+  var xAxesStart:(Float,Float) = (0f, 0f)
+  // Left, right
+  var yAxesStart:(Float,Float) = (0f, 0f)
+  var slicesStartX:Float = 0f
+  var slicesStartY:Float = 0f
+  // Left, right
+  var colorbarStartX:(Float,Float) = (0f, 0f)
+  var colorbarStartY:Float = 0f
+  */
+
   def sortedDims : List[String] = project.currentZoom.dimNames.sorted
 
   def plotData(model:GpModel,
@@ -200,6 +215,55 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         sortedDims.tail
     }
     fields.map {fld => (fld, new Axis(position))} toMap
+  }
+
+  override def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
+                            mouseX:Int, mouseY:Int,
+                            button:P5Panel.MouseButton.Value) = {
+    // Now figure out if we need to deal with any mouse 
+    // movements in the colorbars
+    if(mouseButton == P5Panel.MouseButton.Left) {
+      //val (mouseX, mouseY) = mousePos
+      resp1Info.foreach {case (_, _, _, _, cb, plots) =>
+        if(cb.isInside(mouseX, mouseY)) {
+          handleBarMouse(mouseX, mouseY, cb)
+        }
+      }
+      resp2Info.foreach {case (_, _, _, _, cb, plots) =>
+        if(cb.isInside(mouseX, mouseY)) {
+          handleBarMouse(mouseX, mouseY, cb)
+        }
+      }
+    }
+  }
+
+  override def mousePressed(mouseX:Int, mouseY:Int, 
+                            button:P5Panel.MouseButton.Value) = {
+    // Now figure out if we need to deal with any mouse 
+    // movements in the colorbars
+    if(button == P5Panel.MouseButton.Left) {
+      //val (mouseX, mouseY) = mousePos
+      resp1Info.foreach {case (_, _, _, _, cb, plots) =>
+        if(cb.isInside(mouseX, mouseY)) {
+          handleBarMouse(mouseX, mouseY, cb)
+        }
+      }
+      resp2Info.foreach {case (_, _, _, _, cb, plots) =>
+        if(cb.isInside(mouseX, mouseY)) {
+          handleBarMouse(mouseX, mouseY, cb)
+        }
+      }
+    }
+  }
+
+  def handleBarMouse(mouseX:Int, mouseY:Int, cb:Colorbar) = {
+    val bar = cb.barBounds
+    if(bar.isInside(mouseX, mouseY)) {
+      val cm = cb.colormap
+      val filterVal = P5Panel.map(mouseY, bar.minY, bar.maxY, 
+                                          cm.minVal, cm.maxVal)
+      cm.filterVal = filterVal
+    }
   }
 }
 

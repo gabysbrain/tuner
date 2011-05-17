@@ -43,6 +43,13 @@ object P5Panel {
     val Bottom = Value(PConstants.BOTTOM)
   }
 
+  object MouseButton extends Enumeration {
+    val Nothing = Value(0)
+    val Left = Value(PConstants.LEFT)
+    val Right = Value(PConstants.RIGHT)
+    val Center = Value(PConstants.CENTER)
+  }
+
   val HalfPi = PConstants.HALF_PI
 
   type Color = Int
@@ -70,19 +77,32 @@ abstract class P5Panel (
   import P5Panel._
 
   val applet = {
-    // need to rename these to prevent confusion with P5's 
-    // setup and draw functions
-    def _setup = setup
-    def _draw = draw
     new PApplet {
       override def setup = {
         size(_width, _height, renderer.name)
-        _setup
+        P5Panel.this.setup
       }
 
       override def draw = {
-        _draw
+        P5Panel.this.draw
       }
+
+      override def mouseDragged = {
+        P5Panel.this.mouseDragged(pmouseX, pmouseY, 
+                                  mouseX, mouseY,
+                                  MouseButton(mouseButton))
+      }
+
+      override def mouseMoved = {
+        P5Panel.this.mouseMoved(pmouseX, pmouseY, 
+                                mouseX, mouseY,
+                                MouseButton(mouseButton))
+      }
+
+      override def mousePressed = {
+        P5Panel.this.mousePressed(mouseX, mouseY, MouseButton(mouseButton))
+      }
+
     }
   }
 
@@ -126,6 +146,17 @@ abstract class P5Panel (
 
   def setup = {}
   def draw
+  def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
+                   mouseX:Int, mouseY:Int,
+                   mouseButton:MouseButton.Value) = {}
+  def mouseMoved(prevMouseX:Int, prevMouseY:Int, 
+                 mouseX:Int, mouseY:Int,
+                 button:MouseButton.Value) = {}
+  def mousePressed(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
+
+  def mousePos : (Int,Int) = (applet.mouseX, applet.mouseY)
+  def mouseDown = applet.mousePressed
+  def mouseButton = MouseButton(applet.mouseButton)
 
   def text(stringdata:String, x:Float, y:Float) = {
     applet.text(stringdata, x, y)

@@ -2,11 +2,17 @@ package tuner.gui.widgets
 
 import tuner.Config
 import tuner.SpecifiedColorMap
+import tuner.geom.Rectangle
 import tuner.gui.P5Panel
 
-class Colorbar(colormap:SpecifiedColorMap, field:String) {
+class Colorbar(val colormap:SpecifiedColorMap, field:String) {
+
+  var bounds:Rectangle = Rectangle((0f,0f),(0f,0f))
+  var barBounds:Rectangle = Rectangle((0f,0f),(0f,0f))
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float) = {
+    bounds = Rectangle((x,y), (x+w,y+h))
+
     applet.textFont(Config.fontPath, Config.smallFontSize)
     val labelWidth = 
       applet.textWidth("-" + "M" * Config.colorbarTickDigits._1 +
@@ -57,6 +63,7 @@ class Colorbar(colormap:SpecifiedColorMap, field:String) {
   }
 
   def drawColorbar(applet:P5Panel, x:Float, y:Float, w:Float, h:Float) = {
+    barBounds = Rectangle((x,y), (x+w,y+h))
     applet.noStroke
 
     applet.beginShape(P5Panel.Shape.QuadStrip)
@@ -68,5 +75,7 @@ class Colorbar(colormap:SpecifiedColorMap, field:String) {
     }
     applet.endShape
   }
+
+  def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)
 }
 
