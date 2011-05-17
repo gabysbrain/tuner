@@ -6,6 +6,7 @@ import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
 import tuner.SpecifiedColorMap
+import tuner.gui.event.SliceChanged
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
@@ -60,20 +61,10 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     case None     => None
   }
 
-  /*
   // Cache a bunch of statistics on where the plots are for hit detection
   var responseSize:Float = 0f
-  var sliceSize:Float = 0f
-  // Bottom, top
-  var xAxesStart:(Float,Float) = (0f, 0f)
-  // Left, right
-  var yAxesStart:(Float,Float) = (0f, 0f)
   var slicesStartX:Float = 0f
   var slicesStartY:Float = 0f
-  // Left, right
-  var colorbarStartX:(Float,Float) = (0f, 0f)
-  var colorbarStartY:Float = 0f
-  */
 
   def sortedDims : List[String] = project.currentZoom.dimNames.sorted
 
@@ -99,7 +90,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       ((project.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2)
-    val responseSize = math.min(maxResponseWidth, maxResponseHeight)
+    responseSize = math.min(maxResponseWidth, maxResponseHeight)
     val sliceSize = responseSize / project.currentZoom.length - 
                       Config.plotSpacing
 
@@ -115,8 +106,8 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
        colorbarOffset + Config.plotSpacing + Config.axisSize + 
          responseSize - Config.plotSpacing)
     }
-    val slicesStartX = yAxesStart._1 + Config.axisSize
-    val slicesStartY = xAxesStart._2 + Config.axisSize
+    slicesStartX = yAxesStart._1 + Config.axisSize
+    slicesStartY = xAxesStart._2 + Config.axisSize
     
     // left, right
     val colorbarStartX = 
@@ -225,14 +216,12 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     if(mouseButton == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
       resp1Info.foreach {case (_, _, _, _, cb, plots) =>
-        if(cb.isInside(mouseX, mouseY)) {
-          handleBarMouse(mouseX, mouseY, cb)
-        }
+        handleBarMouse(mouseX, mouseY, cb)
+        handlePlotMouse(mouseX, mouseY, plots)
       }
       resp2Info.foreach {case (_, _, _, _, cb, plots) =>
-        if(cb.isInside(mouseX, mouseY)) {
-          handleBarMouse(mouseX, mouseY, cb)
-        }
+        handleBarMouse(mouseX, mouseY, cb)
+        handlePlotMouse(mouseX, mouseY, plots)
       }
     }
   }
@@ -244,25 +233,44 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     if(button == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
       resp1Info.foreach {case (_, _, _, _, cb, plots) =>
-        if(cb.isInside(mouseX, mouseY)) {
-          handleBarMouse(mouseX, mouseY, cb)
-        }
+        handleBarMouse(mouseX, mouseY, cb)
       }
       resp2Info.foreach {case (_, _, _, _, cb, plots) =>
-        if(cb.isInside(mouseX, mouseY)) {
-          handleBarMouse(mouseX, mouseY, cb)
+        handleBarMouse(mouseX, mouseY, cb)
+      }
+    }
+  }
+
+  def handlePlotMouse(mouseX:Int, mouseY:Int, plots:PlotInfoMap) = {
+    val (slicesEndX, slicesEndY) = (slicesStartX + responseSize, 
+                                    slicesStartY + responseSize)
+    // Do a rough check to see if we're near any of the slicess
+    if(mouseX >= slicesStartX && mouseX <= slicesEndX && 
+       mouseY >= slicesStartY && mouseY <= slicesEndY) {
+      plots.foreach {case ((xfld,yfld), plot) =>
+        if(plot.isInside(mouseX, mouseY)) {
+          val bounds = plot.bounds
+          val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
+          val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
+          val newX = P5Panel.map(mouseX, bounds.minX, bounds.maxX,
+                                         lowZoomX, highZoomX)
+          val newY = P5Panel.map(mouseY, bounds.minY, bounds.maxY,
+                                         lowZoomY, highZoomY)
+          publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
         }
       }
     }
   }
 
   def handleBarMouse(mouseX:Int, mouseY:Int, cb:Colorbar) = {
-    val bar = cb.barBounds
-    if(bar.isInside(mouseX, mouseY)) {
-      val cm = cb.colormap
-      val filterVal = P5Panel.map(mouseY, bar.minY, bar.maxY, 
-                                          cm.minVal, cm.maxVal)
-      cm.filterVal = filterVal
+    if(cb.isInside(mouseX, mouseY)) {
+      val bounds = cb.barBounds
+      if(bounds.isInside(mouseX, mouseY)) {
+        val cm = cb.colormap
+        val filterVal = P5Panel.map(mouseY, bounds.minY, bounds.maxY, 
+                                            cm.minVal, cm.maxVal)
+        cm.filterVal = filterVal
+      }
     }
   }
 }
