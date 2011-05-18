@@ -1,5 +1,6 @@
 package tuner.gui.widgets
 
+import tuner.Config
 import tuner.Matrix2D
 import tuner.SpecifiedColorMap
 import tuner.geom.Rectangle
@@ -19,7 +20,8 @@ class ContinuousPlot(var minX:Float, var maxX:Float,
   def mapy(height:Float, v:Float) : Float = 
     P5Panel.map(v, maxY, minY, 0, height)
 
-  def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, data:Matrix2D) = {
+  def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
+           data:Matrix2D, xSlice:Float, ySlice:Float) = {
     bounds = Rectangle((x,y), (x+w,y+h))
 
     //val startTime = System.currentTimeMillis
@@ -54,6 +56,8 @@ class ContinuousPlot(var minX:Float, var maxX:Float,
     }
     applet.endShape
 
+    drawCrosshair(applet, w, h, xSlice, ySlice)
+
     applet.popMatrix
   }
 
@@ -67,6 +71,16 @@ class ContinuousPlot(var minX:Float, var maxX:Float,
     // set the fill on each vertex separately
     applet.fill(colorMap(cc))
     applet.vertex(mapx(w, x), mapy(h, y))
+  }
+
+  def drawCrosshair(applet:P5Panel, w:Float, h:Float, 
+                                    xSlice:Float, ySlice:Float) = {
+    val xx = mapx(w, xSlice)
+    val yy = mapx(h, ySlice)
+
+    applet.stroke(Config.crosshairColor)
+    applet.line(xx-Config.crosshairRadius, yy, xx+Config.crosshairRadius, yy)
+    applet.line(xx, yy-Config.crosshairRadius, xx, yy+Config.crosshairRadius)
   }
 
   def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)

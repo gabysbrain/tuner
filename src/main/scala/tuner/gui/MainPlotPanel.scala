@@ -167,7 +167,9 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
                         Config.colorbarWidth, colorbarHeight)
       val data = plotData(model, xRange, yRange, project.currentSlice)
       val plot = plots((xFld, yFld))
-      plot.draw(this, xPos, yPos, sliceSize, sliceSize, data)
+      val (xSlice, ySlice) = (project.currentSlice(xFld), 
+                              project.currentSlice(yFld))
+      plot.draw(this, xPos, yPos, sliceSize, sliceSize, data, xSlice, ySlice)
       // See if we should draw the axes
       if(yFld == sortedDims.last) {
         //println(xFld + ": " + xPos + " " + xAxisStart)
@@ -256,7 +258,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
           val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
           val newX = P5Panel.map(mouseX, bounds.minX, bounds.maxX,
                                          lowZoomX, highZoomX)
-          val newY = P5Panel.map(mouseY, bounds.minY, bounds.maxY,
+          val newY = P5Panel.map(mouseY, bounds.maxY, bounds.minY,
                                          lowZoomY, highZoomY)
           publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
         }
