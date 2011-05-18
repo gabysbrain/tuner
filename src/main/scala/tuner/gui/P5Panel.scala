@@ -87,6 +87,10 @@ abstract class P5Panel (
         P5Panel.this.draw
       }
 
+      override def mouseClicked = {
+        P5Panel.this.mouseClicked(mouseX, mouseY, MouseButton(mouseButton))
+      }
+
       override def mouseDragged = {
         P5Panel.this.mouseDragged(pmouseX, pmouseY, 
                                   mouseX, mouseY,
@@ -146,6 +150,7 @@ abstract class P5Panel (
 
   def setup = {}
   def draw
+  def mouseClicked(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
   def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
                    mouseX:Int, mouseY:Int,
                    mouseButton:MouseButton.Value) = {}

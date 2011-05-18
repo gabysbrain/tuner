@@ -230,7 +230,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     }
   }
 
-  override def mousePressed(mouseX:Int, mouseY:Int, 
+  override def mouseClicked(mouseX:Int, mouseY:Int, 
                             button:P5Panel.MouseButton.Value) = {
     // Now figure out if we need to deal with any mouse 
     // movements in the colorbars
@@ -238,9 +238,11 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       //val (mouseX, mouseY) = mousePos
       resp1Info.foreach {case (_, _, _, _, cb, plots) =>
         handleBarMouse(mouseX, mouseY, cb)
+        handlePlotMouse(mouseX, mouseY, plots)
       }
       resp2Info.foreach {case (_, _, _, _, cb, plots) =>
         handleBarMouse(mouseX, mouseY, cb)
+        handlePlotMouse(mouseX, mouseY, plots)
       }
     }
   }
