@@ -32,6 +32,8 @@ case class VisInfo(
   response1:Option[String],
   response2:Option[String]
 )
+case class RadiusSpecification(field:String, radius:Float)
+case class RegionSpecification(shape:String, radii:List[RadiusSpecification])
 case class ProjConfig(
   name:String,
   scriptPath:String,
@@ -39,7 +41,8 @@ case class ProjConfig(
   outputs:List[OutputSpecification],
   ignoreFields:List[String],
   gpModels:List[GpSpecification],
-  currentVis:VisInfo
+  currentVis:VisInfo,
+  currentRegion:RegionSpecification
 )
 
 object Project {
@@ -127,11 +130,30 @@ class Project(var path:Option[String]) {
     val gp = new Rgp(designSiteFile)
     responseFields.map {fld => (fld, loadGpModel(gp, fld))} toMap
   }
+
+  var _region:Region = config match {
+    case Some(c) =>
+      val reg = c.currentRegion.shape match {
+        case "Box"     => Region(Region.Box, this)
+        case "Ellipse" => Region(Region.Ellipse, this)
+      }
+      c.currentRegion.radii.foreach {r =>
+        reg.setRadius(r.field, r.radius)
+      }
+      reg
+    case None => Region(Region.Box, this)
+  }
+
   // Save any gp models that got updated
   save(savePath)
 
   def inputFields : List[String] = inputs.dimNames
   def responseFields : List[String] = responses.map(_._1)
+
+  def region : Region = _region
+  def region_=(r:Region) = {
+    
+  }
 
   def currentSlice : Map[String,Float] = {
     // Pick defaults for any missing dimensions
@@ -250,7 +272,8 @@ class Project(var path:Option[String]) {
         }).toList) ~
         ("response1" -> response1View) ~
         ("response2" -> response2View)
-      ))
+      )) ~
+      ("currentRegion" -> region.toJson)
     )
 
     // Ensure that the project directory exists
