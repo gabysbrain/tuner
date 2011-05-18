@@ -194,6 +194,9 @@ abstract class P5Panel (
 
   def line(x1:Float, y1:Float, x2:Float, y2:Float) = 
     applet.line(x1, y1, x2, y2)
+
+  def triangle(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float) =
+    applet.triangle(x1, y1, x2, y2, x3, y3)
   
   def font(path:String, size:Int) : PFont = {
     loadedFonts.getOrElse((path, size), {

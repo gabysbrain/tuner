@@ -39,7 +39,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         println("cm1: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r1, model, createAxes(Axis.HorizontalBottom),
                          createAxes(Axis.VerticalLeft),
-                         new Colorbar(cm, r1),
+                         new Colorbar(cm, r1, Colorbar.Right),
                          createPlots(cm)))
       case None      => None
     }
@@ -56,7 +56,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         println("cm2: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r2, model, createAxes(Axis.HorizontalTop),
                          createAxes(Axis.VerticalRight),
-                         new Colorbar(cm, r2),
+                         new Colorbar(cm, r2, Colorbar.Left),
                          createPlots(cm)))
       case None      => None
     }
@@ -270,10 +270,9 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
 
   def handleBarMouse(mouseX:Int, mouseY:Int, cb:Colorbar) = {
     if(cb.isInside(mouseX, mouseY)) {
-      val bounds = cb.barBounds
-      if(bounds.isInside(mouseX, mouseY)) {
+      if(cb.bounds.isInside(mouseX, mouseY)) {
         val cm = cb.colormap
-        val filterVal = P5Panel.map(mouseY, bounds.minY, bounds.maxY, 
+        val filterVal = P5Panel.map(mouseY, cb.bounds.minY, cb.bounds.maxY, 
                                             cm.minVal, cm.maxVal)
         cm.filterVal = filterVal
       }

@@ -48,11 +48,12 @@ object Config {
   // Colorbar configuration stuff
   // TODO: do the width automatically
   val colorbarSpacing = 10
-  val colorbarWidth = 60
+  val colorbarWidth = 70
   val colorbarTickSize = 3
   // vertical, horizontal
   val colorbarLabelSpace = (5, 3)
-  val colorbarTickDigits = (1,3)
+  val colorbarTickDigits = (1, 3)
+  val colorbarHandleSize = (15, 9) // width, height
 
   val crosshairColor = 0
   val crosshairRadius = 3
