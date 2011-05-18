@@ -152,7 +152,7 @@ class Project(var path:Option[String]) {
 
   def region : Region = _region
   def region_=(r:Region) = {
-    
+    _region = r
   }
 
   def currentSlice : Map[String,Float] = {
