@@ -14,6 +14,7 @@ import scala.swing.TablePanel
 import scala.swing.event.DialogClosing
 
 import tuner.Project
+import tuner.gui.event.SliceChanged
 
 class ProjectViewer(project:Project) extends MainFrame {
   
@@ -63,6 +64,15 @@ class ProjectViewer(project:Project) extends MainFrame {
 
     layout(leftPanel) = (0,0)
     layout(rightPanel) = (1,0)
+  }
+
+  listenTo(plot)
+
+  reactions += {
+    case SliceChanged(_, sliceInfo) => 
+      sliceInfo.foreach {case (fld, v) =>
+        controlPanel.controlsTab.sliceSliders(fld).value = v
+      }
   }
 
   override def visible_=(b:Boolean) = {
