@@ -6,6 +6,7 @@ import javax.swing.JInternalFrame
 import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PFont
+import processing.core.PImage
 
 import scala.swing.BoxPanel
 import scala.swing.Component
@@ -20,6 +21,26 @@ object P5Panel {
   case object P3D extends Renderer {val name = PConstants.P3D}
   case object OpenGL extends Renderer {val name = PConstants.OPENGL}
   case object PDF extends Renderer {val name = PConstants.PDF}
+
+  object BlendMode extends Enumeration {
+    val Blend = Value(PConstants.BLEND)
+    val Add = Value(PConstants.ADD)
+    val Multiply = Value(PConstants.MULTIPLY)
+  }
+
+  object RectMode extends Enumeration {
+    val Corner = Value(PConstants.CORNER)
+    val Corners = Value(PConstants.CORNERS)
+    val Center = Value(PConstants.CENTER)
+    val Radius = Value(PConstants.RADIUS)
+  }
+
+  object EllipseMode extends Enumeration {
+    val Corner = Value(PConstants.CORNER)
+    val Corners = Value(PConstants.CORNERS)
+    val Center = Value(PConstants.CENTER)
+    val Radius = Value(PConstants.RADIUS)
+  }
 
   object Shape extends Enumeration {
     val QuadStrip = Value(PConstants.QUAD_STRIP)
@@ -150,6 +171,10 @@ abstract class P5Panel (
 
   def setup = {}
   def draw
+
+  def createGraphics(xSize:Int, ySize:Int, renderer:P5Panel.Renderer) =
+    applet.createGraphics(xSize, ySize, renderer.name)
+
   def mouseClicked(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
   def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
                    mouseX:Int, mouseY:Int,
@@ -162,6 +187,9 @@ abstract class P5Panel (
   def mousePos : (Int,Int) = (applet.mouseX, applet.mouseY)
   def mouseDown = applet.mousePressed
   def mouseButton = MouseButton(applet.mouseButton)
+
+  def ellipseMode(mode:EllipseMode.Value) = applet.ellipseMode(mode.id)
+  def rectMode(mode:RectMode.Value) = applet.rectMode(mode.id)
 
   def text(stringdata:String, x:Float, y:Float) = {
     applet.text(stringdata, x, y)
@@ -182,6 +210,11 @@ abstract class P5Panel (
   def translate(x:Float, y:Float) = applet.translate(x, y)
   def rotate(radians:Float) = applet.rotate(radians)
 
+  def blend(srcImg:PImage, x:Int, y:Int, width:Int, height:Int, 
+                           dx:Int, dy:Int, dwidth:Int, dheight:Int, 
+                           mode:BlendMode.Value) = {
+    applet.blend(srcImg, x, y, width, height, dx, dy, dwidth, dheight, mode.id)
+  }
   def stroke(color:Color) = applet.stroke(color)
   def noStroke = applet.noStroke
 
@@ -198,6 +231,12 @@ abstract class P5Panel (
   def triangle(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float) =
     applet.triangle(x1, y1, x2, y2, x3, y3)
   
+  def rect(x1:Float, y1:Float, x2:Float, y2:Float) = 
+    applet.rect(x1, y1, x2, y2)
+
+  def ellipse(x1:Float, y1:Float, x2:Float, y2:Float) = 
+    applet.ellipse(x1, y1, x2, y2)
+
   def font(path:String, size:Int) : PFont = {
     loadedFonts.getOrElse((path, size), {
       println("loading font `" + path + "' (" + size + ")")

@@ -1,7 +1,9 @@
 package tuner.gui
 
+import tuner.BoxRegion
 import tuner.Config
 import tuner.DimRanges
+import tuner.EllipseRegion
 import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
@@ -10,8 +12,11 @@ import tuner.gui.event.SliceChanged
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
+import tuner.util.ColorLib
 
 import scala.swing.Publisher
+
+import processing.core.PConstants
 
 class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String]) 
     extends P5Panel(Config.mainPlotDims._1, Config.mainPlotDims._2, P5Panel.OpenGL) with Publisher {
@@ -68,6 +73,9 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   var slicesStartX:Float = 0f
   var slicesStartY:Float = 0f
 
+  // Also store a mask for the region selection
+  //var regionMask = createGraphics(1, 1, P5Panel.P2D)
+
   def sortedDims : List[String] = project.currentZoom.dimNames.sorted
 
   def plotData(model:GpModel,
@@ -95,6 +103,13 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     responseSize = math.min(maxResponseWidth, maxResponseHeight)
     val sliceSize = responseSize / project.currentZoom.length - 
                       Config.plotSpacing
+
+    // We might need to update the region mask
+    /*
+    if(regionMask.width != sliceSize) {
+      regionMask = createGraphics(sliceSize.toInt, sliceSize.toInt, P5Panel.P2D)
+    }
+    */
 
     // Bottom, top
     val xAxesStart:(Float,Float) = 
@@ -169,7 +184,13 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       val plot = plots((xFld, yFld))
       val (xSlice, ySlice) = (project.currentSlice(xFld), 
                               project.currentSlice(yFld))
+
+      // Draw the main plot
       plot.draw(this, xPos, yPos, sliceSize, sliceSize, data, xSlice, ySlice)
+
+      // Draw a mask over what's not in the current region
+      drawMask(xPos.toInt, yPos.toInt, sliceSize.toInt, xFld, yFld)
+
       // See if we should draw the axes
       if(yFld == sortedDims.last) {
         //println(xFld + ": " + xPos + " " + xAxisStart)
@@ -183,6 +204,35 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
                          yRange)
       }
     }
+  }
+
+  private def drawMask(xPos:Int, yPos:Int, sliceSize:Int, 
+                       xFld:String, yFld:String) = {
+
+    val (xSlice, ySlice) = (project.currentSlice(xFld),
+                            project.currentSlice(yFld))
+    val (xRad, yRad) = (project.region.radius(xFld),
+                        project.region.radius(yFld))
+
+    //regionMask.beginDraw
+    //regionMask.background(255, Config.regionMaskAlpha)
+    //regionMask.background(255, 0)
+    fill(Config.regionColor)
+    stroke(ColorLib.darker(Config.regionColor))
+
+    project.region match {
+      case _:BoxRegion =>
+        rectMode(P5Panel.RectMode.Radius)
+        rect(xSlice, ySlice, xRad, yRad)
+        println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
+      case _:EllipseRegion =>
+        ellipseMode(P5Panel.EllipseMode.Radius)
+        ellipse(xSlice, ySlice, xRad, yRad)
+    }
+    //regionMask.endDraw
+    //this.blend(regionMask, 0, 0, sliceSize, sliceSize, 
+                           //xPos, yPos, sliceSize, sliceSize, 
+                           //P5Panel.BlendMode.Add)
   }
 
   private def createPlots(cm:SpecifiedColorMap) : PlotInfoMap = {

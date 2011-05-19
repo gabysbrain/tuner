@@ -57,6 +57,10 @@ object Config {
 
   val crosshairColor = 0
   val crosshairRadius = 3
+  
+  val regionColor = 0xAAABCDFC
+
+  val regionMaskAlpha = 0.2f
 
   val sliderResolution = 1000
 }
