@@ -189,7 +189,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       plot.draw(this, xPos, yPos, sliceSize, sliceSize, data, xSlice, ySlice)
 
       // Draw a mask over what's not in the current region
-      drawMask(xPos.toInt, yPos.toInt, sliceSize.toInt, xFld, yFld)
+      //drawMask(xPos.toInt, yPos.toInt, sliceSize.toInt, xFld, yFld)
 
       // See if we should draw the axes
       if(yFld == sortedDims.last) {
@@ -224,7 +224,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       case _:BoxRegion =>
         rectMode(P5Panel.RectMode.Radius)
         rect(xSlice, ySlice, xRad, yRad)
-        println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
+        //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
       case _:EllipseRegion =>
         ellipseMode(P5Panel.EllipseMode.Radius)
         ellipse(xSlice, ySlice, xRad, yRad)

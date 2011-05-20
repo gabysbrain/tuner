@@ -26,7 +26,7 @@ class Axis(placement:Axis.Placement) {
 
     // Figure out which ticks to draw
     //val ticks = Range.Double(minVal, maxVal, (maxVal-minVal)/3) map {_.toFloat}
-    val ticks = List(minVal, (maxVal - minVal)/2, maxVal)
+    val ticks = List(minVal, (maxVal + minVal)/2, maxVal)
 
     // set up all the colors and such
     applet.fill(Config.lineColor)

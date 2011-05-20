@@ -24,6 +24,8 @@ object Config {
 
   val estimateSampleDensity = 50
 
+  val paretoDims = (300, 200)
+
   val mainPlotDims = (800, 600)
   val plotSpacing = 5
 

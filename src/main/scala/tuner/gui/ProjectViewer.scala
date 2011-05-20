@@ -3,6 +3,7 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.ButtonGroup
+import scala.swing.CheckBox
 import scala.swing.Dialog
 import scala.swing.FlowPanel
 import scala.swing.Label
@@ -25,6 +26,10 @@ class ProjectViewer(project:Project) extends MainFrame {
   val errResponseButton = new RadioButton("Error")
   val gainResponseButton = new RadioButton("Gain")
 
+  val gradientGlyphButton = new CheckBox("Gradient")
+  val regionGlyphButton = new CheckBox("Region")
+  val sampleLineGlyphButton = new CheckBox("Line to Sample")
+
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
   val plot = new MainPlotPanel(project, Some("Precision"), Some("Precision"))
@@ -33,9 +38,11 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-    val paretoPanel = new FlowPanel {
+    val paretoPanel = new ParetoPanel {
+
       border = Swing.TitledBorder(border, "Pareto")
     }
+    println(paretoPanel.preferredSize)
   
     val responseControlPanel = new BoxPanel(Orientation.Horizontal) {
       contents += mainResponseButton
@@ -43,6 +50,14 @@ class ProjectViewer(project:Project) extends MainFrame {
       contents += gainResponseButton
   
       border = Swing.TitledBorder(border, "View")
+    }
+
+    val glyphControlPanel = new BoxPanel(Orientation.Horizontal) {
+      contents += gradientGlyphButton
+      contents += regionGlyphButton
+      contents += sampleLineGlyphButton
+
+      border = Swing.TitledBorder(border, "Glyphs")
     }
   
     val histogramPanel = new FlowPanel {
@@ -54,6 +69,7 @@ class ProjectViewer(project:Project) extends MainFrame {
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
       contents += responseControlPanel
+      contents += glyphControlPanel
       contents += histogramPanel
     }
 
