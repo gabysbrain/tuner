@@ -41,8 +41,9 @@ class ProjectViewer(project:Project) extends MainFrame {
     val paretoPanel = new ParetoPanel {
 
       border = Swing.TitledBorder(border, "Pareto")
+
+      maximumSize = preferredSize
     }
-    println(paretoPanel.preferredSize)
   
     val responseControlPanel = new BoxPanel(Orientation.Horizontal) {
       contents += mainResponseButton
