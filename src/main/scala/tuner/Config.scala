@@ -24,6 +24,8 @@ object Config {
 
   val estimateSampleDensity = 50
 
+  val samplerSplomDims = (400, 400)
+
   val paretoDims = (289, 289)
 
   val mainPlotDims = (800, 600)
