@@ -24,7 +24,7 @@ object Config {
 
   val estimateSampleDensity = 50
 
-  val paretoDims = (289, 200)
+  val paretoDims = (289, 289)
 
   val mainPlotDims = (800, 600)
   val plotSpacing = 5
@@ -46,6 +46,7 @@ object Config {
   val axisLabelSpace = 3
   val axisSize = smallFontSize + axisTickSize + axisLabelSpace * 2 + 35
   val axisTickDigits = (1,3)
+  println("axis size: " + axisSize)
 
   // Colorbar configuration stuff
   // TODO: do the width automatically

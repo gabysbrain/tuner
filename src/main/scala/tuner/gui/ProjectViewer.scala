@@ -38,7 +38,7 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-    val paretoPanel = new ParetoPanel {
+    val paretoPanel = new ParetoPanel(project) {
 
       border = Swing.TitledBorder(border, "Pareto")
 
