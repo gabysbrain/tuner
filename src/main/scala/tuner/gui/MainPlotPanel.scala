@@ -310,7 +310,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
           val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
           val newX = P5Panel.map(mouseX, bounds.minX, bounds.maxX,
                                          lowZoomX, highZoomX)
-          val newY = P5Panel.map(mouseY, bounds.maxY, bounds.minY,
+          val newY = P5Panel.map(mouseY, bounds.minY, bounds.maxY,
                                          lowZoomY, highZoomY)
           publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
         }
@@ -322,7 +322,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     if(cb.isInside(mouseX, mouseY)) {
       if(cb.bounds.isInside(mouseX, mouseY)) {
         val cm = cb.colormap
-        val filterVal = P5Panel.map(mouseY, cb.bounds.minY, cb.bounds.maxY, 
+        val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
                                             cm.minVal, cm.maxVal)
         cm.filterVal = filterVal
       }

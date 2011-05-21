@@ -66,5 +66,9 @@ object Config {
   val regionMaskAlpha = 0.2f
 
   val sliderResolution = 1000
+
+  val scatterplotDotSize = 7f
+
+  val paretoSampleColor = 0xffDD1C77
 }
 

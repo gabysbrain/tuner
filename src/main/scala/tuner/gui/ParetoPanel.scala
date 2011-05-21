@@ -4,6 +4,7 @@ import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
 import tuner.gui.widgets.Axis
+import tuner.gui.widgets.Scatterplot
 
 class ParetoPanel(project:Project)
     extends P5Panel(Config.paretoDims._1, Config.paretoDims._2, P5Panel.OpenGL) {
@@ -12,6 +13,7 @@ class ParetoPanel(project:Project)
 
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
+  val sampleScatterplot = new Scatterplot(Config.paretoSampleColor)
 
   var xAxisBox = Rectangle((0f,0f), (0f,0f))
   var yAxisBox = Rectangle((0f,0f), (0f,0f))
@@ -33,6 +35,10 @@ class ParetoPanel(project:Project)
                          Config.axisSize, plotHeight)
     plotBox = Rectangle((plotStartX, plotStartY), plotWidth, plotHeight)
 
+    fill(255)
+    rectMode(P5Panel.RectMode.Corner)
+    rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
+
     (project.response1View, project.response2View) match {
       case (Some(r1), Some(r2)) => draw2dPareto(r1, r2)
       case (Some(r1), None) => draw1dPareto(r1)
@@ -40,10 +46,6 @@ class ParetoPanel(project:Project)
       case (None, None) => // Draw nothing
     }
 
-    fill(255)
-    rectMode(P5Panel.RectMode.Corner)
-    rect(plotStartX, plotStartY, plotWidth, plotHeight)
-    //rect(xAxisBox.minX, xAxisBox.minY, xAxisBox.width, xAxisBox.height)
   }
 
   def draw1dPareto(resp:String) {
@@ -58,6 +60,9 @@ class ParetoPanel(project:Project)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
                      (resp2, (r2Model.funcMin, r2Model.funcMax)))
+    sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
+                                 plotBox.width, plotBox.height, 
+                                 project.designSites.get, resp1, resp2)
   }
 
 }
