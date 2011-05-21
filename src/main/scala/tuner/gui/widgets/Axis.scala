@@ -74,9 +74,9 @@ class Axis(placement:Axis.Placement) {
 
       // Also draw the label
       if(tick == ticks.head) {
-        applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Top)
-      } else if(tick == ticks.last) {
         applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Bottom)
+      } else if(tick == ticks.last) {
+        applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Top)
       } else {
         applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Center)
       }
