@@ -6,6 +6,8 @@ object Rectangle {
     new Rectangle(topLeft, bottomRight)
   def apply(topLeft:(Float,Float), bottomRight:(Float,Float)) : Rectangle =
     apply(Point(topLeft._1, topLeft._2), Point(bottomRight._1, bottomRight._2))
+  def apply(topLeft:(Float,Float), width:Float, height:Float) : Rectangle =
+    apply(Point(topLeft._1, topLeft._2), Point(topLeft._1+width, topLeft._2+height))
 }
 
 class Rectangle(val topLeft:Point, val bottomRight:Point) {
@@ -15,8 +17,8 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
 
   def minX = topLeft.x
   def maxX = bottomRight.x
-  def minY = bottomRight.y
-  def maxY = topLeft.y
+  def minY = topLeft.y
+  def maxY = bottomRight.y
 
   def center : (Float,Float) = (
     (topLeft.x+bottomRight.x) / 2,
@@ -27,5 +29,7 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
     (x >= topLeft.x && x <= bottomRight.x && 
      y >= topLeft.y && y <= bottomRight.y)
   }
+
+  override def toString = "Rectangle(" + topLeft + ", " + bottomRight + ")"
 }
 
