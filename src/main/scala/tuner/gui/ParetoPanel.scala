@@ -49,6 +49,10 @@ class ParetoPanel(project:Project)
   }
 
   def draw1dPareto(resp:String) {
+    val model = models(resp)
+    xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
+                     xAxisBox.width, xAxisBox.height,
+                     (resp, (model.funcMin, model.funcMax)))
   }
 
   def draw2dPareto(resp1:String, resp2:String) {
@@ -63,6 +67,11 @@ class ParetoPanel(project:Project)
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
                                  project.designSites.get, resp1, resp2)
+  }
+
+  override def mouseClicked(mouseX:Int, mouseY:Int, 
+                            button:P5Panel.MouseButton.Value) = {
+    
   }
 
 }

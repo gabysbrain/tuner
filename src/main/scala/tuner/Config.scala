@@ -67,7 +67,7 @@ object Config {
 
   val sliderResolution = 1000
 
-  val scatterplotDotSize = 7f
+  val scatterplotDotSize = 6.5f
 
   val paretoSampleColor = 0xffDD1C77
 }
