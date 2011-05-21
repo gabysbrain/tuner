@@ -147,8 +147,8 @@ class Project(var path:Option[String]) {
   // Save any gp models that got updated
   save(savePath)
 
-  def inputFields : List[String] = inputs.dimNames
-  def responseFields : List[String] = responses.map(_._1)
+  def inputFields : List[String] = inputs.dimNames.sorted
+  def responseFields : List[String] = responses.map(_._1).sorted
 
   def region : Region = _region
   def region_=(r:Region) = {

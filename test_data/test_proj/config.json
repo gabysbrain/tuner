@@ -60,13 +60,13 @@
   "currentRegion":{
     "shape":"Box",
     "radii":[{
+      "field":"minCorrelation",
+      "radius":0.0
+    },{
       "field":"orientation",
       "radius":0.0
     },{
       "field":"similThreshold",
-      "radius":0.0
-    },{
-      "field":"minCorrelation",
       "radius":0.0
     }]
   }
