@@ -93,7 +93,6 @@ class ProjectViewer(project:Project) extends MainFrame {
       }
     case HistoryAdd(_, sliceInfo) =>
       project.history.add(sliceInfo)
-      print(sliceInfo)
       controlPanel.historyTab.updateTable
   }
 
