@@ -32,8 +32,6 @@ case class VisInfo(
   response1:Option[String],
   response2:Option[String]
 )
-case class RadiusSpecification(field:String, radius:Float)
-case class RegionSpecification(shape:String, radii:List[RadiusSpecification])
 case class ProjConfig(
   name:String,
   scriptPath:String,
@@ -132,16 +130,8 @@ class Project(var path:Option[String]) {
   }
 
   var _region:Region = config match {
-    case Some(c) =>
-      val reg = c.currentRegion.shape match {
-        case "Box"     => Region(Region.Box, this)
-        case "Ellipse" => Region(Region.Ellipse, this)
-      }
-      c.currentRegion.radii.foreach {r =>
-        reg.setRadius(r.field, r.radius)
-      }
-      reg
-    case None => Region(Region.Box, this)
+    case Some(c) => Region.fromJson(c.currentRegion, this)
+    case None    => Region(Region.Box, this)
   }
 
   // Save any gp models that got updated

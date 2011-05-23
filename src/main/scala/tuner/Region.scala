@@ -4,6 +4,9 @@ import net.liftweb.json.JsonParser._
 //import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+case class RadiusSpecification(field:String, radius:Float)
+case class RegionSpecification(shape:String, radii:List[RadiusSpecification])
+
 object Region {
   abstract class Shape
   case object Box extends Shape
@@ -12,6 +15,17 @@ object Region {
   def apply(t:Shape, project:Project) = t match {
     case Box => new BoxRegion(project)
     case Ellipse => new EllipseRegion(project)
+  }
+
+  def fromJson(json:RegionSpecification, project:Project) = {
+    val reg = json.shape match {
+      case "Box"     => Region(Box, project)
+      case "Ellipse" => Region(Ellipse, project)
+    }
+    json.radii.foreach {r =>
+      reg.setRadius(r.field, r.radius)
+    }
+    reg
   }
 }
 
