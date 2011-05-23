@@ -8,6 +8,7 @@ import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
 import tuner.SpecifiedColorMap
+import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
@@ -26,14 +27,6 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   // This is the response field, gp model, x axes, y axes, and plots
   type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
 
-  /*
-  var zoomDims = new DimRanges(project.inputs.ranges)
-  var currentSlice:Map[String,Float] = project.inputFields.map {fld =>
-    val rng = zoomDims.range(fld)
-    (fld, (rng._1 + rng._2) / 2f)
-  } toMap
-  */
-
   val resp1Info:Option[ResponseInfo] = resp1 match {
     case Some(r1) => project.gpModels match {
       case Some(gpm) => 
@@ -41,7 +34,6 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         val cm = new SpecifiedColorMap(Config.response1ColorMap, 
                                        model.funcMin, 
                                        model.funcMax)
-        println("cm1: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r1, model, createAxes(Axis.HorizontalBottom),
                          createAxes(Axis.VerticalLeft),
                          new Colorbar(cm, r1, Colorbar.Right),
@@ -58,7 +50,6 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         val cm = new SpecifiedColorMap(Config.response2ColorMap, 
                                        model.funcMin, 
                                        model.funcMax)
-        println("cm2: " + cm.minVal + " " + cm.filterVal + " " + cm.maxVal)
         Some((r2, model, createAxes(Axis.HorizontalTop),
                          createAxes(Axis.VerticalRight),
                          new Colorbar(cm, r2, Colorbar.Left),
@@ -76,7 +67,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   // Also store a mask for the region selection
   //var regionMask = createGraphics(1, 1, P5Panel.P2D)
 
-  def sortedDims : List[String] = project.currentZoom.dimNames.sorted
+  def sortedDims : List[String] = project.inputFields
 
   def plotData(model:GpModel,
                d1:(String,(Float,Float)), 
@@ -116,6 +107,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       (Config.plotSpacing + Config.axisSize + 
           responseSize - Config.plotSpacing,
        Config.plotSpacing)
+    //println("xs: " + xAxesStart + " " + slicesStartX)
     // Left, right
     val yAxesStart:(Float,Float) = {
       val colorbarOffset = Config.colorbarSpacing * 2 + Config.colorbarWidth
@@ -142,7 +134,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     }
     def drawResp2(xf:String, yf:String, 
                   x:Float, y:Float) = {
-      drawResponse(resp2Info, xf, yf, x, y, 
+      drawResponse(resp2Info, yf, xf, x, y, 
                    sliceSize, xAxesStart._2, yAxesStart._2,
                    colorbarStartX._2, colorbarStartY,
                    responseSize)
@@ -157,7 +149,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
         } else if(xFld > yFld) {
           // response2 goes in the upper right
           // x and y field names here are actually reversed
-          drawResp2(yFld, xFld, xPos, yPos)
+          drawResp2(xFld, yFld, xPos, yPos)
         }
         yPos + sliceSize + Config.plotSpacing
       }
@@ -174,6 +166,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
                            xAxisStart:Float, yAxisStart:Float,
                            colorbarStartX:Float, colorbarStartY:Float,
                            colorbarHeight:Float) = {
+    //println("drawing: " + xFld + " " + yFld + " " + xPos + " " + yPos)
     val xRange = (xFld, project.currentZoom.range(xFld))
     val yRange = (yFld, project.currentZoom.range(yFld))
     responseInfo foreach {case (field, model, xAxes, yAxes, legend, plots) =>
@@ -286,13 +279,17 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     // movements in the colorbars
     if(button == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
-      resp1Info.foreach {case (_, _, _, _, cb, plots) =>
-        handleBarMouse(mouseX, mouseY, cb)
-        handlePlotMouse(mouseX, mouseY, plots)
-      }
-      resp2Info.foreach {case (_, _, _, _, cb, plots) =>
-        handleBarMouse(mouseX, mouseY, cb)
-        handlePlotMouse(mouseX, mouseY, plots)
+      if(keyCode == P5Panel.KeyCode.Shift) {
+        publish(new HistoryAdd(this, project.currentSlice.toList))
+      } else {
+        resp1Info.foreach {case (_, _, _, _, cb, plots) =>
+          handleBarMouse(mouseX, mouseY, cb)
+          handlePlotMouse(mouseX, mouseY, plots)
+        }
+        resp2Info.foreach {case (_, _, _, _, cb, plots) =>
+          handleBarMouse(mouseX, mouseY, cb)
+          handlePlotMouse(mouseX, mouseY, plots)
+        }
       }
     }
   }

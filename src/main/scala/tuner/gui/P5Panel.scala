@@ -71,6 +71,17 @@ object P5Panel {
     val Center = Value(PConstants.CENTER)
   }
 
+  object KeyCode extends Enumeration {
+    val None = Value(0)
+    val Shift = Value(PConstants.SHIFT)
+    val Alt = Value(PConstants.ALT)
+    val Control = Value(PConstants.CONTROL)
+    val Up = Value(PConstants.UP)
+    val Down = Value(PConstants.DOWN)
+    val Left = Value(PConstants.LEFT)
+    val Right = Value(PConstants.RIGHT)
+  }
+
   val HalfPi = PConstants.HALF_PI
 
   type Color = Int
@@ -187,6 +198,8 @@ abstract class P5Panel (
   def mousePos : (Int,Int) = (applet.mouseX, applet.mouseY)
   def mouseDown = applet.mousePressed
   def mouseButton = MouseButton(applet.mouseButton)
+
+  def keyCode = KeyCode(applet.keyCode)
 
   def ellipseMode(mode:EllipseMode.Value) = applet.ellipseMode(mode.id)
   def rectMode(mode:RectMode.Value) = applet.rectMode(mode.id)

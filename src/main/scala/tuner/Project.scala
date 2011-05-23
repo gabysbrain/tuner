@@ -40,7 +40,8 @@ case class ProjConfig(
   ignoreFields:List[String],
   gpModels:List[GpSpecification],
   currentVis:VisInfo,
-  currentRegion:RegionSpecification
+  currentRegion:RegionSpecification,
+  history:Option[HistorySpecification]
 )
 
 object Project {
@@ -132,6 +133,14 @@ class Project(var path:Option[String]) {
   var _region:Region = config match {
     case Some(c) => Region.fromJson(c.currentRegion, this)
     case None    => Region(Region.Box, this)
+  }
+
+  val history:HistoryManager = config match {
+    case Some(c) => c.history match {
+      case Some(hc) => HistoryManager.fromJson(hc)
+      case None     => new HistoryManager
+    }
+    case None => new HistoryManager
   }
 
   // Save any gp models that got updated
@@ -263,7 +272,8 @@ class Project(var path:Option[String]) {
         ("response1" -> response1View) ~
         ("response2" -> response2View)
       )) ~
-      ("currentRegion" -> region.toJson)
+      ("currentRegion" -> region.toJson) ~
+      ("history" -> history.toJson)
     )
 
     // Ensure that the project directory exists

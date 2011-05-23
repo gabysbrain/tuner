@@ -15,6 +15,7 @@ import scala.swing.TablePanel
 import scala.swing.event.DialogClosing
 
 import tuner.Project
+import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 
 class ProjectViewer(project:Project) extends MainFrame {
@@ -90,6 +91,10 @@ class ProjectViewer(project:Project) extends MainFrame {
       sliceInfo.foreach {case (fld, v) =>
         controlPanel.controlsTab.sliceSliders(fld).value = v
       }
+    case HistoryAdd(_, sliceInfo) =>
+      project.history.add(sliceInfo)
+      print(sliceInfo)
+      controlPanel.historyTab.updateTable
   }
 
   override def visible_=(b:Boolean) = {

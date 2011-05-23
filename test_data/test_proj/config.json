@@ -69,5 +69,8 @@
       "field":"similThreshold",
       "radius":0.0
     }]
+  },
+  "history":{
+    "contents":[]
   }
 }

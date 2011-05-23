@@ -4,17 +4,19 @@ import scala.swing.Alignment
 import scala.swing.TabbedPane
 import scala.swing.event.ValueChanged
 
+import java.awt.Dimension
+
 import tuner.Project
 
 class ControlPanel(project:Project) extends TabbedPane {
   
-  tabPlacement(Alignment.Left)
+  tabPlacement(Alignment.Top)
 
   val infoTab = new InfoPanel(project)
   val localTab = new LocalPanel(project)
   val controlsTab = new PlotControlsPanel(project)
   val candidatesTab = new CandidatesPanel
-  val historyTab = new HistoryPanel
+  val historyTab = new HistoryPanel(project)
 
   pages += new TabbedPane.Page("Info", infoTab)
   pages += new TabbedPane.Page("Local", localTab)
@@ -30,6 +32,8 @@ class ControlPanel(project:Project) extends TabbedPane {
   reactions += {
     case ValueChanged(_) => infoTab.updateTable
   }
+
+  maximumSize = new Dimension(Int.MaxValue, 280)
 
 }
 
