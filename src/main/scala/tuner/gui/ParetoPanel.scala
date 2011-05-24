@@ -7,7 +7,7 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
 
 class ParetoPanel(project:Project)
-    extends P5Panel(Config.paretoDims._1, Config.paretoDims._2, P5Panel.OpenGL) {
+    extends P5Panel(Config.paretoDims._1, Config.paretoDims._2, P5Panel.Java2D) {
 
   val models = project.gpModels.get
 

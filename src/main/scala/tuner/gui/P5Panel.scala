@@ -104,7 +104,7 @@ object P5Panel {
 abstract class P5Panel (
     _width:Int, _height:Int, 
     renderer:P5Panel.Renderer=P5Panel.Java2D) 
-    extends BoxPanel(Orientation.Horizontal) {
+    extends BoxPanel(Orientation.Vertical) {
   
   import P5Panel._
 
@@ -168,13 +168,13 @@ abstract class P5Panel (
   layout(Swing.HGlue) = BorderPanel.Position.East
   layout(Swing.HGlue) = BorderPanel.Position.West
   */
-  contents += Swing.HGlue
-  contents += new BoxPanel(Orientation.Vertical) {
-    contents += Swing.VGlue
+  contents += Swing.VGlue
+  contents += new BoxPanel(Orientation.Horizontal) {
+    contents += Swing.HGlue
     contents += sketchFrame
-    contents += Swing.VGlue
+    contents += Swing.HGlue
   }
-  contents += Swing.HGlue
+  contents += Swing.VGlue
 
   applet.init
 

@@ -12,8 +12,7 @@ object Colorbar {
   case object Right extends Placement
 }
 
-class Colorbar(val colormap:SpecifiedColorMap, 
-               field:String, placement:Colorbar.Placement) {
+class Colorbar(placement:Colorbar.Placement) {
 
   import Colorbar._
 
@@ -21,7 +20,8 @@ class Colorbar(val colormap:SpecifiedColorMap,
   var barBounds:Rectangle = Rectangle((0f,0f),(0f,0f))
   var handleBounds:Triangle = Triangle((0f,0f),(0f,0f),(0f,0f))
 
-  def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float) = {
+  def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
+           field:String, colormap:SpecifiedColorMap) = {
     bounds = Rectangle((x,y), (x+w,y+h))
 
     applet.textFont(Config.fontPath, Config.smallFontSize)
@@ -44,22 +44,23 @@ class Colorbar(val colormap:SpecifiedColorMap,
     
     applet.stroke(Config.lineColor)
     applet.fill(Config.lineColor)
-    drawLabel(applet, x, y, w)
+    drawLabel(applet, x, y, w, field)
     placement match {
       case Left =>
         drawTicks(applet, x, barStartY, barHeight, ticks)
-        drawColorbar(applet, x+labelWidth, barStartY, barWidth, barHeight)
-        drawHandle(applet, x+labelWidth+barWidth, barStartY, barHeight)
+        drawColorbar(applet, x+labelWidth, barStartY, barWidth, barHeight, 
+                     colormap)
+        drawHandle(applet, x+labelWidth+barWidth, barStartY, barHeight, colormap)
       case Right =>
         drawTicks(applet, x+Config.colorbarHandleSize._1+barWidth, barStartY, 
                           barHeight, ticks)
         drawColorbar(applet, x+Config.colorbarHandleSize._1, barStartY, 
-                             barWidth, barHeight)
-        drawHandle(applet, x, barStartY, barHeight)
+                             barWidth, barHeight, colormap)
+        drawHandle(applet, x, barStartY, barHeight, colormap)
     }
   }
 
-  def drawLabel(applet:P5Panel, x:Float, y:Float, w:Float) = {
+  def drawLabel(applet:P5Panel, x:Float, y:Float, w:Float, field:String) = {
     applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Top)
     applet.text(field, (x+w)/2, y)
   }
@@ -92,7 +93,8 @@ class Colorbar(val colormap:SpecifiedColorMap,
     }
   }
 
-  def drawColorbar(applet:P5Panel, x:Float, y:Float, w:Float, h:Float) = {
+  def drawColorbar(applet:P5Panel, x:Float, y:Float, w:Float, h:Float,
+                   colormap:SpecifiedColorMap) = {
     barBounds = Rectangle((x,y), (x+w,y+h))
     applet.noStroke
 
@@ -106,7 +108,8 @@ class Colorbar(val colormap:SpecifiedColorMap,
     applet.endShape
   }
 
-  def drawHandle(applet:P5Panel, x:Float, y:Float, h:Float) = {
+  def drawHandle(applet:P5Panel, x:Float, y:Float, h:Float, 
+                 colormap:SpecifiedColorMap) = {
 
     val yy = P5Panel.map(colormap.filterVal, 
                          colormap.minVal, colormap.maxVal,

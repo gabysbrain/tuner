@@ -33,7 +33,7 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  val plot = new MainPlotPanel(project, Some("Precision"), Some("Precision"))
+  val plot = new MainPlotPanel(project)
 
   val controlPanel = new ControlPanel(project)
 

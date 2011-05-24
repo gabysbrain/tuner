@@ -1,6 +1,7 @@
 package tuner.gui
 
 import tuner.BoxRegion
+import tuner.ColorMap
 import tuner.Config
 import tuner.DimRanges
 import tuner.EllipseRegion
@@ -8,8 +9,10 @@ import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
 import tuner.SpecifiedColorMap
+import tuner.geom.Rectangle
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
+import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
@@ -19,55 +22,59 @@ import scala.swing.Publisher
 
 import processing.core.PConstants
 
-class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String]) 
-    extends P5Panel(Config.mainPlotDims._1, Config.mainPlotDims._2, P5Panel.OpenGL) with Publisher {
+object MainPlotPanel {
+  sealed trait PlotType
+  case object ValuePlot extends PlotType
+  case object ErrorPlot extends PlotType
+  case object GainPlot extends PlotType
+}
+
+class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
+                                                     Config.mainPlotDims._2, 
+                                                     P5Panel.Java2D) 
+                                     with Publisher {
+
+  import MainPlotPanel._
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
+  type ColormapMap = Map[String,(SpecifiedColorMap,SpecifiedColorMap,SpecifiedColorMap)]
   // This is the response field, gp model, x axes, y axes, and plots
-  type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
+  //type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
 
-  val resp1Info:Option[ResponseInfo] = resp1 match {
-    case Some(r1) => project.gpModels match {
-      case Some(gpm) => 
-        val model = gpm(r1)
-        val cm = new SpecifiedColorMap(Config.response1ColorMap, 
-                                       model.funcMin, 
-                                       model.funcMax)
-        Some((r1, model, createAxes(Axis.HorizontalBottom),
-                         createAxes(Axis.VerticalLeft),
-                         new Colorbar(cm, r1, Colorbar.Right),
-                         createPlots(cm)))
-      case None      => None
-    }
-    case None     => None
-  }
 
-  val resp2Info:Option[ResponseInfo] = resp2 match {
-    case Some(r2) => project.gpModels match {
-      case Some(gpm) => 
-        val model = gpm(r2)
-        val cm = new SpecifiedColorMap(Config.response2ColorMap, 
-                                       model.funcMin, 
-                                       model.funcMax)
-        Some((r2, model, createAxes(Axis.HorizontalTop),
-                         createAxes(Axis.VerticalRight),
-                         new Colorbar(cm, r2, Colorbar.Left),
-                         createPlots(cm)))
-      case None      => None
-    }
-    case None     => None
-  }
+  // Everything response 1 needs 
+  val resp1Colormaps = createColormaps(Config.response1ColorMap)
+  val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Right)
+  val resp1XAxes = createAxes(Axis.HorizontalBottom)
+  val resp1YAxes = createAxes(Axis.VerticalLeft)
+  val resp1Plots = createPlots
+
+  // Everything response 2 needs
+  val resp2Colormaps = createColormaps(Config.response2ColorMap)
+  val resp2Colorbar:Colorbar = new Colorbar(Colorbar.Left)
+  val resp2XAxes = createAxes(Axis.HorizontalTop)
+  val resp2YAxes = createAxes(Axis.VerticalRight)
+  val resp2Plots = createPlots
 
   // Cache a bunch of statistics on where the plots are for hit detection
-  var responseSize:Float = 0f
-  var slicesStartX:Float = 0f
-  var slicesStartY:Float = 0f
+  var leftColorbarBounds = Rectangle((0f,0f), 0f, 0f)
+  var rightColorbarBounds = Rectangle((0f,0f), 0f, 0f)
+  var topAxisBounds = Rectangle((0f,0f), 0f, 0f)
+  var bottomAxisBounds = Rectangle((0f,0f), 0f, 0f)
+  var leftAxisBounds = Rectangle((0f,0f), 0f, 0f)
+  var rightAxisBounds = Rectangle((0f,0f), 0f, 0f)
+  var plotBounds = Rectangle((0f,0f), 0f, 0f)
+  var sliceBounds = Map[(String,String),Rectangle]()
+  var sliceSize = 0f
 
   // Also store a mask for the region selection
   //var regionMask = createGraphics(1, 1, P5Panel.P2D)
 
-  def sortedDims : List[String] = project.inputFields
+  def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
+    val (value, error, gain) = map(response)
+    value
+  }
 
   def plotData(model:GpModel,
                d1:(String,(Float,Float)), 
@@ -81,6 +88,43 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
 
     // Compute the spacing of everything
     val startTime = System.currentTimeMillis
+
+    // Update all the bounding boxes
+    updateBounds
+    val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
+    sliceSize = ss
+    sliceBounds = sb
+
+    // We might need to update the region mask
+    /*
+    if(regionMask.width != sliceSize) {
+      regionMask = createGraphics(sliceSize.toInt, sliceSize.toInt, P5Panel.P2D)
+    }
+    */
+
+    // First see if we're drawing the colorbars
+    project.response1View.foreach {r =>
+      resp1Colorbar.draw(this, leftColorbarBounds.minX, 
+                               leftColorbarBounds.minY,
+                               leftColorbarBounds.width, 
+                               leftColorbarBounds.height,
+                               r, colormap(r, resp1Colormaps))
+    }
+    project.response2View.foreach {r =>
+      resp2Colorbar.draw(this, rightColorbarBounds.minX, 
+                               rightColorbarBounds.minY,
+                               rightColorbarBounds.width, 
+                               rightColorbarBounds.height,
+                               r, colormap(r, resp2Colormaps))
+    }
+
+    drawResponses
+
+    val endTime = System.currentTimeMillis
+    println("draw time: " + (endTime - startTime) + "ms")
+  }
+
+  private def updateBounds = {
     val maxResponseWidth = width -
       ((project.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
@@ -91,110 +135,115 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       ((project.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2)
-    responseSize = math.min(maxResponseWidth, maxResponseHeight)
-    val sliceSize = responseSize / project.currentZoom.length - 
-                      Config.plotSpacing
+    val responseSize = math.min(maxResponseWidth, maxResponseHeight)
 
-    // We might need to update the region mask
-    /*
-    if(regionMask.width != sliceSize) {
-      regionMask = createGraphics(sliceSize.toInt, sliceSize.toInt, P5Panel.P2D)
-    }
-    */
-
-    // Bottom, top
-    val xAxesStart:(Float,Float) = 
-      (Config.plotSpacing + Config.axisSize + 
-          responseSize - Config.plotSpacing,
-       Config.plotSpacing)
-    //println("xs: " + xAxesStart + " " + slicesStartX)
-    // Left, right
-    val yAxesStart:(Float,Float) = {
-      val colorbarOffset = Config.colorbarSpacing * 2 + Config.colorbarWidth
-      (colorbarOffset + Config.plotSpacing, 
-       colorbarOffset + Config.plotSpacing + Config.axisSize + 
-         responseSize - Config.plotSpacing)
-    }
-    slicesStartX = yAxesStart._1 + Config.axisSize
-    slicesStartY = xAxesStart._2 + Config.axisSize
-    
-    // left, right
-    val colorbarStartX = 
-      (Config.colorbarSpacing, 
-       yAxesStart._2 + Config.axisSize + 
-         Config.plotSpacing + Config.colorbarSpacing)
-    val colorbarStartY = slicesStartY
-
-    def drawResp1(xf:String, yf:String, 
-                  x:Float, y:Float) = {
-      drawResponse(resp1Info, xf, yf, x, y, 
-                   sliceSize, xAxesStart._1, yAxesStart._1,
-                   colorbarStartX._1, colorbarStartY,
-                   responseSize)
-    }
-    def drawResp2(xf:String, yf:String, 
-                  x:Float, y:Float) = {
-      drawResponse(resp2Info, yf, xf, x, y, 
-                   sliceSize, xAxesStart._2, yAxesStart._2,
-                   colorbarStartX._2, colorbarStartY,
-                   responseSize)
-    }
-
-    // Draw the splom itself
-    sortedDims.foldLeft(slicesStartX) {case (xPos, xFld) =>
-      sortedDims.foldLeft(slicesStartY) {case (yPos, yFld) =>
-        if(xFld < yFld) {
-          // response1 goes in the lower left
-          drawResp1(xFld, yFld, xPos, yPos)
-        } else if(xFld > yFld) {
-          // response2 goes in the upper right
-          // x and y field names here are actually reversed
-          drawResp2(xFld, yFld, xPos, yPos)
-        }
-        yPos + sliceSize + Config.plotSpacing
-      }
-      xPos + sliceSize + Config.plotSpacing
-    }
-
-    val endTime = System.currentTimeMillis
-    //println("draw time: " + (endTime - startTime) + "ms")
+    // Now space everything out top to bottom, left to right
+    leftColorbarBounds = Rectangle((Config.colorbarSpacing, 
+                                    Config.plotSpacing+Config.axisSize),
+                                   Config.colorbarWidth,
+                                   responseSize)
+    leftAxisBounds = Rectangle((leftColorbarBounds.maxX+Config.colorbarSpacing,
+                                Config.plotSpacing+Config.axisSize),
+                               Config.axisSize, responseSize)
+    topAxisBounds = Rectangle((leftAxisBounds.maxX, Config.plotSpacing),
+                              responseSize, Config.axisSize)
+    plotBounds = Rectangle((topAxisBounds.minX, leftAxisBounds.minY),
+                           responseSize, responseSize)
+    bottomAxisBounds = Rectangle((plotBounds.minX, plotBounds.maxY),
+                                 responseSize, Config.axisSize)
+    rightAxisBounds = Rectangle((plotBounds.maxX, plotBounds.minY),
+                                Config.axisSize, responseSize)
+    rightColorbarBounds = Rectangle((rightAxisBounds.maxX+
+                                       Config.colorbarSpacing, 
+                                     rightAxisBounds.minY),
+                                    Config.colorbarWidth, responseSize)
   }
 
-  private def drawResponse(responseInfo:Option[ResponseInfo], 
-                           xFld:String, yFld:String, 
-                           xPos:Float, yPos:Float, sliceSize:Float,
-                           xAxisStart:Float, yAxisStart:Float,
-                           colorbarStartX:Float, colorbarStartY:Float,
-                           colorbarHeight:Float) = {
-    //println("drawing: " + xFld + " " + yFld + " " + xPos + " " + yPos)
-    val xRange = (xFld, project.currentZoom.range(xFld))
-    val yRange = (yFld, project.currentZoom.range(yFld))
-    responseInfo foreach {case (field, model, xAxes, yAxes, legend, plots) =>
-      // Drawing the legends is easy
-      legend.draw(this, colorbarStartX, colorbarStartY, 
-                        Config.colorbarWidth, colorbarHeight)
+  private def drawResponses = {
+    // Loop through all field combinations to see what we need to draw
+    project.inputFields.foreach {xFld =>
+      project.inputFields.foreach {yFld =>
+        val xRange = (xFld, project.currentZoom.range(xFld))
+        val yRange = (yFld, project.currentZoom.range(yFld))
+
+        if(xFld < yFld) {
+          project.response1View.foreach {r1 => 
+            drawResponse(xFld, yFld, xRange, yRange, r1)
+          }
+        } else if(xFld > yFld) {
+          project.response2View.foreach {r2 =>
+            drawResponse(xFld, yFld, yRange, xRange, r2)
+          }
+        } else {
+          drawAxes(xRange)
+        }
+      }
+    }
+  }
+
+  private def drawResponse(xFld:String, yFld:String, 
+                           xRange:(String,(Float,Float)), 
+                           yRange:(String,(Float,Float)), 
+                           response:String) = {
+
+    project.gpModels foreach {gpm =>
+      val model = gpm(response)
+      val bounds = sliceBounds((xFld, yFld))
+      val (slice, cm) = if(xFld < yFld) {
+        (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps))
+      } else {
+        (resp2Plots((yFld, xFld)), colormap(response, resp2Colormaps))
+      }
+
       val data = plotData(model, xRange, yRange, project.currentSlice)
-      val plot = plots((xFld, yFld))
       val (xSlice, ySlice) = (project.currentSlice(xFld), 
                               project.currentSlice(yFld))
 
       // Draw the main plot
-      plot.draw(this, xPos, yPos, sliceSize, sliceSize, data, xSlice, ySlice)
+      slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
+                 data, xSlice, ySlice, cm)
+    }
+  }
 
-      // Draw a mask over what's not in the current region
-      //drawMask(xPos.toInt, yPos.toInt, sliceSize.toInt, xFld, yFld)
+  private def drawAxes(range:(String,(Float,Float))) = {
+    val (fld, (low, high)) = range
+    val firstField = project.inputFields.head
+    val lastField = project.inputFields.last
 
-      // See if we should draw the axes
-      if(yFld == sortedDims.last) {
-        //println(xFld + ": " + xPos + " " + xAxisStart)
-        xAxes(xFld).draw(this, xPos, xAxisStart,
-                         sliceSize, Config.axisSize, 
-                         xRange)
+    project.response1View.foreach {r1 =>
+      // See if we draw the x axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((fld, lastField))
+        val axis = resp1XAxes(fld)
+        axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
+                        sliceDim.width, bottomAxisBounds.height, 
+                        range)
       }
-      if(xFld == sortedDims.head) {
-        yAxes(yFld).draw(this, yAxisStart, yPos,
-                         Config.axisSize, sliceSize, 
-                         yRange)
+      // See if we draw the y axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((firstField, fld))
+        val axis = resp1YAxes(fld)
+        axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
+                        leftAxisBounds.width, sliceDim.height, 
+                        range)
+      }
+    }
+    project.response2View.foreach {r2 =>
+      // See if we draw the x axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((lastField, fld))
+        val axis = resp2XAxes(fld)
+        axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
+                        sliceDim.width, topAxisBounds.height, 
+                        range)
+      }
+      // See if we draw the y axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((fld, firstField))
+        val axis = resp2YAxes(fld)
+        axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
+                        rightAxisBounds.width, sliceDim.height, 
+                        range)
       }
     }
   }
@@ -228,7 +277,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
                            //P5Panel.BlendMode.Add)
   }
 
-  private def createPlots(cm:SpecifiedColorMap) : PlotInfoMap = {
+  private def createPlots : PlotInfoMap = {
     project.inputFields.flatMap({fld1 =>
       project.inputFields.flatMap({fld2 =>
         if(fld1 < fld2) {
@@ -236,8 +285,7 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
             new ContinuousPlot(project.currentZoom.min(fld1), 
                                project.currentZoom.max(fld1),
                                project.currentZoom.min(fld2), 
-                               project.currentZoom.max(fld2),
-                               cm)))
+                               project.currentZoom.max(fld2))))
         } else {
           None
         }
@@ -248,11 +296,27 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
   private def createAxes(position:Axis.Placement) = {
     val fields = position match {
       case Axis.HorizontalTop | Axis.HorizontalBottom => 
-        sortedDims.init
+        project.inputFields.init
       case Axis.VerticalLeft | Axis.VerticalRight => 
-        sortedDims.tail
+        project.inputFields.tail
     }
     fields.map {fld => (fld, new Axis(position))} toMap
+  }
+
+  private def createColormaps(respColormap:ColorMap) : ColormapMap = {
+    project.responseFields.flatMap {fld =>
+      project.gpModels.map {gpm =>
+        val model = gpm(fld)
+        val valCm = new SpecifiedColorMap(respColormap,
+                                          model.funcMin, 
+                                          model.funcMax)
+        val errCm = new SpecifiedColorMap(Config.errorColorMap,
+                                          0f, model.sig2.toFloat)
+        // TODO: fix the max gain calculation!
+        val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 1f)
+        (fld, (valCm, errCm, gainCm))
+      }
+    } toMap
   }
 
   override def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
@@ -262,14 +326,8 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
     // movements in the colorbars
     if(mouseButton == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
-      resp1Info.foreach {case (_, _, _, _, cb, plots) =>
-        handleBarMouse(mouseX, mouseY, cb)
-        handlePlotMouse(mouseX, mouseY, plots)
-      }
-      resp2Info.foreach {case (_, _, _, _, cb, plots) =>
-        handleBarMouse(mouseX, mouseY, cb)
-        handlePlotMouse(mouseX, mouseY, plots)
-      }
+      handleBarMouse(mouseX, mouseY)
+      handlePlotMouse(mouseX, mouseY)
     }
   }
 
@@ -282,46 +340,53 @@ class MainPlotPanel(project:Project, resp1:Option[String], resp2:Option[String])
       if(keyCode == P5Panel.KeyCode.Shift) {
         publish(new HistoryAdd(this, project.currentSlice.toList))
       } else {
-        resp1Info.foreach {case (_, _, _, _, cb, plots) =>
-          handleBarMouse(mouseX, mouseY, cb)
-          handlePlotMouse(mouseX, mouseY, plots)
-        }
-        resp2Info.foreach {case (_, _, _, _, cb, plots) =>
-          handleBarMouse(mouseX, mouseY, cb)
-          handlePlotMouse(mouseX, mouseY, plots)
-        }
+        handleBarMouse(mouseX, mouseY)
+        handlePlotMouse(mouseX, mouseY)
       }
     }
   }
 
-  def handlePlotMouse(mouseX:Int, mouseY:Int, plots:PlotInfoMap) = {
-    val (slicesEndX, slicesEndY) = (slicesStartX + responseSize, 
-                                    slicesStartY + responseSize)
+  def handlePlotMouse(mouseX:Int, mouseY:Int) = {
+
     // Do a rough check to see if we're near any of the slicess
-    if(mouseX >= slicesStartX && mouseX <= slicesEndX && 
-       mouseY >= slicesStartY && mouseY <= slicesEndY) {
-      plots.foreach {case ((xfld,yfld), plot) =>
-        if(plot.isInside(mouseX, mouseY)) {
-          val bounds = plot.bounds
-          val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
-          val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
-          val newX = P5Panel.map(mouseX, bounds.minX, bounds.maxX,
-                                         lowZoomX, highZoomX)
-          val newY = P5Panel.map(mouseY, bounds.minY, bounds.maxY,
-                                         lowZoomY, highZoomY)
-          publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
+    if(plotBounds.isInside(mouseX, mouseY)) {
+      sliceBounds.foreach {case ((xfld,yfld), sb) =>
+        if(sb.isInside(mouseX, mouseY)) {
+          // Make sure we're inside a bounds that's active
+          if((xfld < yfld && project.response1View.isDefined) ||
+             (xfld > yfld && project.response2View.isDefined)) {
+            val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
+            val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
+            val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
+                                           lowZoomX, highZoomX)
+            val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
+                                           lowZoomY, highZoomY)
+            publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
+          }
         }
       }
     }
   }
 
-  def handleBarMouse(mouseX:Int, mouseY:Int, cb:Colorbar) = {
-    if(cb.isInside(mouseX, mouseY)) {
-      if(cb.bounds.isInside(mouseX, mouseY)) {
-        val cm = cb.colormap
-        val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
-                                            cm.minVal, cm.maxVal)
-        cm.filterVal = filterVal
+  def handleBarMouse(mouseX:Int, mouseY:Int) = {
+    if(leftColorbarBounds.isInside(mouseX, mouseY)) {
+      project.response1View.foreach {r1 =>
+        val cb = resp1Colorbar
+        if(cb.bounds.isInside(mouseX, mouseY)) {
+          val cm = colormap(r1, resp1Colormaps)
+          val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
+                                              cm.minVal, cm.maxVal)
+          cm.filterVal = filterVal
+        }
+      }
+      project.response2View.foreach {r2 =>
+        val cb = resp2Colorbar
+        if(cb.bounds.isInside(mouseX, mouseY)) {
+          val cm = colormap(r2, resp2Colormaps)
+          val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
+                                              cm.minVal, cm.maxVal)
+          cm.filterVal = filterVal
+        }
       }
     }
   }
