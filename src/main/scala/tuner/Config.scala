@@ -22,7 +22,8 @@ object Config {
   val errorField = "stddev"
   val gainField = "estgain"
 
-  val estimateSampleDensity = 50
+  //val estimateSampleDensity = 50
+  val estimateSampleDensity = 20
 
   val samplerSplomDims = (400, 400)
 

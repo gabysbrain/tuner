@@ -118,10 +118,10 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                                r, colormap(r, resp2Colormaps))
     }
 
-    //drawResponses
+    drawResponses
 
     val endTime = System.currentTimeMillis
-    println("draw time: " + (endTime - startTime) + "ms")
+    //println("draw time: " + (endTime - startTime) + "ms")
   }
 
   private def updateBounds = {
@@ -168,11 +168,17 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
         if(xFld < yFld) {
           project.response1View.foreach {r1 => 
+            val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, xRange, yRange, r1)
+            val endTime = System.currentTimeMillis
+            //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
           project.response2View.foreach {r2 =>
+            val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, yRange, xRange, r2)
+            val endTime = System.currentTimeMillis
+            //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
         } else {
           drawAxes(xRange)

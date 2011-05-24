@@ -53,8 +53,8 @@ class PlotControlsPanel(project:Project)
     resp2Combo.selection.item = r
   }
 
-  listenTo(resp1Combo)
-  listenTo(resp2Combo)
+  listenTo(resp1Combo.selection)
+  listenTo(resp2Combo.selection)
 
   reactions += {
     case SelectionChanged(`resp1Combo`) => resp1Combo.selection.item match {
