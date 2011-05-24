@@ -45,14 +45,14 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
   // Everything response 1 needs 
   val resp1Colormaps = createColormaps(Config.response1ColorMap)
-  val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Right)
+  val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Left)
   val resp1XAxes = createAxes(Axis.HorizontalBottom)
   val resp1YAxes = createAxes(Axis.VerticalLeft)
   val resp1Plots = createPlots
 
   // Everything response 2 needs
   val resp2Colormaps = createColormaps(Config.response2ColorMap)
-  val resp2Colorbar:Colorbar = new Colorbar(Colorbar.Left)
+  val resp2Colorbar:Colorbar = new Colorbar(Colorbar.Right)
   val resp2XAxes = createAxes(Axis.HorizontalTop)
   val resp2YAxes = createAxes(Axis.VerticalRight)
   val resp2Plots = createPlots
@@ -118,7 +118,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                                r, colormap(r, resp2Colormaps))
     }
 
-    drawResponses
+    //drawResponses
 
     val endTime = System.currentTimeMillis
     println("draw time: " + (endTime - startTime) + "ms")
@@ -372,21 +372,23 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     if(leftColorbarBounds.isInside(mouseX, mouseY)) {
       project.response1View.foreach {r1 =>
         val cb = resp1Colorbar
-        if(cb.bounds.isInside(mouseX, mouseY)) {
-          val cm = colormap(r1, resp1Colormaps)
-          val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
-                                              cm.minVal, cm.maxVal)
-          cm.filterVal = filterVal
-        }
+        val cm = colormap(r1, resp1Colormaps)
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
+                                            cb.barBounds.minY, 
+                                            cm.minVal, 
+                                            cm.maxVal)
+        cm.filterVal = filterVal
       }
+    }
+    if(rightColorbarBounds.isInside(mouseX, mouseY)) {
       project.response2View.foreach {r2 =>
         val cb = resp2Colorbar
-        if(cb.bounds.isInside(mouseX, mouseY)) {
-          val cm = colormap(r2, resp2Colormaps)
-          val filterVal = P5Panel.map(mouseY, cb.bounds.maxY, cb.bounds.minY, 
-                                              cm.minVal, cm.maxVal)
-          cm.filterVal = filterVal
-        }
+        val cm = colormap(r2, resp2Colormaps)
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
+                                            cb.barBounds.minY, 
+                                            cm.minVal, 
+                                            cm.maxVal)
+        cm.filterVal = filterVal
       }
     }
   }

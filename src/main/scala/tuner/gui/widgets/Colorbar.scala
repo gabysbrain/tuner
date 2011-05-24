@@ -18,7 +18,7 @@ class Colorbar(placement:Colorbar.Placement) {
 
   var bounds:Rectangle = Rectangle((0f,0f),(0f,0f))
   var barBounds:Rectangle = Rectangle((0f,0f),(0f,0f))
-  var handleBounds:Triangle = Triangle((0f,0f),(0f,0f),(0f,0f))
+  //var handleBounds:Triangle = Triangle((0f,0f),(0f,0f),(0f,0f))
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            field:String, colormap:SpecifiedColorMap) = {
@@ -46,14 +46,14 @@ class Colorbar(placement:Colorbar.Placement) {
     applet.fill(Config.lineColor)
     drawLabel(applet, x, y, w, field)
     placement match {
-      case Left =>
-        drawTicks(applet, x, barStartY, barHeight, ticks)
+      case Right =>
+        drawTicks(applet, x, barStartY, labelWidth, barHeight, ticks)
         drawColorbar(applet, x+labelWidth, barStartY, barWidth, barHeight, 
                      colormap)
         drawHandle(applet, x+labelWidth+barWidth, barStartY, barHeight, colormap)
-      case Right =>
+      case Left =>
         drawTicks(applet, x+Config.colorbarHandleSize._1+barWidth, barStartY, 
-                          barHeight, ticks)
+                          labelWidth, barHeight, ticks)
         drawColorbar(applet, x+Config.colorbarHandleSize._1, barStartY, 
                              barWidth, barHeight, colormap)
         drawHandle(applet, x, barStartY, barHeight, colormap)
@@ -62,11 +62,11 @@ class Colorbar(placement:Colorbar.Placement) {
 
   def drawLabel(applet:P5Panel, x:Float, y:Float, w:Float, field:String) = {
     applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Top)
-    applet.text(field, (x+w)/2, y)
+    applet.text(field, x+w/2, y)
   }
 
   def drawTicks(applet:P5Panel, x:Float, y:Float, 
-                h:Float, ticks:Seq[Float]) = {
+                labelWidth:Float, h:Float, ticks:Seq[Float]) = {
 
     ticks.foreach {tick =>
       if(tick == ticks.head) {
@@ -83,10 +83,12 @@ class Colorbar(placement:Colorbar.Placement) {
                             Config.colorbarTickDigits._1, 
                             Config.colorbarTickDigits._2) 
       placement match {
-        case Left =>
-          applet.text(txt, x, yy)
-          applet.line(x+textX, yy, x+textX+Config.colorbarTickSize, yy)
         case Right =>
+          applet.text(txt, x, yy)
+          val tickStart = x+labelWidth+Config.colorbarLabelSpace._2
+          applet.line(tickStart, yy, 
+                      tickStart+Config.colorbarTickSize, yy)
+        case Left =>
           applet.text(txt, x+textX, yy)
           applet.line(x, yy, x+Config.colorbarTickSize, yy)
       }
@@ -119,17 +121,17 @@ class Colorbar(placement:Colorbar.Placement) {
     applet.noStroke
 
     val (p1, p2, p3) = placement match {
-      case Left =>
+      case Right =>
         ((x, yy), 
          (x+Config.colorbarHandleSize._1, yy + yOffset),
          (x+Config.colorbarHandleSize._1, yy - yOffset))
-      case Right =>
+      case Left =>
         ((x+Config.colorbarHandleSize._1, yy), 
          (x, yy + yOffset),
          (x, yy - yOffset))
     }
 
-    handleBounds = Triangle(p1, p2, p3)
+    //handleBounds = Triangle(p1, p2, p3)
     applet.triangle(p1._1, p1._2, p2._1, p2._2, p3._1, p3._2)
   }
 
