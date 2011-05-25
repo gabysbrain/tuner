@@ -24,7 +24,7 @@ import processing.core.PConstants
 
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
-                                                     P5Panel.Java2D) 
+                                                     P5Panel.P2D) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
