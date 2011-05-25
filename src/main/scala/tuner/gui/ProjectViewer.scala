@@ -89,6 +89,7 @@ class ProjectViewer(project:Project) extends MainFrame {
   listenTo(mainResponseButton)
   listenTo(errResponseButton)
   listenTo(gainResponseButton)
+  listenTo(regionGlyphButton)
 
   reactions += {
     case SliceChanged(_, sliceInfo) => 
@@ -104,6 +105,8 @@ class ProjectViewer(project:Project) extends MainFrame {
       project.currentMetric = Project.ErrorMetric
     case ButtonClicked(`gainResponseButton`) =>
       project.currentMetric = Project.GainMetric
+    case ButtonClicked(`regionGlyphButton`) =>
+      project.showRegion = regionGlyphButton.selected
   }
 
   // Update which metric we're looking at
@@ -113,6 +116,8 @@ class ProjectViewer(project:Project) extends MainFrame {
     case Project.GainMetric => gainResponseButton.selected = true
   }
 
+  // Update the glyph controls
+  regionGlyphButton.selected = project.showRegion
 
   override def visible_=(b:Boolean) = {
     super.visible_=(b)

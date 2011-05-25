@@ -31,7 +31,8 @@ case class VisInfo(
   currentZoom:List[ZoomSpecification],
   response1:Option[String],
   response2:Option[String],
-  currentMetric:String
+  currentMetric:String,
+  showRegion:Boolean
 )
 case class ProjConfig(
   name:String,
@@ -138,6 +139,10 @@ class Project(var path:Option[String]) {
       case "gain" => GainMetric
     }
     case None => ValueMetric
+  }
+  var showRegion = config match {
+    case Some(c) => c.currentVis.showRegion
+    case None => true
   }
 
   val gpModels : Option[Map[String,GpModel]] = path.map {p =>
@@ -293,7 +298,8 @@ class Project(var path:Option[String]) {
         }).toList) ~
         ("response1" -> response1View) ~
         ("response2" -> response2View) ~
-        ("currentMetric" -> strMetric)
+        ("currentMetric" -> strMetric) ~
+        ("showRegion" -> showRegion)
       )) ~
       ("currentRegion" -> region.toJson) ~
       ("history" -> history.toJson)

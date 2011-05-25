@@ -164,7 +164,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
           project.response1View.foreach {r1 => 
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, xRange, yRange, r1)
-            drawMask(xFld, yFld)
+            if(project.showRegion)
+              drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
@@ -172,7 +173,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
           project.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, yRange, xRange, r2)
-            drawMask(xFld, yFld)
+            if(project.showRegion)
+              drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
