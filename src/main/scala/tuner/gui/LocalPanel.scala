@@ -14,6 +14,8 @@ import tuner.Config
 import tuner.Project
 import tuner.Region
 
+import java.awt.Dimension
+
 class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
   val statsTable = new RegionStatsTable(project)

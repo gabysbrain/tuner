@@ -6,17 +6,36 @@ import scala.swing.event.ValueChanged
 
 import java.awt.Dimension
 
+import tuner.Config
 import tuner.Project
 
 class ControlPanel(project:Project) extends TabbedPane {
   
-  tabPlacement(Alignment.Top)
+  val dims = new Dimension(Int.MaxValue, Config.controlPanelHeight)
 
-  val infoTab = new InfoPanel(project)
-  val localTab = new LocalPanel(project)
-  val controlsTab = new PlotControlsPanel(project)
-  val candidatesTab = new CandidatesPanel
-  val historyTab = new HistoryPanel(project)
+  tabPlacement(Alignment.Top)
+  maximumSize = new Dimension(Int.MaxValue, Config.controlPanelHeight)
+
+  val infoTab = new InfoPanel(project) {
+    preferredSize = dims
+    maximumSize = dims
+  }
+  val localTab = new LocalPanel(project) {
+    preferredSize = dims
+    maximumSize = dims
+  }
+  val controlsTab = new PlotControlsPanel(project) {
+    preferredSize = dims
+    maximumSize = dims
+  }
+  val candidatesTab = new CandidatesPanel {
+    preferredSize = dims
+    maximumSize = dims
+  }
+  val historyTab = new HistoryPanel(project) {
+    preferredSize = dims
+    maximumSize = dims
+  }
 
   pages += new TabbedPane.Page("Info", infoTab)
   pages += new TabbedPane.Page("Local", localTab)
@@ -32,8 +51,6 @@ class ControlPanel(project:Project) extends TabbedPane {
   reactions += {
     case ValueChanged(_) => infoTab.updateTable
   }
-
-  maximumSize = new Dimension(Int.MaxValue, 280)
 
 }
 

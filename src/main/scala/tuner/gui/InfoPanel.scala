@@ -32,8 +32,8 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
 
   contents += new ScrollPane {
     contents = infoTable
-    maximumSize = new Dimension(800, 70)
-    preferredSize = new Dimension(800, 70)
+    maximumSize = new Dimension(Int.MaxValue, 70)
+    preferredSize = new Dimension(Int.MaxValue, 70)
   }
   contents += Swing.VGlue
   contents += imagePanel

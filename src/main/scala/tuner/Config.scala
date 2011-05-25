@@ -31,6 +31,7 @@ object Config {
 
   val mainPlotDims = (800, 600)
   val plotSpacing = 5
+  val controlPanelHeight = 280
 
   //val backgroundColor = 0
   val backgroundColor = 51
