@@ -24,7 +24,7 @@ import processing.core.PConstants
 
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
-                                                     P5Panel.P2D) 
+                                                     P5Panel.P3D) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
@@ -58,9 +58,6 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   var plotBounds = Rectangle((0f,0f), 0f, 0f)
   var sliceBounds = Map[(String,String),Rectangle]()
   var sliceSize = 0f
-
-  // Also store a mask for the region selection
-  //var regionMask = createGraphics(1, 1, P5Panel.P2D)
 
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
     val (value, error, gain) = map(response)
@@ -96,12 +93,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     sliceSize = ss
     sliceBounds = sb
 
-    // We might need to update the region mask
-    /*
-    if(regionMask.width != sliceSize) {
-      regionMask = createGraphics(sliceSize.toInt, sliceSize.toInt, P5Panel.P2D)
-    }
-    */
+    // We might need to draw the region mask
+    
 
     // First see if we're drawing the colorbars
     project.response1View.foreach {r =>
@@ -171,6 +164,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
           project.response1View.foreach {r1 => 
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, xRange, yRange, r1)
+            drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
@@ -178,6 +172,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
           project.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, yRange, xRange, r2)
+            drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
@@ -255,33 +250,39 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     }
   }
 
-  private def drawMask(xPos:Int, yPos:Int, sliceSize:Int, 
-                       xFld:String, yFld:String) = {
+  private def drawMask(xFld:String, yFld:String) = {
+    val slice = sliceBounds((xFld, yFld))
+
+    pushMatrix
+    translate(slice.minX, slice.minY, 1)
 
     val (xSlice, ySlice) = (project.currentSlice(xFld),
                             project.currentSlice(yFld))
+    val (xZoom, yZoom) = (project.currentZoom.range(xFld),
+                          project.currentZoom.range(yFld))
     val (xRad, yRad) = (project.region.radius(xFld),
                         project.region.radius(yFld))
 
-    //regionMask.beginDraw
-    //regionMask.background(255, Config.regionMaskAlpha)
-    //regionMask.background(255, 0)
+    // Convert the x and y radius into pixel values
+    val xx = P5Panel.map(xSlice, xZoom._1, xZoom._2, 0, slice.width)
+    val yy = P5Panel.map(ySlice, yZoom._2, yZoom._1, 0, slice.height)
+    val xxRad = P5Panel.map(xRad, xZoom._1, xZoom._2, 0, slice.width)
+    val yyRad = P5Panel.map(yRad, yZoom._1, yZoom._2, 0, slice.height)
+
     fill(Config.regionColor)
     stroke(ColorLib.darker(Config.regionColor))
 
     project.region match {
       case _:BoxRegion =>
         rectMode(P5Panel.RectMode.Radius)
-        rect(xSlice, ySlice, xRad, yRad)
+        rect(xx, yy, xxRad, yyRad)
         //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
       case _:EllipseRegion =>
         ellipseMode(P5Panel.EllipseMode.Radius)
-        ellipse(xSlice, ySlice, xRad, yRad)
+        ellipse(xx, yy, xxRad, yyRad)
     }
-    //regionMask.endDraw
-    //this.blend(regionMask, 0, 0, sliceSize, sliceSize, 
-                           //xPos, yPos, sliceSize, sliceSize, 
-                           //P5Panel.BlendMode.Add)
+
+    popMatrix
   }
 
   private def createPlots : PlotInfoMap = {

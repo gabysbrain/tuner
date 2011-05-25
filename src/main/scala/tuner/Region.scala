@@ -31,7 +31,10 @@ object Region {
 
 sealed abstract class Region(project:Project) {
   var _radius:Map[String,Float] = 
-    project.inputFields.map {fld => (fld -> 0f)} toMap
+    project.inputFields.map {fld => 
+      //val (low, high) = project.inputs.range(fld)
+      (fld -> 0f)
+    } toMap
   
   def radius(fld:String) = _radius(fld)
   def setRadius(fld:String, v:Float) = {

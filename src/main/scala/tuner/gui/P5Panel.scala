@@ -221,6 +221,7 @@ abstract class P5Panel (
   def pushMatrix = applet.pushMatrix
   def popMatrix = applet.popMatrix
   def translate(x:Float, y:Float) = applet.translate(x, y)
+  def translate(x:Float, y:Float, z:Float) = applet.translate(x, y, z)
   def rotate(radians:Float) = applet.rotate(radians)
 
   def blend(srcImg:PImage, x:Int, y:Int, width:Int, height:Int, 
@@ -232,6 +233,7 @@ abstract class P5Panel (
   def noStroke = applet.noStroke
 
   def fill(color:Color) = applet.fill(color)
+  def fill(grey:Int, alpha:Float) = applet.fill(grey, alpha)
   def noFill = applet.noFill
 
   def beginShape(shape:Shape.Value) = applet.beginShape(shape.id)

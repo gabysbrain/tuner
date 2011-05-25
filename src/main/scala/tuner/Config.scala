@@ -32,13 +32,16 @@ object Config {
   val mainPlotDims = (800, 600)
   val plotSpacing = 5
 
-  val backgroundColor = 0
+  //val backgroundColor = 0
+  val backgroundColor = 51
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
   val errorColorMap = GrayscaleColorMap
   val gainColorMap = GreenColorMap
   val lineColor = 255
-  val filterColor = 180
+  val filterColor = 151
+  val regionAlpha = 0.8f * 255
+  val regionColor = 0xAAABCDFC
 
   // Font stuff
   val fontPath = getClass.getResource("/fonts/MavenPro.otf").getPath
@@ -51,7 +54,6 @@ object Config {
   val axisLabelSpace = 3
   val axisSize = smallFontSize + axisTickSize + axisLabelSpace * 2 + 35
   val axisTickDigits = (1,3)
-  println("axis size: " + axisSize)
 
   // Colorbar configuration stuff
   // TODO: do the width automatically
@@ -66,10 +68,6 @@ object Config {
   val crosshairColor = 0
   val crosshairRadius = 3
   
-  val regionColor = 0xAAABCDFC
-
-  val regionMaskAlpha = 0.2f
-
   val sliderResolution = 1000
 
   val scatterplotDotSize = 6.5f
