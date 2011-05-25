@@ -72,9 +72,10 @@ class ResponseHistogramPanel(project:Project, responseField:String)
         yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                          yAxisBounds.width, yAxisBounds.height,
                          ("Count", (0, maxCount)))
+        val xTicks = minResponse +: h.breaks :+ maxResponse
         xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                          xAxisBounds.width, xAxisBounds.height,
-                         (responseField, (minResponse, maxResponse)))
+                         responseField, xTicks)
       case _ =>
     }
     val endTime = System.currentTimeMillis
