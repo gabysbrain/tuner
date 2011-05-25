@@ -4,9 +4,18 @@ import scala.swing.Table
 
 import tuner.Project
 
+object RegionStatsTable {
+  def columnNames(project:Project) = {
+    List("","Samples") ++ (project.inputFields.map {fld =>
+      fld + " Gradient"
+    }).toSeq
+  }
+}
+
 class RegionStatsTable(project:Project) 
-    extends Table(project.responseFields.length, 
-                  2 + project.inputFields.length) {
+    extends Table(Array.fill(project.responseFields.length)(
+                    Array.fill(2+project.inputFields.length)("":Any)
+                  ), RegionStatsTable.columnNames(project)) {
   
   def updateStats = {
     project.responseFields.zipWithIndex.foreach {case (resp, row) =>
