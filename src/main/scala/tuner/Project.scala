@@ -30,7 +30,8 @@ case class VisInfo(
   currentSlice:List[SliceSpecification],
   currentZoom:List[ZoomSpecification],
   response1:Option[String],
-  response2:Option[String]
+  response2:Option[String],
+  currentMetric:String
 )
 case class ProjConfig(
   name:String,
@@ -57,9 +58,16 @@ object Project {
     val Ok = Value("Ok")
     val BuildingGp = Value("Building GP")
   }
+
+  sealed trait MetricView
+  case object ValueMetric extends MetricView
+  case object ErrorMetric extends MetricView
+  case object GainMetric extends MetricView
 }
 
 class Project(var path:Option[String]) {
+
+  import Project._
 
   def this() = this(None)
 
@@ -123,6 +131,14 @@ class Project(var path:Option[String]) {
   }
   var response1View:Option[String] = config flatMap {_.currentVis.response1}
   var response2View:Option[String] = config flatMap {_.currentVis.response2}
+  var currentMetric:MetricView = config match {
+    case Some(c) => c.currentVis.currentMetric match {
+      case "value" => ValueMetric
+      case "error" => ErrorMetric
+      case "gain" => GainMetric
+    }
+    case None => ValueMetric
+  }
 
   val gpModels : Option[Map[String,GpModel]] = path.map {p =>
     val designSiteFile = p + "/" + Config.designFilename
@@ -232,6 +248,12 @@ class Project(var path:Option[String]) {
   def save(savePath:String) = {
     path = Some(savePath)
 
+    val strMetric = currentMetric match {
+      case ValueMetric => "value"
+      case ErrorMetric => "error"
+      case GainMetric => "gain"
+    }
+
     val json = (
       ("name" -> name) ~
       ("scriptPath" -> scriptPath) ~
@@ -270,7 +292,8 @@ class Project(var path:Option[String]) {
           ("highValue" -> currentZoom.max(fld))
         }).toList) ~
         ("response1" -> response1View) ~
-        ("response2" -> response2View)
+        ("response2" -> response2View) ~
+        ("currentMetric" -> strMetric)
       )) ~
       ("currentRegion" -> region.toJson) ~
       ("history" -> history.toJson)

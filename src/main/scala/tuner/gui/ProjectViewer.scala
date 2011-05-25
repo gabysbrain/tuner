@@ -12,6 +12,7 @@ import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
 import tuner.Project
@@ -85,6 +86,9 @@ class ProjectViewer(project:Project) extends MainFrame {
   }
 
   listenTo(plot)
+  listenTo(mainResponseButton)
+  listenTo(errResponseButton)
+  listenTo(gainResponseButton)
 
   reactions += {
     case SliceChanged(_, sliceInfo) => 
@@ -94,7 +98,21 @@ class ProjectViewer(project:Project) extends MainFrame {
     case HistoryAdd(_, sliceInfo) =>
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
+    case ButtonClicked(`mainResponseButton`) =>
+      project.currentMetric = Project.ValueMetric
+    case ButtonClicked(`errResponseButton`) =>
+      project.currentMetric = Project.ErrorMetric
+    case ButtonClicked(`gainResponseButton`) =>
+      project.currentMetric = Project.GainMetric
   }
+
+  // Update which metric we're looking at
+  project.currentMetric match {
+    case Project.ValueMetric => mainResponseButton.selected = true
+    case Project.ErrorMetric => errResponseButton.selected = true
+    case Project.GainMetric => gainResponseButton.selected = true
+  }
+
 
   override def visible_=(b:Boolean) = {
     super.visible_=(b)

@@ -22,19 +22,10 @@ import scala.swing.Publisher
 
 import processing.core.PConstants
 
-object MainPlotPanel {
-  sealed trait PlotType
-  case object ValuePlot extends PlotType
-  case object ErrorPlot extends PlotType
-  case object GainPlot extends PlotType
-}
-
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
                                                      P5Panel.Java2D) 
                                      with Publisher {
-
-  import MainPlotPanel._
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
@@ -73,14 +64,24 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
     val (value, error, gain) = map(response)
-    value
+    project.currentMetric match {
+      case Project.ValueMetric => value
+      case Project.ErrorMetric => error
+      case Project.GainMetric => gain
+    }
   }
 
   def plotData(model:GpModel,
                d1:(String,(Float,Float)), 
                d2:(String,(Float,Float)), 
                slice:Map[String,Float]) : Matrix2D = {
-    model.sampleSlice(d1, d2, slice.toList)._1._2
+    val sample = model.sampleSlice(d1, d2, slice.toList)
+    val data = project.currentMetric match {
+      case Project.ValueMetric => sample._1
+      case Project.ErrorMetric => sample._2
+      case Project.GainMetric => sample._3
+    }
+    data._2
   }
 
   def draw = {

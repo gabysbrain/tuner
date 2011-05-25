@@ -55,7 +55,8 @@
       "highValue":1.0
     }],
     "response1":"Precision",
-    "response2":"Precision"
+    "response2":"Precision",
+    "currentMetric":"value"
   },
   "currentRegion":{
     "shape":"Box",
