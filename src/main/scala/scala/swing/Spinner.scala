@@ -30,6 +30,8 @@ class Spinner(minVal:Float, maxVal:Float, step:Float)
   def max_=(v:Float) = model.setMaximum(float2Float(v))
   def max : Float = model.getMaximum.asInstanceOf[Number].floatValue
 
+  override def maximumSize = preferredSize
+
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e:javax.swing.event.ChangeEvent) {
       publish(new ValueChanged(Spinner.this))

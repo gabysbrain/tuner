@@ -31,6 +31,8 @@ class FloatRangeSlider(minVal:Float, maxVal:Float, numSteps:Int)
     peer.setHighValue(intVal)
   }
 
+  override def maximumSize = preferredSize
+
   peer.addChangeListener(new javax.swing.event.ChangeListener {
     def stateChanged(e:javax.swing.event.ChangeEvent) {
       publish(new ValueChanged(FloatRangeSlider.this))

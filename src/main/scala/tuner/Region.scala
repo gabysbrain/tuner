@@ -41,6 +41,8 @@ sealed abstract class Region(project:Project) {
     _radius += (fld -> v)
   }
 
+  def center = project.currentSlice
+
   def toJson = {
     val shapeName = this match {
       case x:BoxRegion => "Box"
@@ -54,11 +56,54 @@ sealed abstract class Region(project:Project) {
       }.toList)
     )
   }
+
+  def inside(pt:List[(String,Float)]) : Boolean
+
+  def numSamples = {
+    var count = 0
+    for(i <- 0 until project.samples.numRows) {
+      val tpl = project.samples.tuple(i)
+      if(inside(tpl.toList))
+        count += 1
+    }
+    count
+  }
+
+  def gradient(response:String, fld:String) = {
+    val models = project.gpModels.get
+    val model = models(response)
+    val minVal = center(fld) - radius(fld)
+    val maxVal = center(fld) + radius(fld)
+    val rest = center.toList.filter(_._1 != fld)
+    val (minPt, maxPt) = ((fld, minVal) :: rest, (fld, maxVal) :: rest)
+    val (minEst, maxEst) = (model.runSample(minPt)._1, 
+                            model.runSample(maxPt)._1)
+    val centerEst = model.runSample(center.toList)._1
+    math.max((centerEst - minEst)/radius(fld), 
+             (centerEst - maxEst)/radius(fld))
+  }
 }
 
 class BoxRegion(project:Project) extends Region(project) {
+  def inside(pt:List[(String,Float)]) : Boolean = {
+    val center = project.currentSlice
+    pt.foldLeft(true) {case (bool,(fld,value)) =>
+      val (minVal, maxVal) = (center(fld)-radius(fld), center(fld)+radius(fld))
+      bool && value >= minVal && value <= maxVal
+    }
+  }
+
 }
 
 class EllipseRegion(project:Project) extends Region(project) {
+  // TODO: fix this.  It's wrong!!!
+  def inside(pt:List[(String,Float)]) : Boolean = {
+    val center = project.currentSlice
+    pt.foldLeft(true) {case (bool,(fld,value)) =>
+      val (minVal, maxVal) = (center(fld)-radius(fld), center(fld)+radius(fld))
+      bool && value >= minVal && value <= maxVal
+    }
+  }
+
 }
 

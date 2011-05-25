@@ -4,6 +4,7 @@ import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.Label
 import scala.swing.Orientation
+import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.event.SelectionChanged
@@ -15,6 +16,8 @@ import tuner.Region
 
 class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
+  val statsTable = new RegionStatsTable(project)
+
   val radiusSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.currentZoom.range(fld)
     val maxRadius = (minVal + maxVal) / 2
@@ -24,6 +27,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     reactions += {
       case ValueChanged(`slider`) => 
         project.region.setRadius(fld, slider.value)
+        statsTable.updateStats
     }
     (fld, slider)
   } toMap
@@ -43,6 +47,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
       project.inputFields.foreach {fld =>
         project.region.setRadius(fld, oldRegion.radius(fld))
       }
+      statsTable.updateStats
   }
 
   contents += Swing.VGlue
@@ -69,5 +74,8 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     contents += Swing.HGlue
   }
   contents += Swing.VGlue
+  contents += new ScrollPane {
+    contents = statsTable
+  }
 }
 
