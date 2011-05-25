@@ -63,7 +63,7 @@ class ProjectViewer(project:Project) extends MainFrame {
       border = Swing.TitledBorder(border, "Glyphs")
     }
   
-    val histogramPanel = new FlowPanel {
+    val histogramPanel = new ResponseStatsPanel(project) {
       border = Swing.TitledBorder(border, "Response Histograms")
     }
   

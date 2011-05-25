@@ -41,7 +41,6 @@ object Sampler {
     generateCombinations(f, Nil, seqs.toList)
   }
 
-  /*
   def lhc(dims:DimRanges, n:Int, f:List[(String,Float)] => Unit) = {
     // Split the ranges into slices and sample dims
     val (sampleDims, sliceDims) = dims.ranges.span {tmp =>
@@ -66,7 +65,12 @@ object Sampler {
       f(vals.toList ++ slices)
     })
   }
-  */
+
+  def lhc(dims:DimRanges, n:Int) : Table = {
+    val tbl = new Table
+    lhc(dims, n, {r => tbl.addRow(r)})
+    tbl
+  }
 
   // There's some weird issues with scala's sequence generator
   // TODO: figure out what it is.  You may be pleasantly surprised!

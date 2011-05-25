@@ -84,6 +84,16 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
      (Config.gainField, calcExpectedGain(response, errors)))
   }
 
+  def sampleTable(samples:Table) : Table = {
+    val outTbl = new Table
+    for(r <- 0 until samples.numRows) {
+      val tpl = samples.tuple(r)
+      val (est, err) = runSample(tpl.toList)
+      outTbl.addRow((respDim, est.toFloat)::(errDim, err.toFloat)::tpl.toList)
+    }
+    outTbl
+  }
+
   def sampleAnova(dimRanges:DimRanges,
                   rowDim:(String,(Float,Float)), 
                   colDim:(String,(Float,Float)),

@@ -75,5 +75,12 @@ object Config {
   val paretoSampleColor = 0xffDD1C77
 
   val sampleDotColor = 0xffDD1C77
+
+  val respHistogramSampleDensity = 1000
+  val respHistogramPanelDims = (paretoDims._1, 200)
+  val respHistogramBars = 11
+  val respHistogramBarFill = Some(255)
+  val respHistogramBarStroke = Some(0)
+  var respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
 }
 

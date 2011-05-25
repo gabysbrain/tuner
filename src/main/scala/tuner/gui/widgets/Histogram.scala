@@ -22,12 +22,14 @@ object Histogram {
 }
 
 class Histogram(barStroke:Option[Int], barFill:Option[Int], 
-                breaks:List[Float]) {
+                val breaks:List[Float]) {
 
   def this(barStroke:Option[Int], barFill:Option[Int],
            minVal:Float, maxVal:Float, numBreaks:Int) =
     this(barStroke, barFill, 
          Histogram.computeBreaks(minVal, maxVal, numBreaks))
+
+  var counts:Map[Float,Int] = Map()
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            field:String, data:Table) = {
@@ -35,7 +37,7 @@ class Histogram(barStroke:Option[Int], barFill:Option[Int],
     applet.pushMatrix
     applet.translate(x, y+h)
 
-    val counts = countData(field, data)
+    counts = countData(field, data)
 
     val maxCount = counts.values.max
     val barWidth = w / (breaks.length + 1)
@@ -48,6 +50,7 @@ class Histogram(barStroke:Option[Int], barFill:Option[Int],
       case Some(c) => applet.stroke(c)
       case None    => applet.noStroke
     }
+    applet.rectMode(P5Panel.RectMode.Corners)
     // draw all the bars
     counts.keys.foldLeft(0f) {case (curX, count) =>
       val hgt = P5Panel.map(counts(count), 0, maxCount, 0, h)
