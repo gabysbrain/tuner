@@ -365,13 +365,15 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
           // Make sure we're inside a bounds that's active
           if((xfld < yfld && project.response1View.isDefined) ||
              (xfld > yfld && project.response2View.isDefined)) {
-            val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
-            val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
+            val (xf, yf) = if(xfld < yfld) (xfld, yfld)
+                           else            (yfld, xfld)
+            val (lowZoomX, highZoomX) = project.currentZoom.range(xf)
+            val (lowZoomY, highZoomY) = project.currentZoom.range(yf)
             val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
-                                           lowZoomY, highZoomY)
-            publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
+                                           highZoomY, lowZoomY)
+            publish(new SliceChanged(this, List((xf, newX), (yf, newY))))
           }
         }
       }

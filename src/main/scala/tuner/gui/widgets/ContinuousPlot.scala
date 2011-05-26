@@ -75,7 +75,7 @@ class ContinuousPlot(var minX:Float, var maxX:Float,
   def drawCrosshair(applet:P5Panel, w:Float, h:Float, 
                                     xSlice:Float, ySlice:Float) = {
     val xx = mapx(w, xSlice)
-    val yy = mapx(h, ySlice)
+    val yy = mapy(h, ySlice)
 
     applet.stroke(Config.crosshairColor)
     applet.line(xx-Config.crosshairRadius, yy, xx+Config.crosshairRadius, yy)
