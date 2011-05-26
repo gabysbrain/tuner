@@ -15,14 +15,22 @@ object FacetLayout {
     var plotDims = Map[(String,String),Rectangle]()
     fields.foldLeft(bounds.minX) {case (xPos, xFld) =>
       fields.foldLeft(bounds.minY) {case (yPos, yFld) =>
-        if(xFld != yFld) {
-          val bounds = if(xFld < yFld) {
+        if(xFld < yFld) {
+          /*
+          if(xFld == "minCorrelation" && yFld == "similThreshold")
+            println("y " + yPos + " " + bounds.minY + " " + constrainingSize + " " + bounds.height)
+          */
+          val blBounds = 
             Rectangle((xPos, yPos), facetSize, facetSize)
-          } else {
-            //Rectangle((yPos, xPos), facetSize, facetSize)
-            Rectangle((xPos, yPos), facetSize, facetSize)
+          val trBounds = {
+            val startX = bounds.minX+constrainingSize-xPos-Config.plotSpacing*2
+            val endY = 2*bounds.minY+constrainingSize-yPos
+            val startY = endY - facetSize
+            val endX = startX + facetSize
+            Rectangle((startX, startY), (endX, endY))
           }
-          plotDims += ((xFld, yFld) -> bounds)
+          plotDims += ((xFld, yFld) -> blBounds)
+          plotDims += ((yFld, xFld) -> trBounds)
         }
         yPos + facetSize + Config.plotSpacing
       }
