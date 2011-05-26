@@ -58,7 +58,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
                            plotWidth, plotHeight)
     xAxisBounds = Rectangle((plotBounds.minX, plotBounds.maxY),
                             plotWidth, Config.axisSize)
-    sliderBounds = Rectangle((xAxisBounds.minX, xAxisBounds.maxY),
+    sliderBounds = Rectangle((xAxisBounds.minX, xAxisBounds.minY),
                              plotWidth, Config.respHistogramHandleSize._2)
 
     applet.background(Config.backgroundColor)
@@ -72,14 +72,29 @@ class ResponseHistogramPanel(project:Project, responseField:String)
         yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                          yAxisBounds.width, yAxisBounds.height,
                          ("Count", (0, maxCount)))
-        val xTicks = minResponse +: h.breaks :+ maxResponse
+        //val xTicks = minResponse +: h.breaks :+ maxResponse
         xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                          xAxisBounds.width, xAxisBounds.height,
-                         responseField, xTicks)
+                         (responseField, (minResponse, maxResponse)))
+        drawSlider
       case _ =>
     }
     val endTime = System.currentTimeMillis
     //println("hist draw time: " + (endTime - startTime) + "ms")
+  }
+
+  def drawSlider = {
+    val models = project.gpModels.get
+    val model = models(responseField)
+    val (est, _) = model.runSample(project.currentSlice.toList)
+    val xx = P5Panel.map(est.toFloat, minResponse, maxResponse, 
+                              sliderBounds.minX, sliderBounds.maxX)
+
+    noStroke
+    fill(Config.respHistogramBarFill.get)
+    triangle(xx, sliderBounds.minY, 
+             xx + (Config.respHistogramHandleSize._1/2), sliderBounds.maxY,
+             xx - (Config.respHistogramHandleSize._1/2), sliderBounds.maxY)
   }
 }
 
