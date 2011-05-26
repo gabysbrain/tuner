@@ -258,30 +258,43 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     pushMatrix
     translate(slice.minX, slice.minY, 1)
 
-    val (xSlice, ySlice) = (project.currentSlice(xFld),
-                            project.currentSlice(yFld))
     val (xZoom, yZoom) = (project.currentZoom.range(xFld),
                           project.currentZoom.range(yFld))
+    /*
+    val (xSlice, ySlice) = (project.currentSlice(xFld),
+                            project.currentSlice(yFld))
     val (xRad, yRad) = (project.region.radius(xFld),
                         project.region.radius(yFld))
+    */
 
-    // Convert the x and y radius into pixel values
-    val xx = P5Panel.map(xSlice, xZoom._1, xZoom._2, 0, slice.width)
-    val yy = P5Panel.map(ySlice, yZoom._2, yZoom._1, 0, slice.height)
-    val xxRad = P5Panel.map(xRad, xZoom._1, xZoom._2, 0, slice.width)
-    val yyRad = P5Panel.map(yRad, yZoom._1, yZoom._2, 0, slice.height)
+    val (xMinRng, xMaxRng) = project.region.range(xFld)
+    val (yMinRng, yMaxRng) = project.region.range(yFld)
+
+    // Convert the x and y ranges into pixel values
+    val xxMin = P5Panel.constrain(
+      P5Panel.map(xMinRng, xZoom._1, xZoom._2, 0, slice.width),
+      0, slice.width)
+    val xxMax = P5Panel.constrain(
+      P5Panel.map(xMaxRng, xZoom._1, xZoom._2, 0, slice.width),
+      0, slice.width)
+    val yyMin = P5Panel.constrain(
+      P5Panel.map(yMinRng, yZoom._2, yZoom._1, 0, slice.height),
+      0, slice.height)
+    val yyMax = P5Panel.constrain(
+      P5Panel.map(yMaxRng, yZoom._2, yZoom._1, 0, slice.height),
+      0, slice.height)
 
     fill(Config.regionColor)
     stroke(ColorLib.darker(Config.regionColor))
 
     project.region match {
       case _:BoxRegion =>
-        rectMode(P5Panel.RectMode.Radius)
-        rect(xx, yy, xxRad, yyRad)
+        rectMode(P5Panel.RectMode.Corners)
+        rect(xxMin, yyMin, xxMax, yyMax)
         //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
       case _:EllipseRegion =>
-        ellipseMode(P5Panel.EllipseMode.Radius)
-        ellipse(xx, yy, xxRad, yyRad)
+        ellipseMode(P5Panel.EllipseMode.Corners)
+        ellipse(xxMin, yyMin, xxMax, yyMax)
     }
 
     popMatrix

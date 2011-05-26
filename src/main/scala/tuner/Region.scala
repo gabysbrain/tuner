@@ -43,6 +43,14 @@ sealed abstract class Region(project:Project) {
 
   def center = project.currentSlice
 
+  def range(fld:String) : (Float,Float) = {
+    val c = center(fld)
+    val rad = radius(fld)
+    // Might need to constrain against the dim bounds
+    val (lowRng, highRng) = project.inputs.range(fld)
+    (math.max(lowRng, c-rad), math.min(highRng, c+rad))
+  }
+
   def toJson = {
     val shapeName = this match {
       case x:BoxRegion => "Box"
@@ -72,15 +80,18 @@ sealed abstract class Region(project:Project) {
   def gradient(response:String, fld:String) = {
     val models = project.gpModels.get
     val model = models(response)
-    val minVal = center(fld) - radius(fld)
-    val maxVal = center(fld) + radius(fld)
+    val (minVal,maxVal) = range(fld)
     val rest = center.toList.filter(_._1 != fld)
     val (minPt, maxPt) = ((fld, minVal) :: rest, (fld, maxVal) :: rest)
     val (minEst, maxEst) = (model.runSample(minPt)._1, 
                             model.runSample(maxPt)._1)
     val centerEst = model.runSample(center.toList)._1
-    math.max((centerEst - minEst)/radius(fld), 
-             (centerEst - maxEst)/radius(fld))
+    val minGrad = (centerEst - minEst) / radius(fld)
+    val maxGrad = (centerEst - maxEst) / radius(fld)
+    if(math.abs(minGrad) > math.abs(maxGrad))
+      minGrad
+    else
+      maxGrad
   }
 }
 
@@ -88,7 +99,7 @@ class BoxRegion(project:Project) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
     val center = project.currentSlice
     pt.foldLeft(true) {case (bool,(fld,value)) =>
-      val (minVal, maxVal) = (center(fld)-radius(fld), center(fld)+radius(fld))
+      val (minVal, maxVal) = range(fld)
       bool && value >= minVal && value <= maxVal
     }
   }
@@ -100,7 +111,7 @@ class EllipseRegion(project:Project) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
     val center = project.currentSlice
     pt.foldLeft(true) {case (bool,(fld,value)) =>
-      val (minVal, maxVal) = (center(fld)-radius(fld), center(fld)+radius(fld))
+      val (minVal, maxVal) = range(fld)
       bool && value >= minVal && value <= maxVal
     }
   }
