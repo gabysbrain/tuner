@@ -172,7 +172,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         } else if(xFld > yFld) {
           project.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
-            drawResponse(xFld, yFld, yRange, xRange, r2)
+            drawResponse(xFld, yFld, xRange, yRange, r2)
             if(project.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
@@ -193,19 +193,21 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     project.gpModels foreach {gpm =>
       val model = gpm(response)
       val bounds = sliceBounds((xFld, yFld))
-      val (slice, cm) = if(xFld < yFld) {
-        (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps))
+      val (slice, cm, xf, yf, xr, yr) = if(xFld < yFld) {
+        (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps),
+         xFld, yFld, xRange, yRange)
       } else {
-        (resp2Plots((yFld, xFld)), colormap(response, resp2Colormaps))
+        (resp2Plots((yFld, xFld)), colormap(response, resp2Colormaps),
+         yFld, xFld, yRange, xRange)
       }
 
-      val data = plotData(model, xRange, yRange, project.currentSlice)
-      val (xSlice, ySlice) = (project.currentSlice(xFld), 
-                              project.currentSlice(yFld))
+      val data = plotData(model, xr, yr, project.currentSlice)
+      val (xSlice, ySlice) = (project.currentSlice(xf), 
+                              project.currentSlice(yf))
 
       // Draw the main plot
       slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
-                 data, xSlice, ySlice, xRange._2, yRange._2, cm)
+                 data, xSlice, ySlice, xr._2, yr._2, cm)
     }
   }
 
