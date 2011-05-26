@@ -258,8 +258,10 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     pushMatrix
     translate(slice.minX, slice.minY, 1)
 
-    val (xZoom, yZoom) = (project.currentZoom.range(xFld),
-                          project.currentZoom.range(yFld))
+    val (xf, yf) = if(xFld < yFld) (xFld, yFld)
+                   else            (yFld, xFld)
+    val (xZoom, yZoom) = (project.currentZoom.range(xf),
+                          project.currentZoom.range(yf))
     /*
     val (xSlice, ySlice) = (project.currentSlice(xFld),
                             project.currentSlice(yFld))
@@ -267,8 +269,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                         project.region.radius(yFld))
     */
 
-    val (xMinRng, xMaxRng) = project.region.range(xFld)
-    val (yMinRng, yMaxRng) = project.region.range(yFld)
+    val (xMinRng, xMaxRng) = project.region.range(xf)
+    val (yMinRng, yMaxRng) = project.region.range(yf)
 
     // Convert the x and y ranges into pixel values
     val xxMin = P5Panel.constrain(
@@ -372,17 +374,23 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       sliceBounds.foreach {case ((xfld,yfld), sb) =>
         if(sb.isInside(mouseX, mouseY)) {
           // Make sure we're inside a bounds that's active
-          if((xfld < yfld && project.response1View.isDefined) ||
-             (xfld > yfld && project.response2View.isDefined)) {
-            val (xf, yf) = if(xfld < yfld) (xfld, yfld)
-                           else            (yfld, xfld)
-            val (lowZoomX, highZoomX) = project.currentZoom.range(xf)
-            val (lowZoomY, highZoomY) = project.currentZoom.range(yf)
+          if(xfld < yfld && project.response1View.isDefined) {
+            val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
+            val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
             val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
                                            highZoomY, lowZoomY)
-            publish(new SliceChanged(this, List((xf, newX), (yf, newY))))
+            publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
+          } else if(xfld > yfld && project.response2View.isDefined) {
+            // x and y fields are reversed here!!!
+            val (lowZoomX, highZoomX) = project.currentZoom.range(yfld)
+            val (lowZoomY, highZoomY) = project.currentZoom.range(xfld)
+            val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
+                                           lowZoomX, highZoomX)
+            val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
+                                           highZoomY, lowZoomY)
+            publish(new SliceChanged(this, List((yfld, newX), (xfld, newY))))
           }
         }
       }
