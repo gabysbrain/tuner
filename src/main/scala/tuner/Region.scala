@@ -98,9 +98,9 @@ sealed abstract class Region(project:Project) {
 class BoxRegion(project:Project) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
     val center = project.currentSlice
-    pt.foldLeft(true) {case (bool,(fld,value)) =>
+    pt.forall {case (fld,value) =>
       val (minVal, maxVal) = range(fld)
-      bool && value >= minVal && value <= maxVal
+      value >= minVal && value <= maxVal
     }
   }
 
@@ -109,11 +109,13 @@ class BoxRegion(project:Project) extends Region(project) {
 class EllipseRegion(project:Project) extends Region(project) {
   // TODO: fix this.  It's wrong!!!
   def inside(pt:List[(String,Float)]) : Boolean = {
-    val center = project.currentSlice
-    pt.foldLeft(true) {case (bool,(fld,value)) =>
-      val (minVal, maxVal) = range(fld)
-      bool && value >= minVal && value <= maxVal
+
+    val ttl = pt.foldLeft(0.0) {case (sum,(fld,value)) =>
+      val c = center(fld)
+      val r = radius(fld)
+      sum + math.pow(value-c, 2.0) / math.pow(r, 2.0)
     }
+    ttl <= 1.0
   }
 
 }
