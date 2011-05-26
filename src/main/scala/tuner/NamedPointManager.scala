@@ -21,6 +21,8 @@ class NamedPointManager(defaultPrefix:String) {
     _points += (newName -> pt)
   }
 
+  def clear = _points = Map()
+
   def point(name:String) = _points(name)
 
   def names : List[String] = _points.keys.toList.sorted

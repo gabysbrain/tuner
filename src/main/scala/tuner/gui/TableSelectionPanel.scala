@@ -64,11 +64,14 @@ class TableSelectionPanel(project:Project, points:NamedPointManager)
   reactions += {
     case TableRowsSelected(`dataTable`, _, _) =>
       val row = dataTable.selection.rows.leadIndex
-      if(row != lastRow) {
+      // -1 means no rows selected
+      if(row != -1 && row != lastRow) {
         lastRow = row
         val itemName = points.names(row)
         val point = points.point(itemName)
         publish(new SliceChanged(this, point))
+      } else if(row == -1) {
+        lastRow = row
       }
   }
 

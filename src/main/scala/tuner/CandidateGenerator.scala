@@ -2,12 +2,12 @@ package tuner
 
 class CandidateGenerator(project:Project) {
   
-  var candidates:HistoryManager = new HistoryManager
+  val candidates:NamedPointManager = new NamedPointManager("Candidate")
   var currentFilter:List[(String,Float)] = Nil
 
   def update(newValues:List[(String,Float)]) = {
     currentFilter = newValues
-    candidates = new HistoryManager
+    candidates.clear
 
     var data = project.designSites.get
     for(r <- 0 until data.numRows) {
