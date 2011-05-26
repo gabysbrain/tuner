@@ -262,12 +262,6 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                    else            (yFld, xFld)
     val (xZoom, yZoom) = (project.currentZoom.range(xf),
                           project.currentZoom.range(yf))
-    /*
-    val (xSlice, ySlice) = (project.currentSlice(xFld),
-                            project.currentSlice(yFld))
-    val (xRad, yRad) = (project.region.radius(xFld),
-                        project.region.radius(yFld))
-    */
 
     val (xMinRng, xMaxRng) = project.region.range(xf)
     val (yMinRng, yMaxRng) = project.region.range(yf)
