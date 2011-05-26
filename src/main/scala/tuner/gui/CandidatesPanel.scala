@@ -4,10 +4,12 @@ import scala.swing.BoxPanel
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Table
+import scala.swing.event.TableRowsSelected
 
 import javax.swing.table.AbstractTableModel
 
 import tuner.Project
+import tuner.gui.event.SliceChanged
 
 class CandidatesPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
@@ -50,8 +52,27 @@ class CandidatesPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     contents = candTable
   }
 
-  //override def maximumSize = preferredSize
+  listenTo(candTable.selection)
 
-  def updateTable = tableModel.fireTableStructureChanged
+  // Need to keep track of the last row clicked 
+  // because we get an event from a row being 
+  // deselected and then selected
+  var lastRow = -1
+
+  reactions += {
+    case TableRowsSelected(`candTable`, _, _) =>
+      val row = candTable.selection.rows.leadIndex
+      if(row != lastRow) {
+        lastRow = row
+        val itemName = project.candidates.names(row)
+        val point = project.candidates.point(itemName)
+        publish(new SliceChanged(this, point))
+      }
+  }
+  
+  def updateTable = {
+    tableModel.fireTableStructureChanged
+    candTable.selection.rows += 0
+  }
 }
 

@@ -91,6 +91,8 @@ class ProjectViewer(project:Project) extends MainFrame {
   listenTo(gainResponseButton)
   listenTo(regionGlyphButton)
   listenTo(paretoPanel)
+  listenTo(controlPanel.historyTab)
+  listenTo(controlPanel.candidatesTab)
 
   reactions += {
     case CandidateChanged(_, newCand) =>
@@ -98,7 +100,9 @@ class ProjectViewer(project:Project) extends MainFrame {
       controlPanel.candidatesTab.updateTable
     case SliceChanged(_, sliceInfo) => 
       sliceInfo.foreach {case (fld, v) =>
-        controlPanel.controlsTab.sliceSliders(fld).value = v
+        controlPanel.controlsTab.sliceSliders.get(fld).foreach {slider =>
+          slider.value = v
+        }
       }
     case HistoryAdd(_, sliceInfo) =>
       project.history.add(sliceInfo)

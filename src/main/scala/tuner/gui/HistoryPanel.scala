@@ -4,10 +4,12 @@ import scala.swing.BoxPanel
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Table
+import scala.swing.event.TableRowsSelected
 
 import javax.swing.table.AbstractTableModel
 
 import tuner.Project
+import tuner.gui.event.SliceChanged
 
 class HistoryPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
@@ -49,6 +51,26 @@ class HistoryPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   contents += new ScrollPane {
     contents = histTable
   }
+
+  listenTo(histTable.selection)
+
+  // Need to keep track of the last row clicked 
+  // because we get an event from a row being 
+  // deselected and then selected
+  var lastRow = -1
+
+  reactions += {
+    case TableRowsSelected(`histTable`, _, _) =>
+      val row = histTable.selection.rows.leadIndex
+      if(row != lastRow) {
+        lastRow = row
+        val itemName = project.history.names(row)
+        val point = project.history.point(itemName)
+        publish(new SliceChanged(this, point))
+      }
+  }
+
+  
 
   //override def maximumSize = preferredSize
 
