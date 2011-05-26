@@ -92,6 +92,9 @@ object P5Panel {
   def constrain(value:Float, low:Float, high:Float) = 
     PApplet.constrain(value, low, high)
 
+  def dist(x1:Float, y1:Float, x2:Float, y2:Float) =
+    PApplet.dist(x1, y1, x2, y2)
+
   def norm(value:Float, low:Float, high:Float) = 
     PApplet.norm(value, low, high)
   

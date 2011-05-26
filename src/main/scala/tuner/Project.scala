@@ -164,6 +164,8 @@ class Project(var path:Option[String]) {
     case None => new HistoryManager
   }
 
+  val candidateGenerator = new CandidateGenerator(this)
+
   // Save any gp models that got updated
   save(savePath)
 
@@ -218,6 +220,14 @@ class Project(var path:Option[String]) {
     samples.clear
     addSamples(n)
   }
+
+  def updateCandidates(newValues:List[(String,Float)]) = {
+    candidateGenerator.update(newValues)
+  }
+
+  def candidates = candidateGenerator.candidates
+
+  def candidateFilter = candidateGenerator.currentFilter
 
   def closestSample(point:List[(String,Float)]) : List[(String,Float)] = {
     def ptDist(tpl:Table.Tuple) : Double = {

@@ -16,7 +16,12 @@ object FacetLayout {
     fields.foldLeft(bounds.minX) {case (xPos, xFld) =>
       fields.foldLeft(bounds.minY) {case (yPos, yFld) =>
         if(xFld != yFld) {
-          val bounds = Rectangle((xPos, yPos), facetSize, facetSize)
+          val bounds = if(xFld < yFld) {
+            Rectangle((xPos, yPos), facetSize, facetSize)
+          } else {
+            //Rectangle((yPos, xPos), facetSize, facetSize)
+            Rectangle((xPos, yPos), facetSize, facetSize)
+          }
           plotDims += ((xFld, yFld) -> bounds)
         }
         yPos + facetSize + Config.plotSpacing

@@ -28,7 +28,7 @@ class ControlPanel(project:Project) extends TabbedPane {
     preferredSize = dims
     maximumSize = dims
   }
-  val candidatesTab = new CandidatesPanel {
+  val candidatesTab = new CandidatesPanel(project) {
     preferredSize = dims
     maximumSize = dims
   }

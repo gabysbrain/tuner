@@ -16,6 +16,7 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
 import tuner.Project
+import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 
@@ -38,14 +39,13 @@ class ProjectViewer(project:Project) extends MainFrame {
 
   val controlPanel = new ControlPanel(project)
 
+  val paretoPanel = new ParetoPanel(project) {
+    border = Swing.TitledBorder(border, "Pareto")
+    maximumSize = preferredSize
+  }
+
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-    val paretoPanel = new ParetoPanel(project) {
-
-      border = Swing.TitledBorder(border, "Pareto")
-
-      maximumSize = preferredSize
-    }
   
     val responseControlPanel = new BoxPanel(Orientation.Horizontal) {
       contents += mainResponseButton
@@ -90,8 +90,12 @@ class ProjectViewer(project:Project) extends MainFrame {
   listenTo(errResponseButton)
   listenTo(gainResponseButton)
   listenTo(regionGlyphButton)
+  listenTo(paretoPanel)
 
   reactions += {
+    case CandidateChanged(_, newCand) =>
+      project.updateCandidates(newCand)
+      controlPanel.candidatesTab.updateTable
     case SliceChanged(_, sliceInfo) => 
       sliceInfo.foreach {case (fld, v) =>
         controlPanel.controlsTab.sliceSliders(fld).value = v

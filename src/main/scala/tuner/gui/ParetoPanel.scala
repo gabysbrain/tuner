@@ -3,6 +3,7 @@ package tuner.gui
 import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
+import tuner.gui.event.CandidateChanged
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
 
@@ -72,7 +73,32 @@ class ParetoPanel(project:Project)
   override def mouseClicked(mouseX:Int, mouseY:Int, 
                             button:P5Panel.MouseButton.Value) = {
     
+    (project.response1View, project.response2View) match {
+      case (Some(r1), Some(r2)) =>
+        mouseClick2d(mouseX, mouseY, button, r1, r2)
+      case _ =>
+    }
   }
 
+  def mouseClick2d(mouseX:Int, mouseY:Int, button:P5Panel.MouseButton.Value,
+                   response1:String, response2:String) = {
+
+    val data = project.designSites.get
+    val (minX, maxX) = (data.min(response1), data.max(response1))
+    val (minY, maxY) = (data.min(response2), data.max(response2))
+
+    // See if we hit upon any sample points
+    for(r <- 0 until data.numRows) {
+      val tpl = data.tuple(r)
+      val (dataX, dataY) = (tpl(response1), tpl(response2))
+      val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
+      val yy = P5Panel.map(dataY, minY, maxY, plotBox.maxY, plotBox.minY)
+      val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
+      if(dist < Config.scatterplotDotSize) {
+        publish(new CandidateChanged(this, 
+          List((response1, dataX), (response2, dataY))))
+      }
+    }
+  }
 }
 
