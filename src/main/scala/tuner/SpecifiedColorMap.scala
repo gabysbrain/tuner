@@ -20,11 +20,7 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float) {
 
   def colors = cm.colors
   def breaks = {
-    if(minVal < filterVal) {
-      List(minVal, filterVal, maxVal)
-    } else {
-      List(minVal, maxVal)
-    }
+    List(filterVal, maxVal)
   }
 
   def color(v:Float) : Int = {
