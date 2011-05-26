@@ -205,7 +205,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
       // Draw the main plot
       slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
-                 data, xSlice, ySlice, cm)
+                 data, xSlice, ySlice, xRange._2, yRange._2, cm)
     }
   }
 
@@ -291,11 +291,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     project.inputFields.flatMap({fld1 =>
       project.inputFields.flatMap({fld2 =>
         if(fld1 < fld2) {
-          Some(((fld1, fld2), 
-            new ContinuousPlot(project.currentZoom.min(fld1), 
-                               project.currentZoom.max(fld1),
-                               project.currentZoom.min(fld2), 
-                               project.currentZoom.max(fld2))))
+          Some((fld1, fld2), new ContinuousPlot)
         } else {
           None
         }
