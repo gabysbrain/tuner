@@ -23,7 +23,7 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
   val clusterButton = new Button("Save for Cluster")
   val runButton = new Button("Run")
 
-  val samplerPanel = new SamplerPanel
+  val samplerPanel = new SamplerPanel(project)
 
   contents = new BorderPanel {
     val titlePanel = new BoxPanel(Orientation.Horizontal) {

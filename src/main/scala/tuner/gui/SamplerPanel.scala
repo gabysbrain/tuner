@@ -11,8 +11,9 @@ import scala.swing.TextField
 import scala.swing.event.ValueChanged
 
 import tuner.Config
+import tuner.Project
 
-class SamplerPanel extends BoxPanel(Orientation.Vertical) {
+class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
   val sampleNumField = new TextField
   val sampleTimeField = new TextField
@@ -38,7 +39,7 @@ class SamplerPanel extends BoxPanel(Orientation.Vertical) {
     border = Swing.TitledBorder(border, "Sampling")
   }
 
-  val splomPanel = new BorderPanel
+  val splomPanel = new SamplerSplomPanel(project)
 
   contents += controlPane
   contents += splomPanel

@@ -11,6 +11,6 @@ class SamplerDialog(project:Project, owner:Window) extends Dialog(owner) {
   modal = true
 
   //val okButton = new Button("
-  val mainPanel = new SamplerPanel
+  val mainPanel = new SamplerPanel(project)
 }
 
