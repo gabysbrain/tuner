@@ -13,6 +13,11 @@ class Scatterplot(dotColor:Int) {
     val (minX, maxX) = (data.min(xFld), data.max(xFld))
     val (minY, maxY) = (data.min(yFld), data.max(yFld))
 
+    // Draw a white background
+    // TODO: make this work for any color
+    applet.fill(255)
+    applet.rect(x, y, w, h)
+
     applet.ellipseMode(P5Panel.EllipseMode.Center)
     applet.fill(dotColor)
     applet.stroke(ColorLib.darker(dotColor))

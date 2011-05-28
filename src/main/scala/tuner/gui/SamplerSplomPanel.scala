@@ -3,6 +3,7 @@ package tuner.gui
 import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
+import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Scatterplot
 
 class SamplerSplomPanel(project:Project)
@@ -28,7 +29,18 @@ class SamplerSplomPanel(project:Project)
     val totalSize = math.min(width, height) - Config.plotSpacing * 2
     splomBounds = Rectangle((Config.plotSpacing, Config.plotSpacing), 
                             totalSize, totalSize)
-    //splomSize = splomBounds /
+    val (_, plotBounds) = 
+      FacetLayout.plotBounds(splomBounds, project.inputFields)
+    project.inputFields.foreach {xFld =>
+      project.inputFields.foreach {yFld =>
+        if(xFld < yFld) {
+          val bound = plotBounds((xFld, yFld))
+          val plot = sploms((xFld, yFld))
+          plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
+                    project.samples, xFld, yFld)
+        }
+      }
+    }
   }
 
 }

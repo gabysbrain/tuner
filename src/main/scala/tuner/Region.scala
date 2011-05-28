@@ -77,7 +77,7 @@ sealed abstract class Region(project:Project) {
     count
   }
 
-  def gradient(response:String, fld:String) = {
+  def gradient(response:String, fld:String) : Float = {
     val models = project.gpModels.get
     val model = models(response)
     val (minVal,maxVal) = range(fld)
@@ -89,9 +89,18 @@ sealed abstract class Region(project:Project) {
     val minGrad = (centerEst - minEst) / radius(fld)
     val maxGrad = (centerEst - maxEst) / radius(fld)
     if(math.abs(minGrad) > math.abs(maxGrad))
-      minGrad
+      minGrad.toFloat
     else
-      maxGrad
+      maxGrad.toFloat
+  }
+
+  def gradient(response:String) : List[(String,Float)] = {
+    val gradients = project.inputFields.map {fld => 
+      (fld, gradient(response, fld))
+    }
+    val ttlLen = math.sqrt(
+      gradients.foldLeft(0f) {case (ttl, (fld, g)) => ttl+g*g}).toFloat
+    gradients.map {case (fld, g) => (fld, g/ttlLen)}
   }
 }
 

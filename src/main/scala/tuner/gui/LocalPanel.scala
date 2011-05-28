@@ -7,6 +7,8 @@ import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.event.ButtonClicked
+import scala.swing.event.DialogClosing
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
@@ -40,6 +42,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val sampleButton = new Button("Add Samples")
 
   listenTo(shapeSelector.selection)
+  listenTo(sampleButton)
 
   reactions += {
     case SelectionChanged(`shapeSelector`) =>
@@ -50,6 +53,8 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
         project.region.setRadius(fld, oldRegion.radius(fld))
       }
       statsTable.updateStats
+    case ButtonClicked(`sampleButton`) =>
+      openSamplerDialog
   }
 
   contents += Swing.VGlue
@@ -78,6 +83,18 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   contents += Swing.VGlue
   contents += new ScrollPane {
     contents = statsTable
+  }
+
+  private def openSamplerDialog = {
+    /*
+    val samplerDialog = new SamplerDialog(project, this.parent)
+    listenTo(samplerDialog)
+    reactions += {
+      case DialogClosing(`samplerDialog`, result) =>
+        println(result)
+    }
+    samplerDialog.open
+    */
   }
 }
 
