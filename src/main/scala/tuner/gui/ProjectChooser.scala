@@ -10,6 +10,7 @@ import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.Table
 import scala.swing.event.ButtonClicked
+import scala.swing.event.TableRowsSelected
 
 import javax.swing.table.AbstractTableModel
 
@@ -78,10 +79,15 @@ object ProjectChooser extends MainFrame {
   listenTo(newProjectButton)
   listenTo(openOtherButton)
   listenTo(openButton)
+  listenTo(projectTable.selection)
 
   reactions += {
     case ButtonClicked(`newProjectButton`) => Tuner.startNewProject
     case ButtonClicked(`openOtherButton`) => openOtherProject
+    case ButtonClicked(`openButton`) => openSelectedProject
+    case TableRowsSelected(`projectTable`, _, _) =>
+      val row = projectTable.selection.rows.leadIndex
+      openButton.enabled = row != -1
   }
 
   def openOtherProject = {
@@ -93,6 +99,12 @@ object ProjectChooser extends MainFrame {
       case FileChooser.Result.Approve => Tuner.openProject(fc.selectedFile)
       case _ =>
     }
+  }
+
+  def openSelectedProject = {
+    val row = projectTable.selection.rows.leadIndex
+    val proj = Project.recent(row)
+    Tuner.openProject(proj)
   }
 
 }
