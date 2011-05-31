@@ -8,10 +8,12 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.TextField
+import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
 import tuner.Project
+import tuner.Sampler
 
 class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
@@ -47,10 +49,13 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   // Set up the events
   listenTo(sampleNumField)
   //listenTo(shapeSelector)
-  //listenTo(methodSelector)
+  listenTo(methodSelector.selection)
 
   reactions += {
-    case ValueChanged(`sampleNumField`) => publish(new ValueChanged(this))
+    case ValueChanged(`sampleNumField`) => 
+      publish(new ValueChanged(this))
+    case SelectionChanged(`methodSelector`) => 
+      publish(new ValueChanged(this))
   }
 
   def numSamples : Int = {
@@ -63,6 +68,12 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
 
   //def shape : String = shapeSelector.toString
 
-  //def method : String = methodSelector.toString
+  def method : Sampler.Method = {
+  println(methodSelector.selection.item)
+  methodSelector.selection.item match {
+    case "LHS" => Sampler.lhc
+    case "Cartesian" => Sampler.regularGrid
+  }
+  }
 }
 

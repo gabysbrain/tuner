@@ -207,18 +207,20 @@ class Project(var path:Option[String]) {
     designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
-  def addSamples(n:Int) = {
+  def addSamples(n:Int, method:Sampler.Method) = {
     // TODO: find a better solution than just ignoring the missing inputs
-    Sampler.regularGrid(inputs, n, {v => samples.addRow(v)})
-    println(n + " samples generated")
+    if(n > 0) {
+      method(inputs, n, {v => samples.addRow(v)})
+      println(n + " samples generated")
+    }
   }
 
   /**
    * Clears out the sample table then adds the samples
    */
-  def newSamples(n:Int) = {
+  def newSamples(n:Int, method:Sampler.Method) = {
     samples.clear
-    addSamples(n)
+    addSamples(n, method)
   }
 
   def updateCandidates(newValues:List[(String,Float)]) = {

@@ -53,11 +53,7 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
       close
       Tuner.openProject(project)
     case ValueChanged(`samplerPanel`) =>
-      val numSamples = samplerPanel.numSamples
-      //val shape = samplerPanel.shape
-      //val method = samplerPanel.method
-      //println(shape + " " + method)
-      project.newSamples(numSamples)
+      project.newSamples(samplerPanel.numSamples, samplerPanel.method)
       samplerPanel.splomPanel.redraw
   }
 }

@@ -6,6 +6,8 @@ import scala.util.Random
 object Sampler {
   val rng = new Random
 
+  type Method = (DimRanges, Int, (List[(String,Float)] => Unit)) => Unit
+
   def regularSlice(rowDim:(String,(Float,Float)), 
                    colDim:(String,(Float,Float)),
                    n:Int) : Matrix2D = {
