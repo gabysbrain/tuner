@@ -9,7 +9,7 @@ import tuner.gui.widgets.Scatterplot
 class SamplerSplomPanel(project:Project)
   extends P5Panel(Config.samplerSplomDims._1, 
                   Config.samplerSplomDims._2, 
-                  P5Panel.OpenGL) {
+                  P5Panel.Java2D) {
   
   var splomBounds = Rectangle((0f,0f), (0f,0f))
   val sploms = project.inputFields.flatMap({fld1 =>
@@ -22,6 +22,8 @@ class SamplerSplomPanel(project:Project)
     })
   }).toMap
   
+  println(project.inputFields)
+
   def draw = {
     applet.background(Config.backgroundColor)
 
@@ -36,6 +38,7 @@ class SamplerSplomPanel(project:Project)
         if(xFld < yFld) {
           val bound = plotBounds((xFld, yFld))
           val plot = sploms((xFld, yFld))
+          println(xFld + " " + yFld)
           plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
                     project.samples, xFld, yFld)
         }

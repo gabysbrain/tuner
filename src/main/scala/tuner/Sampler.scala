@@ -33,7 +33,10 @@ object Sampler {
       if(mn == mx) {
         (dimname, List(mn))
       } else {
-        val step = (mx - mn) / (n-1)
+        val step = if(n == 1)
+          (mx - mn)
+        else 
+          (mx - mn) / (n-1)
         (dimname, genLinSeq(mn, mx, step))
       }
     }
@@ -68,14 +71,17 @@ object Sampler {
 
   def lhc(dims:DimRanges, n:Int) : Table = {
     val tbl = new Table
-    lhc(dims, n, {r => tbl.addRow(r)})
+    if(n > 0)
+      lhc(dims, n, {r => tbl.addRow(r)})
     tbl
   }
 
   // There's some weird issues with scala's sequence generator
   // TODO: figure out what it is.  You may be pleasantly surprised!
   def genLinSeq(min:Float, max:Float, step:Float) : List[Float] = {
-    if(min > max) {
+    if(min > max || step <= 0) {
+      Nil
+    } else if(min == 0 && max == 0) {
       Nil
     } else {
       min :: genLinSeq(min+step, max, step)

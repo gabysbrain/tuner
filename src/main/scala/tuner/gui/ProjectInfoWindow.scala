@@ -142,7 +142,6 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
     }
     val validValues = controlValues.flatten
     if(validValues.length > 0) {
-      println(validValues)
       project.inputs = new DimRanges(validValues.toMap)
     }
   }

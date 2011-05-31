@@ -53,7 +53,13 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     case ValueChanged(`sampleNumField`) => publish(new ValueChanged(this))
   }
 
-  def numSamples : Int = sampleNumField.text.toInt
+  def numSamples : Int = {
+    try {
+      sampleNumField.text.toInt
+    } catch {
+      case nfe:NumberFormatException => 0
+    }
+  }
 
   //def shape : String = shapeSelector.toString
 

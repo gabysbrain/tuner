@@ -167,7 +167,7 @@ class Project(var path:Option[String]) {
   val candidateGenerator = new CandidateGenerator(this)
 
   // Save any gp models that got updated
-  save(savePath)
+  path.foreach(_ => save(savePath))
 
   def inputFields : List[String] = inputs.dimNames.sorted
   def responseFields : List[String] = responses.map(_._1).sorted
