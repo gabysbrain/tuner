@@ -105,6 +105,7 @@ class ProjectInfoWindow(project:Project) extends MainFrame {
 
   reactions += {
     case ButtonClicked(`nextButton`) =>
+      updateInputDims
       val samplerWindow = 
         new InitialSamplerWindow(project, locationChooser.path)
       close

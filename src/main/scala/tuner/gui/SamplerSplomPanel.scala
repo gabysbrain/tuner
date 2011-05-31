@@ -27,20 +27,22 @@ class SamplerSplomPanel(project:Project)
   def draw = {
     applet.background(Config.backgroundColor)
 
-    // Compute all the sizes of things
-    val totalSize = math.min(width, height) - Config.plotSpacing * 2
-    splomBounds = Rectangle((Config.plotSpacing, Config.plotSpacing), 
-                            totalSize, totalSize)
-    val (_, plotBounds) = 
-      FacetLayout.plotBounds(splomBounds, project.inputFields)
-    project.inputFields.foreach {xFld =>
-      project.inputFields.foreach {yFld =>
-        if(xFld < yFld) {
-          val bound = plotBounds((xFld, yFld))
-          val plot = sploms((xFld, yFld))
-          println(xFld + " " + yFld)
-          plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
-                    project.samples, xFld, yFld)
+    // Make sure we have something to draw
+    if(project.samples.numRows > 0) {
+      // Compute all the sizes of things
+      val totalSize = math.min(width, height) - Config.plotSpacing * 2
+      splomBounds = Rectangle((Config.plotSpacing, Config.plotSpacing), 
+                              totalSize, totalSize)
+      val (_, plotBounds) = 
+        FacetLayout.plotBounds(splomBounds, project.inputFields)
+      project.inputFields.foreach {xFld =>
+        project.inputFields.foreach {yFld =>
+          if(xFld < yFld) {
+            val bound = plotBounds((xFld, yFld))
+            val plot = sploms((xFld, yFld))
+            plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
+                      project.samples, xFld, yFld)
+          }
         }
       }
     }
