@@ -35,6 +35,7 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
       fc.showOpenDialog(filenameField) match {
         case FileChooser.Result.Approve => 
           filenameField.text = fc.selectedFile.getAbsolutePath
+        case _ => 
       }
     case ValueChanged(`filenameField`) =>
       publish(new ValueChanged(this))

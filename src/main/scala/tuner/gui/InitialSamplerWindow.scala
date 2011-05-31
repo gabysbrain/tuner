@@ -58,6 +58,7 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
       //val method = samplerPanel.method
       //println(shape + " " + method)
       project.newSamples(numSamples)
+      samplerPanel.splomPanel.redraw
   }
 }
 

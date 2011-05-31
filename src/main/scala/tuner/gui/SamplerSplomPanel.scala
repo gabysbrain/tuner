@@ -21,10 +21,16 @@ class SamplerSplomPanel(project:Project)
       }
     })
   }).toMap
+
+  override def setup = {
+    noLoop
+  }
   
-  println(project.inputFields)
+  def redraw = loop
 
   def draw = {
+    noLoop
+
     applet.background(Config.backgroundColor)
 
     // Make sure we have something to draw

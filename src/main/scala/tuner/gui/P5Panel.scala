@@ -186,6 +186,9 @@ abstract class P5Panel (
   def setup = {}
   def draw
 
+  def loop = applet.loop
+  def noLoop = applet.noLoop
+
   def createGraphics(xSize:Int, ySize:Int, renderer:P5Panel.Renderer) =
     applet.createGraphics(xSize, ySize, renderer.name)
 
