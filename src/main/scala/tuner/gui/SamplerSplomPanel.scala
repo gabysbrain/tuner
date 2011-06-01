@@ -4,6 +4,7 @@ import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
 import tuner.gui.util.FacetLayout
+import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
 
 class SamplerSplomPanel(project:Project)
@@ -21,6 +22,11 @@ class SamplerSplomPanel(project:Project)
       }
     })
   }).toMap
+  val (xAxes:Map[String,Axis], yAxes:Map[String,Axis]) = 
+    project.inputFields.foldLeft((Map[String,Axis](),Map[String,Axis]())) {case ((xa,ya),fld) =>
+      (xa + (fld -> new Axis(Axis.HorizontalBottom)),
+       ya + (fld -> new Axis(Axis.VerticalLeft)))
+    }
 
   override def setup = {
     noLoop
@@ -36,8 +42,11 @@ class SamplerSplomPanel(project:Project)
     // Make sure we have something to draw
     if(project.samples.numRows > 0) {
       // Compute all the sizes of things
-      val totalSize = math.min(width, height) - Config.plotSpacing * 2
-      splomBounds = Rectangle((Config.plotSpacing, Config.plotSpacing), 
+      val totalSize = math.min(width, height) - 
+                      Config.plotSpacing * 2 - 
+                      Config.axisSize
+      splomBounds = Rectangle((Config.plotSpacing+Config.axisSize, 
+                               Config.plotSpacing), 
                               totalSize, totalSize)
       val (_, plotBounds) = 
         FacetLayout.plotBounds(splomBounds, project.inputFields)
@@ -48,10 +57,25 @@ class SamplerSplomPanel(project:Project)
             val plot = sploms((xFld, yFld))
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
                       project.samples, xFld, yFld)
+            if(xFld != project.inputFields.last) {
+              xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
+                                     bound.width, Config.axisSize,
+                                     xFld, ticks(xFld))
+            }
+            if(yFld != project.inputFields.head) {
+              yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
+                                     Config.axisSize, bound.height, 
+                                     yFld, ticks(yFld))
+            }
           }
         }
       }
     }
+  }
+
+  private def ticks(fld:String) : List[Float] = {
+    val (min, max) = project.inputs.range(fld)
+    List(min, (min+max)/2, max)
   }
 
 }
