@@ -86,7 +86,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
   def drawSlider = {
     val models = project.gpModels.get
     val model = models(responseField)
-    val (est, _) = model.runSample(project.currentSlice.toList)
+    val (est, _) = model.runSample(project.viewInfo.currentSlice.toList)
     val xx = P5Panel.map(est.toFloat, minResponse, maxResponse, 
                               sliderBounds.minX, sliderBounds.maxX)
 

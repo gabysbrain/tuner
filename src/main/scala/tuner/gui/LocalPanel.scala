@@ -23,7 +23,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val statsTable = new RegionStatsTable(project)
 
   val radiusSliders = project.inputFields.map {fld =>
-    val (minVal, maxVal) = project.currentZoom.range(fld)
+    val (minVal, maxVal) = project.viewInfo.currentZoom.range(fld)
     val maxRadius = (minVal + maxVal) / 2
     val slider = new SpinSlider(0f, maxRadius, Config.sliderResolution)
     slider.value = project.region.radius(fld)

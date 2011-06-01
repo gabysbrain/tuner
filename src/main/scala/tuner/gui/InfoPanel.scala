@@ -40,7 +40,7 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   contents += Swing.VGlue
 
   def updateTable = {
-    val slice = project.currentSlice
+    val slice = project.viewInfo.currentSlice
     val closestSample = project.closestSample(slice.toList).toMap
     val estimates = project.estimatePoint(slice.toList)
 

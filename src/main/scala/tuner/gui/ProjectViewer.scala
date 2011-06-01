@@ -108,24 +108,24 @@ class ProjectViewer(project:Project) extends MainFrame {
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
     case ButtonClicked(`mainResponseButton`) =>
-      project.currentMetric = Project.ValueMetric
+      project.viewInfo.currentMetric = Project.ValueMetric
     case ButtonClicked(`errResponseButton`) =>
-      project.currentMetric = Project.ErrorMetric
+      project.viewInfo.currentMetric = Project.ErrorMetric
     case ButtonClicked(`gainResponseButton`) =>
-      project.currentMetric = Project.GainMetric
+      project.viewInfo.currentMetric = Project.GainMetric
     case ButtonClicked(`regionGlyphButton`) =>
-      project.showRegion = regionGlyphButton.selected
+      project.viewInfo.showRegion = regionGlyphButton.selected
   }
 
   // Update which metric we're looking at
-  project.currentMetric match {
+  project.viewInfo.currentMetric match {
     case Project.ValueMetric => mainResponseButton.selected = true
     case Project.ErrorMetric => errResponseButton.selected = true
     case Project.GainMetric => gainResponseButton.selected = true
   }
 
   // Update the glyph controls
-  regionGlyphButton.selected = project.showRegion
+  regionGlyphButton.selected = project.viewInfo.showRegion
 
   override def visible_=(b:Boolean) = {
     super.visible_=(b)

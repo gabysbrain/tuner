@@ -61,7 +61,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
     val (value, error, gain) = map(response)
-    project.currentMetric match {
+    project.viewInfo.currentMetric match {
       case Project.ValueMetric => value
       case Project.ErrorMetric => error
       case Project.GainMetric => gain
@@ -73,7 +73,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                d2:(String,(Float,Float)), 
                slice:Map[String,Float]) : Matrix2D = {
     val sample = model.sampleSlice(d1, d2, slice.toList)
-    val data = project.currentMetric match {
+    val data = project.viewInfo.currentMetric match {
       case Project.ValueMetric => sample._1
       case Project.ErrorMetric => sample._2
       case Project.GainMetric => sample._3
@@ -97,14 +97,14 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     
 
     // First see if we're drawing the colorbars
-    project.response1View.foreach {r =>
+    project.viewInfo.response1View.foreach {r =>
       resp1Colorbar.draw(this, leftColorbarBounds.minX, 
                                leftColorbarBounds.minY,
                                leftColorbarBounds.width, 
                                leftColorbarBounds.height,
                                r, colormap(r, resp1Colormaps))
     }
-    project.response2View.foreach {r =>
+    project.viewInfo.response2View.foreach {r =>
       resp2Colorbar.draw(this, rightColorbarBounds.minX, 
                                rightColorbarBounds.minY,
                                rightColorbarBounds.width, 
@@ -120,13 +120,13 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
   private def updateBounds = {
     val maxResponseWidth = width -
-      ((project.currentZoom.length-1) * Config.plotSpacing) -
+      ((project.viewInfo.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2) -
       (Config.colorbarSpacing * 4) -
       (Config.colorbarWidth * 2)
     val maxResponseHeight = height - 
-      ((project.currentZoom.length-1) * Config.plotSpacing) -
+      ((project.viewInfo.currentZoom.length-1) * Config.plotSpacing) -
       (Config.axisSize * 2) -
       (Config.plotSpacing * 2)
     val responseSize = math.min(maxResponseWidth, maxResponseHeight)
@@ -157,23 +157,23 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     // Loop through all field combinations to see what we need to draw
     project.inputFields.foreach {xFld =>
       project.inputFields.foreach {yFld =>
-        val xRange = (xFld, project.currentZoom.range(xFld))
-        val yRange = (yFld, project.currentZoom.range(yFld))
+        val xRange = (xFld, project.viewInfo.currentZoom.range(xFld))
+        val yRange = (yFld, project.viewInfo.currentZoom.range(yFld))
 
         if(xFld < yFld) {
-          project.response1View.foreach {r1 => 
+          project.viewInfo.response1View.foreach {r1 => 
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, xRange, yRange, r1)
-            if(project.showRegion)
+            if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
-          project.response2View.foreach {r2 =>
+          project.viewInfo.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
             drawResponse(xFld, yFld, xRange, yRange, r2)
-            if(project.showRegion)
+            if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
             //println("r2 draw time: " + (endTime-startTime) + "ms")
@@ -201,9 +201,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
          yFld, xFld, yRange, xRange)
       }
 
-      val data = plotData(model, xr, yr, project.currentSlice)
-      val (xSlice, ySlice) = (project.currentSlice(xf), 
-                              project.currentSlice(yf))
+      val data = plotData(model, xr, yr, project.viewInfo.currentSlice)
+      val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+                              project.viewInfo.currentSlice(yf))
 
       // Draw the main plot
       slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
@@ -216,7 +216,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
 
-    project.response1View.foreach {r1 =>
+    project.viewInfo.response1View.foreach {r1 =>
       // See if we draw the x axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
@@ -234,7 +234,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                         range)
       }
     }
-    project.response2View.foreach {r2 =>
+    project.viewInfo.response2View.foreach {r2 =>
       // See if we draw the x axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
@@ -262,8 +262,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
     val (xf, yf) = if(xFld < yFld) (xFld, yFld)
                    else            (yFld, xFld)
-    val (xZoom, yZoom) = (project.currentZoom.range(xf),
-                          project.currentZoom.range(yf))
+    val (xZoom, yZoom) = (project.viewInfo.currentZoom.range(xf),
+                          project.viewInfo.currentZoom.range(yf))
 
     val (xMinRng, xMaxRng) = project.region.range(xf)
     val (yMinRng, yMaxRng) = project.region.range(yf)
@@ -355,7 +355,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     if(button == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
       if(keyCode == P5Panel.KeyCode.Shift) {
-        publish(new HistoryAdd(this, project.currentSlice.toList))
+        publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
       } else {
         handleBarMouse(mouseX, mouseY)
         handlePlotMouse(mouseX, mouseY)
@@ -370,18 +370,18 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       sliceBounds.foreach {case ((xfld,yfld), sb) =>
         if(sb.isInside(mouseX, mouseY)) {
           // Make sure we're inside a bounds that's active
-          if(xfld < yfld && project.response1View.isDefined) {
-            val (lowZoomX, highZoomX) = project.currentZoom.range(xfld)
-            val (lowZoomY, highZoomY) = project.currentZoom.range(yfld)
+          if(xfld < yfld && project.viewInfo.response1View.isDefined) {
+            val (lowZoomX, highZoomX) = project.viewInfo.currentZoom.range(xfld)
+            val (lowZoomY, highZoomY) = project.viewInfo.currentZoom.range(yfld)
             val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
                                            highZoomY, lowZoomY)
             publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
-          } else if(xfld > yfld && project.response2View.isDefined) {
+          } else if(xfld > yfld && project.viewInfo.response2View.isDefined) {
             // x and y fields are reversed here!!!
-            val (lowZoomX, highZoomX) = project.currentZoom.range(yfld)
-            val (lowZoomY, highZoomY) = project.currentZoom.range(xfld)
+            val (lowZoomX, highZoomX) = project.viewInfo.currentZoom.range(yfld)
+            val (lowZoomY, highZoomY) = project.viewInfo.currentZoom.range(xfld)
             val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
@@ -395,7 +395,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
 
   def handleBarMouse(mouseX:Int, mouseY:Int) = {
     if(leftColorbarBounds.isInside(mouseX, mouseY)) {
-      project.response1View.foreach {r1 =>
+      project.viewInfo.response1View.foreach {r1 =>
         val cb = resp1Colorbar
         val cm = colormap(r1, resp1Colormaps)
         val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
@@ -406,7 +406,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       }
     }
     if(rightColorbarBounds.isInside(mouseX, mouseY)) {
-      project.response2View.foreach {r2 =>
+      project.viewInfo.response2View.foreach {r2 =>
         val cb = resp2Colorbar
         val cm = colormap(r2, resp2Colormaps)
         val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 

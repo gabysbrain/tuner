@@ -24,16 +24,6 @@ case class GpSpecification(
   responses:List[Double],
   invCorMtx:List[List[Double]]
 )
-case class SliceSpecification(name:String, value:Float)
-case class ZoomSpecification(name:String, lowValue:Float, highValue:Float)
-case class VisInfo(
-  currentSlice:List[SliceSpecification],
-  currentZoom:List[ZoomSpecification],
-  response1:Option[String],
-  response2:Option[String],
-  currentMetric:String,
-  showRegion:Boolean
-)
 case class ProjConfig(
   name:String,
   scriptPath:String,
@@ -55,9 +45,20 @@ object Project {
     new Project(Some(path))
   }
 
-  object Status extends Enumeration {
-    val Ok = Value("Ok")
-    val BuildingGp = Value("Building GP")
+  sealed trait Status {
+    def statusString
+  }
+  case object Ok extends Status {
+    def statusString = "Ok"
+  }
+  case object NeedsInitialSamples extends Status {
+    def statusString = "Needs Initial Samples"
+  }
+  case class RunningSamples(numDone:Int, total:Int) extends Status {
+    def statusString = numDone + "/" + total + " Samples Done"
+  }
+  case object BuildingGp extends Status {
+    def statusString = "Building GP"
   }
 
   sealed trait MetricView
@@ -87,7 +88,7 @@ class Project(var path:Option[String]) {
   }
   var scriptPath : Option[String] = config map {_.scriptPath}
   def modificationDate : Date = new Date
-  var status : Project.Status.Value = Project.Status.Ok
+
   var inputs : DimRanges = config match {
     case Some(c) => 
       new DimRanges(c.inputs map {x => 
@@ -117,32 +118,9 @@ class Project(var path:Option[String]) {
   }
 
   // The visual controls
-  var _currentSlice = config match {
-    case Some(c) => c.currentVis.currentSlice.map {x => 
-      (x.name, x.value)
-    } toMap
-    case None    => Map[String,Float]()
-  }
-  var _currentZoom = config match {
-    case Some(c) => new DimRanges(
-      c.currentVis.currentZoom.map {x => 
-        (x.name, (x.lowValue, x.highValue))
-      } toMap)
-    case None    => new DimRanges(Nil.toMap)
-  }
-  var response1View:Option[String] = config flatMap {_.currentVis.response1}
-  var response2View:Option[String] = config flatMap {_.currentVis.response2}
-  var currentMetric:MetricView = config match {
-    case Some(c) => c.currentVis.currentMetric match {
-      case "value" => ValueMetric
-      case "error" => ErrorMetric
-      case "gain" => GainMetric
-    }
-    case None => ValueMetric
-  }
-  var showRegion = config match {
-    case Some(c) => c.currentVis.showRegion
-    case None => true
+  val viewInfo = config match { 
+    case Some(c) => ViewInfo.fromJson(this, c.currentVis)
+    case None    => new ViewInfo(this)
   }
 
   val gpModels : Option[Map[String,GpModel]] = path.map {p =>
@@ -169,36 +147,22 @@ class Project(var path:Option[String]) {
   // Save any gp models that got updated
   path.foreach(_ => save(savePath))
 
+  def status : Project.Status = {
+    if(samples.numRows == 0) {
+      Project.NeedsInitialSamples
+    } else if(!gpModels.isDefined) {
+      Project.BuildingGp
+    } else {
+      Project.Ok
+    }
+  }
+
   def inputFields : List[String] = inputs.dimNames.sorted
   def responseFields : List[String] = responses.map(_._1).sorted
 
   def region : Region = _region
   def region_=(r:Region) = {
     _region = r
-  }
-
-  def currentSlice : Map[String,Float] = {
-    // Pick defaults for any missing dimensions
-    inputs.dimNames.toSet.diff(_currentSlice.keySet).foreach {k =>
-      val (min, max) = inputs.range(k)
-      _currentSlice += (k -> ((min+max) / 2f))
-    }
-    _currentSlice
-  }
-
-  def currentZoom : DimRanges = {
-    inputs.dimNames.toSet.diff(_currentZoom.ranges.keySet).foreach {k =>
-      _currentZoom.update(k, inputs.min(k), inputs.max(k))
-    }
-    _currentZoom
-  }
-
-  def updateSlice(fld:String, v:Float) = {
-    _currentSlice += (fld -> v)
-  }
-
-  def updateZoom(fld:String, low:Float, high:Float) = {
-    _currentZoom.update(fld, low, high)
   }
 
   def newFields : List[String] = {
@@ -265,12 +229,6 @@ class Project(var path:Option[String]) {
   def save(savePath:String) = {
     path = Some(savePath)
 
-    val strMetric = currentMetric match {
-      case ValueMetric => "value"
-      case ErrorMetric => "error"
-      case GainMetric => "gain"
-    }
-
     val json = (
       ("name" -> name) ~
       ("scriptPath" -> scriptPath) ~
@@ -298,21 +256,7 @@ class Project(var path:Option[String]) {
         } toList
         case None         => Nil
       })) ~
-      ("currentVis" -> (
-        ("currentSlice" -> (currentSlice.map {case (fld,v) =>
-          ("name" -> fld) ~
-          ("value" -> v)
-        }).toList) ~
-        ("currentZoom" -> (currentZoom.dimNames.map {fld =>
-          ("name" -> fld) ~
-          ("lowValue" -> currentZoom.min(fld)) ~
-          ("highValue" -> currentZoom.max(fld))
-        }).toList) ~
-        ("response1" -> response1View) ~
-        ("response2" -> response2View) ~
-        ("currentMetric" -> strMetric) ~
-        ("showRegion" -> showRegion)
-      )) ~
+      ("currentVis" -> viewInfo.toJson) ~
       ("currentRegion" -> region.toJson) ~
       ("history" -> history.toJson)
     )

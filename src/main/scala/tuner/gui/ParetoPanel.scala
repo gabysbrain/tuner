@@ -40,7 +40,7 @@ class ParetoPanel(project:Project)
     rectMode(P5Panel.RectMode.Corner)
     rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
 
-    (project.response1View, project.response2View) match {
+    (project.viewInfo.response1View, project.viewInfo.response2View) match {
       case (Some(r1), Some(r2)) => draw2dPareto(r1, r2)
       case (Some(r1), None) => draw1dPareto(r1)
       case (None, Some(r2)) => draw1dPareto(r2)
@@ -73,7 +73,7 @@ class ParetoPanel(project:Project)
   override def mouseClicked(mouseX:Int, mouseY:Int, 
                             button:P5Panel.MouseButton.Value) = {
     
-    (project.response1View, project.response2View) match {
+    (project.viewInfo.response1View, project.viewInfo.response2View) match {
       case (Some(r1), Some(r2)) =>
         mouseClick2d(mouseX, mouseY, button, r1, r2)
       case _ =>

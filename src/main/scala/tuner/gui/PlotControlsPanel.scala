@@ -20,11 +20,11 @@ class PlotControlsPanel(project:Project)
   val sliceSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
     val slider = new SpinSlider(minVal, maxVal, Config.sliderResolution)
-    slider.value = project.currentSlice(fld)
+    slider.value = project.viewInfo.currentSlice(fld)
     listenTo(slider)
     reactions += {
       case ValueChanged(`slider`) =>
-        project.updateSlice(fld, slider.value)
+        project.viewInfo.updateSlice(fld, slider.value)
     }
     (fld, slider)
   } toMap
@@ -33,11 +33,11 @@ class PlotControlsPanel(project:Project)
   val zoomSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
     val slider = new SpinRangeSlider(minVal, maxVal, Config.sliderResolution)
-    slider.value = project.currentZoom.range(fld)
+    slider.value = project.viewInfo.currentZoom.range(fld)
     listenTo(slider)
     reactions += {
       case ValueChanged(`slider`) =>
-        project.updateZoom(fld, slider.lowValue, slider.highValue)
+        project.viewInfo.updateZoom(fld, slider.lowValue, slider.highValue)
     }
     (fld, slider)
   } toMap
@@ -46,10 +46,10 @@ class PlotControlsPanel(project:Project)
   val resp1Combo = new ComboBox("None" :: project.responses.map {_._1})
   val resp2Combo = new ComboBox("None" :: project.responses.map {_._1})
 
-  project.response1View foreach {r =>
+  project.viewInfo.response1View foreach {r =>
     resp1Combo.selection.item = r
   }
-  project.response2View foreach {r =>
+  project.viewInfo.response2View foreach {r =>
     resp2Combo.selection.item = r
   }
 
@@ -58,12 +58,12 @@ class PlotControlsPanel(project:Project)
 
   reactions += {
     case SelectionChanged(`resp1Combo`) => resp1Combo.selection.item match {
-      case "None" => project.response1View = None
-      case x      => project.response1View = Some(x)
+      case "None" => project.viewInfo.response1View = None
+      case x      => project.viewInfo.response1View = Some(x)
     }
     case SelectionChanged(`resp2Combo`) => resp2Combo.selection.item match {
-      case "None" => project.response2View = None
-      case x      => project.response2View = Some(x)
+      case "None" => project.viewInfo.response2View = None
+      case x      => project.viewInfo.response2View = Some(x)
     }
   }
 

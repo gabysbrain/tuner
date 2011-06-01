@@ -41,7 +41,7 @@ sealed abstract class Region(project:Project) {
     _radius += (fld -> v)
   }
 
-  def center = project.currentSlice
+  def center = project.viewInfo.currentSlice
 
   def range(fld:String) : (Float,Float) = {
     val c = center(fld)
@@ -106,7 +106,7 @@ sealed abstract class Region(project:Project) {
 
 class BoxRegion(project:Project) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
-    val center = project.currentSlice
+    val center = project.viewInfo.currentSlice
     pt.forall {case (fld,value) =>
       val (minVal, maxVal) = range(fld)
       value >= minVal && value <= maxVal
