@@ -12,7 +12,7 @@ class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
   val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
   val prefuse = "org.prefuse" % "prefuse" % "beta-20060220"
 
-  override def compileOptions : Seq[CompileOption] = List(Deprecation)
+  override def compileOptions : Seq[CompileOption] = List(Deprecation, Unchecked)
 
   override def unmanagedClasspath : PathFinder = {
     super.unmanagedClasspath +++ 
