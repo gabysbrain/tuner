@@ -152,6 +152,9 @@ class Project(var path:Option[String]) {
       Project.NeedsInitialSamples
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
+    } else if(unrunSamplesSize > 0) {
+      val ttlNew = samples.numRows - modeledSamplesSize
+      Project.RunningSamples(ttlNew-unrunSamplesSize, ttlNew)
     } else {
       Project.Ok
     }
@@ -177,6 +180,18 @@ class Project(var path:Option[String]) {
       method(inputs, n, {v => samples.addRow(v)})
       println(n + " samples generated")
     }
+  }
+
+  def unrunSamplesSize = designSites match {
+    case Some(ds) => samples.numRows - ds.numRows
+    case None     => samples.numRows
+  }
+
+  def modeledSamplesSize = gpModels match {
+    case None => 0
+    case Some(models) => 
+      val model = models.head._2
+      model.design.size
   }
 
   /**

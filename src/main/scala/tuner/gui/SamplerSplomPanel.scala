@@ -22,10 +22,13 @@ class SamplerSplomPanel(project:Project)
       }
     })
   }).toMap
-  val (xAxes:Map[String,Axis], yAxes:Map[String,Axis]) = 
-    project.inputFields.foldLeft((Map[String,Axis](),Map[String,Axis]())) {case ((xa,ya),fld) =>
-      (xa + (fld -> new Axis(Axis.HorizontalBottom)),
-       ya + (fld -> new Axis(Axis.VerticalLeft)))
+  val xAxes:Map[String,Axis] = 
+    project.inputFields.foldLeft(Map[String,Axis]()) {case (xa, fld) =>
+      xa + (fld -> new Axis(Axis.HorizontalBottom))
+    }
+  val yAxes:Map[String,Axis] = 
+    project.inputFields.foldLeft(Map[String,Axis]()) {case (ya,fld) =>
+      ya + (fld -> new Axis(Axis.VerticalLeft))
     }
 
   override def setup = {
