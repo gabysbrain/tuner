@@ -2,10 +2,13 @@ package tuner.gui
 
 import tuner.Config
 import tuner.Project
+import tuner.Sampler
+import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
 import tuner.gui.util.AxisTicks
 import tuner.gui.widgets.Axis
+import tuner.gui.widgets.Histogram
 import tuner.gui.widgets.Scatterplot
 
 class ParetoPanel(project:Project)
@@ -16,10 +19,17 @@ class ParetoPanel(project:Project)
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
   val sampleScatterplot = new Scatterplot(Config.paretoSampleColor)
+  val histogram = new Histogram(Config.respHistogramBarStroke,
+                                Config.respHistogramBarFill,
+                                Config.respHistogramBars)
 
   var xAxisBox = Rectangle((0f,0f), (0f,0f))
   var yAxisBox = Rectangle((0f,0f), (0f,0f))
   var plotBox = Rectangle((0f,0f), (0f,0f))
+
+  // Caching for the samples stuff
+  var pareto1dField = ""
+  var pareto1dData = new Table
 
   def draw = {
     applet.background(Config.backgroundColor)
@@ -56,6 +66,15 @@ class ParetoPanel(project:Project)
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
                      xAxisBox.width, xAxisBox.height,
                      resp, ticks)
+    if(resp != pareto1dField) {
+      pareto1dField = resp
+      val samples = Sampler.lhc(project.inputs, 
+                                Config.respHistogramSampleDensity)
+      pareto1dData = model.sampleTable(samples)
+    }
+    histogram.draw(this, plotBox.minX, plotBox.minY, 
+                         plotBox.width, plotBox.height,
+                         resp, pareto1dData)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {

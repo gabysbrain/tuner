@@ -37,7 +37,6 @@ class ResponseHistogramPanel(project:Project, responseField:String)
 
     val hist = new Histogram(Config.respHistogramBarStroke, 
                              Config.respHistogramBarFill, 
-                             minVal, maxVal, 
                              Config.respHistogramBars)
     responses = Some(resp)
     minResponse = resp.min(responseField)

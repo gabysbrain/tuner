@@ -21,13 +21,7 @@ object Histogram {
 
 }
 
-class Histogram(barStroke:Option[Int], barFill:Option[Int], 
-                val breaks:List[Float]) {
-
-  def this(barStroke:Option[Int], barFill:Option[Int],
-           minVal:Float, maxVal:Float, numBreaks:Int) =
-    this(barStroke, barFill, 
-         Histogram.computeBreaks(minVal, maxVal, numBreaks))
+class Histogram(barStroke:Option[Int], barFill:Option[Int], numBreaks:Int) {
 
   var counts:Map[Float,Int] = Map()
 
@@ -37,7 +31,10 @@ class Histogram(barStroke:Option[Int], barFill:Option[Int],
     applet.pushMatrix
     applet.translate(x, y+h)
 
-    counts = countData(field, data)
+    val (minVal, maxVal) = (data.min(field), data.max(field))
+    val breaks = Histogram.computeBreaks(minVal, maxVal, numBreaks)
+
+    counts = countData(field, data, breaks)
 
     val maxCount = counts.values.max
     val barWidth = w / (breaks.length + 1)
@@ -61,7 +58,7 @@ class Histogram(barStroke:Option[Int], barFill:Option[Int],
     applet.popMatrix
   }
 
-  def countData(field:String, data:Table) = {
+  def countData(field:String, data:Table, breaks:List[Float]) = {
     var counts = (breaks ++ List(Float.MaxValue)).map((_, 0)).toMap
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
