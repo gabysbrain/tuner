@@ -63,23 +63,17 @@ class SamplerSplomPanel(project:Project)
             if(xFld != project.inputFields.last) {
               xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
                                      bound.width, Config.axisSize,
-                                     xFld, ticks(xFld))
+                                     (xFld, project.inputs.range(xFld)))
             }
             if(yFld != project.inputFields.head) {
               yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
                                      Config.axisSize, bound.height, 
-                                     yFld, ticks(yFld))
+                                     (yFld, project.inputs.range(yFld)))
             }
           }
         }
       }
     }
   }
-
-  private def ticks(fld:String) : List[Float] = {
-    val (min, max) = project.inputs.range(fld)
-    List(min, (min+max)/2, max)
-  }
-
 }
 
