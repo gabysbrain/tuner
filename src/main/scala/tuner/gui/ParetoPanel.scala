@@ -4,6 +4,7 @@ import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
+import tuner.gui.util.AxisTicks
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
 
@@ -51,23 +52,28 @@ class ParetoPanel(project:Project)
 
   def draw1dPareto(resp:String) {
     val model = models(resp)
+    val ticks = AxisTicks.ticks(model.funcMin, model.funcMax)
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
                      xAxisBox.width, xAxisBox.height,
-                     (resp, (model.funcMin, model.funcMax)))
+                     resp, ticks)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {
     val r1Model = models(resp1)
     val r2Model = models(resp2)
+    val r1Ticks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax)
+    val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax)
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
                      xAxisBox.width, xAxisBox.height,
-                     (resp1, (r1Model.funcMin, r1Model.funcMax)))
+                     resp1, r1Ticks)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
-                     (resp2, (r2Model.funcMin, r2Model.funcMax)))
+                     resp2, r2Ticks)
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
-                                 project.designSites.get, resp1, resp2)
+                                 project.designSites.get, 
+                                 (resp1, (r1Ticks.min,r1Ticks.max)),
+                                 (resp2, (r2Ticks.min,r2Ticks.max)))
   }
 
   override def mouseClicked(mouseX:Int, mouseY:Int, 
