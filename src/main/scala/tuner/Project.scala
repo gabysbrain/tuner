@@ -46,7 +46,7 @@ object Project {
   }
 
   sealed trait Status {
-    def statusString
+    def statusString:String
   }
   case object Ok extends Status {
     def statusString = "Ok"

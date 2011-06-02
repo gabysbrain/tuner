@@ -14,12 +14,18 @@ import tuner.Project
 class SamplingProgressBar(owner:Window, project:Project) extends Dialog(owner) {
 
   modal = true
+  //width = 800
+  //height = 75
 
-  val progressBar = new ProgressBar
+  val progressBar = new ProgressBar {
+    min = 0
+  }
   val alwaysBackgroundCheckbox = new CheckBox("Always Background")
   val backgroundButton = new Button("Background")
   val stopButton = new Button("Stop")
-  val progressLabel = new Label
+  val progressLabel = new Label {
+    text = "   "
+  }
 
   contents = new BoxPanel(Orientation.Horizontal) {
     contents += new BoxPanel(Orientation.Vertical) {
@@ -30,6 +36,23 @@ class SamplingProgressBar(owner:Window, project:Project) extends Dialog(owner) {
     contents += alwaysBackgroundCheckbox
     contents += backgroundButton
     contents += stopButton
+  }
+
+  updateProgress
+
+  def updateProgress = {
+    progressLabel.text = project.status.statusString
+
+    project.status match {
+      case Project.BuildingGp =>
+        progressBar.indeterminate = true
+      case Project.RunningSamples(numDone, total) =>
+        progressBar.indeterminate = false
+        progressBar.max = total
+        progressBar.value = numDone
+      case _ => // Do nothing.  We shouldn't get these!
+    }
+    this.pack
   }
 
 }
