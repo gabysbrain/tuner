@@ -8,6 +8,7 @@ import java.io.File
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
+import tuner.gui.SamplingProgressBar
 
 object Tuner extends SimpleSwingApplication {
 
@@ -36,8 +37,16 @@ object Tuner extends SimpleSwingApplication {
     proj.path.foreach {
       Config.recentProjects += _
     }
-    val projWindow = new ProjectViewer(proj)
-    projWindow.visible = true
+
+    proj.status match {
+      case Project.Ok =>
+        val projWindow = new ProjectViewer(proj)
+        projWindow.visible = true
+      case Project.RunningSamples(_,_) | Project.BuildingGp =>
+        val waitWindow = new SamplingProgressBar(ProjectChooser, proj)
+        waitWindow.visible = true
+      case _ =>
+    }
   }
 
   def openProject(file:File) : Unit = {
