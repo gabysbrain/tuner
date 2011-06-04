@@ -194,6 +194,11 @@ class Project(var path:Option[String]) {
     }
   }
 
+  def unrunSamples = designSites match {
+    case Some(ds) => ds.filter(Table.notSubsetFilter(samples))
+    case None     => samples
+  }
+
   def unrunSamplesSize = designSites match {
     case Some(ds) => samples.numRows - ds.numRows
     case None     => samples.numRows
