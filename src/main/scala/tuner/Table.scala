@@ -54,6 +54,20 @@ object Table {
         null
     }
   }
+
+  def notSubsetFilter(tbl:Table) : Filter = {
+    {tpl =>
+      var out:Table.Tuple = null
+      for(r <- 0 until tbl.numRows) {
+        val tpl2 = tbl.tuple(r)
+        if(out == null && 
+           (tpl.forall {case (fld,v) => tpl2.get(fld).forall(x=>x == v)})) {
+          out = tpl
+        } 
+      }
+      out
+    }
+  }
 }
 
 class Table {
