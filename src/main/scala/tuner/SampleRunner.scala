@@ -17,7 +17,14 @@ class SampleRunner(project:Project) extends Actor {
                               designFile.getAbsolutePath)
 
   def act = {
-    loop {
+    var r = 0
+    while(r < samples.numRows) {
+      val subSamples = subsample(r)
+      subSamples.toCsv(sampleFile.getAbsolutePath)
+      val proc = pb.start
+      proc.waitFor // Run until we're done
+
+      r += subSamples.numRows
     }
   }
 
@@ -30,6 +37,17 @@ class SampleRunner(project:Project) extends Actor {
   }
 
   private def absPath(fname:String) : String = new File(fname).getAbsolutePath
+
+  private def subsample(startRow:Int) : Table = {
+    val subSamples = new Table
+    var row = startRow
+    while(subSamples.numRows < Config.samplingRowsPerReq && 
+          row < samples.numRows) {
+      subSamples.addRow(samples.tuple(row).toList)
+      row += 1
+    }
+    subSamples
+  }
 
 }
 

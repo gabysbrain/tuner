@@ -33,6 +33,8 @@ object Config {
   val plotSpacing = 5
   val controlPanelHeight = 280
 
+  val samplingRowsPerReq = 4
+
   //val backgroundColor = 0
   val backgroundColor = 51
   val response1ColorMap = OrangeColorMap
