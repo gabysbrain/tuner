@@ -37,7 +37,6 @@ class ResponseHistogramPanel(project:Project, responseField:String)
 
     val hist = new Histogram(Config.respHistogramBarStroke, 
                              Config.respHistogramBarFill, 
-                             minVal, maxVal, 
                              Config.respHistogramBars)
     responses = Some(resp)
     minResponse = resp.min(responseField)
@@ -71,11 +70,14 @@ class ResponseHistogramPanel(project:Project, responseField:String)
         val maxCount = h.counts.values.max
         yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                          yAxisBounds.width, yAxisBounds.height,
-                         ("Count", (0, maxCount)))
+                         "Count", List(0, maxCount/2,maxCount))
         //val xTicks = minResponse +: h.breaks :+ maxResponse
         xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                          xAxisBounds.width, xAxisBounds.height,
-                         (responseField, (minResponse, maxResponse)))
+                         responseField, 
+                         List(minResponse, 
+                              (minResponse+maxResponse)/2, 
+                              maxResponse))
         drawSlider
       case _ =>
     }

@@ -46,7 +46,7 @@ object Project {
   }
 
   sealed trait Status {
-    def statusString
+    def statusString:String
   }
   case object Ok extends Status {
     def statusString = "Ok"
@@ -102,9 +102,15 @@ class Project(var path:Option[String]) {
     Table.fromCsv(sampleFilename)
   }).getOrElse(new Table)
 
-  var designSites = path.map {p =>
-    val designSiteFile = p + "/" + Config.designFilename
-    Table.fromCsv(designSiteFile)
+  var designSites = path match {
+    case Some(p) =>
+      val designSiteFile = p + "/" + Config.designFilename
+      try {
+        Some(Table.fromCsv(designSiteFile))
+      } catch {
+        case fnf:java.io.FileNotFoundException => None
+      }
+    case None => None
   }
 
   var responses : List[(String,Boolean)] = config match {
@@ -123,10 +129,16 @@ class Project(var path:Option[String]) {
     case None    => new ViewInfo(this)
   }
 
-  val gpModels : Option[Map[String,GpModel]] = path.map {p =>
-    val designSiteFile = p + "/" + Config.designFilename
-    val gp = new Rgp(designSiteFile)
-    responseFields.map {fld => (fld, loadGpModel(gp, fld))} toMap
+  val gpModels : Option[Map[String,GpModel]] = path match {
+    case Some(p) =>
+      if(designSites.isDefined) {
+        val designSiteFile = p + "/" + Config.designFilename
+        val gp = new Rgp(designSiteFile)
+        Some(responseFields.map {fld => (fld, loadGpModel(gp, fld))} toMap)
+      } else {
+        None
+      }
+    case None => None
   }
 
   var _region:Region = config match {
@@ -150,11 +162,11 @@ class Project(var path:Option[String]) {
   def status : Project.Status = {
     if(samples.numRows == 0) {
       Project.NeedsInitialSamples
-    } else if(!gpModels.isDefined) {
-      Project.BuildingGp
     } else if(unrunSamplesSize > 0) {
       val ttlNew = samples.numRows - modeledSamplesSize
       Project.RunningSamples(ttlNew-unrunSamplesSize, ttlNew)
+    } else if(!gpModels.isDefined) {
+      Project.BuildingGp
     } else {
       Project.Ok
     }
@@ -180,6 +192,11 @@ class Project(var path:Option[String]) {
       method(inputs, n, {v => samples.addRow(v)})
       println(n + " samples generated")
     }
+  }
+
+  def unrunSamples = designSites match {
+    case Some(ds) => ds.filter(Table.notSubsetFilter(samples))
+    case None     => samples
   }
 
   def unrunSamplesSize = designSites match {

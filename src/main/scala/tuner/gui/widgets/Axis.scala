@@ -3,6 +3,7 @@ package tuner.gui.widgets
 import tuner.Config
 import tuner.gui.P5Panel
 import tuner.geom.Rectangle
+import tuner.gui.util.AxisTicks
 
 object Axis {
   sealed trait Placement 
@@ -20,15 +21,18 @@ class Axis(placement:Axis.Placement) {
   
   import Axis._
 
+  /*
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            dimInfo:(String,(Float,Float))) : Unit = {
     val (field, (minVal, maxVal)) = dimInfo
 
     // Figure out which ticks to draw
     //val ticks = Range.Double(minVal, maxVal, (maxVal-minVal)/3) map {_.toFloat}
-    val ticks = List(minVal, (maxVal + minVal)/2, maxVal)
+    //val ticks = List(minVal, (maxVal + minVal)/2, maxVal)
+    val ticks = AxisTicks.ticks(minVal, maxVal, Config.axisNumTicks)
     draw(applet, x, y, w, h, field, ticks)
   }
+  */
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            field:String, ticks:List[Float]) : Unit = {

@@ -8,10 +8,12 @@ import tuner.util.ColorLib
 class Scatterplot(dotColor:Int) {
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
-           data:Table, xFld:String, yFld:String) = {
+           data:Table, 
+           xRange:(String,(Float,Float)), 
+           yRange:(String,(Float,Float))) = {
 
-    val (minX, maxX) = (data.min(xFld), data.max(xFld))
-    val (minY, maxY) = (data.min(yFld), data.max(yFld))
+    val (xFld, (minX, maxX)) = xRange
+    val (yFld, (minY, maxY)) = yRange
 
     // Draw a white background
     // TODO: make this work for any color

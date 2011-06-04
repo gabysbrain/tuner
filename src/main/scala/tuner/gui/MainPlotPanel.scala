@@ -12,6 +12,7 @@ import tuner.SpecifiedColorMap
 import tuner.geom.Rectangle
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
+import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
@@ -215,6 +216,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     val (fld, (low, high)) = range
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
+    val ticks = AxisTicks.ticks(low, high)
 
     project.viewInfo.response1View.foreach {r1 =>
       // See if we draw the x axis
@@ -223,7 +225,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         val axis = resp1XAxes(fld)
         axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
                         sliceDim.width, bottomAxisBounds.height, 
-                        range)
+                        fld, ticks)
       }
       // See if we draw the y axis
       if(fld != firstField) {
@@ -231,7 +233,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         val axis = resp1YAxes(fld)
         axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
                         leftAxisBounds.width, sliceDim.height, 
-                        range)
+                        fld, ticks)
       }
     }
     project.viewInfo.response2View.foreach {r2 =>
@@ -241,7 +243,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         val axis = resp2XAxes(fld)
         axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
                         sliceDim.width, topAxisBounds.height, 
-                        range)
+                        fld, ticks)
       }
       // See if we draw the y axis
       if(fld != firstField) {
@@ -249,7 +251,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         val axis = resp2YAxes(fld)
         axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
                         rightAxisBounds.width, sliceDim.height, 
-                        range)
+                        fld, ticks)
       }
     }
   }

@@ -3,6 +3,7 @@ package tuner.gui
 import tuner.Config
 import tuner.Project
 import tuner.geom.Rectangle
+import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
@@ -58,28 +59,28 @@ class SamplerSplomPanel(project:Project)
           if(xFld < yFld) {
             val bound = plotBounds((xFld, yFld))
             val plot = sploms((xFld, yFld))
+            val (minX,maxX) = project.inputs.range(xFld)
+            val (minY,maxY) = project.inputs.range(yFld)
+            val xTicks = AxisTicks.ticks(minX, maxX)
+            val yTicks = AxisTicks.ticks(minY, maxY)
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
-                      project.samples, xFld, yFld)
+                      project.samples,
+                      (xFld, (xTicks.min,xTicks.max)),
+                      (yFld, (yTicks.min,yTicks.max)))
             if(xFld != project.inputFields.last) {
               xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
                                      bound.width, Config.axisSize,
-                                     xFld, ticks(xFld))
+                                     xFld, xTicks)
             }
             if(yFld != project.inputFields.head) {
               yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
                                      Config.axisSize, bound.height, 
-                                     yFld, ticks(yFld))
+                                     yFld, yTicks)
             }
           }
         }
       }
     }
   }
-
-  private def ticks(fld:String) : List[Float] = {
-    val (min, max) = project.inputs.range(fld)
-    List(min, (min+max)/2, max)
-  }
-
 }
 
