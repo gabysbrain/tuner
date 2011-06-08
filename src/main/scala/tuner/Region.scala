@@ -69,8 +69,8 @@ sealed abstract class Region(project:Project) {
 
   def numSamples = {
     var count = 0
-    for(i <- 0 until project.samples.numRows) {
-      val tpl = project.samples.tuple(i)
+    for(i <- 0 until project.newSamples.numRows) {
+      val tpl = project.newSamples.tuple(i)
       if(inside(tpl.toList))
         count += 1
     }

@@ -97,10 +97,15 @@ class Project(var path:Option[String]) {
     case None    => new DimRanges(Nil.toMap)
   }
 
-  val samples = path.map({p =>
-    val sampleFilename = p + "/" + Config.sampleFilename
-    Table.fromCsv(sampleFilename)
-  }).getOrElse(new Table)
+  val newSamples = path match {
+    case Some(p) => try {
+        val sampleFilename = p + "/" + Config.sampleFilename
+        Table.fromCsv(sampleFilename)
+      } catch {
+        case fnf:java.io.FileNotFoundException => new Table
+      }
+    case None => new Table
+  }
 
   var designSites = path match {
     case Some(p) =>
@@ -160,11 +165,15 @@ class Project(var path:Option[String]) {
   path.foreach(_ => save(savePath))
 
   def status : Project.Status = {
-    if(samples.numRows == 0) {
+    if(newSamples.numRows == 0 && designSites.forall(_.numRows==0)) {
       Project.NeedsInitialSamples
-    } else if(unrunSamplesSize > 0) {
-      val ttlNew = samples.numRows - modeledSamplesSize
-      Project.RunningSamples(ttlNew-unrunSamplesSize, ttlNew)
+    } else if(newSamples.numRows > 0) {
+      val unmodeledSamples = designSites match {
+        case Some(ds) => ds.numRows - modeledSamplesSize
+        case None => 0
+      }
+      Project.RunningSamples(newSamples.numRows, 
+                             newSamples.numRows+unmodeledSamples)
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
     } else {
@@ -189,19 +198,9 @@ class Project(var path:Option[String]) {
   def addSamples(n:Int, method:Sampler.Method) = {
     // TODO: find a better solution than just ignoring the missing inputs
     if(n > 0) {
-      method(inputs, n, {v => samples.addRow(v)})
+      method(inputs, n, {v => newSamples.addRow(v)})
       println(n + " samples generated")
     }
-  }
-
-  def unrunSamples = designSites match {
-    case Some(ds) => ds.filter(Table.notSubsetFilter(samples))
-    case None     => samples
-  }
-
-  def unrunSamplesSize = designSites match {
-    case Some(ds) => samples.numRows - ds.numRows
-    case None     => samples.numRows
   }
 
   def modeledSamplesSize = gpModels match {
@@ -214,8 +213,8 @@ class Project(var path:Option[String]) {
   /**
    * Clears out the sample table then adds the samples
    */
-  def newSamples(n:Int, method:Sampler.Method) = {
-    samples.clear
+  def newSamples(n:Int, method:Sampler.Method) : Unit = {
+    newSamples.clear
     addSamples(n, method)
   }
 
@@ -303,7 +302,7 @@ class Project(var path:Option[String]) {
 
     // Also save the samples
     val sampleName = savePath + "/" + Config.sampleFilename
-    samples.toCsv(sampleName)
+    newSamples.toCsv(sampleName)
   }
 
   private def loadGpModel(factory:Rgp, field:String) : GpModel = {

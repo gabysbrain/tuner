@@ -10,21 +10,36 @@ class SampleRunner(project:Project) extends Actor {
   val sampleFile = File.createTempFile("tuner_samples", "csv")
   val designFile = File.createTempFile("tuner_design", "csv")
 
-  val samples = project.unrunSamples
+  val samples = project.newSamples
 
   val pb = new ProcessBuilder(project.scriptPath.get,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
 
   def act = {
-    var r = 0
-    while(r < samples.numRows) {
-      val subSamples = subsample(r)
+    while(samples.numRows > 0) {
+      val subSamples = subsample
       subSamples.toCsv(sampleFile.getAbsolutePath)
       val proc = pb.start
       proc.waitFor // Run until we're done
 
-      r += subSamples.numRows
+      // Now the sampling is all done, load up the new points
+      val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)
+      for(r <- 0 until newDesTbl.numRows) {
+        val tpl = newDesTbl.tuple(r)
+        val ds = project.designSites match {
+          case Some(x) => x
+          case None =>
+            val tbl = new Table
+            project.designSites = Some(tbl)
+            tbl
+        }
+        ds.addRow(tpl.toList)
+        samples.removeRow(0) // Always the first row
+      }
+      project.save(project.savePath)
+
+      // TODO: delete the file?
     }
   }
 
@@ -38,13 +53,10 @@ class SampleRunner(project:Project) extends Actor {
 
   private def absPath(fname:String) : String = new File(fname).getAbsolutePath
 
-  private def subsample(startRow:Int) : Table = {
+  private def subsample : Table = {
     val subSamples = new Table
-    var row = startRow
-    while(subSamples.numRows < Config.samplingRowsPerReq && 
-          row < samples.numRows) {
-      subSamples.addRow(samples.tuple(row).toList)
-      row += 1
+    for(r <- 0 until math.min(samples.numRows, Config.samplingRowsPerReq)) {
+      subSamples.addRow(samples.tuple(r).toList)
     }
     subSamples
   }

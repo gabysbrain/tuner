@@ -44,7 +44,7 @@ class SamplerSplomPanel(project:Project)
     applet.background(Config.backgroundColor)
 
     // Make sure we have something to draw
-    if(project.samples.numRows > 0) {
+    if(project.newSamples.numRows > 0) {
       // Compute all the sizes of things
       val totalSize = math.min(width, height) - 
                       Config.plotSpacing * 2 - 
@@ -64,7 +64,7 @@ class SamplerSplomPanel(project:Project)
             val xTicks = AxisTicks.ticks(minX, maxX)
             val yTicks = AxisTicks.ticks(minY, maxY)
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
-                      project.samples,
+                      project.newSamples,
                       (xFld, (xTicks.min,xTicks.max)),
                       (yFld, (yTicks.min,yTicks.max)))
             if(xFld != project.inputFields.last) {

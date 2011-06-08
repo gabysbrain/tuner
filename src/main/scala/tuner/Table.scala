@@ -77,6 +77,8 @@ class Table {
     data += values.toMap
   }
 
+  def removeRow(row:Int) = data.remove(row)
+
   def clear = data.clear
 
   def min(col:String) : Float = {
