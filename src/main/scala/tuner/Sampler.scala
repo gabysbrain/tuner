@@ -81,7 +81,7 @@ object Sampler {
   // There's some weird issues with scala's sequence generator
   // TODO: figure out what it is.  You may be pleasantly surprised!
   def genLinSeq(min:Float, max:Float, step:Float) : List[Float] = {
-    if(min > max || step <= 0) {
+    if(min > (max+1e-5) || step <= 0) {
       Nil
     } else if(min == 0 && max == 0) {
       Nil

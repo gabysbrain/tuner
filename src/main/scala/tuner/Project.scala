@@ -324,5 +324,64 @@ class Project(var path:Option[String]) {
     }
   }
 
+  def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
+                             resp2Dim:(String,(Float,Float)),
+                             n:Int) = {
+    val resp1 = resp1Dim._1
+    val resp2 = resp2Dim._1
+    val samples = tuner.Sampler.lhc(inputs, n)
+    val models = gpModels.get
+    val r1Model = models(resp1)
+    val r2Model = models(resp2)
+    val resp1Ests = r1Model.sampleTable(samples)
+    val resp2Ests = r2Model.sampleTable(samples)
+    val mtx = tuner.Sampler.regularSlice(resp2Dim, resp1Dim, 
+                                         Config.estimateSampleDensity)
+
+    println("r1: " + resp1Dim)
+    println("r1: " + mtx.colIds)
+    println("r2: " + resp2Dim)
+    println("r2: " + mtx.rowIds)
+    // Fill in the matrix with counts proportional to the ones from the table
+    for(r <- 0 until samples.numRows) {
+      val est1 = resp1Ests.tuple(r).get(resp1).get
+      val est2 = resp2Ests.tuple(r).get(resp2).get
+      val rowMinPos = mtx.rowIds.lastIndexWhere {_ < est2}
+      val colMinPos = mtx.colIds.lastIndexWhere {_ < est1}
+      if(rowMinPos >= 0 && rowMinPos < mtx.rowIds.length-1 && 
+         colMinPos >= 0 && colMinPos < mtx.colIds.length-1) {
+        val (rowMinVal, rowMaxVal, rowMaxPos) = {
+          (mtx.rowVal(rowMinPos), mtx.rowVal(rowMinPos+1), rowMinPos+1)
+        }
+        val (colMinVal, colMaxVal, colMaxPos) = {
+          (mtx.colVal(colMinPos), mtx.colVal(colMinPos+1), colMinPos+1)
+        }
+  
+        // Compute the percent contributions in the min direction
+        val ulDist = math.sqrt(math.pow(est2-rowMinVal,2) + 
+                               math.pow(est1-colMinVal,2)).toFloat
+        val urDist = math.sqrt(math.pow(est2-rowMinVal,2) + 
+                               math.pow(est1-colMaxVal,2)).toFloat
+        val llDist = math.sqrt(math.pow(est2-rowMaxVal,2) + 
+                               math.pow(est1-colMinVal,2)).toFloat
+        val lrDist = math.sqrt(math.pow(est2-rowMaxVal,2) + 
+                               math.pow(est1-colMaxVal,2)).toFloat
+        val ttlDist = ulDist + urDist + llDist + lrDist
+        mtx.set(rowMinPos, colMinPos, 
+                mtx.get(rowMinPos, colMinPos) + (ulDist/ttlDist))
+        mtx.set(rowMinPos, colMaxPos, 
+                mtx.get(rowMinPos, colMaxPos) + (urDist/ttlDist))
+        mtx.set(rowMaxPos, colMinPos, 
+                mtx.get(rowMaxPos, colMinPos) + (llDist/ttlDist))
+        mtx.set(rowMaxPos, colMaxPos, 
+                mtx.get(rowMaxPos, colMaxPos) + (lrDist/ttlDist))
+      } else {
+        println("e1: " + est1 + " " + mtx.colIds.min + " " + mtx.colIds.max)
+        println("e2: " + est2 + " " + mtx.rowIds.min + " " + mtx.rowIds.max)
+      }
+    }
+    mtx
+  }
+
 }
 

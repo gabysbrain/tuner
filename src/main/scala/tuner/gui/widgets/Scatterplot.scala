@@ -17,8 +17,8 @@ class Scatterplot(dotColor:Int) {
 
     // Draw a white background
     // TODO: make this work for any color
-    applet.fill(255)
-    applet.rect(x, y, w, h)
+    //applet.fill(255)
+    //applet.rect(x, y, w, h)
 
     applet.ellipseMode(P5Panel.EllipseMode.Center)
     applet.fill(dotColor)

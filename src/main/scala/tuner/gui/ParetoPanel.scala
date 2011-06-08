@@ -1,18 +1,21 @@
 package tuner.gui
 
 import tuner.Config
+import tuner.Matrix2D
 import tuner.Project
 import tuner.Sampler
+import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
 import tuner.gui.util.AxisTicks
 import tuner.gui.widgets.Axis
+import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Histogram
 import tuner.gui.widgets.Scatterplot
 
 class ParetoPanel(project:Project)
-    extends P5Panel(Config.paretoDims._1, Config.paretoDims._2, P5Panel.Java2D) {
+    extends P5Panel(Config.paretoDims._1, Config.paretoDims._2, P5Panel.OpenGL) {
 
   val models = project.gpModels.get
 
@@ -22,6 +25,7 @@ class ParetoPanel(project:Project)
   val histogram = new Histogram(Config.respHistogramBarStroke,
                                 Config.respHistogramBarFill,
                                 Config.respHistogramBars)
+  val csp = new ContinuousPlot
 
   var xAxisBox = Rectangle((0f,0f), (0f,0f))
   var yAxisBox = Rectangle((0f,0f), (0f,0f))
@@ -30,6 +34,9 @@ class ParetoPanel(project:Project)
   // Caching for the samples stuff
   var pareto1dField = ""
   var pareto1dData = new Table
+  var pareto2dFields = ("", "")
+  var pareto2dData:Matrix2D = null
+  var cspColorMap:SpecifiedColorMap = null
 
   def draw = {
     applet.background(Config.backgroundColor)
@@ -82,17 +89,37 @@ class ParetoPanel(project:Project)
     val r2Model = models(resp2)
     val r1Ticks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax)
     val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax)
+    val r1Range = (resp1, (r1Ticks.min,r1Ticks.max))
+    val r2Range = (resp2, (r2Ticks.min,r2Ticks.max))
+
+    if((resp1, resp2) != pareto2dFields) {
+      pareto2dFields = (resp1, resp2)
+      pareto2dData = project.randomSample2dResponse(
+        r2Range, r1Range, Config.estimateSampleDensity)
+      cspColorMap = new SpecifiedColorMap(tuner.RedColorMap, 
+                                          pareto2dData.min, 
+                                          pareto2dData.max)
+    }
+
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
                      xAxisBox.width, xAxisBox.height,
                      resp1, r1Ticks)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
                      resp2, r2Ticks)
+
+    // Now for the csp
+    csp.draw(this, plotBox.minX, plotBox.minY, 
+                   plotBox.width, plotBox.height,
+                   pareto2dData, 0, 0, 
+                   r1Range._2, r2Range._2,
+                   cspColorMap)
+
+    // Draw the scatterplot over the csp
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
                                  project.designSites.get, 
-                                 (resp1, (r1Ticks.min,r1Ticks.max)),
-                                 (resp2, (r2Ticks.min,r2Ticks.max)))
+                                 r1Range, r2Range)
   }
 
   override def mouseClicked(mouseX:Int, mouseY:Int, 
