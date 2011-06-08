@@ -30,10 +30,18 @@ class Scatterplot(dotColor:Int) {
       val yVal = tpl(yFld)
       val xx = P5Panel.map(xVal, minX, maxX, x, x+w)
       val yy = P5Panel.map(yVal, maxY, minY, y, y+h)
-      applet.ellipse(xx, 
-                     yy, 
-                     Config.scatterplotDotSize, 
-                     Config.scatterplotDotSize)
+      if(xx >= x && xx <= x+w && yy >= y && yy <= y+h) {
+        val dotSize = {
+          val (mousex, mousey) = applet.mousePos
+          if(math.abs(xx-mousex) < Config.scatterplotDotSize &&
+             math.abs(yy-mousey) < Config.scatterplotDotSize) {
+            Config.scatterplotDotSize * 1.5
+          } else {
+            Config.scatterplotDotSize
+          }
+        }
+        applet.ellipse(xx, yy, dotSize.toFloat, dotSize.toFloat)
+      }
     }
   }
 
