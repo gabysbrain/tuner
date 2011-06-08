@@ -168,11 +168,16 @@ class Table {
     print("writing " + filename + "...")
     val file = new java.io.FileWriter(filename)
 
-    val row0 = tuple(0)
-    val (header, _) = row0.unzip
+    val header = if(numRows > 0) {
+      val row0 = tuple(0)
+      val (hdr, _) = row0.unzip
+      // write out the header
+      file.write(hdr.reduceLeft(_ + "," + _) + "\n")
+      hdr
+    } else {
+      Nil
+    }
 
-    // write out the header
-    file.write(header.reduceLeft(_ + "," + _) + "\n")
     for(r <- 0 until numRows) {
       val tpl = tuple(r)
       val vals = header.map(tpl(_)).map(_.toString)

@@ -172,8 +172,8 @@ class Project(var path:Option[String]) {
         case Some(ds) => ds.numRows - modeledSamplesSize
         case None => 0
       }
-      Project.RunningSamples(newSamples.numRows, 
-                             newSamples.numRows+unmodeledSamples)
+      val ttlSamples = newSamples.numRows+unmodeledSamples
+      Project.RunningSamples(unmodeledSamples, ttlSamples)
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
     } else {
