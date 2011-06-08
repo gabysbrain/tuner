@@ -35,7 +35,7 @@ class Scatterplot(dotColor:Int) {
           val (mousex, mousey) = applet.mousePos
           if(math.abs(xx-mousex) < Config.scatterplotDotSize &&
              math.abs(yy-mousey) < Config.scatterplotDotSize) {
-            Config.scatterplotDotSize * 1.5
+            Config.scatterplotDotSize * 1.4
           } else {
             Config.scatterplotDotSize
           }
