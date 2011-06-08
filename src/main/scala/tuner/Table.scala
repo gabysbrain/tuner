@@ -13,7 +13,7 @@ object Table {
   type Filter = Tuple => Tuple
 
   def fromCsv(filename:String) = {
-    print("reading " + filename + "...")
+    //print("reading " + filename + "...")
     val tbl = new Table
 
     val file = Source.fromFile(filename).getLines
@@ -30,7 +30,7 @@ object Table {
       val splitLine = line.split(delim) map {_.toFloat}
       tbl.addRow(header.zip(splitLine))
     })
-    println("done")
+    //println("done")
     tbl
   }
 
@@ -165,7 +165,7 @@ class Table {
   }
 
   def toCsv(filename:String) = {
-    print("writing " + filename + "...")
+    //print("writing " + filename + "...")
     val file = new java.io.FileWriter(filename)
 
     val header = if(numRows > 0) {
@@ -185,7 +185,7 @@ class Table {
     }
 
     file.close
-    println("done")
+    //println("done")
   }
 
 }

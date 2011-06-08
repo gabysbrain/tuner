@@ -164,6 +164,12 @@ class Project(var path:Option[String]) {
   // Save any gp models that got updated
   path.foreach(_ => save(savePath))
 
+  // See if we should start running some samples
+  if(newSamples.numRows > 0) {
+    val runner = new SampleRunner(this)
+    runner.start
+  }
+
   def status : Project.Status = {
     if(newSamples.numRows == 0 && designSites.forall(_.numRows==0)) {
       Project.NeedsInitialSamples
@@ -303,6 +309,12 @@ class Project(var path:Option[String]) {
     // Also save the samples
     val sampleName = savePath + "/" + Config.sampleFilename
     newSamples.toCsv(sampleName)
+
+    // Also save the design points
+    designSites.foreach {ds =>
+      val designName = savePath + "/" + Config.designFilename
+      ds.toCsv(designName)
+    }
   }
 
   private def loadGpModel(factory:Rgp, field:String) : GpModel = {
