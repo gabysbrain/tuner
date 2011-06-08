@@ -23,7 +23,7 @@ object Config {
   val gainField = "estgain"
 
   //val estimateSampleDensity = 50
-  val estimateSampleDensity = 20
+  val estimateSampleDensity = 25
 
   val samplerSplomDims = (400, 400)
 

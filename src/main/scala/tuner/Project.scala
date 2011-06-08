@@ -338,10 +338,6 @@ class Project(var path:Option[String]) {
     val mtx = tuner.Sampler.regularSlice(resp2Dim, resp1Dim, 
                                          Config.estimateSampleDensity)
 
-    println("r1: " + resp1Dim)
-    println("r1: " + mtx.colIds)
-    println("r2: " + resp2Dim)
-    println("r2: " + mtx.rowIds)
     // Fill in the matrix with counts proportional to the ones from the table
     for(r <- 0 until samples.numRows) {
       val est1 = resp1Ests.tuple(r).get(resp1).get
@@ -375,9 +371,6 @@ class Project(var path:Option[String]) {
                 mtx.get(rowMaxPos, colMinPos) + (llDist/ttlDist))
         mtx.set(rowMaxPos, colMaxPos, 
                 mtx.get(rowMaxPos, colMaxPos) + (lrDist/ttlDist))
-      } else {
-        println("e1: " + est1 + " " + mtx.colIds.min + " " + mtx.colIds.max)
-        println("e2: " + est2 + " " + mtx.rowIds.min + " " + mtx.rowIds.max)
       }
     }
     mtx
