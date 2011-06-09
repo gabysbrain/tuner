@@ -7,8 +7,8 @@ import java.io.File
 
 class SampleRunner(project:Project) extends Actor {
   
-  val sampleFile = File.createTempFile("tuner_samples", "csv")
-  val designFile = File.createTempFile("tuner_design", "csv")
+  val sampleFile = File.createTempFile("tuner_samples", ".csv")
+  val designFile = File.createTempFile("tuner_design", ".csv")
 
   val samples = project.newSamples
 
@@ -16,12 +16,18 @@ class SampleRunner(project:Project) extends Actor {
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
 
+  def unrunSamples = samples.numRows
+
   def act = {
     while(samples.numRows > 0) {
       val subSamples = subsample
       subSamples.toCsv(sampleFile.getAbsolutePath)
       val proc = pb.start
       proc.waitFor // Run until we're done
+
+      if(proc.exitValue != 0) {
+        throw new Exception("Script exited with value " + proc.exitValue)
+      }
 
       // Now the sampling is all done, load up the new points
       val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)

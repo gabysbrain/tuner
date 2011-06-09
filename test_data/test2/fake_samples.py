@@ -4,7 +4,7 @@ from os import path
 from shutil import copyfile
 import csv
 from random import random
-import timer
+import time
 
 DEFAULTIMAGE = 'img001.jpeg'
 
@@ -23,5 +23,5 @@ if __name__ == '__main__':
 
   for i, line in enumerate(infile):
     outfile.writerow(line + [random()])
-    timer.sleep(1)
+    time.sleep(1)
 

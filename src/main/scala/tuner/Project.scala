@@ -165,21 +165,22 @@ class Project(var path:Option[String]) {
   path.foreach(_ => save(savePath))
 
   // See if we should start running some samples
-  if(newSamples.numRows > 0) {
-    val runner = new SampleRunner(this)
-    runner.start
+  val sampleRunner = {
+    if(newSamples.numRows > 0) {
+      val runner = new SampleRunner(this)
+      runner.start
+      Some(runner)
+    } else {
+      None
+    }
   }
 
   def status : Project.Status = {
     if(newSamples.numRows == 0 && designSites.forall(_.numRows==0)) {
       Project.NeedsInitialSamples
-    } else if(newSamples.numRows > 0) {
-      val unmodeledSamples = designSites match {
-        case Some(ds) => ds.numRows - modeledSamplesSize
-        case None => 0
-      }
-      val ttlSamples = newSamples.numRows+unmodeledSamples
-      Project.RunningSamples(unmodeledSamples, ttlSamples)
+    } else if(sampleRunner.isDefined) {
+      val Some(sr) = sampleRunner
+      Project.RunningSamples(sr.unrunSamples, sr.totalSamples)
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
     } else {

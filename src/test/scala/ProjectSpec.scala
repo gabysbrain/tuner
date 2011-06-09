@@ -6,6 +6,9 @@ import org.scalatest.matchers.ShouldMatchers._
 
 import java.io.File
 
+import scala.actors.Actor
+
+import tuner.Config
 import tuner.Project
 
 class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
@@ -50,9 +53,18 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
 
   test("test in progress running of samples") {
     val proj = Project.fromFile(projectPath)
+    val Some(sr) = proj.sampleRunner
+
+    Thread.sleep(10)
 
     // Make sure the inititial status is ok
     proj.status should be (Project.RunningSamples(0, 100))
+    sr.getState should be (Actor.State.Runnable)
+    
+    // Sleep for 5 seconds and then more samples should have finished
+    Thread.sleep(5000)
+
+    proj.status should be (Project.RunningSamples(Config.samplingRowsPerReq, 100))
   }
 
   test("test in progress progress query") (pending)
