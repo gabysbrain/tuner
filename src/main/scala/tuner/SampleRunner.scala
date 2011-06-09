@@ -12,11 +12,15 @@ class SampleRunner(project:Project) extends Actor {
 
   val samples = project.newSamples
 
+  var completedSamples:Int = 0
+
   val pb = new ProcessBuilder(project.scriptPath.get,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
 
   def unrunSamples = samples.numRows
+
+  def totalSamples = completedSamples + unrunSamples
 
   def act = {
     while(samples.numRows > 0) {
@@ -44,6 +48,7 @@ class SampleRunner(project:Project) extends Actor {
         samples.removeRow(0) // Always the first row
       }
       project.save(project.savePath)
+      completedSamples += newDesTbl.numRows
 
       // TODO: delete the file?
     }

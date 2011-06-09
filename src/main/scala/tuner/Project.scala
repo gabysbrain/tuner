@@ -180,7 +180,7 @@ class Project(var path:Option[String]) {
       Project.NeedsInitialSamples
     } else if(sampleRunner.isDefined) {
       val Some(sr) = sampleRunner
-      Project.RunningSamples(sr.unrunSamples, sr.totalSamples)
+      Project.RunningSamples(sr.completedSamples, sr.totalSamples)
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
     } else {

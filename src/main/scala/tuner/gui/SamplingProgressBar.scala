@@ -1,5 +1,7 @@
 package tuner.gui
 
+import scala.actors.Actor
+import scala.actors.Actor._
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.CheckBox
@@ -40,6 +42,13 @@ class SamplingProgressBar(owner:Window, project:Project) extends Dialog(owner) {
 
   updateProgress
 
+  private val scanner:Actor = actor {
+    while(true) {
+      Thread.sleep(1237)
+      updateProgress
+    }
+  }
+
   def updateProgress = {
     progressLabel.text = project.status.statusString
 
@@ -54,6 +63,6 @@ class SamplingProgressBar(owner:Window, project:Project) extends Dialog(owner) {
     }
     this.pack
   }
-
+  
 }
 

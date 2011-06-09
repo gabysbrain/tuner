@@ -67,7 +67,29 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     proj.status should be (Project.RunningSamples(Config.samplingRowsPerReq, 100))
   }
 
-  test("test in progress progress query") (pending)
+  test("test in progress progress query") {
+    val proj = Project.fromFile(projectPath)
+    val Some(sr) = proj.sampleRunner
+    val random = new scala.util.Random
+
+    Thread.sleep(10)
+
+    // Make sure the inititial status is ok
+    proj.status should be (Project.RunningSamples(0, 100))
+    sr.getState should be (Actor.State.Runnable)
+    
+    // Sleep for 5 seconds and then more samples should have finished
+    Thread.sleep(5000)
+
+    val done = sr.completedSamples
+    proj.status should be (Project.RunningSamples(done, 100))
+
+    // Sleep some more
+    Thread.sleep(5000 + random.nextInt(5000))
+
+    val done2 = sr.completedSamples
+    proj.status should be (Project.RunningSamples(done2, 100))
+  }
 
 }
 
