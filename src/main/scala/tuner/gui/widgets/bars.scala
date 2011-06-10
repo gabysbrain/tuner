@@ -8,6 +8,8 @@ class Bars(barStroke:Option[Int], barFill:Option[Int]) {
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            bins:List[Float]) = {
 
+    val maxCount = bins.max
+
     applet.pushMatrix
     applet.translate(x, y+h)
 
@@ -24,8 +26,8 @@ class Bars(barStroke:Option[Int], barFill:Option[Int]) {
     }
     applet.rectMode(P5Panel.RectMode.Corners)
     // draw all the bars
-    counts.keys.foldLeft(0f) {case (curX, count) =>
-      val hgt = P5Panel.map(counts(count), 0, maxCount, 0, h)
+    bins.foldLeft(0f) {case (curX, count) =>
+      val hgt = P5Panel.map(count, 0, maxCount, 0, h)
       applet.rect(curX, 0, curX+barWidth, -hgt)
       curX + barWidth
     }

@@ -1,5 +1,7 @@
 package tuner.gui.util
 
+import tuner.Table
+
 object Histogram {
   def computeBreaks(minVal:Float, maxVal:Float, numBreaks:Int) : List[Float] = {
     if(numBreaks <= 1) {
@@ -15,7 +17,13 @@ object Histogram {
     }
   }
   
-  def countData(field:String, data:Table, breaks:List[Float]) = {
+  def countData(field:String, data:Table, numBreaks:Int) : Map[Float,Int] = {
+    val breaks = computeBreaks(data.min(field), data.max(field), numBreaks)
+    countData(field, data, breaks)
+  }
+
+  def countData(field:String, data:Table, breaks:List[Float]) 
+        : Map[Float,Int] = {
     var counts = (breaks ++ List(Float.MaxValue)).map((_, 0)).toMap
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
