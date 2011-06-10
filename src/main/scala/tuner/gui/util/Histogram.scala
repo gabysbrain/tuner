@@ -1,0 +1,31 @@
+package tuner.gui.util
+
+object Histogram {
+  def computeBreaks(minVal:Float, maxVal:Float, numBreaks:Int) : List[Float] = {
+    if(numBreaks <= 1) {
+      Nil
+    } else {
+      val spacing = (maxVal - minVal) / (numBreaks - 1)
+      val last = maxVal - (spacing/2)
+      def bl(lst:List[Float],v:Float) : List[Float] = {
+        if(v <= minVal) lst
+        else            bl(v::lst, v-spacing)
+      }
+      bl(Nil, last)
+    }
+  }
+  
+  def countData(field:String, data:Table, breaks:List[Float]) = {
+    var counts = (breaks ++ List(Float.MaxValue)).map((_, 0)).toMap
+    for(r <- 0 until data.numRows) {
+      val tpl = data.tuple(r)
+      counts.keys.foreach {k =>
+        if(k > tpl(field)) 
+          counts += (k -> (counts(k) + 1))
+      }
+    }
+    counts
+  }
+
+}
+
