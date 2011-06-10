@@ -75,9 +75,7 @@ class ParetoPanel(project:Project)
                      resp, ticks)
     if(resp != pareto1dField) {
       pareto1dField = resp
-      val samples = Sampler.lhc(project.inputs, 
-                                Config.respHistogramSampleDensity)
-      val data = model.sampleTable(samples)
+      val data = project.modelSamples
       pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
     }
     histogram.draw(this, plotBox.minX, plotBox.minY, 

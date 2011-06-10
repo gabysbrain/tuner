@@ -29,11 +29,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
   var sliderBounds = Rectangle((0f,0f),(0f,0f))
 
   override def setup = {
-    val samples = Sampler.lhc(project.inputs, 
-                                Config.respHistogramSampleDensity)
-    val models = project.gpModels.get
-    val model = models(responseField)
-    val data = model.sampleTable(samples)
+    val data = project.modelSamples
 
     val breaks = Histogram.computeBreaks(data.min(responseField), 
                                          data.max(responseField), 

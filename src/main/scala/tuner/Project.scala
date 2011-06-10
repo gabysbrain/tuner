@@ -175,6 +175,16 @@ class Project(var path:Option[String]) {
     }
   }
 
+  // Also set up a table of samples from each gp model
+  lazy val modelSamples:Table = gpModels match {
+    case Some(gpm) =>
+      val samples = Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+      gpm.foldLeft(samples) {case (tbl, (fld, model)) =>
+        gpm(fld).sampleTable(tbl)
+      }
+    case None => new Table
+  }
+
   def status : Project.Status = {
     if(newSamples.numRows == 0 && designSites.forall(_.numRows==0)) {
       Project.NeedsInitialSamples
