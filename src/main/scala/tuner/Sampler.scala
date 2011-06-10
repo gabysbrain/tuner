@@ -56,7 +56,12 @@ object Sampler {
 
     // Use R to generate the maximim lhc
     R.runCommand("library(lhs)")
-    val lhcCmd = "maximinLHS(%d, %d)".format(n, sampleDims.size)
+    // for larger sample sizes the maximin stuff takes way too long
+    val lhcCmd = if(n <= 1000) {
+      "maximinLHS(%d, %d)".format(n, sampleDims.size)
+    } else {
+      "randomLHS(%d, %d)".format(n, sampleDims.size)
+    }
     println("R: " + lhcCmd)
     val res = R.runCommand(lhcCmd)
     val x:Array[Array[Double]] = res.asDoubleMatrix

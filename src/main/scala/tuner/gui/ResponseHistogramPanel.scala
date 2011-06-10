@@ -18,7 +18,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
 
   val histogram = new Bars(Config.respHistogramBarStroke, 
                            Config.respHistogramBarFill)
-  var counts:Map[Float,Int] = Map()
+  var counts:Map[Float,Float] = Map()
   var xAxisTicks:List[Float] = Nil
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
@@ -34,7 +34,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     val breaks = Histogram.computeBreaks(data.min(responseField), 
                                          data.max(responseField), 
                                          Config.respHistogramBars)
-    counts = Histogram.countData(responseField, data, breaks)
+    counts = Histogram.pctData(responseField, data, breaks)
     //xAxisTicks = breaks.window(2)
     xAxisTicks = breaks
   }
@@ -63,7 +63,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     val maxCount = counts.values.max
     yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                      yAxisBounds.width, yAxisBounds.height,
-                     "Count", List(0, maxCount/2,maxCount))
+                     "Pct", List(0, maxCount/2,maxCount))
     //val xTicks = minResponse +: h.breaks :+ maxResponse
     xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                      xAxisBounds.width, xAxisBounds.height,
