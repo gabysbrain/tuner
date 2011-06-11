@@ -31,6 +31,7 @@ case class ProjConfig(
   outputs:List[OutputSpecification],
   ignoreFields:List[String],
   gpModels:List[GpSpecification],
+  buildInBackground:Boolean,
   currentVis:VisInfo,
   currentRegion:RegionSpecification,
   history:Option[HistorySpecification]
@@ -161,19 +162,18 @@ class Project(var path:Option[String]) {
 
   val candidateGenerator = new CandidateGenerator(this)
 
+  // See if we should do offline stuff in the background
+  var _buildInBackground:Boolean = config match {
+    case Some(c) => c.buildInBackground
+    case None    => false
+  }
+
   // Save any gp models that got updated
   path.foreach(_ => save(savePath))
 
   // See if we should start running some samples
-  val sampleRunner = {
-    if(newSamples.numRows > 0) {
-      val runner = new SampleRunner(this)
-      runner.start
-      Some(runner)
-    } else {
-      None
-    }
-  }
+  var sampleRunner:Option[SampleRunner] = None 
+  if(_buildInBackground) runSamples
 
   // Also set up a table of samples from each gp model
   lazy val modelSamples:Table = gpModels match {
@@ -195,6 +195,20 @@ class Project(var path:Option[String]) {
       Project.BuildingGp
     } else {
       Project.Ok
+    }
+  }
+
+  def buildInBackground = _buildInBackground
+  def buildInBackground_=(b:Boolean) = {
+    _buildInBackground = b
+  }
+
+  def runSamples = {
+    // only run if we aren't running something
+    if(!sampleRunner.isDefined && newSamples.numRows > 0) {
+      val runner = new SampleRunner(this)
+      runner.start
+      sampleRunner = Some(runner)
     }
   }
 
@@ -290,6 +304,7 @@ class Project(var path:Option[String]) {
         ("minimize" -> rf._2)}
       ) ~
       ("ignoreFields" -> ignoreFields) ~
+      ("buildInBackground" -> buildInBackground) ~
       ("gpModels" -> (gpModels match {
         case Some(models) => models.map {case (fld, model) =>
           ("responseDim" -> fld) ~

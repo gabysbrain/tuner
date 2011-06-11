@@ -1,4 +1,4 @@
 #!/bin/sh
 
 export R_HOME=/Library/Frameworks/R.framework/Resources
-sbt $*
+/usr/local/Cellar/sbt/0.7.5/bin/sbt $*
