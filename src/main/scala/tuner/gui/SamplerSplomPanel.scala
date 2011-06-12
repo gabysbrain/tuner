@@ -41,6 +41,8 @@ class SamplerSplomPanel(project:Project)
   def draw = {
     noLoop
 
+    val ranges = project.region.toRange
+
     applet.background(Config.backgroundColor)
 
     // Make sure we have something to draw
@@ -59,8 +61,8 @@ class SamplerSplomPanel(project:Project)
           if(xFld < yFld) {
             val bound = plotBounds((xFld, yFld))
             val plot = sploms((xFld, yFld))
-            val (minX,maxX) = project.inputs.range(xFld)
-            val (minY,maxY) = project.inputs.range(yFld)
+            val (minX,maxX) = ranges.range(xFld)
+            val (minY,maxY) = ranges.range(yFld)
             val xTicks = AxisTicks.ticks(minX, maxX)
             val yTicks = AxisTicks.ticks(minY, maxY)
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
