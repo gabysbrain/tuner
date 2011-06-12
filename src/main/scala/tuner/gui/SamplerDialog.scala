@@ -9,6 +9,7 @@ import scala.swing.Swing
 import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
+import scala.swing.event.ValueChanged
 
 import tuner.Project
 
@@ -22,10 +23,16 @@ class SamplerDialog(project:Project, owner:Window) extends Dialog(owner) {
   val okButton = new Button("Run")
   val cancelButton = new Button("Cancel")
 
+  listenTo(mainPanel)
   listenTo(okButton)
   listenTo(cancelButton)
 
   reactions += {
+    case ValueChanged(`mainPanel`) =>
+      project.newSamples(mainPanel.numSamples, 
+                         project.region.toRange, 
+                         mainPanel.method)
+      mainPanel.splomPanel.redraw
     case ButtonClicked(`okButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Ok))
       close

@@ -11,6 +11,7 @@ import scala.actors.Actor
 import tuner.Config
 import tuner.DimRanges
 import tuner.Project
+import tuner.Region
 import tuner.Sampler
 
 class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
@@ -115,6 +116,27 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     np2.newSamples.numRows should be (math.pow(numSamples,4).toInt)
     // Make sure the status is correct
     np2.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
+  }
+
+  test("new project range should be full input range") {
+    val dimRanges = new DimRanges(Map(("d1" -> (0f, 1f)), 
+                                      ("d2" -> (0f, 1f)), 
+                                      ("d3" -> (0f, 1f)), 
+                                      ("d4" -> (0f, 1f))))
+    val numSamples = 5
+    val projName = "testing_project"
+    val savePath = newProjSavePath + "/" + projName
+    val np = new Project
+    np.name = projName
+    np.scriptPath = Some("/")
+    np.inputs = dimRanges
+
+    //np.region.shape should be (x:BoxRegion)
+    
+    // Make sure all the ranges equal each other
+    dimRanges.dimNames.foreach {fld =>
+      np.region.range(fld) should be (dimRanges.range(fld))
+    }
   }
 
 }

@@ -51,6 +51,12 @@ sealed abstract class Region(project:Project) {
     (math.max(lowRng, c-rad), math.min(highRng, c+rad))
   }
 
+  def fields = _radius.keys
+
+  def toRange : DimRanges = {
+    new DimRanges(fields.map {fld => (fld, (range(fld)))} toMap)
+  }
+
   def toJson = {
     val shapeName = this match {
       case x:BoxRegion => "Box"

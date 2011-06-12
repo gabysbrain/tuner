@@ -164,10 +164,10 @@ class ProjectViewer(project:Project) extends MainFrame {
     reactions += {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
-          project.addSamples(samplerDialog.numSamples, samplerDialog.method)
           project.save(project.savePath)
           // TODO: Need to tell tuner to close the project
         case Dialog.Result.Cancel =>
+          project.newSamples.clear
           //samplerDialog.close
       }
     }

@@ -90,7 +90,7 @@ class Project(var path:Option[String]) {
   var scriptPath : Option[String] = config map {_.scriptPath}
   def modificationDate : Date = new Date
 
-  var inputs : DimRanges = config match {
+  var _inputs : DimRanges = config match {
     case Some(c) => 
       new DimRanges(c.inputs map {x => 
         (x.name, (x.minRange, x.maxRange))
@@ -219,6 +219,16 @@ class Project(var path:Option[String]) {
   def inputFields : List[String] = inputs.dimNames.sorted
   def responseFields : List[String] = responses.map(_._1).sorted
 
+  def inputs : DimRanges = _inputs
+  def inputs_=(dr:DimRanges) = {
+    _inputs = dr
+    region = Region(Region.Box, this)
+    _inputs.dimNames.foreach {fld =>
+      val (mn, mx) = _inputs.range(fld)
+      region.setRadius(fld, (mn+mx)/2)
+    }
+  }
+
   def region : Region = _region
   def region_=(r:Region) = {
     _region = r
@@ -230,12 +240,28 @@ class Project(var path:Option[String]) {
     designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
-  def addSamples(n:Int, method:Sampler.Method) = {
+  def addSamples(n:Int, range:DimRanges, method:Sampler.Method) : Unit = {
     // TODO: find a better solution than just ignoring the missing inputs
     if(n > 0) {
-      method(inputs, n, {v => newSamples.addRow(v)})
+      method(range, n, {v => newSamples.addRow(v)})
       println(n + " samples generated")
     }
+  }
+
+  def addSamples(n:Int, method:Sampler.Method) : Unit = {
+    addSamples(n, inputs, method)
+  }
+
+  def newSamples(n:Int, range:DimRanges, method:Sampler.Method) : Unit = {
+    newSamples.clear
+    addSamples(n, range, method)
+  }
+
+  /**
+   * Clears out the sample table then adds the samples
+   */
+  def newSamples(n:Int, method:Sampler.Method) : Unit = {
+    newSamples(n, inputs, method)
   }
 
   def modeledSamplesSize = gpModels match {
@@ -243,14 +269,6 @@ class Project(var path:Option[String]) {
     case Some(models) => 
       val model = models.head._2
       model.design.size
-  }
-
-  /**
-   * Clears out the sample table then adds the samples
-   */
-  def newSamples(n:Int, method:Sampler.Method) : Unit = {
-    newSamples.clear
-    addSamples(n, method)
   }
 
   def updateCandidates(newValues:List[(String,Float)]) = {
