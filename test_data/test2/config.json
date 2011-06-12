@@ -1,7 +1,6 @@
 {
   "name":"test2",
   "scriptPath":"/Users/tom/Projects/tuner/test_data/test2/run_samples.sh",
-  "buildInBackground":false,
   "inputs":[{
     "name":"p1",
     "minRange":0.0,
@@ -21,6 +20,7 @@
   }],
   "outputs":[],
   "ignoreFields":[],
+  "buildInBackground":false,
   "gpModels":[],
   "currentVis":{
     "currentSlice":[{
