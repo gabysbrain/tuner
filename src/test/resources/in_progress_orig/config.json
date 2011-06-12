@@ -1,7 +1,7 @@
 {
   "name":"test2",
   "scriptPath":"/Users/tom/Projects/tuner/test_data/test2/run_samples.sh",
-  "buildInBackground":false,
+  "buildInBackground":true,
   "inputs":[{
     "name":"p1",
     "minRange":0.0,

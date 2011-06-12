@@ -9,12 +9,15 @@ import java.io.File
 import scala.actors.Actor
 
 import tuner.Config
+import tuner.DimRanges
 import tuner.Project
+import tuner.Sampler
 
 class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
 
   // temp directory where the project config stuff is stored
   var projectPath:String = _
+  val newProjSavePath:String = getClass.getResource("/new_proj_path").getPath
 
   override def beforeEach = {
     val resourcePath = getClass.getResource("/in_progress_orig").getPath
@@ -89,6 +92,29 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
 
     val done2 = sr.completedSamples
     proj.status should be (Project.RunningSamples(done2, 100))
+  }
+
+
+  test("new project status") {
+    val numSamples = 5
+    val projName = "testing_project"
+    val savePath = newProjSavePath + "/" + projName
+    val np = new Project
+    np.name = projName
+    np.scriptPath = Some("/")
+    np.inputs = new DimRanges(Map(("d1" -> (0f, 1f)), 
+                                  ("d2" -> (0f, 1f)), 
+                                  ("d3" -> (0f, 1f)), 
+                                  ("d4" -> (0f, 1f))))
+    np.newSamples(numSamples, Sampler.regularGrid)
+    // Make sure the status is correct
+    np.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
+    np.save(savePath)
+
+    val np2 = new Project(Some(savePath))
+    np2.newSamples.numRows should be (math.pow(numSamples,4).toInt)
+    // Make sure the status is correct
+    np2.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
   }
 
 }

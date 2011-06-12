@@ -186,11 +186,15 @@ class Project(var path:Option[String]) {
   }
 
   def status : Project.Status = {
-    if(newSamples.numRows == 0 && designSites.forall(_.numRows==0)) {
+    if(newSamples.numRows == 0 && !designSites.forall(_.numRows!=0)) {
       Project.NeedsInitialSamples
-    } else if(sampleRunner.isDefined) {
-      val Some(sr) = sampleRunner
-      Project.RunningSamples(sr.completedSamples, sr.totalSamples)
+    } else if(newSamples.numRows > 0) {
+      sampleRunner match {
+        case Some(sr) => 
+          Project.RunningSamples(sr.completedSamples, sr.totalSamples)
+        case None     =>
+          Project.RunningSamples(0, newSamples.numRows)
+      }
     } else if(!gpModels.isDefined) {
       Project.BuildingGp
     } else {
