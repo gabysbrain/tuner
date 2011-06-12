@@ -6,18 +6,20 @@ import tuner.Project
 import tuner.Sampler
 import tuner.Table
 import tuner.geom.Rectangle
+import tuner.gui.util.AxisTicks
+import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
-import tuner.gui.widgets.Histogram
+import tuner.gui.widgets.Bars
 
 class ResponseHistogramPanel(project:Project, responseField:String) 
     extends P5Panel(Config.respHistogramPanelDims._1, 
                     Config.respHistogramPanelDims._2, 
                     P5Panel.Java2D) {
 
-  var responses:Option[Table] = None
-  var histogram:Option[Histogram] = None
-  var minResponse = Float.MinValue
-  var maxResponse = Float.MaxValue
+  val histogram = new Bars(Config.respHistogramBarStroke, 
+                           Config.respHistogramBarFill)
+  var counts:Map[Float,Float] = Map()
+  var xAxisTicks:List[Float] = Nil
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
 
@@ -27,21 +29,14 @@ class ResponseHistogramPanel(project:Project, responseField:String)
   var sliderBounds = Rectangle((0f,0f),(0f,0f))
 
   override def setup = {
-    val (resp, minVal, maxVal) = {
-      val samples = Sampler.lhc(project.inputs, 
-                                Config.respHistogramSampleDensity)
-      val models = project.gpModels.get
-      val model = models(responseField)
-      (model.sampleTable(samples), model.funcMin, model.funcMax)
-    }
+    val data = project.modelSamples
 
-    val hist = new Histogram(Config.respHistogramBarStroke, 
-                             Config.respHistogramBarFill, 
-                             Config.respHistogramBars)
-    responses = Some(resp)
-    minResponse = resp.min(responseField)
-    maxResponse = resp.max(responseField)
-    histogram = Some(hist)
+    val breaks = Histogram.computeBreaks(data.min(responseField), 
+                                         data.max(responseField), 
+                                         Config.respHistogramBars)
+    counts = Histogram.pctData(responseField, data, breaks)
+    //xAxisTicks = breaks.window(2)
+    xAxisTicks = breaks
   }
 
   def draw = {
@@ -61,26 +56,19 @@ class ResponseHistogramPanel(project:Project, responseField:String)
                              plotWidth, Config.respHistogramHandleSize._2)
 
     applet.background(Config.backgroundColor)
-    (histogram, responses) match {
-      case (Some(h), Some(r)) =>
-        h.draw(this, plotBounds.minX, plotBounds.minY, 
-                     plotBounds.width, plotBounds.height, 
-                     responseField, r)
+    histogram.draw(this, plotBounds.minX, plotBounds.minY, 
+                   plotBounds.width, plotBounds.height, 
+                   counts.values.map(_.toFloat).toList)
         // Figure out how to draw the y axis
-        val maxCount = h.counts.values.max
-        yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
-                         yAxisBounds.width, yAxisBounds.height,
-                         "Count", List(0, maxCount/2,maxCount))
-        //val xTicks = minResponse +: h.breaks :+ maxResponse
-        xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
-                         xAxisBounds.width, xAxisBounds.height,
-                         responseField, 
-                         List(minResponse, 
-                              (minResponse+maxResponse)/2, 
-                              maxResponse))
-        drawSlider
-      case _ =>
-    }
+    val maxCount = counts.values.max
+    yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
+                     yAxisBounds.width, yAxisBounds.height,
+                     "Pct", List(0, maxCount/2,maxCount))
+    //val xTicks = minResponse +: h.breaks :+ maxResponse
+    xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
+                     xAxisBounds.width, xAxisBounds.height,
+                     responseField, xAxisTicks)
+    drawSlider
     val endTime = System.currentTimeMillis
     //println("hist draw time: " + (endTime - startTime) + "ms")
   }
@@ -89,7 +77,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     val models = project.gpModels.get
     val model = models(responseField)
     val (est, _) = model.runSample(project.viewInfo.currentSlice.toList)
-    val xx = P5Panel.map(est.toFloat, minResponse, maxResponse, 
+    val xx = P5Panel.map(est.toFloat, xAxisTicks.min, xAxisTicks.max, 
                               sliderBounds.minX, sliderBounds.maxX)
 
     noStroke

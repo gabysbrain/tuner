@@ -9,9 +9,10 @@ import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
 import tuner.gui.util.AxisTicks
+import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.ContinuousPlot
-import tuner.gui.widgets.Histogram
+import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
 
 class ParetoPanel(project:Project)
@@ -22,9 +23,8 @@ class ParetoPanel(project:Project)
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
   val sampleScatterplot = new Scatterplot(Config.paretoSampleColor)
-  val histogram = new Histogram(Config.respHistogramBarStroke,
-                                Config.respHistogramBarFill,
-                                Config.respHistogramBars)
+  val histogram = new Bars(Config.respHistogramBarStroke,
+                           Config.respHistogramBarFill)
   val csp = new ContinuousPlot
 
   var xAxisBox = Rectangle((0f,0f), (0f,0f))
@@ -33,7 +33,7 @@ class ParetoPanel(project:Project)
 
   // Caching for the samples stuff
   var pareto1dField = ""
-  var pareto1dData = new Table
+  var pareto1dCounts:Map[Float,Int] = Map[Float,Int]()
   var pareto2dFields = ("", "")
   var pareto2dData:Matrix2D = null
   var cspColorMap:SpecifiedColorMap = null
@@ -75,13 +75,12 @@ class ParetoPanel(project:Project)
                      resp, ticks)
     if(resp != pareto1dField) {
       pareto1dField = resp
-      val samples = Sampler.lhc(project.inputs, 
-                                Config.respHistogramSampleDensity)
-      pareto1dData = model.sampleTable(samples)
+      val data = project.modelSamples
+      pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
     }
     histogram.draw(this, plotBox.minX, plotBox.minY, 
                          plotBox.width, plotBox.height,
-                         resp, pareto1dData)
+                         pareto1dCounts.values.map(_.toFloat).toList)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {

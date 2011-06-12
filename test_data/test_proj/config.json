@@ -1,6 +1,7 @@
 {
   "name":"test",
   "scriptPath":"/Users/tom/Dropbox/activate.csh",
+  "buildInBackground":false,
   "inputs":[{
     "name":"orientation",
     "minRange":0.0,
