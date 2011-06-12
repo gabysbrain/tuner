@@ -16,6 +16,7 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
 import tuner.Project
+import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
@@ -93,6 +94,7 @@ class ProjectViewer(project:Project) extends MainFrame {
   listenTo(paretoPanel)
   listenTo(controlPanel.historyTab)
   listenTo(controlPanel.candidatesTab)
+  listenTo(controlPanel.localTab)
 
   reactions += {
     case CandidateChanged(_, newCand) =>
@@ -104,6 +106,8 @@ class ProjectViewer(project:Project) extends MainFrame {
           slider.value = v
         }
       }
+    case AddSamples(_) => 
+      openSamplerDialog
     case HistoryAdd(_, sliceInfo) =>
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
@@ -153,5 +157,22 @@ class ProjectViewer(project:Project) extends MainFrame {
       rs.open
     }
   }
+
+  private def openSamplerDialog = {
+    val samplerDialog = new SamplerDialog(project, this)
+    listenTo(samplerDialog)
+    reactions += {
+      case DialogClosing(`samplerDialog`, result) => result match {
+        case Dialog.Result.Ok => 
+          project.addSamples(samplerDialog.numSamples, samplerDialog.method)
+          project.save(project.savePath)
+          // TODO: Need to tell tuner to close the project
+        case Dialog.Result.Cancel =>
+          //samplerDialog.close
+      }
+    }
+    samplerDialog.open
+  }
+
 }
 

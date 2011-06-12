@@ -2,11 +2,13 @@ package tuner.gui
 
 import scala.swing.BoxPanel
 import scala.swing.Button
+import scala.swing.Dialog
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
+import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.SelectionChanged
@@ -15,6 +17,7 @@ import scala.swing.event.ValueChanged
 import tuner.Config
 import tuner.Project
 import tuner.Region
+import tuner.gui.event.AddSamples
 
 import java.awt.Dimension
 
@@ -43,6 +46,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
 
   listenTo(shapeSelector.selection)
   listenTo(sampleButton)
+  listenTo(sampleButton)
 
   reactions += {
     case SelectionChanged(`shapeSelector`) =>
@@ -54,7 +58,7 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
       }
       statsTable.updateStats
     case ButtonClicked(`sampleButton`) =>
-      openSamplerDialog
+      publish(new AddSamples(this))
   }
 
   contents += Swing.VGlue
@@ -85,16 +89,5 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     contents = statsTable
   }
 
-  private def openSamplerDialog = {
-    /*
-    val samplerDialog = new SamplerDialog(project, this.parent)
-    listenTo(samplerDialog)
-    reactions += {
-      case DialogClosing(`samplerDialog`, result) =>
-        println(result)
-    }
-    samplerDialog.open
-    */
-  }
 }
 
