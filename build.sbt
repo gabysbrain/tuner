@@ -25,5 +25,7 @@ javaOptions := {
   Seq("-Djava.library.path=" + jriPath + ":/Users/tom/Projects/tuner/lib/opengl")
 }
 
+parallelExecution := false
+
 mainClass := Some("tuner.Tuner")
   
