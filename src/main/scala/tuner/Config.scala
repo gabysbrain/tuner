@@ -16,11 +16,14 @@ object Config {
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
   val designFilename = "responses.csv"
+  val imageDirname = "images"
 
   val gpRScript = getClass.getResource("/sparkle.R").getPath
 
   val errorField = "stddev"
   val gainField = "estgain"
+
+  val rowField = "rowNum"
 
   //val estimateSampleDensity = 50
   val estimateSampleDensity = 25

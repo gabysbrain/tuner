@@ -139,5 +139,17 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     }
   }
 
+  test("make sure a project without images loads up correctly") {
+    val projPath = getClass.getResource("/no_images_proj").getPath
+    val proj = new Project(Some(projPath))
+    proj.previewImages should be (None)
+  }
+
+  test("make sure a project with images loads up correctly") {
+    val projPath = getClass.getResource("/has_images_proj").getPath
+    val proj = new Project(Some(projPath))
+    proj.previewImages.isDefined should be (true)
+  }
+
 }
 

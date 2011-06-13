@@ -133,7 +133,7 @@ class Table {
   }
 
   def tuple(row:Int) : Table.Tuple = {
-    data(row)
+    data(row) + (Config.rowField -> row)
   }
 
   // Adds all rows of t to this table

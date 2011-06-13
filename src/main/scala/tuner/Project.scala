@@ -168,6 +168,11 @@ class Project(var path:Option[String]) {
     case None    => false
   }
 
+  val previewImages:Option[PreviewImages] = path match {
+    case Some(p) => loadImages(p)
+    case None    => None
+  }
+
   // Save any gp models that got updated
   path.foreach(_ => save(savePath))
 
@@ -435,5 +440,14 @@ class Project(var path:Option[String]) {
     mtx
   }
 
+  private def loadImages(path:String) : Option[PreviewImages] = {
+    (gpModels, designSites) match {
+      case (Some(gpm), Some(ds)) => 
+        val model = gpm.values.head
+        val imagePath = path + "/" + Config.imageDirname
+        Some(new PreviewImages(model, imagePath, ds))
+      case _ => None
+    }
+  }
 }
 
