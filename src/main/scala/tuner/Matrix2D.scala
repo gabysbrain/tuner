@@ -22,7 +22,9 @@ class Matrix2D(rids:List[Float],
   def maxY : Float = colIds.max
 
   // Storing stuff in column-major order
-  protected val data:Array[Float] = new Array(colIds.length * rowIds.length)
+  //protected val data:Array[Float] = new Array(colIds.length * rowIds.length)
+  protected val data:Array[Float] = 
+    Array.fill(colIds.length * rowIds.length)(0f)
 
   def set(row:Int, col:Int, value:Float) = {
     data(col * rows + row) = value
@@ -36,5 +38,14 @@ class Matrix2D(rids:List[Float],
 
   def rowVal(row:Int) : Float = rowIds(row)
   def colVal(col:Int) : Float = colIds(col)
+
+  def map(f:Float=>Float) = {
+    val newData = data.map(f)
+    new Matrix2D(rowIds, colIds) {
+      override val data = newData
+      _min = newData.min
+      _max = newData.max
+    }
+  }
 }
 

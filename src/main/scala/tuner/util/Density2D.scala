@@ -15,6 +15,10 @@ object Density2D {
     val mtx = tuner.Sampler.regularSlice(rowFieldRange, colFieldRange, n)
     val rowRadius = math.abs(mtx.rowIds(0) - mtx.rowIds(1)) / 2
     val colRadius = math.abs(mtx.colIds(0) - mtx.colIds(1)) / 2
+    /*
+    print("row radius: " + rowRadius)
+    println(" col radius: " + colRadius)
+    */
 
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
@@ -27,8 +31,16 @@ object Density2D {
       // Let's see where this should actually get assigned
       val updateRow = updateIdx(minRowPos, rowVal, rowRadius, mtx.rowIds)
       val updateCol = updateIdx(minColPos, colVal, colRadius, mtx.colIds)
+
       (updateRow, updateCol) match {
-        case (Some(ur), Some(uc)) => mtx.set(ur, uc, mtx.get(ur, uc) + 1)
+        case (Some(ur), Some(uc)) => 
+          /*
+          print(" ur: " + ur + " " + mtx.rowIds(ur))
+          println(" rv: " + rowVal)
+          print(" uc: " + uc + " " + mtx.colIds(uc))
+          println(" cv: " + colVal)
+          */
+          mtx.set(ur, uc, mtx.get(ur, uc) + 1)
         case _ => // outside the bounds of the grid
       }
     }
