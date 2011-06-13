@@ -21,7 +21,7 @@
     "name":"Precision",
     "minimize":false
   }],
-  "ignoreFields":[],
+  "ignoreFields":["rowNum"],
   "buildInBackground":false,
   "gpModels":[{
     "responseDim":"Precision",
