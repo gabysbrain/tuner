@@ -445,7 +445,13 @@ class Project(var path:Option[String]) {
       case (Some(gpm), Some(ds)) => 
         val model = gpm.values.head
         val imagePath = path + "/" + Config.imageDirname
-        Some(new PreviewImages(model, imagePath, ds))
+        try {
+          Some(new PreviewImages(model, imagePath, ds))
+        } catch {
+          case e:java.io.FileNotFoundException => 
+            e.printStackTrace
+            None
+        }
       case _ => None
     }
   }
