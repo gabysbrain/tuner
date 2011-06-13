@@ -20,6 +20,8 @@ object Tuner extends SimpleSwingApplication {
     super.main(args)
   }
 
+  var openProjects:Map[Project,Window] = Map()
+
   //def top = ProjectChooser
   def top = { 
     //openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/test_proj/")))
@@ -41,12 +43,27 @@ object Tuner extends SimpleSwingApplication {
     proj.status match {
       case Project.Ok =>
         val projWindow = new ProjectViewer(proj)
+        openProjects += (proj -> projWindow)
         projWindow.visible = true
       case Project.RunningSamples(_,_) | Project.BuildingGp =>
         val waitWindow = new SamplingProgressBar(ProjectChooser, proj)
+        openProjects += (proj -> waitWindow)
         waitWindow.visible = true
       case _ =>
     }
+  }
+
+  def closeProject(proj:Project) : Unit = openProjects.get(proj) match {
+    case Some(window) =>
+      window.visible = false
+      openProjects -= proj
+    case None         => 
+      println("project doesn't have a window open...")
+  }
+
+  def reloadProject(proj:Project) = {
+    closeProject(proj)
+    openProject(proj)
   }
 
   def openProject(file:File) : Unit = {

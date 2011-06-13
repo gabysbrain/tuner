@@ -16,6 +16,7 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
 import tuner.Project
+import tuner.Tuner
 import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
@@ -165,10 +166,9 @@ class ProjectViewer(project:Project) extends MainFrame {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save(project.savePath)
-          // TODO: Need to tell tuner to close the project
+          Tuner.reloadProject(project)
         case Dialog.Result.Cancel =>
           project.newSamples.clear
-          //samplerDialog.close
       }
     }
     samplerDialog.open
