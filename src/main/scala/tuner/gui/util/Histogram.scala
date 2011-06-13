@@ -43,8 +43,8 @@ object Histogram {
   def pctData(field:String, data:Table, breaks:List[Float]) 
         : Map[Float,Float] = {
     val counts = countData(field, data, breaks)
-    val maxCount = counts.values.max.toFloat
-    counts.map {case (break,count) => (break -> 100f * count / maxCount)}
+    val ttlCount = counts.values.sum.toFloat
+    counts.map {case (break,count) => (break -> count / ttlCount)}
   }
 
 }

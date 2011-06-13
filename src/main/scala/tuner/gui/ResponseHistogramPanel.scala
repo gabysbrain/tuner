@@ -63,7 +63,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     val maxCount = counts.values.max
     yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                      yAxisBounds.width, yAxisBounds.height,
-                     "Pct", List(0, maxCount/2,maxCount))
+                     "Pct", List(0, 0.5f, 1f))
     //val xTicks = minResponse +: h.breaks :+ maxResponse
     xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                      xAxisBounds.width, xAxisBounds.height,
