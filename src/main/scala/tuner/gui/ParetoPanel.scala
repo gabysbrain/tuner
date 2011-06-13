@@ -93,8 +93,7 @@ class ParetoPanel(project:Project)
 
     if((resp1, resp2) != pareto2dFields) {
       pareto2dFields = (resp1, resp2)
-      pareto2dData = project.randomSample2dResponse(
-        r2Range, r1Range, Config.paretoHistogramDensity)
+      pareto2dData = project.randomSample2dResponse(r2Range, r1Range)
       cspColorMap = new SpecifiedColorMap(tuner.RedColorMap, 
                                           pareto2dData.min, 
                                           pareto2dData.max)
