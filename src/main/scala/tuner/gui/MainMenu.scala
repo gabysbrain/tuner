@@ -39,6 +39,10 @@ object MainMenu extends MenuBar {
 
   // Window menu
   contents += new Menu("Window") {
+    contents += new MenuItem("Project Chooser")
+
+    contents += new Separator
+
     contents += new MenuItem("Info Window")
     contents += new MenuItem("Local Region Analyzer")
     contents += new MenuItem("Control Window")
