@@ -173,22 +173,18 @@ class Project(var path:Option[String]) {
     case None    => None
   }
 
-  // Save any gp models that got updated
-  path.foreach(_ => save(savePath))
-
   // See if we should start running some samples
   var sampleRunner:Option[SampleRunner] = None 
   if(_buildInBackground) runSamples
 
   // Also set up a table of samples from each gp model
-  lazy val modelSamples:Table = gpModels match {
-    case Some(gpm) =>
-      val samples = Sampler.lhc(inputs, Config.respHistogramSampleDensity)
-      gpm.foldLeft(samples) {case (tbl, (fld, model)) =>
-        gpm(fld).sampleTable(tbl)
-      }
-    case None => new Table
+  lazy val modelSamples:Table = path match {
+    case Some(p) => loadResponseSamples(p)
+    case None    => new Table
   }
+
+  // Save any gp models that got updated
+  path.foreach(_ => save(savePath))
 
   def status : Project.Status = {
     if(newSamples.numRows == 0 && !designSites.forall(_.numRows!=0)) {
@@ -368,6 +364,11 @@ class Project(var path:Option[String]) {
       val designName = savePath + "/" + Config.designFilename
       ds.toCsv(designName)
     }
+
+    if(modelSamples.numRows > 0) {
+      val filepath = savePath + "/" + Config.respSampleFilename
+      modelSamples.toCsv(filepath)
+    }
   }
 
   private def loadGpModel(factory:Rgp, field:String) : GpModel = {
@@ -440,17 +441,41 @@ class Project(var path:Option[String]) {
     mtx
   }
 
+  private def loadResponseSamples(path:String) : Table = gpModels match {
+    case Some(gpm) =>
+      // First try to load up an old file
+      val samples = try {
+        val filepath = path + "/" + Config.respSampleFilename
+        Table.fromCsv(filepath)
+      } catch {
+        case e:java.io.FileNotFoundException => 
+          Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+      }
+      gpm.foldLeft(samples) {case (tbl, (fld, model)) =>
+        if(!tbl.fieldNames.contains(fld))
+          gpm(fld).sampleTable(tbl)
+        else
+          tbl
+      }
+    case None => new Table
+  }
+
   private def loadImages(path:String) : Option[PreviewImages] = {
     (gpModels, designSites) match {
       case (Some(gpm), Some(ds)) => 
-        val model = gpm.values.head
-        val imagePath = path + "/" + Config.imageDirname
-        try {
-          Some(new PreviewImages(model, imagePath, ds))
-        } catch {
-          case e:java.io.FileNotFoundException => 
-            e.printStackTrace
-            None
+        if(!gpm.isEmpty) {
+          val model = gpm.values.head
+          val imagePath = path + "/" + Config.imageDirname
+          try {
+            Some(new PreviewImages(model, imagePath, ds))
+          } catch {
+            case e:java.io.FileNotFoundException => 
+              //e.printStackTrace
+              println("Could not find images, disabling")
+              None
+          }
+        } else {
+          None
         }
       case _ => None
     }
