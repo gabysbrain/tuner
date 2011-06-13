@@ -30,8 +30,10 @@ object Tuner extends SimpleSwingApplication {
 
   def startNewProject = {
     println("Starting new project")
-    val window = new ProjectInfoWindow(new Project)
-    window.visible = true
+    val proj = new Project
+    val window = new ProjectInfoWindow(proj)
+    openProjects += (proj -> window)
+    window.open
   }
 
   def openProject(proj:Project) : Unit = {
@@ -44,21 +46,34 @@ object Tuner extends SimpleSwingApplication {
       case Project.Ok =>
         val projWindow = new ProjectViewer(proj)
         openProjects += (proj -> projWindow)
-        projWindow.visible = true
-      case Project.RunningSamples(_,_) | Project.BuildingGp =>
-        val waitWindow = new SamplingProgressBar(ProjectChooser, proj)
+        ProjectChooser.close
+        projWindow.open
+      case Project.RunningSamples(_,_) =>
+        proj.runSamples
+        val waitWindow = new SamplingProgressBar(proj)
         openProjects += (proj -> waitWindow)
-        waitWindow.visible = true
+        ProjectChooser.close
+        waitWindow.open
+      case Project.BuildingGp =>
+        val waitWindow = new SamplingProgressBar(proj)
+        openProjects += (proj -> waitWindow)
+        ProjectChooser.close
+        waitWindow.open
       case _ =>
     }
   }
 
-  def closeProject(proj:Project) : Unit = openProjects.get(proj) match {
-    case Some(window) =>
-      window.visible = false
-      openProjects -= proj
-    case None         => 
-      println("project doesn't have a window open...")
+  def closeProject(proj:Project) : Unit = {
+    openProjects.get(proj) match {
+      case Some(window) =>
+        window.close
+        openProjects -= proj
+      case None         => 
+        println("project doesn't have a window open...")
+    }
+    // See if we need to show the project chooser
+    if(openProjects.isEmpty)
+      ProjectChooser.open
   }
 
   def reloadProject(proj:Project) = {

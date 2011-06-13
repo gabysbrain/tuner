@@ -4,7 +4,7 @@ import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.Label
-import scala.swing.MainFrame
+import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.event.ButtonClicked
@@ -13,7 +13,7 @@ import scala.swing.event.ValueChanged
 import tuner.Project
 import tuner.Tuner
 
-class InitialSamplerWindow(project:Project, saveDir:String) extends MainFrame {
+class InitialSamplerWindow(project:Project, saveDir:String) extends Frame {
   
   title = "Select Samples"
 

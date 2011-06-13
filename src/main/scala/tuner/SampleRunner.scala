@@ -14,9 +14,16 @@ class SampleRunner(project:Project) extends Actor {
 
   var completedSamples:Int = 0
 
+  var currentProcess:Process = null
+
   val pb = new ProcessBuilder(project.scriptPath.get,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
+
+  def stop = {
+    if(currentProcess != null)
+      currentProcess.destroy
+  }
 
   def unrunSamples = samples.numRows
 
@@ -26,12 +33,13 @@ class SampleRunner(project:Project) extends Actor {
     while(samples.numRows > 0) {
       val subSamples = subsample
       subSamples.toCsv(sampleFile.getAbsolutePath)
-      val proc = pb.start
-      proc.waitFor // Run until we're done
+      currentProcess = pb.start
+      currentProcess.waitFor // Run until we're done
 
-      if(proc.exitValue != 0) {
-        throw new Exception("Script exited with value " + proc.exitValue)
+      if(currentProcess.exitValue != 0) {
+        throw new Exception("Script exited with value " + currentProcess.exitValue)
       }
+      currentProcess = null
 
       // Now the sampling is all done, load up the new points
       val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)

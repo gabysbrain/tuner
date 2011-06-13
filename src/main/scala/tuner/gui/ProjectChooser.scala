@@ -4,7 +4,7 @@ import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.FileChooser
-import scala.swing.MainFrame
+import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
@@ -21,7 +21,7 @@ import tuner.Tuner
  * Project window that allows the user to select which project they want to
  * examine.
  */
-object ProjectChooser extends MainFrame {
+object ProjectChooser extends Frame {
 
   title = "Select Project"
 

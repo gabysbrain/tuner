@@ -5,7 +5,7 @@ import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.FileChooser
 import scala.swing.Label
-import scala.swing.MainFrame
+import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
@@ -21,7 +21,7 @@ import tuner.Project
 import tuner.Tuner
 import tuner.gui.event.ControlTableRowChanged
 
-class ProjectInfoWindow(project:Project) extends MainFrame {
+class ProjectInfoWindow(project:Project) extends Frame {
 
   title = "New Project"
 

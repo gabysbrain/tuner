@@ -7,7 +7,7 @@ import scala.swing.CheckBox
 import scala.swing.Dialog
 import scala.swing.FlowPanel
 import scala.swing.Label
-import scala.swing.MainFrame
+import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
@@ -22,7 +22,7 @@ import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 
-class ProjectViewer(project:Project) extends MainFrame {
+class ProjectViewer(project:Project) extends Frame {
   
   title = project.name
   menuBar = MainMenu
