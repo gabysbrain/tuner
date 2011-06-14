@@ -95,6 +95,6 @@ object Config {
 
   val sampleLineColor = 255
   val sampleLineDotRadius = 2f
-  val sampleLineWidth = 1.2f
+  val sampleLineWidth = 2f
 }
 

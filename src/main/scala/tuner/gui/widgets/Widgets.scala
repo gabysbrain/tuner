@@ -34,13 +34,24 @@ object Widgets {
     val xx2 = P5Panel.map(xSample, xRange._1, xRange._2, 0, w)
     val yy2 = P5Panel.map(ySample, yRange._2, yRange._1, 0, h)
 
+    val radius = Config.sampleLineDotRadius * 1.2f
+    applet.ellipseMode(P5Panel.EllipseMode.Center)
+
+    // Draw a slight border around the whole thing
+    val border = 1f
+    val borderColor = math.abs(Config.sampleLineColor - 255)
+    applet.stroke(borderColor)
+    applet.fill(borderColor)
+    applet.strokeWeight(Config.sampleLineWidth + border)
+
+    applet.line(xx1, yy1, xx2, yy2)
+    applet.ellipse(xx2, yy2, radius + border, radius + border)
+
     applet.stroke(Config.sampleLineColor)
     applet.fill(Config.sampleLineColor)
-    applet.line(xx1, yy1, xx2, yy2)
     applet.strokeWeight(Config.sampleLineWidth)
 
-    applet.ellipseMode(P5Panel.EllipseMode.Center)
-    val radius = Config.sampleLineDotRadius
+    applet.line(xx1, yy1, xx2, yy2)
     applet.ellipse(xx2, yy2, radius, radius)
 
     applet.popMatrix
