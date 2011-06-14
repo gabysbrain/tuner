@@ -71,22 +71,30 @@ class PlotControlsPanel(project:Project)
     }
   }
 
-  val slicePanel = new TablePanel(2, sliceSliders.size) {
-    project.inputFields.sorted.zipWithIndex.foreach {case (fld,i) =>
-      layout(new Label(fld)) = (0, i)
-      layout(sliceSliders(fld)) = (1, i)
+  val (slicePanel, zoomPanel) = {
+    val cellWidths:List[Double] = List(0.25, TablePanel.Size.Fill)
+    val hgts:List[Double] = List.fill(sliceSliders.size)(30)
+    val cellHeights:List[Double] = 
+      hgts :+ TablePanel.Size.Fill
+  
+    val slices = new TablePanel(cellWidths, cellHeights) {
+      project.inputFields.sorted.zipWithIndex.foreach {case (fld,i) =>
+        layout(new Label(fld)) = (0, i, TablePanel.HorizAlign.Right)
+        layout(sliceSliders(fld)) = (1, i, TablePanel.HorizAlign.Full)
+      }
+
+      border = Swing.TitledBorder(border, "Slice")
     }
 
-    border = Swing.TitledBorder(border, "Slice")
-  }
+    val zooms = new TablePanel(cellWidths, cellHeights) {
+      project.inputFields.sorted.zipWithIndex.foreach {case (fld, i) =>
+        layout(new Label(fld)) = (0, i, TablePanel.HorizAlign.Right)
+        layout(zoomSliders(fld)) = (1, i, TablePanel.HorizAlign.Full)
+      }
 
-  val zoomPanel = new TablePanel(2, zoomSliders.size) {
-    project.inputFields.sorted.zipWithIndex.foreach {case (fld, i) =>
-      layout(new Label(fld)) = (0, i)
-      layout(zoomSliders(fld)) = (1, i)
+      border = Swing.TitledBorder(border, "Zoom")
     }
-
-    border = Swing.TitledBorder(border, "Zoom")
+    (slices, zooms)
   }
 
   val responsePanel = new BoxPanel(Orientation.Horizontal) {
@@ -101,6 +109,7 @@ class PlotControlsPanel(project:Project)
     border = Swing.TitledBorder(border, "Response")
   }
 
+  /*
   contents += new BoxPanel(Orientation.Horizontal) {
     Swing.HGlue
     contents += slicePanel
@@ -108,6 +117,12 @@ class PlotControlsPanel(project:Project)
     contents += zoomPanel
     Swing.HGlue
   }
+  */
+  contents += new TablePanel(2, 1) {
+    layout(slicePanel) = (0, 0)
+    layout(zoomPanel) = (1, 0)
+  }
+
   contents += responsePanel
     
 }
