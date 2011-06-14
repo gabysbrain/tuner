@@ -54,7 +54,7 @@ object Config {
 
   // Font stuff
   val fontPath = getClass.getResource("/fonts/MavenPro.otf").getPath
-  val smallFontSize = 10
+  val smallFontSize = 12
 
   // Axis configuration stuff
   // Make sure the is big enough to accomodate the labels
@@ -68,7 +68,7 @@ object Config {
   // Colorbar configuration stuff
   // TODO: do the width automatically
   val colorbarSpacing = 10
-  val colorbarWidth = 70
+  val colorbarWidth = 77
   val colorbarTickSize = 3
   // vertical, horizontal
   val colorbarLabelSpace = (5, 3)

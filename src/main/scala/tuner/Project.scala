@@ -149,6 +149,14 @@ class Project(var path:Option[String]) {
     case None => None
   }
 
+  /*
+  gpModels.foreach {gpm =>
+    gpm.foreach {case (fld, model) =>
+      println("mu: " + fld + " -> " + model.mean)
+    }
+  }
+  */
+
   var _region:Region = config match {
     case Some(c) => Region.fromJson(c.currentRegion, this)
     case None    => Region(Region.Box, this)

@@ -29,7 +29,7 @@ import processing.core.PConstants
 
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
-                                                     P5Panel.OpenGL) 
+                                                     P5Panel.P3D) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
@@ -233,7 +233,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         Widgets.sampleLine(this, bounds.minX, bounds.minY,
                                  bounds.width, bounds.height,
                                  xSlice, ySlice, 
-                                 closestSample(xFld), closestSample(yFld),
+                                 closestSample(xf), closestSample(yf),
                                  xr._2, yr._2)
       }
     }
