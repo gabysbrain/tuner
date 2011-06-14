@@ -65,6 +65,13 @@ class SamplerSplomPanel(project:Project)
             val (minY,maxY) = ranges.range(yFld)
             val xTicks = AxisTicks.ticks(minX, maxX)
             val yTicks = AxisTicks.ticks(minY, maxY)
+
+            // Draw a nice white background
+            fill(255)
+            rectMode(P5Panel.RectMode.Corner)
+            rect(bound.minX, bound.minY, bound.width, bound.height)
+
+            // Draw the actual plot
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
                       project.newSamples,
                       (xFld, (xTicks.min,xTicks.max)),
