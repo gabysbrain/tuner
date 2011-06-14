@@ -50,9 +50,13 @@ class ProjectViewer(project:Project) extends Frame {
                             List(TablePanel.Size.Fill)) {
   
     val responseControlPanel = new BoxPanel(Orientation.Horizontal) {
+      contents += Swing.HGlue
       contents += mainResponseButton
+      contents += Swing.HGlue
       contents += errResponseButton
+      contents += Swing.HGlue
       contents += gainResponseButton
+      contents += Swing.HGlue
   
       border = Swing.TitledBorder(border, "View")
     }
