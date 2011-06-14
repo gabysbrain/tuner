@@ -121,6 +121,8 @@ abstract class P5Panel (
     new PApplet {
       override def setup = {
         size(_width, _height, renderer.name)
+        if(renderer == OpenGL)
+          hint(PConstants.ENABLE_NATIVE_FONTS)
         P5Panel.this.setup
       }
 
