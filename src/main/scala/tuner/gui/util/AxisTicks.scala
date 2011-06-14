@@ -6,7 +6,12 @@ import tuner.R
 object AxisTicks {
   
   // Set up the labeling library
-  R.runCommand("library(labeling)")
+  try {
+    R.runCommand("library(labeling)")
+  } catch {
+    case e:Exception =>
+      throw new Exception("error loading labeling R libary")
+  }
 
   def ticks(min:Float, max:Float, n:Int=Config.axisNumTicks) : List[Float] = {
     val cmd = "extended(%f, %f, %d)".format(min, max, n)
