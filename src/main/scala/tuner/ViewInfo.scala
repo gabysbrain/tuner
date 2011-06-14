@@ -12,6 +12,7 @@ case class VisInfo(
   response1:Option[String],
   response2:Option[String],
   currentMetric:String,
+  showSampleLine:Boolean,
   showRegion:Boolean
 )
 
@@ -31,6 +32,7 @@ object ViewInfo {
       case "error" => Project.ErrorMetric
       case "gain" => Project.GainMetric
     }
+    v.showSampleLine = vi.showSampleLine
     v.showRegion = vi.showRegion
     v
   }
@@ -43,6 +45,7 @@ class ViewInfo(project:Project) {
   var response1View:Option[String] = None
   var response2View:Option[String] = None
   var currentMetric:Project.MetricView = Project.ValueMetric
+  var showSampleLine = false
   var showRegion = true
 
   def currentSlice : Map[String,Float] = {
@@ -88,6 +91,7 @@ class ViewInfo(project:Project) {
     ("response1" -> response1View) ~
     ("response2" -> response2View) ~
     ("currentMetric" -> strMetric) ~
+    ("showSampleLine" -> showSampleLine) ~
     ("showRegion" -> showRegion)
   }
 }

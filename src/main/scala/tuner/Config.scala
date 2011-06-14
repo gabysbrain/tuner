@@ -93,6 +93,8 @@ object Config {
   val respHistogramBarStroke = Some(0)
   val respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
 
-  val paretoHistogramDensity = 100
+  val sampleLineColor = 255
+  val sampleLineDotRadius = 2f
+  val sampleLineWidth = 1.2f
 }
 

@@ -33,8 +33,12 @@ class ProjectViewer(project:Project) extends Frame {
   val gainResponseButton = new RadioButton("Gain")
 
   val gradientGlyphButton = new CheckBox("Gradient")
-  val regionGlyphButton = new CheckBox("Region")
-  val sampleLineGlyphButton = new CheckBox("Line to Sample")
+  val regionGlyphButton = new CheckBox("Region") {
+    selected = project.viewInfo.showRegion
+  }
+  val sampleLineGlyphButton = new CheckBox("Line to Sample") {
+    selected = project.viewInfo.showSampleLine
+  }
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
@@ -101,6 +105,7 @@ class ProjectViewer(project:Project) extends Frame {
   listenTo(errResponseButton)
   listenTo(gainResponseButton)
   listenTo(regionGlyphButton)
+  listenTo(sampleLineGlyphButton)
   listenTo(paretoPanel)
   listenTo(controlPanel.historyTab)
   listenTo(controlPanel.candidatesTab)
@@ -128,6 +133,8 @@ class ProjectViewer(project:Project) extends Frame {
       project.viewInfo.currentMetric = Project.ErrorMetric
     case ButtonClicked(`gainResponseButton`) =>
       project.viewInfo.currentMetric = Project.GainMetric
+    case ButtonClicked(`sampleLineGlyphButton`) =>
+      project.viewInfo.showSampleLine = sampleLineGlyphButton.selected
     case ButtonClicked(`regionGlyphButton`) =>
       project.viewInfo.showRegion = regionGlyphButton.selected
   }
@@ -138,9 +145,6 @@ class ProjectViewer(project:Project) extends Frame {
     case Project.ErrorMetric => errResponseButton.selected = true
     case Project.GainMetric => gainResponseButton.selected = true
   }
-
-  // Update the glyph controls
-  regionGlyphButton.selected = project.viewInfo.showRegion
 
   override def visible_=(b:Boolean) = {
     super.visible_=(b)

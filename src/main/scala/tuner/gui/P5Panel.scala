@@ -250,6 +250,8 @@ abstract class P5Panel (
   def stroke(color:Color) = applet.stroke(color)
   def noStroke = applet.noStroke
 
+  def strokeWeight(width:Float) = applet.strokeWeight(width)
+
   def fill(color:Color) = applet.fill(color)
   def fill(grey:Int, alpha:Float) = applet.fill(grey, alpha)
   def noFill = applet.noFill

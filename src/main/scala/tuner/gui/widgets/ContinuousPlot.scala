@@ -57,8 +57,6 @@ class ContinuousPlot {
     }
     applet.endShape
 
-    drawCrosshair(applet, w, h, xSlice, ySlice, xRange, yRange)
-
     applet.popMatrix
   }
 
@@ -72,18 +70,6 @@ class ContinuousPlot {
     // set the fill on each vertex separately
     applet.fill(colormap.color(cc))
     applet.vertex(mapx(w, xRange, x), mapy(h, yRange, y))
-  }
-
-  def drawCrosshair(applet:P5Panel, w:Float, h:Float, 
-                                    xSlice:Float, ySlice:Float,
-                                    xRange:(Float,Float), 
-                                    yRange:(Float,Float)) = {
-    val xx = mapx(w, xRange, xSlice)
-    val yy = mapy(h, yRange, ySlice)
-
-    applet.stroke(Config.crosshairColor)
-    applet.line(xx-Config.crosshairRadius, yy, xx+Config.crosshairRadius, yy)
-    applet.line(xx, yy-Config.crosshairRadius, xx, yy+Config.crosshairRadius)
   }
 
   def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)

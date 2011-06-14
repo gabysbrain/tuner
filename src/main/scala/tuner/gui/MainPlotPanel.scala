@@ -9,6 +9,7 @@ import tuner.GpModel
 import tuner.Matrix2D
 import tuner.Project
 import tuner.SpecifiedColorMap
+import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
@@ -17,6 +18,7 @@ import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
+import tuner.gui.widgets.Widgets
 import tuner.util.ColorLib
 
 import scala.swing.Publisher
@@ -165,6 +167,10 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   }
 
   private def drawResponses = {
+    // Find the closest sample
+    val closestSample = project.closestSample(
+      project.viewInfo.currentSlice.toList).toMap
+
     // Loop through all field combinations to see what we need to draw
     project.inputFields.foreach {xFld =>
       project.inputFields.foreach {yFld =>
@@ -174,7 +180,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         if(xFld < yFld) {
           project.viewInfo.response1View.foreach {r1 => 
             val startTime = System.currentTimeMillis
-            drawResponse(xFld, yFld, xRange, yRange, r1)
+            drawResponse(xFld, yFld, xRange, yRange, r1, closestSample)
             if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
@@ -183,7 +189,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
-            drawResponse(xFld, yFld, xRange, yRange, r2)
+            drawResponse(xFld, yFld, xRange, yRange, r2, closestSample)
             if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
@@ -199,7 +205,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   private def drawResponse(xFld:String, yFld:String, 
                            xRange:(String,(Float,Float)), 
                            yRange:(String,(Float,Float)), 
-                           response:String) = {
+                           response:String,
+                           closestSample:Table.Tuple) = {
 
     project.gpModels foreach {gpm =>
       val model = gpm(response)
@@ -219,6 +226,16 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       // Draw the main plot
       slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
                  data, xSlice, ySlice, xr._2, yr._2, cm)
+      Widgets.crosshair(this, bounds.minX, bounds.minY, 
+                              bounds.width, bounds.height,
+                              xSlice, ySlice, xr._2, yr._2)
+      if(project.viewInfo.showSampleLine) {
+        Widgets.sampleLine(this, bounds.minX, bounds.minY,
+                                 bounds.width, bounds.height,
+                                 xSlice, ySlice, 
+                                 closestSample(xFld), closestSample(yFld),
+                                 xr._2, yr._2)
+      }
     }
   }
 
