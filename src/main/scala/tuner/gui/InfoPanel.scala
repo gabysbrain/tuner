@@ -52,6 +52,9 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   contents += imagePanel
   contents += Swing.VGlue
 
+  // Set up the initial table
+  updateView
+
   def updateView = {
     val slice = project.viewInfo.currentSlice
     val closestSample = project.closestSample(slice.toList).toMap
