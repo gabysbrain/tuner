@@ -73,7 +73,7 @@ class PlotControlsPanel(project:Project)
 
   val (slicePanel, zoomPanel) = {
     val cellWidths:List[Double] = List(0.25, TablePanel.Size.Fill)
-    val hgts:List[Double] = List.fill(sliceSliders.size)(30)
+    val hgts:List[Double] = List.fill(sliceSliders.size)(25)
     val cellHeights:List[Double] = 
       hgts :+ TablePanel.Size.Fill
   

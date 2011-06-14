@@ -137,16 +137,8 @@ class Project(var path:Option[String]) {
     case None    => new ViewInfo(this)
   }
 
-  val gpModels : Option[Map[String,GpModel]] = path match {
-    case Some(p) =>
-      if(designSites.isDefined) {
-        val designSiteFile = p + "/" + Config.designFilename
-        val gp = new Rgp(designSiteFile)
-        Some(responseFields.map {fld => (fld, loadGpModel(gp, fld))} toMap)
-      } else {
-        None
-      }
-    case None => None
+  val gpModels : Option[Map[String,GpModel]] = path.map {p =>
+    buildGpModels(p)
   }
 
   /*
@@ -381,24 +373,6 @@ class Project(var path:Option[String]) {
     }
   }
 
-  private def loadGpModel(factory:Rgp, field:String) : GpModel = {
-    val gpConfig:Option[GpSpecification] = config match {
-      case Some(c) => c.gpModels.find(_.responseDim==field)
-      case None    => None
-    }
-    gpConfig match {
-      case Some(c) => 
-        new GpModel(c.thetas, c.alphas, c.mean, c.sigma2,
-                    c.designMatrix.map {_.toArray} toArray, 
-                    c.responses.toArray,
-                    c.invCorMtx.map {_.toArray} toArray, 
-                    c.dimNames, c.responseDim, Config.errorField)
-      case None    => 
-        println("building model for " + field)
-        factory.buildModel(inputFields, field, Config.errorField)
-    }
-  }
-
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
@@ -443,6 +417,35 @@ class Project(var path:Option[String]) {
           None
         }
       case _ => None
+    }
+  }
+
+  private def buildGpModels(path:String) : Map[String,GpModel] = {
+    val tmpModels:Map[String,GpModel] = config match {
+      case Some(c) => c.gpModels.map({gpSpec =>
+        val model = new GpModel(
+          gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
+          gpSpec.designMatrix.map(x => x.toArray).toArray,
+          gpSpec.responses.toArray,
+          gpSpec.invCorMtx.map(x => x.toArray).toArray,
+          gpSpec.dimNames, gpSpec.responseDim, Config.errorField
+        )
+        (gpSpec.responseDim, model)
+      }).toMap
+      case None    => Map()
+    }
+    if(designSites.isDefined) {
+      val unseenFields:Set[String] = 
+        responseFields.toSet.diff(tmpModels.keys.toSet)
+      val designSiteFile = path + "/" + Config.designFilename
+      val gp = new Rgp(designSiteFile)
+
+      tmpModels ++ unseenFields.map({fld => 
+        println("building model for " + fld)
+        (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      }).toMap
+    } else {
+      tmpModels
     }
   }
 }

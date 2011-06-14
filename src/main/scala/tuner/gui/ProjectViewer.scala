@@ -146,10 +146,11 @@ class ProjectViewer(project:Project) extends Frame {
     case Project.GainMetric => gainResponseButton.selected = true
   }
 
-  override def visible_=(b:Boolean) = {
-    super.visible_=(b)
+  override def open = {
+    super.open
+
     // See if there are new responses we need to deal with
-    if(b && project.newFields.length > 0) {
+    if(project.newFields.length > 0) {
       println("new fields detected")
       val rs = new ResponseSelector(project, this)
       listenTo(rs)

@@ -40,7 +40,7 @@ class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
   }
   */
 
-  val radioMap = project.newFields.map {fld =>
+  val radioMap = project.newFields.sorted.map {fld =>
     val ignoreRadio = new RadioButton("Ignore")
     val minRadio = new RadioButton("Min")
     val maxRadio = new RadioButton("Max")
