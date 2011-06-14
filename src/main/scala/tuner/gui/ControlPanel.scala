@@ -49,7 +49,7 @@ class ControlPanel(project:Project) extends TabbedPane {
   }
 
   reactions += {
-    case ValueChanged(_) => infoTab.updateTable
+    case ValueChanged(_) => infoTab.updateView
   }
 
 }

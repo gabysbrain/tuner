@@ -27,7 +27,7 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
 
   def image(applet:PApplet, count:Int) : PImage = {
     //println("loading image " + count)
-    fields(count.toInt - 1).image(applet)
+    fields(count).image(applet)
   }
 
   // Stuff to memoize last position

@@ -29,6 +29,8 @@ object Config {
   //val estimateSampleDensity = 50
   val estimateSampleDensity = 25
 
+  val sampleImageSize = 140
+
   val samplerSplomDims = (400, 400)
 
   val paretoDims = (289, 289)

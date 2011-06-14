@@ -42,6 +42,12 @@ object P5Panel {
     val Radius = Value(PConstants.RADIUS)
   }
 
+  object ImageMode extends Enumeration {
+    val Corner = Value(PConstants.CORNER)
+    val Corners = Value(PConstants.CORNERS)
+    val Center = Value(PConstants.CENTER)
+  }
+
   object Shape extends Enumeration {
     val QuadStrip = Value(PConstants.QUAD_STRIP)
     val TriangleStrip = Value(PConstants.TRIANGLE_STRIP)
@@ -220,6 +226,10 @@ abstract class P5Panel (
   def textAlign(halign:TextHAlign.Value, valign:TextVAlign.Value) = 
     applet.textAlign(halign.id, valign.id)
   def textWidth(text:String) = applet.textWidth(text)
+
+  def imageMode(mode:ImageMode.Value) = applet.imageMode(mode.id)
+  def image(img:PImage, x:Float, y:Float, w:Float, h:Float) =
+    applet.image(img, x, y, w, h)
 
   def height = applet.height
   def width = applet.width
