@@ -14,6 +14,7 @@ import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
+import scala.swing.event.ValueChanged
 
 import tuner.Project
 import tuner.Tuner
@@ -37,9 +38,11 @@ class ProjectViewer(project:Project) extends Frame {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  val plot = new MainPlotPanel(project)
+  val mainPlotPanel = new MainPlotPanel(project)
 
   val controlPanel = new ControlPanel(project)
+  // Need this reference for later
+  val plotControls = controlPanel.controlsTab
 
   val paretoPanel = new ParetoPanel(project) {
     border = Swing.TitledBorder(border, "Pareto")
@@ -73,8 +76,6 @@ class ProjectViewer(project:Project) extends Frame {
       border = Swing.TitledBorder(border, "Response Histograms")
     }
   
-    val mainPlotPanel = plot
-  
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
       contents += responseControlPanel
@@ -91,7 +92,7 @@ class ProjectViewer(project:Project) extends Frame {
     layout(rightPanel) = (1,0)
   }
 
-  listenTo(plot)
+  listenTo(mainPlotPanel)
   listenTo(mainResponseButton)
   listenTo(errResponseButton)
   listenTo(gainResponseButton)
@@ -100,6 +101,7 @@ class ProjectViewer(project:Project) extends Frame {
   listenTo(controlPanel.historyTab)
   listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
+  listenTo(plotControls)
 
   reactions += {
     case CandidateChanged(_, newCand) =>
@@ -124,6 +126,8 @@ class ProjectViewer(project:Project) extends Frame {
       project.viewInfo.currentMetric = Project.GainMetric
     case ButtonClicked(`regionGlyphButton`) =>
       project.viewInfo.showRegion = regionGlyphButton.selected
+    case ValueChanged(`plotControls`) =>
+      mainPlotPanel.redraw
   }
 
   // Update which metric we're looking at

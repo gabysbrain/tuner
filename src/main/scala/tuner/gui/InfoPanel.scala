@@ -32,8 +32,8 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
                                          Config.sampleImageSize)
 
   val imagePanel = new BoxPanel(Orientation.Horizontal) {
-    maximumSize = new Dimension(300, 150)
-    preferredSize = new Dimension(300, 150)
+    maximumSize = new Dimension(Int.MaxValue, 150)
+    preferredSize = new Dimension(Int.MaxValue, 150)
 
     contents += Swing.HGlue
     contents += new BorderPanel {

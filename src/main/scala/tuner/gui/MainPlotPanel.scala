@@ -20,6 +20,8 @@ import tuner.gui.widgets.ContinuousPlot
 import tuner.util.ColorLib
 
 import scala.swing.Publisher
+import scala.swing.event.UIElementMoved
+import scala.swing.event.UIElementResized
 
 import processing.core.PConstants
 
@@ -60,6 +62,11 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   var sliceBounds = Map[(String,String),Rectangle]()
   var sliceSize = 0f
 
+  reactions += {
+    case UIElementMoved(_) => redraw
+    case UIElementResized(_) => redraw
+  }
+
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
     val (value, error, gain) = map(response)
     project.viewInfo.currentMetric match {
@@ -82,7 +89,15 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     data._2
   }
 
+  override def setup = {
+    noLoop
+  }
+
+  def redraw = loop
+
   def draw = {
+    noLoop
+
     applet.background(Config.backgroundColor)
 
     // Compute the spacing of everything
