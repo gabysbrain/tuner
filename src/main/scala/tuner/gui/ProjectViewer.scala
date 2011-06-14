@@ -65,9 +65,13 @@ class ProjectViewer(project:Project) extends Frame {
     }
 
     val glyphControlPanel = new BoxPanel(Orientation.Horizontal) {
+      contents += Swing.HGlue
       contents += gradientGlyphButton
+      contents += Swing.HGlue
       contents += regionGlyphButton
+      contents += Swing.HGlue
       contents += sampleLineGlyphButton
+      contents += Swing.HGlue
 
       border = Swing.TitledBorder(border, "Glyphs")
     }
@@ -126,8 +130,6 @@ class ProjectViewer(project:Project) extends Frame {
       project.viewInfo.currentMetric = Project.GainMetric
     case ButtonClicked(`regionGlyphButton`) =>
       project.viewInfo.showRegion = regionGlyphButton.selected
-    case ValueChanged(`plotControls`) =>
-      mainPlotPanel.redraw
   }
 
   // Update which metric we're looking at

@@ -272,11 +272,14 @@ abstract class P5Panel (
 
   def font(path:String, size:Int) : PFont = {
     loadedFonts.getOrElse((path, size), {
-      println("loading font `" + path + "' (" + size + ")")
+      //println("loading font `" + path + "' (" + size + ")")
       val f = applet.createFont(path, size)
       loadedFonts += (path, size) -> f
       f
     })
+  }
+  def clearFonts = {
+    loadedFonts = Map()
   }
 }
 

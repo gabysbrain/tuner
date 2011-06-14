@@ -63,8 +63,10 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   var sliceSize = 0f
 
   reactions += {
-    case UIElementMoved(_) => redraw
-    case UIElementResized(_) => redraw
+    case UIElementMoved(_) => 
+      clearFonts
+    case UIElementResized(_) => 
+      clearFonts
   }
 
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
@@ -89,14 +91,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     data._2
   }
 
-  override def setup = {
-    noLoop
-  }
-
-  def redraw = loop
-
   def draw = {
-    noLoop
 
     applet.background(Config.backgroundColor)
 
