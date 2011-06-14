@@ -40,18 +40,24 @@ object Widgets {
     // Draw a slight border around the whole thing
     val border = 1f
     val borderColor = math.abs(Config.sampleLineColor - 255)
-    applet.stroke(borderColor)
-    applet.fill(borderColor)
-    applet.strokeWeight(Config.sampleLineWidth + border)
+    //applet.strokeWeight(Config.sampleLineWidth + border)
 
+    applet.stroke(borderColor)
+    applet.noFill
     applet.line(xx1, yy1, xx2, yy2)
+
+    applet.noStroke
+    applet.fill(borderColor)
     applet.ellipse(xx2, yy2, radius + border, radius + border)
 
-    applet.stroke(Config.sampleLineColor)
-    applet.fill(Config.sampleLineColor)
-    applet.strokeWeight(Config.sampleLineWidth)
+    //applet.strokeWeight(Config.sampleLineWidth)
 
+    applet.stroke(Config.sampleLineColor)
+    applet.noFill
     applet.line(xx1, yy1, xx2, yy2)
+
+    applet.noStroke
+    applet.fill(Config.sampleLineColor)
     applet.ellipse(xx2, yy2, radius, radius)
 
     applet.popMatrix

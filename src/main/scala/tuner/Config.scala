@@ -94,7 +94,7 @@ object Config {
   val respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
 
   val sampleLineColor = 255
-  val sampleLineDotRadius = 2f
+  val sampleLineDotRadius = scatterplotDotSize / 2
   val sampleLineWidth = 2f
 }
 
