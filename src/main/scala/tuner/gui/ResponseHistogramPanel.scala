@@ -6,6 +6,7 @@ import tuner.Project
 import tuner.Sampler
 import tuner.Table
 import tuner.geom.Rectangle
+import tuner.gui.event.ReadyToDraw
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
@@ -20,6 +21,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
                            Config.respHistogramBarFill)
   var counts:Map[Float,Float] = Map()
   var xAxisTicks:List[Float] = Nil
+  var yAxisTicks:List[Float] = List(0,0.5f,1f)
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
 
@@ -31,12 +33,18 @@ class ResponseHistogramPanel(project:Project, responseField:String)
   override def setup = {
     val data = project.modelSamples
 
+    /*
     val breaks = Histogram.computeBreaks(data.min(responseField), 
                                          data.max(responseField), 
                                          Config.respHistogramBars)
-    counts = Histogram.pctData(responseField, data, breaks)
+    */
+    counts = Histogram.pctData(responseField, data, Config.respHistogramBars)
     //xAxisTicks = breaks.window(2)
-    xAxisTicks = breaks
+    xAxisTicks = counts.keys.toList
+    val minY = counts.values.min
+    val maxY = counts.values.max
+    yAxisTicks = List(minY, (minY+maxY)/2, maxY)
+    publish(new ReadyToDraw(this))
   }
 
   def draw = {
@@ -58,12 +66,13 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     applet.background(Config.backgroundColor)
     histogram.draw(this, plotBounds.minX, plotBounds.minY, 
                    plotBounds.width, plotBounds.height, 
-                   counts.values.map(_.toFloat).toList)
+                   counts.values.map(_.toFloat).toList,
+                   yAxisTicks.min, yAxisTicks.max)
         // Figure out how to draw the y axis
-    val maxCount = counts.values.max
+    //val maxCount = counts.values.max
     yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                      yAxisBounds.width, yAxisBounds.height,
-                     "Pct", List(0, 0.5f, 1f))
+                     "Pct", yAxisTicks)
     //val xTicks = minResponse +: h.breaks :+ maxResponse
     xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                      xAxisBounds.width, xAxisBounds.height,

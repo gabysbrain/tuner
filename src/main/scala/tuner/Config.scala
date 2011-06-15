@@ -27,7 +27,8 @@ object Config {
   val rowField = "rowNum"
 
   //val estimateSampleDensity = 50
-  val estimateSampleDensity = 25
+  //val estimateSampleDensity = 25
+  val estimateSampleDensity = 20
 
   val sampleImageSize = 140
 
@@ -87,7 +88,7 @@ object Config {
   val sampleDotColor = 0xffDD1C77
 
   val respHistogramSampleDensity = 10000
-  val respHistogramPanelDims = (paretoDims._1, 200)
+  val respHistogramPanelDims = (paretoDims._1 - 15, 200)
   val respHistogramBars = 11
   val respHistogramBarFill = Some(255)
   val respHistogramBarStroke = Some(0)

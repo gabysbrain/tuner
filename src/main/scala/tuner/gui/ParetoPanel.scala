@@ -80,9 +80,11 @@ class ParetoPanel(project:Project)
       val data = project.modelSamples
       pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
     }
+    val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
     histogram.draw(this, plotBox.minX, plotBox.minY, 
                          plotBox.width, plotBox.height,
-                         pareto1dCounts.values.map(_.toFloat).toList)
+                         pareto1dCounts.values.map(_.toFloat).toList,
+                         yMin, yMax)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {

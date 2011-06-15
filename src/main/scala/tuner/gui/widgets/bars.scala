@@ -6,7 +6,7 @@ import tuner.gui.P5Panel
 class Bars(barStroke:Option[Int], barFill:Option[Int]) {
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
-           heightPcts:List[Float]) = {
+           heightPcts:List[Float], dataYMin:Float, dataYMax:Float) = {
 
     applet.pushMatrix
     applet.translate(x, y+h)
@@ -24,7 +24,8 @@ class Bars(barStroke:Option[Int], barFill:Option[Int]) {
     applet.rectMode(P5Panel.RectMode.Corners)
     // draw all the bars
     heightPcts.foldLeft(0f) {case (curX, pct) =>
-      val hgt = P5Panel.map(pct, 0, 1f, 0, h)
+      //val hgt = P5Panel.map(pct, 0, 1f, 0, h)
+      val hgt = P5Panel.map(pct, dataYMin, dataYMax, 0, h)
       applet.rect(curX, 0, curX+barWidth, -hgt)
       curX + barWidth
     }
