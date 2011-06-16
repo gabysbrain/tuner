@@ -40,8 +40,15 @@ object ViewInfo {
 
 class ViewInfo(project:Project) {
 
-  var _currentSlice = Map[String,Float]()
-  var _currentZoom:DimRanges = new DimRanges(Nil.toMap)
+  //var _currentSlice = Map[String,Float]()
+  //var _currentZoom:DimRanges = new DimRanges(Nil.toMap)
+  var _currentSlice = project.inputs.dimNames.map {fld =>
+    val (mn, mx) = project.inputs.range(fld)
+    (fld, (mn+mx)/2)
+  } toMap
+  var _currentZoom = new DimRanges(project.inputs.dimNames.map {fld =>
+    (fld, project.inputs.range(fld))
+  } toMap)
   var response1View:Option[String] = None
   var response2View:Option[String] = None
   var currentMetric:Project.MetricView = Project.ValueMetric
