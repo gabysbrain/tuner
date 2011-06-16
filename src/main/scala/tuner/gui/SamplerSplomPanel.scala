@@ -33,13 +33,15 @@ class SamplerSplomPanel(project:Project)
     }
 
   override def setup = {
-    noLoop
+    loop = false
   }
   
-  def redraw = loop
+  def redraw = {
+    loop = true
+  }
 
   def draw = {
-    noLoop
+    loop = false
 
     val ranges = project.region.toRange
 

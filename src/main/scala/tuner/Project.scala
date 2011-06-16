@@ -12,6 +12,7 @@ import scala.collection.immutable.SortedMap
 import scala.io.Source
 
 import tuner.util.Density2D
+import tuner.util.Path
 
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
@@ -81,7 +82,7 @@ class Project(var path:Option[String]) {
   implicit val formats = net.liftweb.json.DefaultFormats
 
   var config = path map {p =>
-    val projConfigPath = p + "/" + Config.projConfigFilename
+    val projConfigPath = Path.join(p, Config.projConfigFilename)
     val json = parse(Source.fromFile(projConfigPath).mkString)
     json.extract[ProjConfig]
   }
@@ -103,7 +104,7 @@ class Project(var path:Option[String]) {
 
   val newSamples = path match {
     case Some(p) => try {
-        val sampleFilename = p + "/" + Config.sampleFilename
+        val sampleFilename = Path.join(p, Config.sampleFilename)
         Table.fromCsv(sampleFilename)
       } catch {
         case fnf:java.io.FileNotFoundException => new Table
@@ -113,7 +114,7 @@ class Project(var path:Option[String]) {
 
   var designSites = path match {
     case Some(p) =>
-      val designSiteFile = p + "/" + Config.designFilename
+      val designSiteFile = Path.join(p, Config.designFilename)
       try {
         Some(Table.fromCsv(designSiteFile))
       } catch {
@@ -353,23 +354,23 @@ class Project(var path:Option[String]) {
     // Ensure that the project directory exists
     var pathDir = new File(savePath).mkdir
 
-    val jsonPath = savePath + "/" + Config.projConfigFilename
+    val jsonPath = Path.join(savePath, Config.projConfigFilename)
     val outFile = new FileWriter(jsonPath)
     outFile.write(pretty(render(json)))
     outFile.close
 
     // Also save the samples
-    val sampleName = savePath + "/" + Config.sampleFilename
+    val sampleName = Path.join(savePath, Config.sampleFilename)
     newSamples.toCsv(sampleName)
 
     // Also save the design points
     designSites.foreach {ds =>
-      val designName = savePath + "/" + Config.designFilename
+      val designName = Path.join(savePath, Config.designFilename)
       ds.toCsv(designName)
     }
 
     if(modelSamples.numRows > 0) {
-      val filepath = savePath + "/" + Config.respSampleFilename
+      val filepath = Path.join(savePath, Config.respSampleFilename)
       modelSamples.toCsv(filepath)
     }
   }
@@ -385,7 +386,7 @@ class Project(var path:Option[String]) {
     case Some(gpm) =>
       // First try to load up an old file
       val samples = try {
-        val filepath = path + "/" + Config.respSampleFilename
+        val filepath = Path.join(path, Config.respSampleFilename)
         Table.fromCsv(filepath)
       } catch {
         case e:java.io.FileNotFoundException => 
@@ -405,7 +406,7 @@ class Project(var path:Option[String]) {
       case (Some(gpm), Some(ds)) => 
         if(!gpm.isEmpty) {
           val model = gpm.values.head
-          val imagePath = path + "/" + Config.imageDirname
+          val imagePath = Path.join(path, Config.imageDirname)
           try {
             Some(new PreviewImages(model, imagePath, ds))
           } catch {
@@ -438,7 +439,7 @@ class Project(var path:Option[String]) {
     if(designSites.isDefined) {
       val unseenFields:Set[String] = 
         responseFields.toSet.diff(tmpModels.keys.toSet)
-      val designSiteFile = path + "/" + Config.designFilename
+      val designSiteFile = Path.join(path, Config.designFilename)
       val gp = new Rgp(designSiteFile)
 
       tmpModels ++ unseenFields.map({fld => 

@@ -18,11 +18,11 @@ class PImagePanel(w:Int, h:Int) extends P5Panel(w, h) {
   }
 
   override def setup = {
-    noLoop
+    loop = false
   }
 
   def draw = {
-    noLoop
+    loop = false
 
     applet.background(Config.backgroundColor)
     

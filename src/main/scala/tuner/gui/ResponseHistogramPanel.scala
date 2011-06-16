@@ -31,6 +31,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
   var sliderBounds = Rectangle((0f,0f),(0f,0f))
 
   override def setup = {
+    frameRate = Config.respHistogramFramerate
     val data = project.modelSamples
 
     /*

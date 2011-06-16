@@ -194,8 +194,16 @@ abstract class P5Panel (
   def setup = {}
   def draw
 
-  def loop = applet.loop
-  def noLoop = applet.noLoop
+  // TODO: make this look up the actual value
+  def loop = true
+  def loop_=(b:Boolean) = {
+    if(b) applet.loop
+    else  applet.noLoop
+  }
+
+  // TODO: make this look up the actual value
+  def frameRate = 0
+  def frameRate_=(fr:Int) = applet.frameRate(fr)
 
   def createGraphics(xSize:Int, ySize:Int, renderer:P5Panel.Renderer) =
     applet.createGraphics(xSize, ySize, renderer.name)

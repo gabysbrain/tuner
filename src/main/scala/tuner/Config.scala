@@ -70,7 +70,7 @@ object Config {
   // Colorbar configuration stuff
   // TODO: do the width automatically
   val colorbarSpacing = 10
-  val colorbarWidth = 77
+  val colorbarWidth = 81
   val colorbarTickSize = 3
   // vertical, horizontal
   val colorbarLabelSpace = (5, 3)
@@ -94,6 +94,7 @@ object Config {
   val respHistogramBarFill = Some(255)
   val respHistogramBarStroke = Some(0)
   val respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
+  val respHistogramFramerate = 10
 
   val sampleLineColor = 255
   val sampleLineDotRadius = scatterplotDotSize / 2
