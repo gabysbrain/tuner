@@ -1,6 +1,7 @@
 import sbt._
+import com.github.retronym.OneJarProject
 
-class TunerProject(info : ProjectInfo) extends DefaultProject(info) {
+class TunerProject(info : ProjectInfo) extends DefaultProject(info) with OneJarProject {
 
   val scalaToolsSnapshots = ScalaToolsSnapshots
 
