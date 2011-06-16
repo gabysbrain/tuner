@@ -20,7 +20,6 @@ object Config {
   val respSampleFilename = "response_samples.csv"
   val imageDirname = "images"
 
-  //val gpRScript = getClass.getResource("/sparkle.R").getPath
   val gpRScript = ResourceLoader.fileResource("/sparkle.R")
 
   val errorField = "stddev"
@@ -56,7 +55,7 @@ object Config {
   val regionColor = 0xAAABCDFC
 
   // Font stuff
-  val fontPath = getClass.getResource("/fonts/MavenPro.otf").getPath
+  val fontPath = ResourceLoader.fileResource("/fonts/MavenPro.otf")
   val smallFontSize = 12
 
   // Axis configuration stuff
