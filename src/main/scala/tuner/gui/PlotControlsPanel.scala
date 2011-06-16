@@ -45,8 +45,8 @@ class PlotControlsPanel(project:Project)
   } toMap
 
   // Create combo boxes for the 2 possible outputs
-  val resp1Combo = new ComboBox("None" :: project.responses.map {_._1})
-  val resp2Combo = new ComboBox("None" :: project.responses.map {_._1})
+  val resp1Combo = new ComboBox("None" :: project.responseFields)
+  val resp2Combo = new ComboBox("None" :: project.responseFields)
 
   project.viewInfo.response1View foreach {r =>
     resp1Combo.selection.item = r

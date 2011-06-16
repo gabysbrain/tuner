@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
+import scala.collection.immutable.SortedMap
 import scala.io.Source
 
 import tuner.util.Density2D
@@ -137,7 +138,7 @@ class Project(var path:Option[String]) {
     case None    => new ViewInfo(this)
   }
 
-  val gpModels : Option[Map[String,GpModel]] = path.map {p =>
+  val gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
     buildGpModels(p)
   }
 
@@ -420,8 +421,8 @@ class Project(var path:Option[String]) {
     }
   }
 
-  private def buildGpModels(path:String) : Map[String,GpModel] = {
-    val tmpModels:Map[String,GpModel] = config match {
+  private def buildGpModels(path:String) : SortedMap[String,GpModel] = {
+    val tmpModels = SortedMap[String,GpModel]() ++ (config match {
       case Some(c) => c.gpModels.map({gpSpec =>
         val model = new GpModel(
           gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
@@ -431,9 +432,9 @@ class Project(var path:Option[String]) {
           gpSpec.dimNames, gpSpec.responseDim, Config.errorField
         )
         (gpSpec.responseDim, model)
-      }).toMap
-      case None    => Map()
-    }
+      })
+      case None    => Nil
+    })
     if(designSites.isDefined) {
       val unseenFields:Set[String] = 
         responseFields.toSet.diff(tmpModels.keys.toSet)
