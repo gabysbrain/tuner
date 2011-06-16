@@ -5,6 +5,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 import tuner.util.Prefs
+import tuner.util.ResourceLoader
 
 object Config {
   
@@ -19,7 +20,8 @@ object Config {
   val respSampleFilename = "response_samples.csv"
   val imageDirname = "images"
 
-  val gpRScript = getClass.getResource("/sparkle.R").getPath
+  //val gpRScript = getClass.getResource("/sparkle.R").getPath
+  val gpRScript = ResourceLoader.fileResource("/sparkle.R")
 
   val errorField = "stddev"
   val gainField = "estgain"
