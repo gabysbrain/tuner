@@ -25,7 +25,7 @@ class ParetoPanel(project:Project)
   val sampleScatterplot = new Scatterplot(Config.paretoSampleColor)
   val histogram = new Bars(Config.respHistogramBarStroke,
                            Config.respHistogramBarFill)
-  val csp = new ContinuousPlot
+  //val csp = new ContinuousPlot
 
   var xAxisBox = Rectangle((0f,0f), (0f,0f))
   var yAxisBox = Rectangle((0f,0f), (0f,0f))
@@ -35,8 +35,8 @@ class ParetoPanel(project:Project)
   var pareto1dField = ""
   var pareto1dCounts:Map[Float,Int] = Map[Float,Int]()
   var pareto2dFields = ("", "")
-  var pareto2dData:Matrix2D = null
-  var cspColorMap:SpecifiedColorMap = null
+  //var pareto2dData:Matrix2D = null
+  //var cspColorMap:SpecifiedColorMap = null
 
   def draw = {
     applet.background(Config.backgroundColor)
@@ -99,10 +99,12 @@ class ParetoPanel(project:Project)
       pareto2dFields = (resp1, resp2)
       val samp = project.randomSample2dResponse(r2Range, r1Range)
       // Put the counts on a log scale
-      pareto2dData = samp.map(x => if(x==0) x else math.log(x).toFloat)
+      //pareto2dData = samp.map(x => if(x==0) x else math.log(x).toFloat)
+      /*
       cspColorMap = new SpecifiedColorMap(tuner.RedColorMap, 
                                           pareto2dData.min, 
                                           pareto2dData.max)
+      */
     }
 
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
@@ -113,13 +115,17 @@ class ParetoPanel(project:Project)
                      resp2, r2Ticks)
 
     // Now for the csp
+    /*
     csp.draw(this, plotBox.minX, plotBox.minY, 
                    plotBox.width, plotBox.height,
                    pareto2dData, 0, 0, 
                    r1Range._2, r2Range._2,
                    cspColorMap)
+    */
 
     // Draw the scatterplot over the csp
+    fill(255)
+    rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
                                  project.designSites.get, 
