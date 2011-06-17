@@ -16,6 +16,7 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
+import tuner.Config
 import tuner.Project
 import tuner.Tuner
 import tuner.gui.event.AddSamples
@@ -50,6 +51,8 @@ class ProjectViewer(project:Project) extends Frame {
 
   val paretoPanel = new ParetoPanel(project) {
     border = Swing.TitledBorder(border, "Pareto")
+    minimumSize = new java.awt.Dimension(Config.paretoDims._1, 
+                                         Config.paretoDims._2)
     maximumSize = preferredSize
   }
 
