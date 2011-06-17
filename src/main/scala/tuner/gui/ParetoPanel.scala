@@ -128,6 +128,7 @@ class ParetoPanel(project:Project)
     */
 
     // Draw the scatterplot over the csp
+    rectMode(P5Panel.RectMode.Corner)
     fill(255)
     rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
 
