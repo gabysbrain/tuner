@@ -4,15 +4,15 @@
   "inputs":[{
     "name":"alpha5",
     "minRange":0.0,
-    "maxRange":1.0
+    "maxRange":2.0
   },{
     "name":"alpha2",
     "minRange":0.0,
-    "maxRange":1.0
+    "maxRange":10.0
   },{
     "name":"alpha6",
     "minRange":0.0,
-    "maxRange":1.0
+    "maxRange":2.0
   },{
     "name":"sigma",
     "minRange":0.0,
@@ -20,7 +20,7 @@
   },{
     "name":"alpha3",
     "minRange":0.0,
-    "maxRange":1.0
+    "maxRange":0.5
   },{
     "name":"alpha4",
     "minRange":0.0,
@@ -28,7 +28,7 @@
   },{
     "name":"alpha7",
     "minRange":0.0,
-    "maxRange":1.0
+    "maxRange":2.0
   },{
     "name":"alpha1",
     "minRange":0.0,
@@ -197,15 +197,15 @@
     "currentZoom":[{
       "name":"alpha5",
       "lowValue":0.0,
-      "highValue":1.0
+      "highValue":2.0
     },{
       "name":"alpha2",
       "lowValue":0.0,
-      "highValue":1.0
+      "highValue":10.0
     },{
       "name":"alpha6",
       "lowValue":0.0,
-      "highValue":1.0
+      "highValue":2.0
     },{
       "name":"sigma",
       "lowValue":0.0,
@@ -213,7 +213,7 @@
     },{
       "name":"alpha3",
       "lowValue":0.0,
-      "highValue":1.0
+      "highValue":0.5
     },{
       "name":"alpha4",
       "lowValue":0.0,
@@ -221,7 +221,7 @@
     },{
       "name":"alpha7",
       "lowValue":0.0,
-      "highValue":1.0
+      "highValue":2.0
     },{
       "name":"alpha1",
       "lowValue":0.0,
