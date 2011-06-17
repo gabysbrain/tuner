@@ -190,6 +190,19 @@ class Project(var path:Option[String]) {
   // Save any gp models that got updated
   path.foreach(_ => save(savePath))
 
+  override def hashCode : Int = path match {
+    case Some(p) => p.hashCode
+    case _       => name.hashCode
+  }
+
+  override def equals(other:Any) : Boolean = other match {
+    case that:Project => (this.path, that.path) match {
+      case (Some(p1), Some(p2)) => p1 == p2
+      case _                    => this.name == that.name
+    }
+    case _ => false
+  }
+
   def status : Project.Status = {
     if(newSamples.numRows == 0 && !designSites.forall(_.numRows!=0)) {
       Project.NeedsInitialSamples
@@ -292,11 +305,17 @@ class Project(var path:Option[String]) {
       math.sqrt(diffs.sum)
     }
     designSites match {
-      case Some(t) => t.data.foldLeft(Double.MaxValue, t.tuple(0))((mi,r) => {
-        val dist = ptDist(r)
-        if(dist < mi._1) (dist, r)
-        else             mi
-      })._2.toList
+      case Some(t) => 
+        var (minDist, minRow) = (Double.MaxValue, t.tuple(0))
+        for(r <- 0 until t.numRows) {
+          val tpl = t.tuple(r)
+          val dist = ptDist(tpl)
+          if(dist < minDist) {
+            minDist = dist
+            minRow = tpl
+          }
+        }
+        minRow.toList
       case None => Nil
     }
   }

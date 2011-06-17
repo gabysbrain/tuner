@@ -170,7 +170,8 @@ class Table {
 
     val header = if(numRows > 0) {
       val row0 = tuple(0)
-      val (hdr, _) = row0.unzip
+      //val (hdr, _) = row0.unzip
+      val hdr = row0.keys.filter {x => x != "rowNum"}
       // write out the header
       file.write(hdr.reduceLeft(_ + "," + _) + "\n")
       hdr

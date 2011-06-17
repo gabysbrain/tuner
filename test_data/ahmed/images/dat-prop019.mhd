@@ -1,0 +1,6 @@
+NDims = 2
+DimSize = 91 109
+ElementType = MET_FLOAT
+ElementNumberOfChannels = 6
+ElementByteOrderMSB = False
+ElementDataFile =dat-prop019.img

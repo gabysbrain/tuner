@@ -11,7 +11,7 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
   val fields = new Array[ProbabilityField](samples.numRows)
   // Load in all the images
   for(r <- 0 until samples.numRows) {
-    val count = r
+    val count = r + 1
     val imgFilename = FIELDFILEFORMAT.format(count)
     fields(r) = ProbabilityField.fromMhd(imageDir, imgFilename)
   }
