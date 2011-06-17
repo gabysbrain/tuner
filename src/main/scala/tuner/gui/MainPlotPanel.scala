@@ -94,6 +94,10 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     data._2
   }
 
+  override def setup = {
+    frameRate = 30
+  }
+
   def draw = {
 
     applet.background(Config.backgroundColor)

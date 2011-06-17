@@ -38,6 +38,10 @@ class ParetoPanel(project:Project)
   //var pareto2dData:Matrix2D = null
   //var cspColorMap:SpecifiedColorMap = null
 
+  override def setup = {
+    frameRate = 30
+  }
+
   def draw = {
     applet.background(Config.backgroundColor)
 

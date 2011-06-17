@@ -48,6 +48,7 @@ class TableSelectionPanel(project:Project, points:NamedPointManager)
 
   val dataTable = new Table {
     model = tableModel
+    autoResizeMode = Table.AutoResizeMode.Off
   }
 
   contents += new ScrollPane {

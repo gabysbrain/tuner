@@ -25,32 +25,42 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     val initialData:Array[Array[Any]] = Array(
       "Estimate" +: Array.fill(columnNames.length)(""),
       "Nearest Sample" +: Array.fill(columnNames.length)(""))
-    new Table(initialData, "" :: columnNames)
+    new Table(initialData, " " :: columnNames) {
+      autoResizeMode = Table.AutoResizeMode.Off
+      //minimumSize = new Dimension(Int.MaxValue, 70)
+    }
   }
+  infoTable.peer.getColumnModel.getColumn(0).setPreferredWidth(100)
 
   val sampleImagePanel = new PImagePanel(Config.sampleImageSize, 
                                          Config.sampleImageSize)
 
-  val imagePanel = new BoxPanel(Orientation.Horizontal) {
-    maximumSize = new Dimension(Int.MaxValue, 150)
-    preferredSize = new Dimension(Int.MaxValue, 150)
-
-    contents += Swing.HGlue
-    contents += new BorderPanel {
-      layout(sampleImagePanel) = BorderPanel.Position.Center
-      layout(new Label("Closest Sample")) = BorderPanel.Position.South
+  val imagePanel = project.previewImages map {pi =>
+    new BoxPanel(Orientation.Horizontal) {
+      maximumSize = new Dimension(Int.MaxValue, 150)
+      preferredSize = new Dimension(Int.MaxValue, 150)
+  
+      contents += Swing.HGlue
+      contents += new BorderPanel {
+        layout(sampleImagePanel) = BorderPanel.Position.Center
+        layout(new Label("Closest Sample")) = BorderPanel.Position.South
+      }
+      contents += Swing.HGlue
     }
-    contents += Swing.HGlue
   }
 
   contents += new ScrollPane {
     contents = infoTable
+    //horizontalScrollBarPolicy = ScrollPane.BarPolicy.Always
     maximumSize = new Dimension(Int.MaxValue, 70)
     preferredSize = new Dimension(Int.MaxValue, 70)
   }
   contents += Swing.VGlue
-  contents += imagePanel
-  contents += Swing.VGlue
+
+  imagePanel.foreach {ip =>
+    contents += ip
+    contents += Swing.VGlue
+  }
 
   // Set up the initial table
   updateView
