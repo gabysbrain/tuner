@@ -9,7 +9,7 @@ import tuner.Project
 import tuner.gui.event.ReadyToDraw
 
 class ResponseStatsPanel(project:Project) 
-    extends BoxPanel(Orientation.Vertical) {
+    extends ScrollPane {
     //extends BoxPanel(Orientation.Vertical) {
   
   var curMin = Float.MaxValue
@@ -25,7 +25,7 @@ class ResponseStatsPanel(project:Project)
     case None      => Map()
   }
 
-  //contents = new BoxPanel(Orientation.Vertical) {
+  contents = new BoxPanel(Orientation.Vertical) {
     contents += new CollapsiblePanel(CollapsiblePanel.Scroll) {
       histogramPanels.foreach {case (fld,panel) =>
         //panels += new CollapsiblePanel.CPanel(fld, panel)
@@ -44,7 +44,7 @@ class ResponseStatsPanel(project:Project)
         peer.add(p)
       }
     }
-  //}
+  }
 
   reactions += {
     case ReadyToDraw(rhp:ResponseHistogramPanel) =>
