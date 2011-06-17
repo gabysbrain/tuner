@@ -48,6 +48,11 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     publish(new ReadyToDraw(this))
   }
 
+  override def visible_=(v:Boolean) = {
+    loop = v
+    super.visible_=(v)
+  }
+
   def draw = {
     val startTime = System.currentTimeMillis
 

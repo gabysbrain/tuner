@@ -8,23 +8,29 @@ import scala.swing.ScrollPane
 import tuner.Project
 import tuner.gui.event.ReadyToDraw
 
-class ResponseStatsPanel(project:Project) extends ScrollPane {
+class ResponseStatsPanel(project:Project) 
+    extends BoxPanel(Orientation.Vertical) {
     //extends BoxPanel(Orientation.Vertical) {
   
   var curMin = Float.MaxValue
   var curMax = Float.MinValue
 
-  val histogramPanels = project.gpModels.get.map {case (fld, model) =>
-    val panel = new ResponseHistogramPanel(project, fld)
-    listenTo(panel)
-    (fld -> panel)
+  val histogramPanels:Map[String,ResponseHistogramPanel] = project.gpModels match {
+    case Some(gpm) => project.responseFields.map {fld =>
+      val model = gpm(fld)
+      val panel = new ResponseHistogramPanel(project, fld)
+      listenTo(panel)
+      (fld -> panel)
+    } toMap
+    case None      => Map()
   }
 
-  contents = new BoxPanel(Orientation.Vertical) {
-    contents += new CollapsiblePanel {
+  //contents = new BoxPanel(Orientation.Vertical) {
+    contents += new CollapsiblePanel(CollapsiblePanel.Scroll) {
       histogramPanels.foreach {case (fld,panel) =>
         //panels += new CollapsiblePanel.CPanel(fld, panel)
         val p = new org.japura.gui.CollapsiblePanel(fld)
+        p.collapse
         p.setAnimationEnabled(false)
         p.addCollapsiblePanelListener(new org.japura.gui.event.CollapsiblePanelAdapter {
           override def panelCollapsed(event:org.japura.gui.event.CollapsiblePanelEvent) = {
@@ -38,7 +44,7 @@ class ResponseStatsPanel(project:Project) extends ScrollPane {
         peer.add(p)
       }
     }
-  }
+  //}
 
   reactions += {
     case ReadyToDraw(rhp:ResponseHistogramPanel) =>
