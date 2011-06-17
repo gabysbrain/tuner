@@ -1,6 +1,6 @@
 {
   "name":"test",
-  "scriptPath":"/Users/tom/Dropbox/activate.csh",
+  "scriptPath":"run_segmentation.bat",
   "inputs":[{
     "name":"orientation",
     "minRange":0.0,

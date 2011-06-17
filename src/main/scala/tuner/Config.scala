@@ -29,8 +29,8 @@ object Config {
 
   //val estimateSampleDensity = 50
   //val estimateSampleDensity = 25
-  val estimateSampleDensity = 20
-  //val maxEstimateSamples = 4000
+  //val estimateSampleDensity = 20
+  val maxEstimateSamples = 4000
 
   val sampleImageSize = 140
 

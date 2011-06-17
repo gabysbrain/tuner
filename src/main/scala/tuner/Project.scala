@@ -378,8 +378,8 @@ class Project(var path:Option[String]) {
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
-    Density2D.density(modelSamples, Config.estimateSampleDensity*2, 
-                      resp2Dim, resp1Dim)
+    val numSamples = viewInfo.estimateSampleDensity * 2
+    Density2D.density(modelSamples, numSamples, resp2Dim, resp1Dim)
   }
 
   private def loadResponseSamples(path:String) : Table = gpModels match {

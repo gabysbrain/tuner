@@ -84,7 +84,8 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                xDim:(String,(Float,Float)), 
                yDim:(String,(Float,Float)), 
                slice:Map[String,Float]) : Matrix2D = {
-    val sample = model.sampleSlice(xDim, yDim, slice.toList)
+    val sample = model.sampleSlice(xDim, yDim, slice.toList, 
+                                   project.viewInfo.estimateSampleDensity)
     val data = project.viewInfo.currentMetric match {
       case Project.ValueMetric => sample._1
       case Project.ErrorMetric => sample._2

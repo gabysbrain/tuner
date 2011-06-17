@@ -55,6 +55,12 @@ class ViewInfo(project:Project) {
   var showSampleLine = false
   var showRegion = true
 
+  val estimateSampleDensity:Int = {
+    val len = project.inputFields.length
+    val numPlots = math.pow(len, 2) - len
+    math.sqrt(Config.maxEstimateSamples / numPlots).toInt
+  }
+
   def currentSlice : Map[String,Float] = {
     // Pick defaults for any missing dimensions
     project.inputs.dimNames.toSet.diff(_currentSlice.keySet).foreach {k =>

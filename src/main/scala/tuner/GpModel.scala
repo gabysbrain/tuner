@@ -53,9 +53,10 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   def funcMax:Float = responses.max.toFloat
   def funcMin:Float = responses.min.toFloat
 
-  def sampleSlice(rowDim:(String,(Float,Float)), colDim:(String,(Float,Float)),
+  def sampleSlice(rowDim:(String,(Float,Float)), 
+                  colDim:(String,(Float,Float)),
                   slices:List[(String,Float)], 
-                  numSamples:Int = Config.estimateSampleDensity)
+                  numSamples:Int)
       : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
     
     val filteredSlice = slices.filter {x =>
@@ -94,6 +95,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     outTbl
   }
 
+  /*
   def sampleAnova(dimRanges:DimRanges,
                   rowDim:(String,(Float,Float)), 
                   colDim:(String,(Float,Float)),
@@ -113,6 +115,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
     response
   }
+  */
 
   def runSample(pt:List[(String, Float)]) : (Double, Double) = {
     val mapx = pt.toMap
