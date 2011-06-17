@@ -77,6 +77,7 @@ object P5Panel {
     val Center = Value(PConstants.CENTER)
   }
 
+  /*
   object KeyCode extends Enumeration {
     val None = Value(0)
     val Shift = Value(PConstants.SHIFT)
@@ -87,6 +88,7 @@ object P5Panel {
     val Left = Value(PConstants.LEFT)
     val Right = Value(PConstants.RIGHT)
   }
+  */
 
   val HalfPi = PConstants.HALF_PI
 
@@ -148,6 +150,10 @@ abstract class P5Panel (
 
       override def mousePressed = {
         P5Panel.this.mousePressed(mouseX, mouseY, MouseButton(mouseButton))
+      }
+
+      override def keyPressed = {
+        P5Panel.this.keyPressed(key)
       }
 
     }
@@ -217,11 +223,14 @@ abstract class P5Panel (
                  button:MouseButton.Value) = {}
   def mousePressed(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
 
+  def keyPressed(key:Char) = {}
+
   def mousePos : (Int,Int) = (applet.mouseX, applet.mouseY)
   def mouseDown = applet.mousePressed
   def mouseButton = MouseButton(applet.mouseButton)
+  def key = applet.key
 
-  def keyCode = KeyCode(applet.keyCode)
+  //def keyCode = KeyCode(applet.keyCode)
 
   def ellipseMode(mode:EllipseMode.Value) = applet.ellipseMode(mode.id)
   def rectMode(mode:RectMode.Value) = applet.rectMode(mode.id)

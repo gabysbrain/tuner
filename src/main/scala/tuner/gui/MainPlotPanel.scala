@@ -388,12 +388,18 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     // movements in the colorbars
     if(button == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
-      if(keyCode == P5Panel.KeyCode.Shift) {
-        publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
-      } else {
+      //if(keyCode == P5Panel.KeyCode.Shift) {
+        //publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
+      //} else {
         handleBarMouse(mouseX, mouseY)
         handlePlotMouse(mouseX, mouseY)
-      }
+      //}
+    }
+  }
+
+  override def keyPressed(key:Char) = {
+    if(key == 'h' || key == 'H') {
+      publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
     }
   }
 
