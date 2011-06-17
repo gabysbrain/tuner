@@ -227,6 +227,8 @@
       "lowValue":0.0,
       "highValue":1.0
     }],
+    "response1":"dice6",
+    "response2":"Error6",
     "currentMetric":"value",
     "showSampleLine":false,
     "showRegion":true
