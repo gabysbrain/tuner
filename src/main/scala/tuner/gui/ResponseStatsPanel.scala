@@ -26,7 +26,6 @@ class ResponseStatsPanel(project:Project)
   }
 
   //contents = new BoxPanel(Orientation.Vertical) {
-    /*
     contents += new CollapsiblePanel(CollapsiblePanel.Scroll) {
       histogramPanels.foreach {case (fld,panel) =>
         //panels += new CollapsiblePanel.CPanel(fld, panel)
@@ -45,7 +44,6 @@ class ResponseStatsPanel(project:Project)
         peer.add(p)
       }
     }
-    */
   //}
 
   reactions += {

@@ -7,9 +7,20 @@ import tuner.Table
 
 object Histogram {
   private def rHist(values:Iterable[Float], numBreaks:Int) = {
-    val rvect = "c(" + values.map(_.toString).reduceLeft(_ + "," + _) + ")"
+    val startTime = System.currentTimeMillis
+    val strVals = values.map(_.toString)
+    //val rvect = "c(" + strVals.reduceLeft(_ + "," + _) + ")"
+    val rvect = new StringBuilder(2000)
+    rvect.append("c(")
+    values.foreach {v =>
+      if(rvect(rvect.length-1) != '(')
+        rvect.append(",")
+      rvect.append(v.toString)
+    }
+    rvect.append(")")
+    val endTime = System.currentTimeMillis
+    //println("hist t1: " + (endTime - startTime) + "ms")
     val cmd = "hist(%s, breaks=%d, plot=FALSE)"
-    println(cmd)
     R.runCommand(cmd.format(rvect, numBreaks))
   }
   

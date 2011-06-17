@@ -42,7 +42,7 @@ class ResponseHistogramPanel(project:Project, responseField:String)
     val maxY = counts.values.max
     yAxisTicks = List(minY, (minY+maxY)/2, maxY)
     val endTime = System.currentTimeMillis
-    println("resp histo: " + (endTime-startTime) + "ms")
+    //println("resp histo setup: " + (endTime-startTime) + "ms")
     publish(new ReadyToDraw(this))
   }
 

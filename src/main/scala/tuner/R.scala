@@ -39,6 +39,12 @@ object R {
     res
   }
 
+  /*
+  def toREXP(values:Array[Double]) = {
+    new REXP(values))
+  }
+  */
+
   def setVar(exp:REXP, sym:String) = {
     engine.assign(sym, exp)
   }
