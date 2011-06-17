@@ -15,6 +15,7 @@ class PImagePanel(w:Int, h:Int) extends P5Panel(w, h) {
   }
   def image_=(i:PImage) : Unit = {
     image = Some(i)
+    loop = true
   }
 
   override def setup = {
