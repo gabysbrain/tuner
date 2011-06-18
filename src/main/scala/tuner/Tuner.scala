@@ -66,8 +66,9 @@ object Tuner extends SimpleSwingApplication {
   def closeProject(proj:Project) : Unit = {
     openProjects.get(proj) match {
       case Some(window) =>
-        window.close
         openProjects -= proj
+        window.close
+        //window.dispose
       case None         => 
         println("project doesn't have a window open...")
     }

@@ -29,7 +29,6 @@ class ProjectViewer(project:Project) extends Frame {
   title = project.name
   menuBar = MainMenu
 
-  println("here")
   val mainResponseButton = new RadioButton("Value")
   val errResponseButton = new RadioButton("Error")
   val gainResponseButton = new RadioButton("Gain")
