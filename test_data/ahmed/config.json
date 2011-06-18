@@ -171,28 +171,28 @@
   "currentVis":{
     "currentSlice":[{
       "name":"alpha5",
-      "value":0.5
+      "value":0.64000004529953
     },{
       "name":"alpha2",
-      "value":0.5
+      "value":3.5
     },{
       "name":"alpha6",
-      "value":0.5
+      "value":0.9620000720024109
     },{
       "name":"sigma",
-      "value":0.5
+      "value":0.2720000147819519
     },{
       "name":"alpha3",
-      "value":0.5
+      "value":0.4390000104904175
     },{
       "name":"alpha4",
-      "value":0.5
+      "value":0.7750000357627869
     },{
       "name":"alpha7",
-      "value":0.5
+      "value":0.7220000624656677
     },{
       "name":"alpha1",
-      "value":0.5
+      "value":0.7230000495910645
     }],
     "currentZoom":[{
       "name":"alpha5",
@@ -237,31 +237,85 @@
     "shape":"Box",
     "radii":[{
       "field":"alpha5",
-      "radius":0.0
+      "radius":0.1120000034570694
     },{
       "field":"alpha2",
-      "radius":0.0
+      "radius":1.4249999523162842
     },{
       "field":"alpha6",
-      "radius":0.0
+      "radius":0.44700002670288086
     },{
       "field":"sigma",
-      "radius":0.0
+      "radius":0.2905000150203705
     },{
       "field":"alpha3",
-      "radius":0.0
+      "radius":0.10175000131130219
     },{
       "field":"alpha4",
-      "radius":0.0
+      "radius":0.13450001180171967
     },{
       "field":"alpha7",
-      "radius":0.0
+      "radius":0.5420000553131104
     },{
       "field":"alpha1",
-      "radius":0.0
+      "radius":0.1495000123977661
     }]
   },
   "history":{
-    "contents":[]
+    "contents":[{
+      "name":"History 0",
+      "position":[{
+        "name":"alpha5",
+        "value":0.64000004529953
+      },{
+        "name":"alpha2",
+        "value":7.889999866485596
+      },{
+        "name":"alpha6",
+        "value":1.162000060081482
+      },{
+        "name":"sigma",
+        "value":0.2720000147819519
+      },{
+        "name":"alpha3",
+        "value":0.4390000104904175
+      },{
+        "name":"alpha4",
+        "value":0.7750000357627869
+      },{
+        "name":"alpha7",
+        "value":0.7220000624656677
+      },{
+        "name":"alpha1",
+        "value":0.7230000495910645
+      }]
+    },{
+      "name":"History 1",
+      "position":[{
+        "name":"alpha5",
+        "value":0.64000004529953
+      },{
+        "name":"alpha2",
+        "value":3.5
+      },{
+        "name":"alpha6",
+        "value":0.9620000720024109
+      },{
+        "name":"sigma",
+        "value":0.2720000147819519
+      },{
+        "name":"alpha3",
+        "value":0.4390000104904175
+      },{
+        "name":"alpha4",
+        "value":0.7750000357627869
+      },{
+        "name":"alpha7",
+        "value":0.7220000624656677
+      },{
+        "name":"alpha1",
+        "value":0.7230000495910645
+      }]
+    }]
   }
 }
