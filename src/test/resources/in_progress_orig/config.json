@@ -54,7 +54,8 @@
       "highValue":1.0
     }],
     "currentMetric":"value",
-    "showRegion":true
+    "showRegion":true,
+    "showSampleLine":false
   },
   "currentRegion":{
     "shape":"Box",
