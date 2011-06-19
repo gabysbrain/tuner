@@ -43,7 +43,14 @@ case class ProjConfig(
 
 object Project {
   def recent : List[Project] = {
-    Config.recentProjects map {Project.fromFile(_)} toList
+    Config.recentProjects flatMap {rp =>
+      try {
+        Some(Project.fromFile(rp))
+      } catch {
+        case e:java.io.FileNotFoundException =>
+          None
+      }
+    } toList
   }
 
   def fromFile(path:String) = {

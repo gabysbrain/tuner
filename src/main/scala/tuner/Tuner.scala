@@ -38,8 +38,8 @@ object Tuner extends SimpleSwingApplication {
 
   def openProject(proj:Project) : Unit = {
     println("opening project")
-    proj.path.foreach {
-      Config.recentProjects += _
+    proj.path.foreach {p =>
+      Config.recentProjects += p
     }
 
     proj.status match {

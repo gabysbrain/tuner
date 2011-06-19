@@ -20,7 +20,8 @@ object Config {
   val respSampleFilename = "response_samples.csv"
   val imageDirname = "images"
 
-  val gpRScript = ResourceLoader.fileResource("/sparkle.R")
+  val gpRScript = 
+    ResourceLoader.fileResource("/sparkle.R").replace("\\", "/")
 
   val errorField = "stddev"
   val gainField = "estgain"
