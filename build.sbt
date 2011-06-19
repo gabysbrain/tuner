@@ -21,10 +21,10 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 fork := true
 
 javaOptions := {
-  //val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
-  //Seq("-Djava.library.path=" + jriPath + ":/Users/tom/Projects/tuner/lib/opengl")
-  val jriPath = """C:\Users\tom\Documents\R\win-library\2.13\rJava\jri"""
-  Seq("-Djava.library.path=" + jriPath + """\x64;""" + jriPath)
+  val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
+  Seq("-Djava.library.path=" + jriPath + ":/Users/tom/Projects/tuner/lib/opengl")
+  //val jriPath = """C:\Users\tom\Documents\R\win-library\2.13\rJava\jri"""
+  //Seq("-Djava.library.path=" + jriPath + """\x64;""" + jriPath)
 }
 
 parallelExecution := false
