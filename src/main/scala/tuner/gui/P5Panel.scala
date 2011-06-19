@@ -8,6 +8,7 @@ import processing.core.PConstants
 import processing.core.PFont
 import processing.core.PImage
 
+import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Component
 import scala.swing.Orientation
@@ -115,7 +116,8 @@ object P5Panel {
 abstract class P5Panel (
     _width:Int, _height:Int, 
     renderer:P5Panel.Renderer=P5Panel.Java2D) 
-    extends BoxPanel(Orientation.Vertical) {
+    //extends BoxPanel(Orientation.Vertical) {
+extends BorderPanel {
   
   import P5Panel._
 
@@ -178,13 +180,12 @@ abstract class P5Panel (
     peer.pack
   }
 
-  /*
   layout(sketchFrame) = BorderPanel.Position.Center
   layout(Swing.VGlue) = BorderPanel.Position.North
   layout(Swing.VGlue) = BorderPanel.Position.South
   layout(Swing.HGlue) = BorderPanel.Position.East
   layout(Swing.HGlue) = BorderPanel.Position.West
-  */
+/*
   contents += Swing.VGlue
   contents += new BoxPanel(Orientation.Horizontal) {
     contents += Swing.HGlue
@@ -192,6 +193,7 @@ abstract class P5Panel (
     contents += Swing.HGlue
   }
   contents += Swing.VGlue
+  */
 
   applet.init
 
