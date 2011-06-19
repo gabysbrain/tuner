@@ -8,4 +8,4 @@ set PATH=%PATH%;%R_HOME%\bin;%R_HOME%\bin\x64
 
 set JAVAOPTS=-Djava.library.path=%JRI%
 
-java -Xmx2G %JAVAOPTS% -jar tuner_2.8.1-0.9-onejar.jar
+java -Xmx2G %JAVAOPTS% -jar Tuner-assembly-0.9.jar
