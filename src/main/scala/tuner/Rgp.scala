@@ -11,10 +11,12 @@ object Rgp {
   val ESTIMATERVAR = "data.estimates"
   val MODELRVAR = "gp.fit"
 
+  /*
   def main(args:Array[String]) = {
     val gp = new Rgp("data/temp_design.txt")
     val model = gp.buildModel(List("alpha","sigma"), "dice", "dace_stddev")
   }
+  */
 }
 
 class Rgp(designFile:String) {
