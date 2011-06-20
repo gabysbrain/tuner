@@ -29,6 +29,12 @@ object P5Panel {
     val Multiply = Value(PConstants.MULTIPLY)
   }
 
+  object TextMode extends Enumeration {
+    val Shape = Value(PConstants.SHAPE)
+    val Model = Value(PConstants.MODEL)
+    val Screen = Value(PConstants.SCREEN)
+  }
+
   object RectMode extends Enumeration {
     val Corner = Value(PConstants.CORNER)
     val Corners = Value(PConstants.CORNERS)
@@ -173,11 +179,13 @@ extends BorderPanel {
     // Set up P5's container frame
     peer.add(applet)
     peer.setSize(_width, _height)
+    peer.setMinimumSize(new Dimension(_width, _height))
     peer.setPreferredSize(new Dimension(_width, _height))
     peer.setMaximumSize(new Dimension(_width, _height))
     peer.setResizable(false)
     peer.setVisible(true)
     peer.pack
+
   }
 
   layout(sketchFrame) = BorderPanel.Position.Center
@@ -240,6 +248,7 @@ extends BorderPanel {
   def text(stringdata:String, x:Float, y:Float) = {
     applet.text(stringdata, x, y)
   }
+  def textMode(mode:TextMode.Value) = applet.textMode(mode.id)
   def textFont(path:String, size:Int) = {
     applet.textFont(font(path, size))
   }

@@ -96,11 +96,17 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   }
 
   override def setup = {
+    super.setup
     frameRate = 30
   }
 
   def draw = {
 
+    // Need to clear the font cache when resizing.  
+    // Otherwise wakiness will ensue
+    if((width, height) != Config.mainPlotDims) {
+      clearFonts
+    }
     applet.background(Config.backgroundColor)
 
     // Compute the spacing of everything
