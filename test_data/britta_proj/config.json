@@ -1,5 +1,5 @@
 {
-  "name":"test",
+  "name":"britta",
   "scriptPath":"run_segmentation.bat",
   "inputs":[{
     "name":"orientation",
