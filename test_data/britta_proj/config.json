@@ -1,5 +1,5 @@
 {
-  "name":"test",
+  "name":"britta",
   "scriptPath":"run_segmentation.bat",
   "inputs":[{
     "name":"orientation",
@@ -71,8 +71,8 @@
     "response1":"Precision",
     "response2":"Recall",
     "currentMetric":"value",
-    "showSampleLine":true,
-    "showRegion":true
+    "showSampleLine":false,
+    "showRegion":false
   },
   "currentRegion":{
     "shape":"Box",
