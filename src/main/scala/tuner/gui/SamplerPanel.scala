@@ -69,7 +69,7 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   //def shape : String = shapeSelector.toString
 
   def method : Sampler.Method = {
-    println(methodSelector.selection.item)
+    //println(methodSelector.selection.item)
     methodSelector.selection.item match {
       case "LHS" => Sampler.lhc
       case "Random" => Sampler.random

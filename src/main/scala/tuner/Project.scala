@@ -269,7 +269,7 @@ class Project(var path:Option[String]) {
     // TODO: find a better solution than just ignoring the missing inputs
     if(n > 0) {
       method(range, n, {v => newSamples.addRow(v)})
-      println(n + " samples generated")
+      //println(n + " samples generated")
     }
   }
 
