@@ -132,6 +132,7 @@ class Axis(placement:Axis.Placement) {
     applet.translate(centerPt._1, centerPt._2)
     applet.rotate(-P5Panel.HalfPi)
 
+    //applet.textMode(P5Panel.TextMode.Model)
     applet.textFont(Config.fontPath, Config.smallFontSize)
     applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Center)
     applet.text(label, 0, 0)
@@ -141,6 +142,8 @@ class Axis(placement:Axis.Placement) {
 
   private def drawLabelHoriz(applet:P5Panel, labelBox:Rectangle, 
                              label:String) = {
+
+    //applet.textMode(P5Panel.TextMode.Model)
     applet.textFont(Config.fontPath, Config.smallFontSize)
     applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Center)
     val centerPt = labelBox.center

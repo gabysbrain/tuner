@@ -29,7 +29,8 @@ import processing.core.PConstants
 
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
-                                                     P5Panel.P3D) 
+                                                     //P5Panel.P3D) 
+                                                     P5Panel.OpenGL) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
@@ -95,11 +96,17 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   }
 
   override def setup = {
+    super.setup
     frameRate = 30
   }
 
   def draw = {
 
+    // Need to clear the font cache when resizing.  
+    // Otherwise wakiness will ensue
+    if((width, height) != Config.mainPlotDims) {
+      clearFonts
+    }
     applet.background(Config.backgroundColor)
 
     // Compute the spacing of everything
