@@ -14,7 +14,7 @@ object AxisTicks {
   }
 
   def ticks(min:Float, max:Float, n:Int=Config.axisNumTicks) : List[Float] = {
-    val cmd = "extended(%f, %f, %d)".format(min, max, n)
+    val cmd = "extended(%s, %s, %d)".format(min, max, n)
     val rTicks = R.runCommand(cmd)
     rTicks.asDoubles.toList.map {_.toFloat}
   }
