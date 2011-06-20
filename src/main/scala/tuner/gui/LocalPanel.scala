@@ -74,13 +74,17 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     }
     contents += Swing.HGlue
     contents += new BoxPanel(Orientation.Vertical) {
+      /*
       contents += new TablePanel(2, 1) {
         layout(new Label("Shape")) = (0, 0)
         layout(shapeSelector) = (1, 0)
       }
+      */
+      contents += Swing.VGlue
       contents += sampleButton
+      contents += Swing.VGlue
 
-      border = Swing.TitledBorder(border, "Region")
+      border = Swing.TitledBorder(border, "Sampling")
     }
     contents += Swing.HGlue
   }
