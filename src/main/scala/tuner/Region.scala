@@ -73,14 +73,18 @@ sealed abstract class Region(project:Project) {
 
   def inside(pt:List[(String,Float)]) : Boolean
 
-  def numSamples = {
-    var count = 0
-    for(i <- 0 until project.newSamples.numRows) {
-      val tpl = project.newSamples.tuple(i)
-      if(inside(tpl.toList))
-        count += 1
-    }
-    count
+  def numSamples = project.designSites match {
+    case Some(ds) => 
+      val inputFields = project.inputFields.toSet
+      var count = 0
+      for(i <- 0 until ds.numRows) {
+        val tpl = ds.tuple(i)
+        val inputs = tpl.filterKeys {k => inputFields contains k}
+        if(inside(inputs.toList))
+          count += 1
+      }
+      count
+    case None => 0
   }
 
   def gradient(response:String, fld:String) : Float = {
@@ -112,7 +116,6 @@ sealed abstract class Region(project:Project) {
 
 class BoxRegion(project:Project) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
-    val center = project.viewInfo.currentSlice
     pt.forall {case (fld,value) =>
       val (minVal, maxVal) = range(fld)
       value >= minVal && value <= maxVal
