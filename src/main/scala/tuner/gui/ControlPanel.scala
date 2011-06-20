@@ -40,7 +40,7 @@ class ControlPanel(project:Project) extends TabbedPane {
   pages += new TabbedPane.Page("Info", infoTab)
   pages += new TabbedPane.Page("Local", localTab)
   pages += new TabbedPane.Page("Controls", controlsTab)
-  pages += new TabbedPane.Page("Candidates", candidatesTab)
+  //pages += new TabbedPane.Page("Candidates", candidatesTab)
   pages += new TabbedPane.Page("History", historyTab)
 
   // We need to update the info panel when the slice changes
