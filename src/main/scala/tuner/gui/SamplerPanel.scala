@@ -21,7 +21,7 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val sampleTimeField = new TextField
   val ttlRunTimeField = new TextField
   val shapeSelector = new RegionShapeCombo
-  val methodSelector = new ComboBox(List("LHS", "Cartesian"))
+  val methodSelector = new ComboBox(List("LHS", "Random"))
 
   val controlPane = new TablePanel(2, 5) {
     // Labels in left column
@@ -72,7 +72,7 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   println(methodSelector.selection.item)
   methodSelector.selection.item match {
     case "LHS" => Sampler.lhc
-    case "Cartesian" => Sampler.regularGrid
+    case "Random" => Sampler.random
   }
   }
 }

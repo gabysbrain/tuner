@@ -46,10 +46,26 @@ object Sampler {
     generateCombinations(f, Nil, seqs.toList)
   }
 
+  def random(dims:DimRanges, n:Int, f:List[(String,Float)] => Unit) = {
+    val rand = new scala.util.Random
+
+    // Split the ranges into slices and sample dims
+    val (sampleDims, sliceDims) = dims.ranges.span {case (_,rng) =>
+      rng._1 != rng._2
+    }
+    val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}
+
+    for(i <- 0 until n) {
+      val pts = sampleDims.map {case (fld, (mn, mx)) =>
+        (fld, mn + (rand.nextFloat * (mx-mn)))
+      }
+      f(pts.toList ++ slices)
+    }
+  }
+
   def lhc(dims:DimRanges, n:Int, f:List[(String,Float)] => Unit) = {
     // Split the ranges into slices and sample dims
-    val (sampleDims, sliceDims) = dims.ranges.span {tmp =>
-      val (dimname, rng) = tmp
+    val (sampleDims, sliceDims) = dims.ranges.span {case (_,rng) =>
       rng._1 != rng._2
     }
     val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}
@@ -62,7 +78,7 @@ object Sampler {
     } else {
       "randomLHS(%d, %d)".format(n, sampleDims.size)
     }
-    println("R: " + lhcCmd)
+    //println("R: " + lhcCmd)
     val res = R.runCommand(lhcCmd)
     val x:Array[Array[Double]] = res.asDoubleMatrix
     
