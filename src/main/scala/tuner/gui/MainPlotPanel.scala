@@ -29,8 +29,8 @@ import processing.core.PConstants
 
 class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
                                                      Config.mainPlotDims._2, 
-                                                     //P5Panel.P3D) 
-                                                     P5Panel.OpenGL) 
+                                                     P5Panel.P3D) 
+                                                     //P5Panel.OpenGL) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]

@@ -39,7 +39,7 @@ object Config {
 
   val paretoDims = (289, 289)
 
-  val mainPlotDims = (600, 300)
+  val mainPlotDims = (600, 400)
   val plotSpacing = 5
   val controlPanelHeight = 220
 
@@ -96,7 +96,7 @@ object Config {
   val respHistogramBarFill = Some(255)
   val respHistogramBarStroke = Some(0)
   val respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
-  val respHistogramFramerate = 10
+  val respHistogramFramerate = 30
 
   val sampleLineColor = 255
   val sampleLineDotRadius = scatterplotDotSize / 2
