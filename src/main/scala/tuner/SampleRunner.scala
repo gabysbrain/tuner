@@ -19,6 +19,7 @@ class SampleRunner(project:Project) extends Actor {
   val pb = new ProcessBuilder(project.scriptPath.get,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
+  pb.directory(new File(project.savePath))
 
   def stop = {
     if(currentProcess != null)
