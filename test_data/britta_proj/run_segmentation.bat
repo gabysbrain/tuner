@@ -10,7 +10,7 @@ AMIRABINDIR=/Users/tom/Downloads/ZIBAmira-2011.01-rc14
 AMIRADATADIR=/Users/tom/Downloads/testnetwork
 AMIRA=${AMIRABINDIR}/bin/start
 
-cp ${locations} ${AMIRADATADIR}/params.csv
+awk '{print $1 "," $3 "," $2}' FS="," ${locations} > ${AMIRADATADIR}/params.csv
 
 # run amira
 cd ${AMIRADATADIR}
