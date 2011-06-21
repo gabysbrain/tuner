@@ -65,8 +65,10 @@ class SamplerSplomPanel(project:Project)
             val plot = sploms((xFld, yFld))
             val (minX,maxX) = ranges.range(xFld)
             val (minY,maxY) = ranges.range(yFld)
-            val xTicks = AxisTicks.ticks(minX, maxX)
-            val yTicks = AxisTicks.ticks(minY, maxY)
+            val xTicks = AxisTicks.ticks(minX, maxX, 
+                                         bound.width, Config.smallFontSize)
+            val yTicks = AxisTicks.ticks(minY, maxY,
+                                         bound.height, Config.smallFontSize)
 
             // Draw a nice white background
             fill(255)

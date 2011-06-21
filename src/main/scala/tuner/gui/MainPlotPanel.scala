@@ -255,13 +255,15 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     val (fld, (low, high)) = range
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
-    val ticks = AxisTicks.ticks(low, high)
 
     project.viewInfo.response1View.foreach {r1 =>
       // See if we draw the x axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.width, 
+                                    Config.smallFontSize)
         axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
                         sliceDim.width, bottomAxisBounds.height, 
                         fld, ticks)
@@ -270,6 +272,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
         axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
                         leftAxisBounds.width, sliceDim.height, 
                         fld, ticks)
@@ -280,6 +285,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.width, 
+                                    Config.smallFontSize)
         axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
                         sliceDim.width, topAxisBounds.height, 
                         fld, ticks)
@@ -288,6 +296,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
       if(fld != firstField) {
         val sliceDim = sliceBounds((fld, firstField))
         val axis = resp2YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
         axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
                         rightAxisBounds.width, sliceDim.height, 
                         fld, ticks)

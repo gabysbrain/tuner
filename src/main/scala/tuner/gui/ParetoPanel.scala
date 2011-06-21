@@ -77,7 +77,8 @@ class ParetoPanel(project:Project)
 
   def draw1dPareto(resp:String) {
     val model = models(resp)
-    val ticks = AxisTicks.ticks(model.funcMin, model.funcMax)
+    val ticks = AxisTicks.ticks(model.funcMin, model.funcMax, 
+                                xAxisBox.width, Config.smallFontSize)
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
                      xAxisBox.width, xAxisBox.height,
                      resp, ticks)
@@ -96,8 +97,10 @@ class ParetoPanel(project:Project)
   def draw2dPareto(resp1:String, resp2:String) {
     val r1Model = models(resp1)
     val r2Model = models(resp2)
-    val r1Ticks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax)
-    val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax)
+    val r1Ticks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax,
+                                  xAxisBox.width, Config.smallFontSize)
+    val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax,
+                                  yAxisBox.height, Config.smallFontSize)
     val r1Range = (resp1, (r1Ticks.min,r1Ticks.max))
     val r2Range = (resp2, (r2Ticks.min,r2Ticks.max))
 
