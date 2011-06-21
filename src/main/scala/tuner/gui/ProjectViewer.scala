@@ -72,8 +72,8 @@ class ProjectViewer(project:Project) extends Frame {
     }
 
     val glyphControlPanel = new BoxPanel(Orientation.Horizontal) {
-      contents += Swing.HGlue
-      contents += gradientGlyphButton
+      //contents += Swing.HGlue
+      //contents += gradientGlyphButton
       contents += Swing.HGlue
       contents += regionGlyphButton
       contents += Swing.HGlue
