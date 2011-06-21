@@ -27,7 +27,7 @@ class ProjectInfoWindow(project:Project) extends Frame {
 
   menuBar = MainMenu
 
-  resizable = false
+  resizable = true
 
   val projectNameField = new TextField
   val locationChooser = new PathPanel

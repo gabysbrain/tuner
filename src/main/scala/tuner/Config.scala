@@ -39,9 +39,9 @@ object Config {
 
   val paretoDims = (289, 289)
 
-  val mainPlotDims = (800, 600)
+  val mainPlotDims = (600, 300)
   val plotSpacing = 5
-  val controlPanelHeight = 280
+  val controlPanelHeight = 220
 
   val samplingRowsPerReq = 4
 
@@ -91,7 +91,7 @@ object Config {
   val sampleDotColor = 0xffDD1C77
 
   val respHistogramSampleDensity = 10000
-  val respHistogramPanelDims = (paretoDims._1 - 50, 200)
+  val respHistogramPanelDims = (paretoDims._1 - 50, 130)
   val respHistogramBars = 11
   val respHistogramBarFill = Some(255)
   val respHistogramBarStroke = Some(0)

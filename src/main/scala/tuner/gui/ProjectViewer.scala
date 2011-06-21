@@ -10,6 +10,7 @@ import scala.swing.Label
 import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.RadioButton
+import scala.swing.SplitPane
 import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
@@ -94,9 +95,13 @@ class ProjectViewer(project:Project) extends Frame {
       contents += histogramPanel
     }
 
-    val rightPanel = new BoxPanel(Orientation.Vertical) {
+    val rightPanel = new SplitPane(Orientation.Horizontal) {
+      /*
       contents += mainPlotPanel
       contents += controlPanel
+      */
+      topComponent = mainPlotPanel
+      bottomComponent = controlPanel
     }
 
     layout(leftPanel) = (0,0)
