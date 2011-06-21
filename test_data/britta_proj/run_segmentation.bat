@@ -1,22 +1,20 @@
-#!/bin/sh
 
-locations=$1
-output=$2
-imagedir=$3
-startcount=$4
+set locations=%1%
+set output=%2%
+set imagedir=%3%
+set startcount=%4%
 
-MYDIR=`dirname $0`
-AMIRABINDIR=/Users/tom/Downloads/ZIBAmira-2011.01-rc14
-AMIRADATADIR=/Users/tom/Downloads/testnetwork
-AMIRA=${AMIRABINDIR}/bin/start
+set AMIRABINDIR=/Users/tom/Downloads/ZIBAmira-2011.01-rc14
+set AMIRADATADIR=/Users/tom/Downloads/testnetwork
+set AMIRA=%AMIRABINDIR%\bin\start
 
-awk '{print $1 "," $3 "," $2}' FS="," ${locations} > ${AMIRADATADIR}/params.csv
+awk '{print $1 "," $3 "," $2}' FS="," %locations% > %AMIRADATADIR%\params.csv
 
-# run amira
-cd ${AMIRADATADIR}
-${AMIRA} -no_gui -log logfile runAll.hx
+REM run amira
+cd %AMIRADATADIR%
+%AMIRA% -no_gui -log logfile runAll.hx
 
-# some post-processing is needed
-cat output.csv | sed '1d' | sed '/^$/d' | sed -e 's/nan/1/' | sed -e 's/,$//' > ${output}
+REM some post-processing is needed
+type output.csv | sed '1d' | sed '/^$/d' | sed -e 's/nan/1/' | sed -e 's/,$//' > %output%
 
 
