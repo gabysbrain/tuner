@@ -23,20 +23,20 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val shapeSelector = new RegionShapeCombo
   val methodSelector = new ComboBox(List("LHS", "Random"))
 
-  val controlPane = new TablePanel(2, 4) {
+  val controlPane = new TablePanel(2, 2) {
     // Labels in left column
     layout(new Label("Number of Samples")) = (0,0)
-    layout(new Label("x Time per Sample")) = (0,1)
-    layout(new Label("= Total Run Time")) = (0,2)
+    //layout(new Label("x Time per Sample")) = (0,1)
+    //layout(new Label("= Total Run Time")) = (0,2)
     //layout(new Label("Shape")) = (0,3)
-    layout(new Label("Method")) = (0,3)
+    layout(new Label("Method")) = (0,1)
 
     // Fields in left column
     layout(sampleNumField) = (1,0)
-    layout(sampleTimeField) = (1,1)
-    layout(ttlRunTimeField) = (1,2)
+    //layout(sampleTimeField) = (1,1)
+    //layout(ttlRunTimeField) = (1,2)
     //layout(shapeSelector) = (1,3)
-    layout(methodSelector) = (1,3)
+    layout(methodSelector) = (1,1)
 
     border = Swing.TitledBorder(border, "Sampling")
   }
