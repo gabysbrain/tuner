@@ -28,7 +28,7 @@ object AxisTicks {
     if(n < 2) {
       Nil
     } else {
-      val cmd = "extended(%s, %s, %d)".format(min, max, n)
+      val cmd = "extended(%s, %s, %d, only.loose=TRUE)".format(min, max, n)
       val rTicks = R.runCommand(cmd)
       rTicks.asDoubles.toList.map {_.toFloat}
     }
