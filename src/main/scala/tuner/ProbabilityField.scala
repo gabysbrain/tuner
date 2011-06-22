@@ -34,7 +34,7 @@ object ProbabilityField {
     })
 
     val pf = new ProbabilityField(xsize, ysize, fields)
-    print("reading image " + dataname + "...")
+    //print("reading image " + dataname + "...")
     val in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(dirname + "/" + dataname)))
     for(y <- 0 until ysize) {
@@ -52,7 +52,7 @@ object ProbabilityField {
         }
       }
     }
-    println("done")
+    //println("done")
 
     pf
   }
@@ -69,12 +69,8 @@ object ProbabilityField {
 
 }
 
-class ProbabilityField(xs:Int, ys:Int, nf:Int) {
+class ProbabilityField(xSize:Int, ySize:Int, numFields:Int) {
   
-  val xSize = xs
-  val ySize = ys
-  val numFields = nf
-
   val data = (0 until numFields).foldLeft(Nil:List[Matrix2D]) {(lst:List[Matrix2D], n:Int) => 
     val newMtx = new Matrix2D((0 until xSize).toList.map({_.toFloat}),
                               (0 until ySize).toList.map({_.toFloat})) 
@@ -88,6 +84,7 @@ class ProbabilityField(xs:Int, ys:Int, nf:Int) {
     if(myImage == null) {
       val startTime = System.currentTimeMillis
       val startMax = (Float.MinValue, -1)
+      println(xSize + " " + ySize)
       myImage = applet.createImage(xSize, ySize, PConstants.RGB)
       myImage.loadPixels
       for(x <- 0 until xSize) {
@@ -103,7 +100,7 @@ class ProbabilityField(xs:Int, ys:Int, nf:Int) {
       }
       myImage.updatePixels
       val endTime = System.currentTimeMillis
-      println("Image time: " + (endTime - startTime) + "ms")
+      //println("Image time: " + (endTime - startTime) + "ms")
     }
     myImage
   }
