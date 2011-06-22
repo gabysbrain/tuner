@@ -76,16 +76,26 @@ class SamplerSplomPanel(project:Project)
             rect(bound.minX, bound.minY, bound.width, bound.height)
 
             // Draw the actual plot
+            val (dataXMin, dataXMax) = if(xTicks.isEmpty) {
+              (minX, maxX)
+            } else {
+              (xTicks.min, xTicks.max)
+            }
+            val (dataYMin, dataYMax) = if(yTicks.isEmpty) {
+              (minY, maxY)
+            } else {
+              (yTicks.min, yTicks.max)
+            }
             plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
                       project.newSamples,
-                      (xFld, (xTicks.min,xTicks.max)),
-                      (yFld, (yTicks.min,yTicks.max)))
-            if(xFld != project.inputFields.last) {
+                      (xFld, (dataXMin, dataXMax)),
+                      (yFld, (dataYMin, dataYMax)))
+            if(xFld != project.inputFields.last && !xTicks.isEmpty) {
               xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
                                      bound.width, Config.axisSize,
                                      xFld, xTicks)
             }
-            if(yFld != project.inputFields.head) {
+            if(yFld != project.inputFields.head && !yTicks.isEmpty) {
               yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
                                      Config.axisSize, bound.height, 
                                      yFld, yTicks)

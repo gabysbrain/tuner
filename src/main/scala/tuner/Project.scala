@@ -419,10 +419,12 @@ class Project(var path:Option[String]) {
           Sampler.lhc(inputs, Config.respHistogramSampleDensity)
       }
       gpm.foldLeft(samples) {case (tbl, (fld, model)) =>
-        if(!tbl.fieldNames.contains(fld))
+        if(!tbl.fieldNames.contains(fld)) {
+          println("sampling response " + fld)
           gpm(fld).sampleTable(tbl)
-        else
+        } else {
           tbl
+        }
       }
     case None => new Table
   }
