@@ -41,9 +41,15 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
       preferredSize = new Dimension(Int.MaxValue, 150)
   
       contents += Swing.HGlue
-      contents += new BorderPanel {
+      contents += new BoxPanel(Orientation.Vertical) {
+        /*
         layout(sampleImagePanel) = BorderPanel.Position.Center
         layout(new Label("Closest Sample")) = BorderPanel.Position.South
+        */
+        contents += Swing.VGlue
+        contents += sampleImagePanel
+        contents += new Label("Closest Sample")
+        contents += Swing.VGlue
       }
       contents += Swing.HGlue
     }

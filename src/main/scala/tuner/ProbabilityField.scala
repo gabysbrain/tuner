@@ -24,8 +24,8 @@ object ProbabilityField {
       val splitLine = line.split("=").map(_.trim)
       if(splitLine(0).equals("DimSize")) {
         val sizes = splitLine(1).split(" ")
-        xsize = sizes(0).toInt
-        ysize = sizes(1).toInt
+        ysize = sizes(0).toInt
+        xsize = sizes(1).toInt
       } else if(splitLine(0).equals("ElementNumberOfChannels")) {
         fields = splitLine(1).toInt
       } else if(splitLine(0).equals("ElementDataFile")) {
@@ -37,8 +37,8 @@ object ProbabilityField {
     //print("reading image " + dataname + "...")
     val in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(dirname + "/" + dataname)))
-    for(y <- 0 until ysize) {
       for(x <- 0 until xsize) {
+    for(y <- 0 until ysize) {
         for(fnum <- 0 until fields) {
           //val flt = in.readFloat()
           val flt = readFloatLittleEndian(in)
@@ -48,7 +48,7 @@ object ProbabilityField {
           if(flt < -1.1) {
             throw new Exception("Probability under 0 (" + flt + ")")
           }
-          pf.data(fnum).set(x, y, flt)
+          pf.data(fnum).set(y, x, flt)
         }
       }
     }
@@ -69,11 +69,11 @@ object ProbabilityField {
 
 }
 
-class ProbabilityField(xSize:Int, ySize:Int, numFields:Int) {
+class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int) {
   
   val data = (0 until numFields).foldLeft(Nil:List[Matrix2D]) {(lst:List[Matrix2D], n:Int) => 
-    val newMtx = new Matrix2D((0 until xSize).toList.map({_.toFloat}),
-                              (0 until ySize).toList.map({_.toFloat})) 
+    val newMtx = new Matrix2D((0 until ySize).toList.map({_.toFloat}),
+                              (0 until xSize).toList.map({_.toFloat})) 
     newMtx :: lst
   }
 
@@ -87,15 +87,15 @@ class ProbabilityField(xSize:Int, ySize:Int, numFields:Int) {
       println(xSize + " " + ySize)
       myImage = applet.createImage(xSize, ySize, PConstants.RGB)
       myImage.loadPixels
-      for(x <- 0 until xSize) {
         for(y <- 0 until ySize) {
+      for(x <- 0 until xSize) {
           val (_, mx) = data.zipWithIndex.foldLeft(startMax) {(maxinfo, d) =>
-            if(d._1.get(x,y) > maxinfo._1)
-              (d._1.get(x,y), d._2)
+            if(d._1.get(y,x) > maxinfo._1)
+              (d._1.get(y,x), d._2)
             else
               maxinfo
           }
-          myImage.pixels(x * xSize + y) = CategoryColorMap.color(mx)
+          myImage.pixels(y * xSize + x) = CategoryColorMap.color(mx)
         }
       }
       myImage.updatePixels

@@ -35,8 +35,8 @@ class PImagePanel(w:Int, h:Int) extends P5Panel(w, h) {
   }
 
   def imageSize(img:PImage) : (Float,Float) = {
-    val maxWidth = math.min(img.width, width)
-    val maxHeight = math.min(img.height, height)
+    val maxWidth = math.max(img.width, width)
+    val maxHeight = math.max(img.height, height)
 
     // make sure to maintain aspect ratio when resizing
     val widthDiff = img.width - maxWidth
