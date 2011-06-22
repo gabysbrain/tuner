@@ -30,7 +30,7 @@ class PImagePanel(w:Int, h:Int) extends P5Panel(w, h) {
     image.foreach {img =>
       val (imgWidth, imgHeight) = imageSize(img)
       imageMode(P5Panel.ImageMode.Center)
-      image(img, w/2, h/2, imgWidth/2, imgHeight/2)
+      image(img, w/2, h/2, imgWidth, imgHeight)
     }
   }
 

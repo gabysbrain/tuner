@@ -84,7 +84,6 @@ class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int) {
     if(myImage == null) {
       val startTime = System.currentTimeMillis
       val startMax = (Float.MinValue, -1)
-      println(xSize + " " + ySize)
       myImage = applet.createImage(xSize, ySize, PConstants.RGB)
       myImage.loadPixels
         for(y <- 0 until ySize) {
