@@ -5,6 +5,8 @@ import scala.swing.CollapsiblePanel
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 
+import scala.collection.immutable.SortedMap
+
 import tuner.Project
 import tuner.gui.event.ReadyToDraw
 
@@ -15,15 +17,17 @@ class ResponseStatsPanel(project:Project)
   var curMin = Float.MaxValue
   var curMax = Float.MinValue
 
-  val histogramPanels:Map[String,ResponseHistogramPanel] = project.gpModels match {
-    case Some(gpm) => project.responseFields.map {fld =>
-      val model = gpm(fld)
-      val panel = new ResponseHistogramPanel(project, fld)
-      listenTo(panel)
-      (fld -> panel)
-    } toMap
-    case None      => Map()
-  }
+  val histogramPanels:SortedMap[String,ResponseHistogramPanel] = 
+    project.gpModels match {
+      case Some(gpm) => SortedMap[String,ResponseHistogramPanel]() ++
+        project.responseFields.map {fld =>
+          val model = gpm(fld)
+          val panel = new ResponseHistogramPanel(project, fld)
+          listenTo(panel)
+          (fld -> panel)
+        }
+      case None      => SortedMap()
+    }
 
   contents = new BoxPanel(Orientation.Vertical) {
     contents += new CollapsiblePanel(CollapsiblePanel.Scroll) {
