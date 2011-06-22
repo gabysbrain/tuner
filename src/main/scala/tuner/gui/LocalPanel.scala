@@ -1,5 +1,6 @@
 package tuner.gui
 
+import scala.collection.immutable.SortedMap
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.Dialog
@@ -25,19 +26,21 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   
   val statsTable = new RegionStatsTable(project)
 
-  val radiusSliders = project.inputFields.map {fld =>
-    val (minVal, maxVal) = project.viewInfo.currentZoom.range(fld)
-    val maxRadius = (minVal + maxVal) / 2
-    val slider = new SpinSlider(0f, maxRadius, Config.sliderResolution)
-    slider.value = project.region.radius(fld)
-    listenTo(slider)
-    reactions += {
-      case ValueChanged(`slider`) => 
-        project.region.setRadius(fld, slider.value)
-        statsTable.updateStats
+  val radiusSliders:SortedMap[String,SpinSlider] = 
+    SortedMap[String,SpinSlider]() ++
+    project.inputFields.map {fld =>
+      val (minVal, maxVal) = project.viewInfo.currentZoom.range(fld)
+      val maxRadius = (minVal + maxVal) / 2
+      val slider = new SpinSlider(0f, maxRadius, Config.sliderResolution)
+      slider.value = project.region.radius(fld)
+      listenTo(slider)
+      reactions += {
+        case ValueChanged(`slider`) => 
+          project.region.setRadius(fld, slider.value)
+          statsTable.updateStats
+      }
+      (fld, slider)
     }
-    (fld, slider)
-  } toMap
 
   val shapeSelector = new RegionShapeCombo {
     value = project.region
