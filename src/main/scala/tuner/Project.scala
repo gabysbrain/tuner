@@ -249,8 +249,11 @@ class Project(var path:Option[String]) {
     _inputs = dr
     region = Region(Region.Box, this)
     _inputs.dimNames.foreach {fld =>
+      /*
       val (mn, mx) = _inputs.range(fld)
       region.setRadius(fld, (mn+mx)/2)
+      */
+      region.setRadius(fld, 0f)
     }
   }
 
