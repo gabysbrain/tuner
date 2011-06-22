@@ -64,13 +64,20 @@ class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   contents += Swing.VGlue
   contents += new BoxPanel(Orientation.Horizontal) {
     contents += Swing.HGlue
-    contents += new TablePanel(2, radiusSliders.size) {
-      radiusSliders.zipWithIndex.foreach {case ((fld, slider), i) =>
-        layout(new Label(fld)) = (0, i)
-        layout(slider) = (1, i)
-      }
+    contents += {
+      val cellWidths:List[Double] = List(0.25, TablePanel.Size.Fill)
+      val hgts:List[Double] = List.fill(radiusSliders.size)(25)
+      val cellHeights:List[Double] = 
+        hgts :+ TablePanel.Size.Fill
 
-      border = Swing.TitledBorder(border, "Radius")
+      new TablePanel(cellWidths, cellHeights) {
+        radiusSliders.zipWithIndex.foreach {case ((fld, slider), i) =>
+          layout(new Label(fld)) = (0, i)
+          layout(slider) = (1, i)
+        }
+
+        border = Swing.TitledBorder(border, "Radius")
+      }
     }
     contents += Swing.HGlue
     contents += new BoxPanel(Orientation.Vertical) {

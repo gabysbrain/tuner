@@ -12,8 +12,16 @@ class SpinRangeSlider(minVal:Float, maxVal:Float, numSteps:Int)
     extends BoxPanel(Orientation.Horizontal) {
   
   val slider = new FloatRangeSlider(minVal, maxVal, numSteps)
-  val lowSpinner = new Spinner(minVal, maxVal, numSteps)
-  val highSpinner = new Spinner(minVal, maxVal, numSteps)
+  val lowSpinner = new Spinner(minVal, maxVal, numSteps) {
+    minimumSize = new java.awt.Dimension(70, 25)
+    preferredSize = new java.awt.Dimension(70, 25)
+    maximumSize = new java.awt.Dimension(70, 25)
+  }
+  val highSpinner = new Spinner(minVal, maxVal, numSteps) {
+    minimumSize = new java.awt.Dimension(70, 25)
+    preferredSize = new java.awt.Dimension(70, 25)
+    maximumSize = new java.awt.Dimension(70, 25)
+  }
 
   // Set the initial spinner values
   lowSpinner.value = slider.lowValue

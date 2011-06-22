@@ -11,7 +11,11 @@ import javax.swing.BoundedRangeModel
 class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int) 
     extends BoxPanel(Orientation.Horizontal) {
   
-  val spinner = new Spinner(minVal, maxVal, numSteps)
+  val spinner = new Spinner(minVal, maxVal, numSteps) {
+    minimumSize = new java.awt.Dimension(70, 25)
+    preferredSize = new java.awt.Dimension(70, 25)
+    maximumSize = new java.awt.Dimension(70, 25)
+  }
   val slider = new FloatSlider(minVal, maxVal, numSteps) {
     minFloat = minVal
     maxFloat = maxVal

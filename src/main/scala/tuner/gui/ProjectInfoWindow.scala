@@ -81,8 +81,11 @@ class ProjectInfoWindow(project:Project) extends Frame {
     }
 
     contents += projectInfoPanel
+    contents += Swing.HGlue
     contents += scriptPanel
+    contents += Swing.HGlue
     contents += inputsPanel
+    contents += Swing.HGlue
   }
 
   val buttonPanel = new BoxPanel(Orientation.Horizontal) {

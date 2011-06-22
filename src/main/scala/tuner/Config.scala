@@ -33,7 +33,7 @@ object Config {
   //val estimateSampleDensity = 20
   val maxEstimateSamples = 4000
 
-  val sampleImageSize = 140
+  val sampleImageSize = 120
 
   val samplerSplomDims = (400, 400)
 
