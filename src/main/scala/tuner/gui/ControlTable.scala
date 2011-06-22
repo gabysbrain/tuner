@@ -8,6 +8,7 @@ import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ComponentEvent
 
+import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
 
 abstract class ControlTable(header0:List[String]) 
@@ -25,7 +26,7 @@ abstract class ControlTable(header0:List[String])
   // now set up the first row
   addControlRow
 
-  protected def addControlRow = {
+  def addControlRow = {
     val controls = controlRow
 
     // We might need to change the plus to a minus button
@@ -49,7 +50,9 @@ abstract class ControlTable(header0:List[String])
   listenTo(plusButton)
 
   reactions += {
-    case ButtonClicked(`plusButton`) => addControlRow
+    case ButtonClicked(`plusButton`) => 
+      addControlRow
+      publish(new ControlTableRowAdded(this))
     case ce:ComponentEvent => findControlRow(ce.source) foreach {row =>
       publish(new ControlTableRowChanged(this, rowControls(row).toList))
     }

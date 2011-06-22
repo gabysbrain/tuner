@@ -19,6 +19,7 @@ import tuner.Config
 import tuner.DimRanges
 import tuner.Project
 import tuner.Tuner
+import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
 
 class ProjectInfoWindow(project:Project) extends Frame {
@@ -119,7 +120,7 @@ class ProjectInfoWindow(project:Project) extends Frame {
       project.name = projectNameField.text
     case ValueChanged(`scriptChooser`) =>
       project.scriptPath = Some(scriptChooser.path)
-    case UIElementResized(`inputDimTable`) =>
+    case ControlTableRowAdded(`inputDimTable`) =>
       this.pack
   }
 
