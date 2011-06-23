@@ -51,6 +51,7 @@ class Rgp(designFile:String) {
     print("building model...")
     // Read the design file
 
+    println(designFile)
     R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, designFile))
     // Create an r vector of all the strings
     val rvect = "c(" + paramFields.map("'"+_+"'").reduceLeft(_+","+_) + ")"
