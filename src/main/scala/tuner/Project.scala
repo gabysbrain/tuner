@@ -469,7 +469,7 @@ class Project(var path:Option[String]) {
     })
     if(designSites.isDefined) {
       val unseenFields:Set[String] = 
-        responseFields.toSet.diff(tmpModels.keys.toSet)
+        (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
       val designSiteFile = Path.join(path, Config.designFilename)
       val gp = new Rgp(designSiteFile)
 

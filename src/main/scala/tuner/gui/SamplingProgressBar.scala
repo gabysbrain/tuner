@@ -63,8 +63,9 @@ class SamplingProgressBar(project:Project) extends Frame {
 
   updateProgress
 
+  private var runScanner = true
   private val scanner:Actor = actor {
-    while(true) {
+    while(runScanner) {
       Thread.sleep(1237)
       updateProgress
     }
@@ -80,10 +81,12 @@ class SamplingProgressBar(project:Project) extends Frame {
         progressBar.indeterminate = false
         progressBar.max = total
         progressBar.value = numDone
-      case _ => // Do nothing.  We shouldn't get these!
+      case _ => 
+        // Reload the project
+        runScanner = false
+        Tuner.reloadProject(project)
     }
     this.pack
   }
-  
 }
 
