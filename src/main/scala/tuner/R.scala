@@ -10,11 +10,11 @@ import java.io.PrintStream
 object R {
 
   // Any special arguments to R go in this array
-  val RARGS = List("--no-save")
+  val RARGS = List("--no-save", "--slave")
 
   print("loading R library...")
   try {
-  System.loadLibrary("jri")
+    System.loadLibrary("jri")
   } catch {
     case se:SecurityException => se.printStackTrace
     case le:UnsatisfiedLinkError => le.printStackTrace
