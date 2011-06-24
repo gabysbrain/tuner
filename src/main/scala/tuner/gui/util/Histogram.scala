@@ -28,16 +28,16 @@ object Histogram {
         : SortedMap[Float,Int] = {
 
     val hist = rHist(data.values(field), numBreaks).asList
-    val breaks = hist.at("breaks").asDoubles.map(_.toFloat)
-    val counts = hist.at("counts").asDoubles.map(_.toInt)
+    val breaks = hist.at("breaks").asDoubleArray.map(_.toFloat)
+    val counts = hist.at("counts").asDoubleArray.map(_.toInt)
     SortedMap[Float,Int]() ++ breaks.zip(counts)
   }
 
   def pctData(field:String, data:Table, numBreaks:Int) 
         : SortedMap[Float,Float] = {
     val hist = rHist(data.values(field), numBreaks).asList
-    val breaks = hist.at("breaks").asDoubles.map(_.toFloat)
-    val pcts = hist.at("density").asDoubles.map(_.toFloat/100f)
+    val breaks = hist.at("breaks").asDoubleArray.map(_.toFloat)
+    val pcts = hist.at("density").asDoubleArray.map(_.toFloat/100f)
     SortedMap[Float,Float]() ++ breaks.zip(pcts)
   }
 

@@ -30,7 +30,7 @@ object AxisTicks {
     } else {
       val cmd = "extended(%s, %s, %d, only.loose=TRUE)".format(min, max, n)
       val rTicks = R.runCommand(cmd)
-      rTicks.asDoubles.toList.map {_.toFloat}
+      rTicks.asDoubleArray.toList.map {_.toFloat}
     }
   }
 }

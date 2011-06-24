@@ -1,8 +1,7 @@
 package tuner
 
-import org.rosuda.REngine.JRI.JRIEngine
-import org.rosuda.REngine.RList
-import org.rosuda.REngine.REXP
+import org.rosuda.JRI.RList
+import org.rosuda.JRI.REXP
 
 import scala.io.Source
 

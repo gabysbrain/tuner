@@ -4,7 +4,7 @@ import org.apache.commons.math.analysis.MultivariateRealFunction
 import org.apache.commons.math.optimization.GoalType
 import org.apache.commons.math.optimization.direct.MultiDirectional
 
-import org.rosuda.REngine.RList
+import org.rosuda.JRI.RList
 
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
@@ -37,12 +37,12 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
          design, responses, rInverse, dims, respDim, errDim)
 
   def this(fm:RList, dims:List[String], respDim:String, errDim:String) =
-    this(fm.at("beta").asDoubles.toList,
-         fm.at("a").asDoubles.toList,
+    this(fm.at("beta").asDoubleArray.toList,
+         fm.at("a").asDoubleArray.toList,
          fm.at("mu").asDouble,
          fm.at("sig2").asDouble,
          fm.at("X").asDoubleMatrix,
-         fm.at("Z").asDoubles,
+         fm.at("Z").asDoubleArray,
          fm.at("invVarMatrix").asDoubleMatrix,
          dims, respDim, errDim)
 

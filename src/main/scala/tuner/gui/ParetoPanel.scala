@@ -101,8 +101,16 @@ class ParetoPanel(project:Project)
                                   xAxisBox.width, Config.smallFontSize)
     val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax,
                                   yAxisBox.height, Config.smallFontSize)
-    val r1Range = (resp1, (r1Ticks.min,r1Ticks.max))
-    val r2Range = (resp2, (r2Ticks.min,r2Ticks.max))
+    val r1Range = (resp1, if(r1Ticks.isEmpty) {
+                            (r1Model.funcMin,r1Model.funcMax)
+                          } else {
+                            (r1Ticks.min,r1Ticks.max)
+                          })
+    val r2Range = (resp2, if(r2Ticks.isEmpty) {
+                            (r2Model.funcMin,r2Model.funcMax)
+                          } else {
+                            (r2Ticks.min,r2Ticks.max)
+                          })
 
     if((resp1, resp2) != pareto2dFields) {
       pareto2dFields = (resp1, resp2)

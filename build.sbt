@@ -18,6 +18,8 @@ libraryDependencies += "org.scalatest" % "scalatest_2.8.1" % "1.5" % "test"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
+javacOptions := Seq("-Xlint:deprecation")
+
 fork := true
 
 javaOptions := {
