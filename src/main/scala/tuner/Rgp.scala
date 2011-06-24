@@ -50,8 +50,8 @@ class Rgp(designFile:String) {
     print("building model...")
     // Read the design file
 
-    println(designFile)
-    R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, designFile))
+    val rDesignFile = designFile.replace("\\", "/")
+    R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, rDesignFile))
     // Create an r vector of all the strings
     val rvect = "c(" + paramFields.map("'"+_+"'").reduceLeft(_+","+_) + ")"
     //println("params: " + rvect)
