@@ -6,7 +6,8 @@ import scala.collection.immutable.HashSet
 import scala.collection.immutable.SortedSet
 import scala.collection.immutable.TreeSet
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
+
+import tuner.util.FileReader
 
 object Table {
   type Tuple = Map[String,Float]
@@ -16,20 +17,30 @@ object Table {
     //print("reading " + filename + "...")
     val tbl = new Table
 
-    val file = Source.fromFile(filename).getLines
+    //val file = Source.fromFile(filename).getLines
+    val file = FileReader.read(filename)
 
     // First line is the header
     // Try and detect the separation character
-    val rawHeader = file.next
-    val delim =
-      if(rawHeader.split(",").toList.length > 1) ","
-      else                                       "\t"
-    val header = rawHeader.split(delim).toList
+    try {
+      var header:List[String] = Nil
+      var delim = ","
+      while(header.length <= 1 && file.hasNext) {
+        val rawHeader = file.next
+        delim =
+          if(rawHeader.split(",").toList.length > 1) ","
+          else                                       "\t"
+        header = rawHeader.split(delim).toList
+      }
 
-    file.foreach((line) => {
-      val splitLine = line.split(delim) map {_.toFloat}
-      tbl.addRow(header.zip(splitLine))
-    })
+      file.foreach((line) => {
+        val splitLine = line.split(delim) map {_.toFloat}
+        tbl.addRow(header.zip(splitLine))
+      })
+    } catch {
+      case nse:java.util.NoSuchElementException =>
+        println("can't find header")
+    }
     //println("done")
     tbl
   }
