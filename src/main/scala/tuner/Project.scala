@@ -123,7 +123,9 @@ class Project(var path:Option[String]) {
     case Some(p) =>
       val designSiteFile = Path.join(p, Config.designFilename)
       try {
-        Some(Table.fromCsv(designSiteFile))
+        val tbl = Table.fromCsv(designSiteFile)
+        tbl.toCsv(designSiteFile)
+        Some(tbl)
       } catch {
         case fnf:java.io.FileNotFoundException => None
       }
