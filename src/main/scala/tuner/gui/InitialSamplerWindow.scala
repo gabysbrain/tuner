@@ -27,7 +27,7 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends Frame {
 
   project.inputFields.foreach {fld => 
     val (mn, mx) = project.inputs.range(fld)
-    project.region.setRadius(fld, (mn+mx)/2)
+    project.region.setRadius(fld, mn+mx)
   }
 
   contents = new BorderPanel {
@@ -55,7 +55,6 @@ class InitialSamplerWindow(project:Project, saveDir:String) extends Frame {
   reactions += {
     case ButtonClicked(`runButton`) =>
       project.inputFields.foreach {fld => 
-        val (mn, mx) = project.inputs.range(fld)
         project.region.setRadius(fld, 0f)
       }
       project.save(saveDir + "/" + project.name)
