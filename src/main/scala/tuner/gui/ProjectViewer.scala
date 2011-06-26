@@ -18,14 +18,15 @@ import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
 import tuner.Config
-import tuner.Project
 import tuner.Tuner
+import tuner.ViewInfo
 import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
+import tuner.project.Viewable
 
-class ProjectViewer(project:Project) extends Frame {
+class ProjectViewer(project:Viewable) extends Frame {
   
   title = project.name
   menuBar = MainMenu
@@ -136,11 +137,11 @@ class ProjectViewer(project:Project) extends Frame {
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
     case ButtonClicked(`mainResponseButton`) =>
-      project.viewInfo.currentMetric = Project.ValueMetric
+      project.viewInfo.currentMetric = ViewInfo.ValueMetric
     case ButtonClicked(`errResponseButton`) =>
-      project.viewInfo.currentMetric = Project.ErrorMetric
+      project.viewInfo.currentMetric = ViewInfo.ErrorMetric
     case ButtonClicked(`gainResponseButton`) =>
-      project.viewInfo.currentMetric = Project.GainMetric
+      project.viewInfo.currentMetric = ViewInfo.GainMetric
     case ButtonClicked(`sampleLineGlyphButton`) =>
       project.viewInfo.showSampleLine = sampleLineGlyphButton.selected
     case ButtonClicked(`regionGlyphButton`) =>
@@ -149,9 +150,9 @@ class ProjectViewer(project:Project) extends Frame {
 
   // Update which metric we're looking at
   project.viewInfo.currentMetric match {
-    case Project.ValueMetric => mainResponseButton.selected = true
-    case Project.ErrorMetric => errResponseButton.selected = true
-    case Project.GainMetric => gainResponseButton.selected = true
+    case ViewInfo.ValueMetric => mainResponseButton.selected = true
+    case ViewInfo.ErrorMetric => errResponseButton.selected = true
+    case ViewInfo.GainMetric => gainResponseButton.selected = true
   }
 
   override def open = {

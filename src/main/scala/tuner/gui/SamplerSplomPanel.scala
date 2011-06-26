@@ -1,14 +1,14 @@
 package tuner.gui
 
 import tuner.Config
-import tuner.Project
 import tuner.geom.Rectangle
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
+import tuner.project.Sampler
 
-class SamplerSplomPanel(project:Project)
+class SamplerSplomPanel(project:Sampler)
   extends P5Panel(Config.samplerSplomDims._1, 
                   Config.samplerSplomDims._2, 
                   P5Panel.Java2D) {

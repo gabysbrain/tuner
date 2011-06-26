@@ -11,9 +11,9 @@ import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
-import tuner.Project
+import tuner.project.Viewable
 
-class PlotControlsPanel(project:Project) 
+class PlotControlsPanel(project:Viewable) 
     extends BoxPanel(Orientation.Vertical) {
   
   // Create dim sliders for each input dimension

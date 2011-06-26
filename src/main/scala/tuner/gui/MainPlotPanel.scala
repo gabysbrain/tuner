@@ -7,9 +7,9 @@ import tuner.DimRanges
 import tuner.EllipseRegion
 import tuner.GpModel
 import tuner.Matrix2D
-import tuner.Project
 import tuner.SpecifiedColorMap
 import tuner.Table
+import tuner.ViewInfo
 import tuner.geom.Rectangle
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
@@ -19,6 +19,7 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Widgets
+import tuner.project.Viewable
 import tuner.util.ColorLib
 
 import scala.swing.Publisher
@@ -27,10 +28,10 @@ import scala.swing.event.UIElementResized
 
 import processing.core.PConstants
 
-class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1, 
-                                                     Config.mainPlotDims._2, 
-                                                     //P5Panel.P3D) 
-                                                     P5Panel.OpenGL) 
+class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1, 
+                                                      Config.mainPlotDims._2, 
+                                                      //P5Panel.P3D) 
+                                                      P5Panel.OpenGL) 
                                      with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
@@ -75,9 +76,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
     val (value, error, gain) = map(response)
     project.viewInfo.currentMetric match {
-      case Project.ValueMetric => value
-      case Project.ErrorMetric => error
-      case Project.GainMetric => gain
+      case ViewInfo.ValueMetric => value
+      case ViewInfo.ErrorMetric => error
+      case ViewInfo.GainMetric => gain
     }
   }
 
@@ -88,9 +89,9 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
     val sample = model.sampleSlice(xDim, yDim, slice.toList, 
                                    project.viewInfo.estimateSampleDensity)
     val data = project.viewInfo.currentMetric match {
-      case Project.ValueMetric => sample._1
-      case Project.ErrorMetric => sample._2
-      case Project.GainMetric => sample._3
+      case ViewInfo.ValueMetric => sample._1
+      case ViewInfo.ErrorMetric => sample._2
+      case ViewInfo.GainMetric => sample._3
     }
     data._2
   }

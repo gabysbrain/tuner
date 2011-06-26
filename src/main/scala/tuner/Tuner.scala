@@ -9,6 +9,7 @@ import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
 import tuner.gui.SamplingProgressBar
+import tuner.project._
 
 object Tuner extends SimpleSwingApplication {
 
@@ -42,6 +43,20 @@ object Tuner extends SimpleSwingApplication {
       Config.recentProjects += p
     }
 
+    proj match {
+      case v:Viewable => 
+        val projWindow = new ProjectViewer(v)
+        openProjects += (proj -> projWindow)
+        ProjectChooser.close
+        projWindow.open
+      case ip:InProgress =>
+        val waitWindow = new SamplingProgressBar(ip)
+        openProjects += (proj -> waitWindow)
+        ProjectChooser.close
+        waitWindow.open
+      case _ => 
+    }
+    /*
     proj.status match {
       case Project.Ok =>
         val projWindow = new ProjectViewer(proj)
@@ -61,6 +76,7 @@ object Tuner extends SimpleSwingApplication {
         waitWindow.open
       case _ =>
     }
+    */
   }
 
   def closeProject(proj:Project) : Unit = {

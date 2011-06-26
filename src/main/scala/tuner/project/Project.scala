@@ -1,4 +1,4 @@
-package tuner
+package tuner.project
 
 import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
@@ -11,6 +11,18 @@ import java.util.Date
 import scala.collection.immutable.SortedMap
 import scala.io.Source
 
+import tuner.CandidateGenerator
+import tuner.Config
+import tuner.DimRanges
+import tuner.GpModel
+import tuner.HistoryManager
+import tuner.PreviewImages
+import tuner.Region
+import tuner.Rgp
+import tuner.SampleRunner
+import tuner.Table
+import tuner.ViewInfo
+import tuner.VisInfo
 import tuner.util.Density2D
 import tuner.util.Path
 
@@ -42,6 +54,10 @@ case class ProjConfig(
 )
 
 object Project {
+
+  // Serializers to get the json parser to work
+  implicit val formats = net.liftweb.json.DefaultFormats
+
   def recent : List[Project] = {
     Config.recentProjects flatMap {rp =>
       try {
@@ -50,168 +66,259 @@ object Project {
         case e:java.io.FileNotFoundException =>
           None
       }
-    } toList
+    }
   }
 
   def fromFile(path:String) = {
-    new Project(Some(path))
+    val config = json.extract[ProjConfig]
+
+    val sampleFilePath = path + "/" + Config.sampleFilename
+    val samples = try {
+      Table.fromCsv(sampleFilePath)
+    } catch {
+      case _:java.io.FileNotFoundException => new Table
+    }
+
+    val designSitePath = Path.join(path, Config.designFilename)
+    val designSites = try {
+      Table.fromCsv(designSitePath)
+    } catch {
+      case _:java.io.FileNotFoundException => new Table
+    }
+
+    val specifiedFields = config.inputs.length + 
+                          config.outputs.length + 
+                          config.ignoreFields.length
+
+    val proj = if(samples.numRows > 0) {
+      new RunningSamples(config, path, samples)
+    } else if(config.gpModels.length < config.outputs.length) {
+      new BuildingGp(config, path, designSites)
+    } else if(designSites.fieldNames.length > specifiedFields) {
+      new NewResponses(config, path, designSites.fieldNames)
+    } else {
+      new Viewable(config, path, designSites)
+    }
+
+    proj.start
+    proj
   }
 
-  sealed trait Status {
-    def statusString:String
-  }
-  case object Ok extends Status {
-    def statusString = "Ok"
-  }
-  case object NeedsInitialSamples extends Status {
-    def statusString = "Needs Initial Samples"
-  }
-  case class RunningSamples(numDone:Int, total:Int) extends Status {
-    def statusString = numDone + "/" + total + " Samples Done"
-  }
-  case object BuildingGp extends Status {
-    def statusString = "Building GP"
-  }
+  def mapInputs(inputs:List[(String,Float,Float)]) = 
+    inputs.map {case (fld, mn, mx) =>
+      InputSpecification(fld, mn, mx)
+    }
 
-  sealed trait MetricView
-  case object ValueMetric extends MetricView
-  case object ErrorMetric extends MetricView
-  case object GainMetric extends MetricView
 }
 
-class Project(var path:Option[String]) {
-
-  import Project._
-
-  def this() = this(None)
-
-  // Serializers to get the json parser to work
-  implicit val formats = net.liftweb.json.DefaultFormats
-
-  var config = path map {p =>
-    val projConfigPath = Path.join(p, Config.projConfigFilename)
-    val json = parse(Source.fromFile(projConfigPath).mkString)
-    json.extract[ProjConfig]
+sealed abstract class Project(config:ProjConfig) {
+  
+  def save(savePath:String) : Unit = {
+    val saveFile = savePath + "/" + Config.projConfigFilename
+    val outFile = new FileWriter(saveFile)
+    outFile.write(pretty(render(decompose(config))))
+    outFile.close
   }
 
-  var name : String = config match {
-    case Some(c) => c.name
-    case None    => "New Project"
-  }
-  var scriptPath : Option[String] = config map {_.scriptPath}
-  def modificationDate : Date = new Date
+  val name = config.name
 
-  var _inputs : DimRanges = config match {
-    case Some(c) => 
-      new DimRanges(c.inputs map {x => 
-        (x.name, (x.minRange, x.maxRange))
-      } toMap)
-    case None    => new DimRanges(Nil.toMap)
-  }
+  val scriptPath = config.scriptPath
 
-  val newSamples = path match {
-    case Some(p) => try {
-        val sampleFilename = Path.join(p, Config.sampleFilename)
-        Table.fromCsv(sampleFilename)
-      } catch {
-        case fnf:java.io.FileNotFoundException => new Table
-      }
-    case None => new Table
+  val inputs = new DimRanges(config.inputs.map {x =>
+    (x.name -> (x.minRange, x.maxRange))
+  } toMap)
+
+  val modificationDate:Date
+
+  // See if we should do offline stuff in the background
+  var _buildInBackground:Boolean = config.buildInBackground
+  def buildInBackground = _buildInBackground
+  def buildInBackground_=(b:Boolean) = {
+    _buildInBackground = b
   }
 
-  var designSites = path match {
-    case Some(p) =>
-      val designSiteFile = Path.join(p, Config.designFilename)
-      try {
-        val tbl = Table.fromCsv(designSiteFile)
-        tbl.toCsv(designSiteFile)
-        Some(tbl)
-      } catch {
-        case fnf:java.io.FileNotFoundException => None
-      }
-    case None => None
+  override def hashCode : Int = savePath.hashCode
+
+  override def equals(other:Any) : Boolean = other match {
+    case that:Project => this.path == that.path
+    case _            => false
   }
 
-  var responses : List[(String,Boolean)] = config match {
-    case Some(c) => c.outputs map {rf => (rf.name, rf.minimize)}
-    case None => Nil
-  }
+  def statusString:String
 
-  var ignoreFields : List[String] = config match {
-    case Some(c) => c.ignoreFields
-    case None => Nil
-  }
+  def responses = config.outputs.map {x => (x.name, x.minimize)}
 
-  // The visual controls
-  val viewInfo = config match { 
-    case Some(c) => ViewInfo.fromJson(this, c.currentVis)
-    case None    => new ViewInfo(this)
-  }
+  def ignoreFields = config.ignoreFields.sorted
 
-  val gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
-    buildGpModels(p)
+  def inputFields = inputs.dimNames.sorted
+  def responseFields = responses.map(_._1).sorted
+
+  def newFields : List[String] = {
+    val knownFields : Set[String] = 
+      (responseFields ++ ignoreFields ++ inputFields).toSet
+    designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
+}
+
+class NewProject(name:String, 
+                 scriptPath:String, 
+                 inputDims:List[(String,Float,Float)]) 
+    extends Project(ProjConfig(name, scriptPath, 
+                               Project.mapInputs(inputDims),
+                               Nil, Nil, Nil, 
+                               ViewInfo.DefaultVisInfo,
+                               Region.DefaultRegionInfo,
+                               None)) with Sampler {
+
+  val modificationDate = new Date
+
+  val newSamples = new Table
+
+  def statusString = "New"
+}
+
+class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
+    extends Project(config) with Saved with InProgress {
+  
+  var gpBuilt = false
+  
+  // Build the gp models
+  val designSitesPath = path + "/" + Config.designFilename
+  val gp = new Rgp(designSitesPath)
+  val gps = responseFields.map(fld => (fld, loadGpModel(gp, fld))).toMap
+
+  gpBuilt = true
+
+  def statusString = "Building GP"
+
+  def currentTime = -1
+  def totalTime = -1
 
   /*
-  gpModels.foreach {gpm =>
-    gpm.foreach {case (fld, model) =>
-      println("mu: " + fld + " -> " + model.mean)
+  private def loadGpModel(factory:Rgp, field:String) : GpModel = {
+    val gpConfig:Option[GpSpecification] = 
+      config.gpModels.find(_.responseDim==field)
+
+    gpConfig match {
+      case Some(c) => 
+        new GpModel(c.thetas, c.alphas, c.mean, c.sigma2,
+                    c.designMatrix.map {_.toArray} toArray, 
+                    c.responses.toArray,
+                    c.invCorMtx.map {_.toArray} toArray, 
+                    c.dimNames, c.responseDim, Config.errorField)
+      case None    => 
+        println("building model for " + field)
+        factory.buildModel(inputFields, field, Config.errorField)
     }
   }
   */
 
-  var _region:Region = config match {
-    case Some(c) => Region.fromJson(c.currentRegion, this)
-    case None    => Region(Region.Box, this)
-  }
+  private def buildGpModels(path:String) : SortedMap[String,GpModel] = {
+    val tmpModels = SortedMap[String,GpModel]() ++ 
+      config.gpModels.map({gpSpec =>
+        val model = new GpModel(
+          gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
+          gpSpec.designMatrix.map(x => x.toArray).toArray,
+          gpSpec.responses.toArray,
+          gpSpec.invCorMtx.map(x => x.toArray).toArray,
+          gpSpec.dimNames, gpSpec.responseDim, Config.errorField
+        )
+        (gpSpec.responseDim, model)
+      })
+    val unseenFields:Set[String] = 
+      (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
+    val designSiteFile = Path.join(path, Config.designFilename)
+    val gp = new Rgp(designSiteFile)
 
-  val history:HistoryManager = config match {
-    case Some(c) => c.history match {
-      case Some(hc) => HistoryManager.fromJson(hc)
-      case None     => new HistoryManager
+    tmpModels ++ unseenFields.map({fld => 
+      println("building model for " + fld)
+      (fld, gp.buildModel(inputFields, fld, Config.errorField))
+    }).toMap
+  }
+}
+
+class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
+    extends Project(config) with Saved {
+  
+  def statusString = "New Responses"
+
+  def newFields : List[String] = newFields(allFields)
+
+  def addResponse(field:String, minimize:Boolean) = {
+    if(!responseFields.contains(field)) {
+      config.outputs = OutputSpecification(field, minimize) :: config.outputs
     }
-    case None => new HistoryManager
   }
 
-  val candidateGenerator = new CandidateGenerator(this)
-
-  // See if we should do offline stuff in the background
-  var _buildInBackground:Boolean = config match {
-    case Some(c) => c.buildInBackground
-    case None    => false
+  def addIgnore(field:String) = {
+    if(!ignoreFields.contains(field)) {
+      config.ignoreFields = field :: config.ignoreFields
+    }
   }
 
-  val previewImages:Option[PreviewImages] = path match {
-    case Some(p) => loadImages(p)
-    case None    => None
-  }
+}
+
+class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
+    extends Project(config) with Saved with InProgress {
+  
+
+  def statusString = "Running Samples"
+
+  def currentTime = 10
+  def totalTime = 100
 
   // See if we should start running some samples
   var sampleRunner:Option[SampleRunner] = None 
   if(_buildInBackground) runSamples
 
-  // Also set up a table of samples from each gp model
-  lazy val modelSamples:Table = path match {
-    case Some(p) => loadResponseSamples(p)
-    case None    => new Table
+  private def runSamples = {
+    // only run if we aren't running something
+    if(!sampleRunner.isDefined && newSamples.numRows > 0) {
+      val runner = new SampleRunner(this)
+      runner.start
+      sampleRunner = Some(runner)
+    }
   }
+}
+
+class Viewable(config:ProjConfig) extends Project(config) with Saved with Sampler {
+
+  import Project._
+
+  // Serializers to get the json parser to work
+  implicit val formats = net.liftweb.json.DefaultFormats
+
+  val newSamples = new Table
+
+  // The visual controls
+  val viewInfo = ViewInfo.fromJson(this, config.currentVis)
+
+  val gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
+    buildGpModels(p)
+  }
+
+  var _region:Region = Region.fromJson(config.currentRegion, this)
+
+  val history:HistoryManager = config.history match {
+    case Some(hc) => HistoryManager.fromJson(hc)
+    case None     => new HistoryManager
+  }
+
+  val candidateGenerator = new CandidateGenerator(this)
+
+  def statusString = "Ok"
+
+  val previewImages:Option[PreviewImages] = loadImages(path)
+
+  // Also set up a table of samples from each gp model
+  lazy val modelSamples:Table = loadResponseSamples(path)
 
   // Save any gp models that got updated
-  path.foreach(_ => save(savePath))
+  //save(savePath)
+  save
+  //path.foreach(_ => save(savePath))
 
-  override def hashCode : Int = path match {
-    case Some(p) => p.hashCode
-    case _       => name.hashCode
-  }
-
-  override def equals(other:Any) : Boolean = other match {
-    case that:Project => (this.path, that.path) match {
-      case (Some(p1), Some(p2)) => p1 == p2
-      case _                    => this.name == that.name
-    }
-    case _ => false
-  }
-
+  /*
   def status : Project.Status = {
     if(newSamples.numRows == 0 && !designSites.forall(_.numRows!=0)) {
       Project.NeedsInitialSamples
@@ -228,36 +335,18 @@ class Project(var path:Option[String]) {
       Project.Ok
     }
   }
+  */
 
-  def buildInBackground = _buildInBackground
-  def buildInBackground_=(b:Boolean) = {
-    _buildInBackground = b
-  }
-
-  def runSamples = {
-    // only run if we aren't running something
-    if(!sampleRunner.isDefined && newSamples.numRows > 0) {
-      val runner = new SampleRunner(this)
-      runner.start
-      sampleRunner = Some(runner)
-    }
-  }
-
-  def inputFields : List[String] = inputs.dimNames.sorted
-  def responseFields : List[String] = responses.map(_._1).sorted
-
+  /*
   def inputs : DimRanges = _inputs
   def inputs_=(dr:DimRanges) = {
     _inputs = dr
     region = Region(Region.Box, this)
     _inputs.dimNames.foreach {fld =>
-      /*
-      val (mn, mx) = _inputs.range(fld)
-      region.setRadius(fld, (mn+mx)/2)
-      */
       region.setRadius(fld, 0f)
     }
   }
+  */
 
   def region : Region = _region
   def region_=(r:Region) = {
@@ -267,38 +356,7 @@ class Project(var path:Option[String]) {
   def newFields : List[String] = {
     val knownFields : Set[String] = 
       (responseFields ++ ignoreFields ++ inputFields).toSet
-    designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
-  }
-
-  def addSamples(n:Int, range:DimRanges, method:Sampler.Method) : Unit = {
-    // TODO: find a better solution than just ignoring the missing inputs
-    if(n > 0) {
-      method(range, n, {v => newSamples.addRow(v)})
-      //println(n + " samples generated")
-    }
-  }
-
-  def addSamples(n:Int, method:Sampler.Method) : Unit = {
-    addSamples(n, inputs, method)
-  }
-
-  def newSamples(n:Int, range:DimRanges, method:Sampler.Method) : Unit = {
-    newSamples.clear
-    addSamples(n, range, method)
-  }
-
-  /**
-   * Clears out the sample table then adds the samples
-   */
-  def newSamples(n:Int, method:Sampler.Method) : Unit = {
-    newSamples(n, inputs, method)
-  }
-
-  def modeledSamplesSize = gpModels match {
-    case None => 0
-    case Some(models) => 
-      val model = models.head._2
-      model.design.size
+    designSites.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
   def updateCandidates(newValues:List[(String,Float)]) = {
@@ -316,20 +374,17 @@ class Project(var path:Option[String]) {
       }
       math.sqrt(diffs.sum)
     }
-    designSites match {
-      case Some(t) => 
-        var (minDist, minRow) = (Double.MaxValue, t.tuple(0))
-        for(r <- 0 until t.numRows) {
-          val tpl = t.tuple(r)
-          val dist = ptDist(tpl)
-          if(dist < minDist) {
-            minDist = dist
-            minRow = tpl
-          }
-        }
-        minRow.toList
-      case None => Nil
+
+    var (minDist, minRow) = (Double.MaxValue, t.tuple(0))
+    for(r <- 0 until t.numRows) {
+      val tpl = t.tuple(r)
+      val dist = ptDist(tpl)
+      if(dist < minDist) {
+        minDist = dist
+        minRow = tpl
+      }
     }
+    minRow.toList
   }
 
   def estimatePoint(point:List[(String,Float)]) 
@@ -344,7 +399,8 @@ class Project(var path:Option[String]) {
     }
   }
 
-  def savePath : String = path.get
+  /*
+  def savePath : String = path
 
   def save(savePath:String) = {
     path = Some(savePath)
@@ -405,6 +461,7 @@ class Project(var path:Option[String]) {
       modelSamples.toCsv(filepath)
     }
   }
+  */
 
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
@@ -413,75 +470,41 @@ class Project(var path:Option[String]) {
     Density2D.density(modelSamples, numSamples, resp2Dim, resp1Dim)
   }
 
-  private def loadResponseSamples(path:String) : Table = gpModels match {
-    case Some(gpm) =>
-      // First try to load up an old file
-      val samples = try {
-        val filepath = Path.join(path, Config.respSampleFilename)
-        Table.fromCsv(filepath)
-      } catch {
-        case e:java.io.FileNotFoundException => 
-          Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+  private def loadResponseSamples(path:String) : Table = {
+    // First try to load up an old file
+    val samples = try {
+      val filepath = Path.join(path, Config.respSampleFilename)
+      Table.fromCsv(filepath)
+    } catch {
+      case e:java.io.FileNotFoundException => 
+        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+    }
+    gpModels.foldLeft(samples) {case (tbl, (fld, model)) =>
+      if(!tbl.fieldNames.contains(fld)) {
+        println("sampling response " + fld)
+        gpModels(fld).sampleTable(tbl)
+      } else {
+        tbl
       }
-      gpm.foldLeft(samples) {case (tbl, (fld, model)) =>
-        if(!tbl.fieldNames.contains(fld)) {
-          println("sampling response " + fld)
-          gpm(fld).sampleTable(tbl)
-        } else {
-          tbl
-        }
-      }
-    case None => new Table
+    }
   }
 
   private def loadImages(path:String) : Option[PreviewImages] = {
-    (gpModels, designSites) match {
-      case (Some(gpm), Some(ds)) => 
-        if(!gpm.isEmpty) {
-          val model = gpm.values.head
-          val imagePath = Path.join(path, Config.imageDirname)
-          try {
-            Some(new PreviewImages(model, imagePath, ds))
-          } catch {
-            case e:java.io.FileNotFoundException => 
-              //e.printStackTrace
-              println("Could not find images, disabling")
-              None
-          }
-        } else {
+    if(!gpModels.isEmpty) {
+      val model = gpModels.values.head
+      val imagePath = Path.join(path, Config.imageDirname)
+      try {
+        Some(new PreviewImages(model, imagePath, designSites))
+      } catch {
+        case e:java.io.FileNotFoundException => 
+          //e.printStackTrace
+          println("Could not find images, disabling")
           None
-        }
-      case _ => None
-    }
-  }
-
-  private def buildGpModels(path:String) : SortedMap[String,GpModel] = {
-    val tmpModels = SortedMap[String,GpModel]() ++ (config match {
-      case Some(c) => c.gpModels.map({gpSpec =>
-        val model = new GpModel(
-          gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
-          gpSpec.designMatrix.map(x => x.toArray).toArray,
-          gpSpec.responses.toArray,
-          gpSpec.invCorMtx.map(x => x.toArray).toArray,
-          gpSpec.dimNames, gpSpec.responseDim, Config.errorField
-        )
-        (gpSpec.responseDim, model)
-      })
-      case None    => Nil
-    })
-    if(designSites.isDefined) {
-      val unseenFields:Set[String] = 
-        (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
-      val designSiteFile = Path.join(path, Config.designFilename)
-      val gp = new Rgp(designSiteFile)
-
-      tmpModels ++ unseenFields.map({fld => 
-        println("building model for " + fld)
-        (fld, gp.buildModel(inputFields, fld, Config.errorField))
-      }).toMap
+      }
     } else {
-      tmpModels
+      None
     }
   }
+
 }
 

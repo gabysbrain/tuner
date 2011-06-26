@@ -11,9 +11,9 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
-import tuner.Project
+import tuner.project.Viewable
 
-class SamplerDialog(project:Project, owner:Window) extends Dialog(owner) {
+class SamplerDialog(project:Viewable, owner:Window) extends Dialog(owner) {
 
   title = "Add Samples"
   modal = true

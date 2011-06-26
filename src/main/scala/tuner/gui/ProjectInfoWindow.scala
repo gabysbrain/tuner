@@ -17,12 +17,12 @@ import scala.swing.event.ValueChanged
 
 import tuner.Config
 import tuner.DimRanges
-import tuner.Project
 import tuner.Tuner
 import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
+import tuner.project.NewProject
 
-class ProjectInfoWindow(project:Project) extends Frame {
+class ProjectInfoWindow(project:NewProject) extends Frame {
 
   title = "New Project"
 

@@ -10,10 +10,10 @@ import scala.swing.Swing
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
-import tuner.Project
+import tuner.project.NewProject
 import tuner.Tuner
 
-class InitialSamplerWindow(project:Project, saveDir:String) extends Frame {
+class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
   
   title = "Select Samples"
 

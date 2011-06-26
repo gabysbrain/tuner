@@ -2,7 +2,6 @@ package tuner.gui
 
 import tuner.Config
 import tuner.Matrix2D
-import tuner.Project
 import tuner.Sampler
 import tuner.SpecifiedColorMap
 import tuner.Table
@@ -14,8 +13,9 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
+import tuner.project.Viewable
 
-class ParetoPanel(project:Project)
+class ParetoPanel(project:Viewable)
     extends P5Panel(Config.paretoDims._1, 
                     Config.paretoDims._2, 
                     P5Panel.Java2D) {
@@ -164,7 +164,7 @@ class ParetoPanel(project:Project)
   def mouseClick2d(mouseX:Int, mouseY:Int, button:P5Panel.MouseButton.Value,
                    response1:String, response2:String) = {
 
-    val data = project.designSites.get
+    val data = project.designSites
     val (minX, maxX) = (data.min(response1), data.max(response1))
     val (minY, maxY) = (data.min(response2), data.max(response2))
 
