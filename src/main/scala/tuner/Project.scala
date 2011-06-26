@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
+import scala.actors.Actor.actor
 import scala.collection.immutable.SortedMap
 import scala.io.Source
 
@@ -148,9 +149,19 @@ class Project(var path:Option[String]) {
     case None    => new ViewInfo(this)
   }
 
-  val gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
-    buildGpModels(p)
+  // See if we should do offline stuff in the background
+  var _buildInBackground:Boolean = config match {
+    case Some(c) => c.buildInBackground
+    case None    => false
   }
+
+  private var _gpModels : Option[SortedMap[String,GpModel]] = None
+  path.foreach {p =>
+    actor {
+      _gpModels = Some(buildGpModels(p))
+    }
+  }
+  def gpModels = _gpModels
 
   /*
   gpModels.foreach {gpm =>
@@ -174,12 +185,6 @@ class Project(var path:Option[String]) {
   }
 
   val candidateGenerator = new CandidateGenerator(this)
-
-  // See if we should do offline stuff in the background
-  var _buildInBackground:Boolean = config match {
-    case Some(c) => c.buildInBackground
-    case None    => false
-  }
 
   val previewImages:Option[PreviewImages] = path match {
     case Some(p) => loadImages(p)

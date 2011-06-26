@@ -84,6 +84,7 @@ class SamplingProgressBar(project:Project) extends Frame {
       case _ => 
         // Reload the project
         runScanner = false
+        project.save(project.savePath)
         Tuner.reloadProject(project)
     }
     this.pack

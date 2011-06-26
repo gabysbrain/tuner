@@ -64,6 +64,10 @@ object Tuner extends SimpleSwingApplication {
     }
   }
 
+  def openProject(file:File) : Unit = {
+    openProject(Project.fromFile(file.getAbsolutePath))
+  }
+
   def closeProject(proj:Project) : Unit = {
     openProjects.get(proj) match {
       case Some(window) =>
@@ -80,11 +84,7 @@ object Tuner extends SimpleSwingApplication {
 
   def reloadProject(proj:Project) = {
     closeProject(proj)
-    openProject(proj)
-  }
-
-  def openProject(file:File) : Unit = {
-    openProject(Project.fromFile(file.getAbsolutePath))
+    openProject(new File(proj.savePath))
   }
 
 }
