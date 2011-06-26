@@ -373,16 +373,18 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
   }
 
   private def createColormaps(respColormap:ColorMap) : ColormapMap = {
-    project.responseFields.flatMap {fld =>
+    project.responses.flatMap {case (fld, minimize) =>
       project.gpModels.map {gpm =>
         val model = gpm(fld)
         val valCm = new SpecifiedColorMap(respColormap,
                                           model.funcMin, 
-                                          model.funcMax)
+                                          model.funcMax,
+                                          minimize)
         val errCm = new SpecifiedColorMap(Config.errorColorMap,
-                                          0f, model.sig2.toFloat)
+                                          0f, model.sig2.toFloat,
+                                          false)
         // TODO: fix the max gain calculation!
-        val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 1f)
+        val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 1f, false)
         (fld, (valCm, errCm, gainCm))
       }
     } toMap

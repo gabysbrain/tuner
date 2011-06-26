@@ -102,9 +102,9 @@ class Colorbar(placement:Colorbar.Placement) {
 
     applet.beginShape(P5Panel.Shape.QuadStrip)
     // Maybe draw the filterd out colors
-    if(colormap.minVal < colormap.filterVal) {
-      applet.fill(colormap.color(colormap.minVal))
-      val yy1 = P5Panel.map(colormap.minVal, 
+    if(colormap.isFiltered) {
+      applet.fill(colormap.filterColor)
+      val yy1 = P5Panel.map(colormap.filterStart, 
                             colormap.minVal, colormap.maxVal, 
                             y+h, y)
       val yy2 = P5Panel.map(colormap.filterVal, 
@@ -115,7 +115,8 @@ class Colorbar(placement:Colorbar.Placement) {
       applet.vertex(x, yy2)
       applet.vertex(x+w, yy2)
     }
-    colormap.breaks.foreach {break =>
+    List(colormap.filterVal, colormap.colorEnd).foreach {break =>
+    //colormap.breaks.foreach {break =>
       applet.fill(colormap.color(break))
       val yy = P5Panel.map(break, colormap.minVal, colormap.maxVal, y+h, y)
       applet.vertex(x, yy)
