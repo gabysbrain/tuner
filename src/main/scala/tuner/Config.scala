@@ -39,7 +39,8 @@ object Config {
 
   val paretoDims = (289, 289)
 
-  val mainPlotDims = (600, 380)
+  val mainPlotDims = (800, 600)
+  //val mainPlotDims = (600, 380)
   val plotSpacing = 5
   val controlPanelHeight = 220
 
