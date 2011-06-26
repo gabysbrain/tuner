@@ -155,14 +155,24 @@ class Project(var path:Option[String]) {
     case None    => false
   }
 
-  private var _gpModels : Option[SortedMap[String,GpModel]] = None
-  path.foreach {p =>
-    actor {
-      _gpModels = Some(buildGpModels(p))
+  private var _gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
+    loadGpModels(p)
+  }
+  // See if we need to build additional models
+  private var _gpModelsReady:Boolean = {
+    val currentFields:Set[String] = _gpModels.getOrElse(Nil.toMap).keys.toSet
+    val unseenFields:Set[String] = 
+      (newFields ++ responseFields).toSet.diff(currentFields)
+    if(designSites.isDefined && !unseenFields.isEmpty) {
+      buildGpModels(unseenFields)
+      false
+    } else {
+      true
     }
   }
-  def gpModels = _gpModels
 
+  def gpModels = _gpModels
+  def gpModelsReady = _gpModelsReady
   /*
   gpModels.foreach {gpm =>
     gpm.foreach {case (fld, model) =>
@@ -227,7 +237,7 @@ class Project(var path:Option[String]) {
         case None     =>
           Project.RunningSamples(0, newSamples.numRows)
       }
-    } else if(!gpModels.isDefined) {
+    } else if(!gpModelsReady) {
       Project.BuildingGp
     } else {
       Project.Ok
@@ -460,7 +470,7 @@ class Project(var path:Option[String]) {
     }
   }
 
-  private def buildGpModels(path:String) : SortedMap[String,GpModel] = {
+  private def loadGpModels(path:String) : SortedMap[String,GpModel] = {
     val tmpModels = SortedMap[String,GpModel]() ++ (config match {
       case Some(c) => c.gpModels.map({gpSpec =>
         val model = new GpModel(
@@ -474,9 +484,11 @@ class Project(var path:Option[String]) {
       })
       case None    => Nil
     })
+
+    // See if we need to build additional models
+    val unseenFields:Set[String] = 
+      (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
     if(designSites.isDefined) {
-      val unseenFields:Set[String] = 
-        (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
       val designSiteFile = Path.join(path, Config.designFilename)
       val gp = new Rgp(designSiteFile)
 
@@ -486,6 +498,23 @@ class Project(var path:Option[String]) {
       }).toMap
     } else {
       tmpModels
+    }
+  }
+
+  private def buildGpModels(unseenFields:Set[String]) = {
+    actor {
+      val designSiteFile = Path.join(path.get, Config.designFilename)
+      val gp = new Rgp(designSiteFile)
+
+      val newModels = unseenFields.map({fld => 
+        println("building model for " + fld)
+        (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      }).toMap
+      _gpModels = Some(_gpModels match {
+        case Some(gpm) => gpm ++ newModels
+        case None      => SortedMap[String,GpModel]() ++ newModels
+      })
+      _gpModelsReady = true
     }
   }
 }
