@@ -40,6 +40,10 @@ object RedColorMap extends ColorMap {
   val colors = Array(0xFFFEE0D2, 0xFFDE2D26)
 }
 
+object BlueColorMap extends ColorMap {
+  val colors = Array(0xFFEFF3FF, 0xFF08519C)
+}
+
 object GrayscaleColorMap extends ColorMap {
   val colors = Array(0xFF000000, 0xFFFFFFFF)
 }

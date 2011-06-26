@@ -39,6 +39,8 @@ class ParetoPanel(project:Project)
   var pareto2dFields = ("", "")
   //var pareto2dData:Matrix2D = null
   //var cspColorMap:SpecifiedColorMap = null
+  var xAxisTicks:List[Float] = Nil
+  var yAxisTicks:List[Float] = Nil
 
   override def setup = {
     frameRate = 30
@@ -97,39 +99,39 @@ class ParetoPanel(project:Project)
   def draw2dPareto(resp1:String, resp2:String) {
     val r1Model = models(resp1)
     val r2Model = models(resp2)
-    val r1Ticks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax,
-                                  xAxisBox.width, Config.smallFontSize)
-    val r2Ticks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax,
-                                  yAxisBox.height, Config.smallFontSize)
-    val r1Range = (resp1, if(r1Ticks.isEmpty) {
+    val xAxisTicks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax,
+                                     xAxisBox.width, Config.smallFontSize)
+    val yAxisTicks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax,
+                                     yAxisBox.height, Config.smallFontSize)
+    val r1Range = (resp1, if(xAxisTicks.isEmpty) {
                             (r1Model.funcMin,r1Model.funcMax)
                           } else {
-                            (r1Ticks.min,r1Ticks.max)
+                            (xAxisTicks.min,xAxisTicks.max)
                           })
-    val r2Range = (resp2, if(r2Ticks.isEmpty) {
+    val r2Range = (resp2, if(yAxisTicks.isEmpty) {
                             (r2Model.funcMin,r2Model.funcMax)
                           } else {
-                            (r2Ticks.min,r2Ticks.max)
+                            (yAxisTicks.min,yAxisTicks.max)
                           })
 
+      /*
     if((resp1, resp2) != pareto2dFields) {
       pareto2dFields = (resp1, resp2)
       val samp = project.randomSample2dResponse(r2Range, r1Range)
       // Put the counts on a log scale
       //pareto2dData = samp.map(x => if(x==0) x else math.log(x).toFloat)
-      /*
       cspColorMap = new SpecifiedColorMap(tuner.RedColorMap, 
                                           pareto2dData.min, 
                                           pareto2dData.max)
-      */
     }
+      */
 
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
                      xAxisBox.width, xAxisBox.height,
-                     resp1, r1Ticks)
+                     resp1, xAxisTicks)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
-                     resp2, r2Ticks)
+                     resp2, yAxisTicks)
 
     // Now for the csp
     /*
@@ -164,20 +166,44 @@ class ParetoPanel(project:Project)
   def mouseClick2d(mouseX:Int, mouseY:Int, button:P5Panel.MouseButton.Value,
                    response1:String, response2:String) = {
 
-    val data = project.designSites.get
-    val (minX, maxX) = (data.min(response1), data.max(response1))
-    val (minY, maxY) = (data.min(response2), data.max(response2))
+    //println("mouse: " + mouseX + " " + mouseY)
+    project.designSites.foreach {data =>
+      val r1Model = models(response1)
+      val r2Model = models(response2)
+      val (minX, maxX) = if(!xAxisTicks.isEmpty) {
+        (xAxisTicks.min, xAxisTicks.max)
+      } else {
+        (r1Model.funcMin, r1Model.funcMax)
+      }
+      val (minY, maxY) = if(!yAxisTicks.isEmpty) {
+        (yAxisTicks.min, yAxisTicks.max)
+      } else {
+        (r2Model.funcMin, r2Model.funcMax)
+      }
 
-    // See if we hit upon any sample points
-    for(r <- 0 until data.numRows) {
-      val tpl = data.tuple(r)
-      val (dataX, dataY) = (tpl(response1), tpl(response2))
-      val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
-      val yy = P5Panel.map(dataY, minY, maxY, plotBox.maxY, plotBox.minY)
-      val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
-      if(dist < Config.scatterplotDotSize) {
+      // See if we hit upon any sample points
+      var minDist = Float.MaxValue
+      var minInfo:(Float,Float) = (-1f, -1f)
+      var tmp:(Float,Float) = (-1f, -1f)
+      for(r <- 0 until data.numRows) {
+        val tpl = data.tuple(r)
+        val (dataX, dataY) = (tpl(response1), tpl(response2))
+        val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
+        val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
+        val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
+
+        if(dist < minDist) {
+          minDist = dist
+          minInfo = (dataX, dataY)
+          tmp = (xx, yy)
+        }
+      }
+      //println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
+      //println("mp: " + minInfo)
+      // Figure out if we're inside a point
+      if(minDist < Config.scatterplotDotSize*2) {
         publish(new CandidateChanged(this, 
-          List((response1, dataX), (response2, dataY))))
+          List((response1, minInfo._1), (response2, minInfo._2))))
       }
     }
   }

@@ -382,7 +382,7 @@ class MainPlotPanel(project:Project) extends P5Panel(Config.mainPlotDims._1,
                                           minimize)
         val errCm = new SpecifiedColorMap(Config.errorColorMap,
                                           0f, model.sig2.toFloat,
-                                          true)
+                                          false)
         // TODO: fix the max gain calculation!
         val maxGain = model.maxGain(project.inputs) / 4
         val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 

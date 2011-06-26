@@ -50,7 +50,8 @@ object Config {
   val backgroundColor = 51
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
-  val errorColorMap = GrayscaleColorMap
+  //val errorColorMap = GrayscaleColorMap
+  val errorColorMap = BlueColorMap
   val gainColorMap = GreenColorMap
   val lineColor = 255
   val filterColor = 151
