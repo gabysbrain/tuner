@@ -26,6 +26,7 @@ object Tuner extends SimpleSwingApplication {
   //def top = ProjectChooser
   def top = { 
     //openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/test_proj/")))
+    //openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/ahmed/")))
     ProjectChooser
   }
 

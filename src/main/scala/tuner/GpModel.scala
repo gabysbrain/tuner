@@ -1,10 +1,18 @@
 package tuner
 
+import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction
 import org.apache.commons.math.analysis.MultivariateRealFunction
+import org.apache.commons.math.analysis.MultivariateVectorialFunction
 import org.apache.commons.math.optimization.GoalType
 import org.apache.commons.math.optimization.direct.MultiDirectional
+import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer
+import org.apache.commons.math.optimization.general.NonLinearConjugateGradientOptimizer
+import org.apache.commons.math.optimization.general.ConjugateGradientFormula
+
 
 import org.rosuda.JRI.RList
+
+import tuner.util.Util
 
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
@@ -48,6 +56,16 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
 
   // Also precompute rInverse . (responses - mean)
   val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
+
+  def maxGain(range:DimRanges):Float = {
+    var mx:Float = Float.MinValue
+    Sampler.lhc(range, Config.respHistogramSampleDensity, pt => {
+      val (est, err) = runSample(pt)
+      val expgain = calcExpectedGain(est.toFloat, err.toFloat)
+      mx = math.max(mx, expgain)
+    })
+    mx
+  }
 
   // Store the most recently seen max value for the function
   def funcMax:Float = responses.max.toFloat
@@ -150,6 +168,22 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     theta * math.pow(math.abs(x1 - x2), alpha)
   }
 
+  def gradient(pt:List[(String,Float)]) : List[(String,Float)] = {
+    val Epsilon:Float = 1e-9.toFloat
+    val outVals = Array.fill(pt.length)(0f)
+    val (val1, _) = runSample(pt)
+    for(d <- 0 until pt.length) {
+      val p2 = pt.take(d) ++ List((pt(d)._1, pt(d)._2+Epsilon)) ++ pt.drop(d)
+      val p3 = pt.take(d) ++ List((pt(d)._1, pt(d)._2-Epsilon)) ++ pt.drop(d)
+      val (val2, _) = runSample(p2)
+      val (val3, _) = runSample(p3)
+      val g2 = (val1 - val2) / Epsilon
+      val g3 = (val1 - val3) / Epsilon
+      outVals(d) = if(math.abs(g2) > math.abs(g3)) g2.toFloat else g3.toFloat
+    }
+    pt.zip(outVals).map {case ((fld,_),v2) => (fld, v2)}
+  }
+
   def calcExpectedGain(ests:Matrix2D, errs:Matrix2D) : Matrix2D = {
     val funcMax = ests.max
     val gainMatrix = new Matrix2D(ests.rowIds, ests.colIds)
@@ -238,22 +272,41 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     math.abs(t1 * t2 + t3)
   }
 
+  /*
   def computeMaxGain : (List[(String,Double)], Double) = {
-    print("computing gain...")
-    val energyFunc = new MultivariateRealFunction {
+    print("computing gain for " + respDim + "...")
+    val energyFunc = new DifferentiableMultivariateRealFunction {
       def value(point:Array[Double]) : Double = {
         val (est, err) = estimatePoint(point)
         calcExpectedGain(est.toFloat, err.toFloat).toDouble
       }
+
+      val gradient = new MultivariateVectorialFunction {
+        def value(point:Array[Double]) : Array[Double] = {
+          val pt = dims.zip(point).map {case (fld,v) => (fld,v.toFloat)}
+          val (_, grad) = GpModel.this.gradient(pt).unzip
+          grad.map(_.toDouble).toArray
+        }
+      }
+
+      def partialDerivative(k:Int) = new MultivariateRealFunction {
+        def value(point:Array[Double]) : Double = {
+          val grad = gradient.value(point)
+          grad(k)
+        }
+      }
     }
-    val optim = new MultiDirectional()
+    val optim = new org.apache.commons.math.optimization.direct.PowellOptimizer
+    val maxPointId = Util.maxIndex(responses)
     val optimPoint = optim.optimize(energyFunc, 
                                     GoalType.MAXIMIZE, 
-                                    design(0).map {v => 0.5})
+                                    Array.fill(design(0).length)(0.5))
+                                    //design(maxPointId))
     println("done")
     println("optim: " + optimPoint.getValue)
     (dims.zip(optimPoint.getPointRef), optimPoint.getValue)
   }
+  */
 
   // NOTE: This assumes the gaussian correlation model!
   def levelSets(c:Float) : List[DimRanges] = {
