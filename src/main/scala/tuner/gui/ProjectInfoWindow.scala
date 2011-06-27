@@ -137,7 +137,7 @@ class ProjectInfoWindow(project:Project) extends Frame {
          maxField.text.length > 0) {
         // Any conversion problems we ignore
         try {
-          Some((nameField.text, (minField.text.toFloat, maxField.text.toFloat)))
+          Some((nameField.text.trim, (minField.text.toFloat, maxField.text.toFloat)))
         } catch {
           case _ => None
         }

@@ -105,7 +105,7 @@ class Project(var path:Option[String]) {
   var _inputs : DimRanges = config match {
     case Some(c) => 
       new DimRanges(c.inputs map {x => 
-        (x.name, (x.minRange, x.maxRange))
+        (x.name.trim, (x.minRange, x.maxRange))
       } toMap)
     case None    => new DimRanges(Nil.toMap)
   }
@@ -282,7 +282,10 @@ class Project(var path:Option[String]) {
   def newFields : List[String] = {
     val knownFields : Set[String] = 
       (responseFields ++ ignoreFields ++ inputFields).toSet
-    designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
+    designSites match {
+      case Some(ds) => ds.fieldNames.filter {fn => !knownFields.contains(fn)}
+      case None     => Nil
+    }
   }
 
   def addSamples(n:Int, range:DimRanges, method:Sampler.Method) : Unit = {
