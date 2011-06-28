@@ -51,11 +51,17 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   //listenTo(shapeSelector)
   listenTo(methodSelector.selection)
 
+  var lastSamples:Int = numSamples
+  var lastSelection:String = methodString
+
   reactions += {
-    case ValueChanged(`sampleNumField`) => 
-      publish(new ValueChanged(this))
-    case SelectionChanged(`methodSelector`) => 
-      publish(new ValueChanged(this))
+    case ValueChanged(`sampleNumField`) | SelectionChanged(`methodSelector`) => 
+      // Only publish if something actually changed
+      if(lastSamples != numSamples || lastSelection != methodString) {
+        lastSamples = numSamples
+        lastSelection = methodString
+        publish(new ValueChanged(this))
+      }
   }
 
   def numSamples : Int = {
@@ -67,6 +73,8 @@ class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   }
 
   //def shape : String = shapeSelector.toString
+
+  def methodString = methodSelector.selection.item
 
   def method : Sampler.Method = {
     //println(methodSelector.selection.item)
