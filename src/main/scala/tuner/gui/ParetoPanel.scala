@@ -198,7 +198,7 @@ class ParetoPanel(project:Project)
           tmp = (xx, yy)
         }
       }
-      //println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
+      println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
       //println("mp: " + minInfo)
       // Figure out if we're inside a point
       if(minDist < Config.scatterplotDotSize*2) {
