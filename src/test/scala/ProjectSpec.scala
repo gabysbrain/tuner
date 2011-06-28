@@ -122,6 +122,7 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     np2.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
   }
 
+  /*
   test("new project range should be full input range") {
     val dimRanges = new DimRanges(Map(("d1" -> (0f, 1f)), 
                                       ("d2" -> (0f, 1f)), 
@@ -142,6 +143,7 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
       np.region.range(fld) should be (dimRanges.range(fld))
     }
   }
+  */
 
   test("make sure a project without images loads up correctly") {
     val projPath = getClass.getResource("/no_images_proj").getPath
