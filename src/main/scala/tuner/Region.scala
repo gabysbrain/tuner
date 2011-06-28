@@ -96,8 +96,14 @@ sealed abstract class Region(project:Project) {
     val (minEst, maxEst) = (model.runSample(minPt)._1, 
                             model.runSample(maxPt)._1)
     val centerEst = model.runSample(center.toList)._1
-    val minGrad = (centerEst - minEst) / radius(fld)
-    val maxGrad = (centerEst - maxEst) / radius(fld)
+
+    val gradRadius = if(radius(fld) == 0) {
+      Float.Epsilon
+    } else {
+      radius(fld)
+    }
+    val minGrad = (centerEst - minEst) / gradRadius
+    val maxGrad = (centerEst - maxEst) / gradRadius
     if(math.abs(minGrad) > math.abs(maxGrad))
       minGrad.toFloat
     else
