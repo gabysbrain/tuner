@@ -88,9 +88,17 @@ sealed abstract class Region(project:Project) {
   }
 
   def gradient(response:String, fld:String) : Float = {
+    val epsilon = 1e-6f
     val models = project.gpModels.get
     val model = models(response)
-    val (minVal,maxVal) = range(fld)
+    val (minVal,maxVal) = {
+      val rng = range(fld)
+      if(rng._1 == rng._2) {
+        (rng._1 - epsilon, rng._1 + epsilon)
+      } else {
+        rng
+      }
+    }
     val rest = center.toList.filter(_._1 != fld)
     val (minPt, maxPt) = ((fld, minVal) :: rest, (fld, maxVal) :: rest)
     val (minEst, maxEst) = (model.runSample(minPt)._1, 
@@ -98,7 +106,7 @@ sealed abstract class Region(project:Project) {
     val centerEst = model.runSample(center.toList)._1
 
     val gradRadius = if(radius(fld) == 0) {
-      Float.Epsilon
+      epsilon
     } else {
       radius(fld)
     }
