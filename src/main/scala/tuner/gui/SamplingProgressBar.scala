@@ -72,20 +72,16 @@ class SamplingProgressBar(project:InProgress) extends Frame {
   }
 
   def updateProgress = {
-    progressLabel.text = project.status.statusString
+    progressLabel.text = project.statusString
 
-    project.status match {
-      case Project.BuildingGp =>
-        progressBar.indeterminate = true
-      case Project.RunningSamples(numDone, total) =>
-        progressBar.indeterminate = false
-        progressBar.max = total
-        progressBar.value = numDone
-      case _ => 
-        // Reload the project
-        runScanner = false
-        project.save(project.savePath)
-        Tuner.reloadProject(project)
+    val (cur, max) = project.runStatus
+
+    if(max > 0) {
+      progressBar.indeterminate = false
+    } else {
+      progressBar.indeterminate = true
+      progressBar.max = max
+      progressBar.value = cur
     }
     this.pack
   }

@@ -20,7 +20,7 @@ class ParetoPanel(project:Viewable)
                     Config.paretoDims._2, 
                     P5Panel.Java2D) {
 
-  val models = project.gpModels.get
+  val models = project.gpModels
 
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
@@ -181,30 +181,29 @@ class ParetoPanel(project:Viewable)
       (r2Model.funcMin, r2Model.funcMax)
     }
 
-      // See if we hit upon any sample points
-      var minDist = Float.MaxValue
-      var minInfo:(Float,Float) = (-1f, -1f)
-      var tmp:(Float,Float) = (-1f, -1f)
-      for(r <- 0 until data.numRows) {
-        val tpl = data.tuple(r)
-        val (dataX, dataY) = (tpl(response1), tpl(response2))
-        val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
-        val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
-        val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
+    // See if we hit upon any sample points
+    var minDist = Float.MaxValue
+    var minInfo:(Float,Float) = (-1f, -1f)
+    var tmp:(Float,Float) = (-1f, -1f)
+    for(r <- 0 until data.numRows) {
+      val tpl = data.tuple(r)
+      val (dataX, dataY) = (tpl(response1), tpl(response2))
+      val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
+      val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
+      val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
 
-        if(dist < minDist) {
-          minDist = dist
-          minInfo = (dataX, dataY)
-          tmp = (xx, yy)
-        }
+      if(dist < minDist) {
+        minDist = dist
+        minInfo = (dataX, dataY)
+        tmp = (xx, yy)
       }
-      println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
-      //println("mp: " + minInfo)
-      // Figure out if we're inside a point
-      if(minDist < Config.scatterplotDotSize*2) {
-        publish(new CandidateChanged(this, 
-          List((response1, minInfo._1), (response2, minInfo._2))))
-      }
+    }
+    println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
+    //println("mp: " + minInfo)
+    // Figure out if we're inside a point
+    if(minDist < Config.scatterplotDotSize*2) {
+      publish(new CandidateChanged(this, 
+        List((response1, minInfo._1), (response2, minInfo._2))))
     }
   }
 }

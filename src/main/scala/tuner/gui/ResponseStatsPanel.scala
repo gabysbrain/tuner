@@ -17,17 +17,16 @@ class ResponseStatsPanel(project:Viewable)
   var curMin = Float.MaxValue
   var curMax = Float.MinValue
 
-  val histogramPanels:SortedMap[String,ResponseHistogramPanel] = 
-    project.gpModels match {
-      case Some(gpm) => SortedMap[String,ResponseHistogramPanel]() ++
-        project.responseFields.map {fld =>
-          val model = gpm(fld)
-          val panel = new ResponseHistogramPanel(project, fld)
-          listenTo(panel)
-          (fld -> panel)
-        }
-      case None      => SortedMap()
-    }
+  val histogramPanels:SortedMap[String,ResponseHistogramPanel] = {
+    val gpm = project.gpModels
+    SortedMap[String,ResponseHistogramPanel]() ++
+      project.responseFields.map {fld =>
+        val model = gpm(fld)
+        val panel = new ResponseHistogramPanel(project, fld)
+        listenTo(panel)
+        (fld -> panel)
+      }
+  }
 
   contents = new BoxPanel(Orientation.Vertical) {
     contents += new CollapsiblePanel(CollapsiblePanel.Scroll) {

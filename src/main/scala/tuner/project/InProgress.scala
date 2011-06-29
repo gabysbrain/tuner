@@ -1,15 +1,12 @@
 package tuner.project
 
-import scala.actors.Actor._
-
 trait InProgress {
   
+  var buildInBackground:Boolean
+
   protected def totalTime : Int
   protected def currentTime : Int
-  
-  val statusActions:PartialFunction[Any,Unit] = {
-    case CurrentRunStatus =>
-      reply(CurrentRunStatusResponse(currentTime, totalTime))
-  }
+
+  def runStatus:(Int,Int) = (currentTime, totalTime)
 }
 

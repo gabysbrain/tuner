@@ -48,14 +48,7 @@ class SampleRunner(project:RunningSamples) extends Actor {
       val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)
       for(r <- 0 until newDesTbl.numRows) {
         val tpl = newDesTbl.tuple(r)
-        val ds = project.designSites match {
-          case Some(x) => x
-          case None =>
-            val tbl = new Table
-            project.designSites = Some(tbl)
-            tbl
-        }
-        ds.addRow(tpl.toList)
+        project.designSites.addRow(tpl.toList)
         samples.removeRow(0) // Always the first row
       }
       project.save(project.savePath)
