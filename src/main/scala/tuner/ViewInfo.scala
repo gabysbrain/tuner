@@ -4,6 +4,8 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+import tuner.project.Viewable
+
 case class SliceSpecification(name:String, value:Float)
 case class ZoomSpecification(name:String, lowValue:Float, highValue:Float)
 case class VisInfo(
@@ -17,7 +19,7 @@ case class VisInfo(
 )
 
 object ViewInfo {
-  def fromJson(project:Project, vi:VisInfo) = {
+  def fromJson(project:Viewable, vi:VisInfo) = {
     val v = new ViewInfo(project)
     v._currentSlice = vi.currentSlice.map({x => 
       (x.name, x.value)
@@ -28,17 +30,24 @@ object ViewInfo {
     v.response1View = vi.response1
     v.response2View = vi.response2
     v.currentMetric = vi.currentMetric match {
-      case "value" => Project.ValueMetric
-      case "error" => Project.ErrorMetric
-      case "gain" => Project.GainMetric
+      case "value" => ValueMetric
+      case "error" => ErrorMetric
+      case "gain" => GainMetric
     }
     v.showSampleLine = vi.showSampleLine
     v.showRegion = vi.showRegion
     v
   }
+
+  sealed trait MetricView
+  case object ValueMetric extends MetricView
+  case object ErrorMetric extends MetricView
+  case object GainMetric extends MetricView
 }
 
-class ViewInfo(project:Project) {
+class ViewInfo(project:Viewable) {
+
+  import ViewInfo._
 
   //var _currentSlice = Map[String,Float]()
   //var _currentZoom:DimRanges = new DimRanges(Nil.toMap)
@@ -51,7 +60,7 @@ class ViewInfo(project:Project) {
   } toMap)
   var response1View:Option[String] = None
   var response2View:Option[String] = None
-  var currentMetric:Project.MetricView = Project.ValueMetric
+  var currentMetric:MetricView = ValueMetric
   var showSampleLine = false
   var showRegion = true
 
@@ -87,9 +96,9 @@ class ViewInfo(project:Project) {
 
   def toJson = {
     val strMetric = currentMetric match {
-      case Project.ValueMetric => "value"
-      case Project.ErrorMetric => "error"
-      case Project.GainMetric => "gain"
+      case ValueMetric => "value"
+      case ErrorMetric => "error"
+      case GainMetric => "gain"
     }
 
     ("currentSlice" -> (currentSlice.map {case (fld,v) =>

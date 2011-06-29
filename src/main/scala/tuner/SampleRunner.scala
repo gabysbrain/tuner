@@ -5,7 +5,9 @@ import scala.actors.Actor._
 
 import java.io.File
 
-class SampleRunner(project:Project) extends Actor {
+import tuner.project.RunningSamples
+
+class SampleRunner(project:RunningSamples) extends Actor {
   
   val sampleFile = File.createTempFile("tuner_samples", ".csv")
   val designFile = File.createTempFile("tuner_design", ".csv")
@@ -16,10 +18,10 @@ class SampleRunner(project:Project) extends Actor {
 
   var currentProcess:Process = null
 
-  val pb = new ProcessBuilder(project.scriptPath.get,
+  val pb = new ProcessBuilder(project.scriptPath,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
-  pb.directory(new File(project.savePath))
+  pb.directory(new File(project.path))
 
   def stop = {
     if(currentProcess != null)

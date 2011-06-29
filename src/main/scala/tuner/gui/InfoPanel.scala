@@ -10,12 +10,12 @@ import scala.swing.Swing
 import scala.swing.Table
 
 import tuner.Config
-import tuner.Project
+import tuner.project.Viewable
 
 import java.awt.Dimension
 import javax.swing.table.AbstractTableModel
 
-class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
+class InfoPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
 
   val infoTable = {
     val columnNames = project.inputFields ++ 
@@ -35,24 +35,22 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
   val sampleImagePanel = new PImagePanel(Config.sampleImageSize, 
                                          Config.sampleImageSize)
 
-  val imagePanel = project.previewImages map {pi =>
-    new BoxPanel(Orientation.Horizontal) {
-      maximumSize = new Dimension(Int.MaxValue, 150)
-      preferredSize = new Dimension(Int.MaxValue, 150)
+  val imagePanel = new BoxPanel(Orientation.Horizontal) {
+    maximumSize = new Dimension(Int.MaxValue, 150)
+    preferredSize = new Dimension(Int.MaxValue, 150)
   
-      contents += Swing.HGlue
-      contents += new BoxPanel(Orientation.Vertical) {
-        /*
-        layout(sampleImagePanel) = BorderPanel.Position.Center
-        layout(new Label("Closest Sample")) = BorderPanel.Position.South
-        */
-        contents += Swing.VGlue
-        contents += sampleImagePanel
-        contents += new Label("Closest Sample")
-        contents += Swing.VGlue
-      }
-      contents += Swing.HGlue
+    contents += Swing.HGlue
+    contents += new BoxPanel(Orientation.Vertical) {
+      /*
+      layout(sampleImagePanel) = BorderPanel.Position.Center
+      layout(new Label("Closest Sample")) = BorderPanel.Position.South
+      */
+      contents += Swing.VGlue
+      contents += sampleImagePanel
+      contents += new Label("Closest Sample")
+      contents += Swing.VGlue
     }
+    contents += Swing.HGlue
   }
 
   contents += new ScrollPane {
@@ -93,11 +91,9 @@ class InfoPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
     }
 
     // Update the closest image
-    project.previewImages.foreach {pi =>
-      val img = pi.image(sampleImagePanel.applet, 
-                         closestSample("rowNum").toInt)
-      sampleImagePanel.image = img
-    }
+    val img = project.previewImages.image(sampleImagePanel.applet, 
+                       closestSample("rowNum").toInt)
+    sampleImagePanel.image = img
   }
 
 }
