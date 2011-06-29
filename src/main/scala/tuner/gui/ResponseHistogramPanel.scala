@@ -2,7 +2,6 @@ package tuner.gui
 
 import tuner.Config
 import tuner.GpModel
-import tuner.Project
 import tuner.Sampler
 import tuner.Table
 import tuner.geom.Rectangle
@@ -11,8 +10,9 @@ import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Bars
+import tuner.project.Viewable
 
-class ResponseHistogramPanel(project:Project, responseField:String) 
+class ResponseHistogramPanel(project:Viewable, responseField:String) 
     extends P5Panel(Config.respHistogramPanelDims._1, 
                     Config.respHistogramPanelDims._2, 
                     P5Panel.Java2D) {

@@ -16,13 +16,13 @@ import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
-import tuner.Project
 import tuner.Region
 import tuner.gui.event.AddSamples
+import tuner.project.Viewable
 
 import java.awt.Dimension
 
-class LocalPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
+class LocalPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
   
   val statsTable = new RegionStatsTable(project)
 

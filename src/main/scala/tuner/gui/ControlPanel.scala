@@ -7,9 +7,9 @@ import scala.swing.event.ValueChanged
 import java.awt.Dimension
 
 import tuner.Config
-import tuner.Project
+import tuner.project.Viewable
 
-class ControlPanel(project:Project) extends TabbedPane {
+class ControlPanel(project:Viewable) extends TabbedPane {
   
   val dims = new Dimension(Int.MaxValue, Config.controlPanelHeight)
 

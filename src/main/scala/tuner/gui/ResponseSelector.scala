@@ -14,7 +14,7 @@ import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
-import tuner.Project
+import tuner.project.NewResponses
 
 object ResponseSelector {
   abstract class Response 
@@ -23,7 +23,7 @@ object ResponseSelector {
   case object Maximize extends Response
 }
 
-class ResponseSelector(project:Project, owner:Window) extends Dialog(owner) {
+class ResponseSelector(project:NewResponses, owner:Window) extends Dialog(owner) {
   title = "Select Responses"
   modal = true
 

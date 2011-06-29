@@ -7,10 +7,10 @@ import scala.swing.ScrollPane
 
 import scala.collection.immutable.SortedMap
 
-import tuner.Project
 import tuner.gui.event.ReadyToDraw
+import tuner.project.Viewable
 
-class ResponseStatsPanel(project:Project) 
+class ResponseStatsPanel(project:Viewable) 
     extends ScrollPane {
     //extends BoxPanel(Orientation.Vertical) {
   

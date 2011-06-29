@@ -14,8 +14,8 @@ import scala.swing.event.TableRowsSelected
 
 import javax.swing.table.AbstractTableModel
 
-import tuner.Project
 import tuner.Tuner
+import tuner.project.Project
 
 /**
  * Project window that allows the user to select which project they want to
@@ -49,7 +49,7 @@ object ProjectChooser extends Frame {
       def getValueAt(row:Int, col:Int) = col match {
         case 0 => rows(row).name
         case 1 => rows(row).modificationDate
-        case 2 => rows(row).status
+        case 2 => rows(row).statusString
       }
     }
   }

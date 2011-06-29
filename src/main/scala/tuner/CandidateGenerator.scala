@@ -1,6 +1,8 @@
 package tuner
 
-class CandidateGenerator(project:Project) {
+import tuner.project.Viewable
+
+class CandidateGenerator(project:Viewable) {
   
   val candidates:NamedPointManager = new NamedPointManager("Candidate")
   var currentFilter:List[(String,Float)] = Nil
@@ -9,7 +11,7 @@ class CandidateGenerator(project:Project) {
     currentFilter = newValues
     candidates.clear
 
-    var data = project.designSites.get
+    var data = project.designSites
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
       if(newValues.forall {case (fld, v) => v == tpl(fld)}) {

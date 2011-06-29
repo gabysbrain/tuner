@@ -12,10 +12,10 @@ import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
-import tuner.Project
 import tuner.Sampler
 
-class SamplerPanel(project:Project) extends BoxPanel(Orientation.Vertical) {
+class SamplerPanel(project:tuner.project.Sampler) 
+    extends BoxPanel(Orientation.Vertical) {
   
   val sampleNumField = new TextField
   val sampleTimeField = new TextField
