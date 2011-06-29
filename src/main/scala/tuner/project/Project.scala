@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
+import scala.actors.Actor.actor
 import scala.collection.immutable.SortedMap
 import scala.io.Source
 
@@ -293,11 +294,29 @@ class Viewable(config:ProjConfig) extends Project(config) with Saved with Sample
   // The visual controls
   val viewInfo = ViewInfo.fromJson(this, config.currentVis)
 
-  val gpModels : Option[SortedMap[String,GpModel]] = path.map {p =>
-    buildGpModels(p)
+  // See if we should do offline stuff in the background
+  var _buildInBackground:Boolean = config match {
+    case Some(c) => c.buildInBackground
+    case None    => false
   }
 
   var _region:Region = Region.fromJson(config.currentRegion, this)
+
+  private var _gpModels : Option[SortedMap[String,GpModel]] = None
+  path.foreach {p =>
+    actor {
+      _gpModels = Some(buildGpModels(p))
+    }
+  }
+  def gpModels = _gpModels
+
+  /*
+  gpModels.foreach {gpm =>
+    gpm.foreach {case (fld, model) =>
+      println("mu: " + fld + " -> " + model.mean)
+    }
+  }
+  */
 
   val history:HistoryManager = config.history match {
     case Some(hc) => HistoryManager.fromJson(hc)
@@ -307,7 +326,6 @@ class Viewable(config:ProjConfig) extends Project(config) with Saved with Sample
   val candidateGenerator = new CandidateGenerator(this)
 
   def statusString = "Ok"
-
   val previewImages:Option[PreviewImages] = loadImages(path)
 
   // Also set up a table of samples from each gp model
