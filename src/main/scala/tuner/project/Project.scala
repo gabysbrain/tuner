@@ -308,8 +308,9 @@ class Viewable(config:ProjConfig) extends Project(config) with Saved with Sample
       _gpModels = Some(buildGpModels(p))
     }
   }
-  def gpModels = _gpModels
 
+  def gpModels = _gpModels
+  def gpModelsReady = _gpModelsReady
   /*
   gpModels.foreach {gpm =>
     gpm.foreach {case (fld, model) =>
@@ -347,7 +348,7 @@ class Viewable(config:ProjConfig) extends Project(config) with Saved with Sample
         case None     =>
           Project.RunningSamples(0, newSamples.numRows)
       }
-    } else if(!gpModels.isDefined) {
+    } else if(!gpModelsReady) {
       Project.BuildingGp
     } else {
       Project.Ok
@@ -524,5 +525,55 @@ class Viewable(config:ProjConfig) extends Project(config) with Saved with Sample
     }
   }
 
+<<<<<<< local
+=======
+  private def loadGpModels(path:String) : SortedMap[String,GpModel] = {
+    val tmpModels = SortedMap[String,GpModel]() ++ (config match {
+      case Some(c) => c.gpModels.map({gpSpec =>
+        val model = new GpModel(
+          gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
+          gpSpec.designMatrix.map(x => x.toArray).toArray,
+          gpSpec.responses.toArray,
+          gpSpec.invCorMtx.map(x => x.toArray).toArray,
+          gpSpec.dimNames, gpSpec.responseDim, Config.errorField
+        )
+        (gpSpec.responseDim, model)
+      })
+      case None    => Nil
+    })
+
+    // See if we need to build additional models
+    val unseenFields:Set[String] = 
+      (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
+    if(designSites.isDefined) {
+      val designSiteFile = Path.join(path, Config.designFilename)
+      val gp = new Rgp(designSiteFile)
+
+      tmpModels ++ unseenFields.map({fld => 
+        println("building model for " + fld)
+        (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      }).toMap
+    } else {
+      tmpModels
+    }
+  }
+
+  private def buildGpModels(unseenFields:Set[String]) = {
+    actor {
+      val designSiteFile = Path.join(path.get, Config.designFilename)
+      val gp = new Rgp(designSiteFile)
+
+      val newModels = unseenFields.map({fld => 
+        println("building model for " + fld)
+        (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      }).toMap
+      _gpModels = Some(_gpModels match {
+        case Some(gpm) => gpm ++ newModels
+        case None      => SortedMap[String,GpModel]() ++ newModels
+      })
+      _gpModelsReady = true
+    }
+  }
+>>>>>>> other
 }
 
