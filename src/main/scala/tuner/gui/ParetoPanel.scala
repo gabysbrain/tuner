@@ -2,7 +2,6 @@ package tuner.gui
 
 import tuner.Config
 import tuner.Matrix2D
-import tuner.Project
 import tuner.Sampler
 import tuner.SpecifiedColorMap
 import tuner.Table
@@ -14,8 +13,9 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
+import tuner.project.Viewable
 
-class ParetoPanel(project:Project)
+class ParetoPanel(project:Viewable)
     extends P5Panel(Config.paretoDims._1, 
                     Config.paretoDims._2, 
                     P5Panel.Java2D) {
@@ -166,20 +166,20 @@ class ParetoPanel(project:Project)
   def mouseClick2d(mouseX:Int, mouseY:Int, button:P5Panel.MouseButton.Value,
                    response1:String, response2:String) = {
 
-    //println("mouse: " + mouseX + " " + mouseY)
-    project.designSites.foreach {data =>
-      val r1Model = models(response1)
-      val r2Model = models(response2)
-      val (minX, maxX) = if(!xAxisTicks.isEmpty) {
-        (xAxisTicks.min, xAxisTicks.max)
-      } else {
-        (r1Model.funcMin, r1Model.funcMax)
-      }
-      val (minY, maxY) = if(!yAxisTicks.isEmpty) {
-        (yAxisTicks.min, yAxisTicks.max)
-      } else {
-        (r2Model.funcMin, r2Model.funcMax)
-      }
+    val data = project.designSites
+    val r1Model = models(response1)
+    val r2Model = models(response2)
+
+    val (minX, maxX) = if(!xAxisTicks.isEmpty) {
+      (xAxisTicks.min, xAxisTicks.max)
+    } else {
+      (r1Model.funcMin, r1Model.funcMax)
+    }
+    val (minY, maxY) = if(!yAxisTicks.isEmpty) {
+      (yAxisTicks.min, yAxisTicks.max)
+    } else {
+      (r2Model.funcMin, r2Model.funcMax)
+    }
 
       // See if we hit upon any sample points
       var minDist = Float.MaxValue

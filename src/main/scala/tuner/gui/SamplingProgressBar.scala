@@ -12,10 +12,10 @@ import scala.swing.ProgressBar
 import scala.swing.Window
 import scala.swing.event.ButtonClicked
 
-import tuner.Project
 import tuner.Tuner
+import tuner.project.InProgress
 
-class SamplingProgressBar(project:Project) extends Frame {
+class SamplingProgressBar(project:InProgress) extends Frame {
 
   //modal = true
   //width = 800

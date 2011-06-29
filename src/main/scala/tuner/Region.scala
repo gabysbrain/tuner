@@ -4,6 +4,8 @@ import net.liftweb.json.JsonParser._
 //import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+import tuner.project.Viewable
+
 case class RadiusSpecification(field:String, radius:Float)
 case class RegionSpecification(shape:String, radii:List[RadiusSpecification])
 
@@ -12,12 +14,12 @@ object Region {
   case object Box extends Shape
   case object Ellipse extends Shape
 
-  def apply(t:Shape, project:Project) = t match {
+  def apply(t:Shape, project:Viewable) = t match {
     case Box => new BoxRegion(project)
     case Ellipse => new EllipseRegion(project)
   }
 
-  def fromJson(json:RegionSpecification, project:Project) = {
+  def fromJson(json:RegionSpecification, project:Viewable) = {
     val reg = json.shape match {
       case "Box"     => Region(Box, project)
       case "Ellipse" => Region(Ellipse, project)
@@ -29,7 +31,7 @@ object Region {
   }
 }
 
-sealed abstract class Region(project:Project) {
+sealed abstract class Region(project:Viewable) {
   var _radius:Map[String,Float] = 
     project.inputFields.map {fld => 
       //val (low, high) = project.inputs.range(fld)
@@ -73,18 +75,16 @@ sealed abstract class Region(project:Project) {
 
   def inside(pt:List[(String,Float)]) : Boolean
 
-  def numSamples = project.designSites match {
-    case Some(ds) => 
-      val inputFields = project.inputFields.toSet
-      var count = 0
-      for(i <- 0 until ds.numRows) {
-        val tpl = ds.tuple(i)
-        val inputs = tpl.filterKeys {k => inputFields contains k}
-        if(inside(inputs.toList))
-          count += 1
-      }
-      count
-    case None => 0
+  def numSamples = {
+    val inputFields = project.inputFields.toSet
+    var count = 0
+    for(i <- 0 until project.designSites.numRows) {
+      val tpl = project.designSites.tuple(i)
+      val inputs = tpl.filterKeys {k => inputFields contains k}
+      if(inside(inputs.toList))
+        count += 1
+    }
+    count
   }
 
   def gradient(response:String, fld:String) : Float = {
@@ -114,7 +114,7 @@ sealed abstract class Region(project:Project) {
   }
 }
 
-class BoxRegion(project:Project) extends Region(project) {
+class BoxRegion(project:Viewable) extends Region(project) {
   def inside(pt:List[(String,Float)]) : Boolean = {
     pt.forall {case (fld,value) =>
       val (minVal, maxVal) = range(fld)
@@ -124,7 +124,7 @@ class BoxRegion(project:Project) extends Region(project) {
 
 }
 
-class EllipseRegion(project:Project) extends Region(project) {
+class EllipseRegion(project:Viewable) extends Region(project) {
   // TODO: fix this.  It's wrong!!!
   def inside(pt:List[(String,Float)]) : Boolean = {
 

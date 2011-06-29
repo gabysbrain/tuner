@@ -8,11 +8,11 @@ import scala.swing.event.TableRowsSelected
 
 import javax.swing.table.AbstractTableModel
 
-import tuner.Project
 import tuner.NamedPointManager
 import tuner.gui.event.SliceChanged
+import tuner.project.Viewable
 
-class TableSelectionPanel(project:Project, points:NamedPointManager) 
+class TableSelectionPanel(project:Viewable, points:NamedPointManager) 
     extends BoxPanel(Orientation.Vertical) {
   
   val columnNames = "Name" :: project.inputFields ++
