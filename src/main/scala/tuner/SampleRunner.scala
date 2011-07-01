@@ -51,7 +51,7 @@ class SampleRunner(project:RunningSamples) extends Actor {
         project.designSites.addRow(tpl.toList)
         samples.removeRow(0) // Always the first row
       }
-      project.save(project.savePath)
+      project.save
       completedSamples += newDesTbl.numRows
 
       // TODO: delete the file?

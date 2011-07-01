@@ -22,6 +22,7 @@ object Tuner extends SimpleSwingApplication {
   }
 
   var openProjects:Map[Project,Window] = Map()
+  var newProjectWindow:Option[ProjectInfoWindow] = None
 
   //def top = ProjectChooser
   def top = { 
@@ -32,16 +33,16 @@ object Tuner extends SimpleSwingApplication {
 
   def startNewProject = {
     println("Starting new project")
-    val proj = new Project
-    val window = new ProjectInfoWindow(proj)
-    openProjects += (proj -> window)
+    val window = new ProjectInfoWindow
+    newProjectWindow = Some(window)
     window.open
   }
 
   def openProject(proj:Project) : Unit = {
     println("opening project")
-    proj.path.foreach {p =>
-      Config.recentProjects += p
+    proj match {
+      case p:Saved => Config.recentProjects += p.path
+      case _       =>
     }
 
     proj match {
@@ -100,7 +101,10 @@ object Tuner extends SimpleSwingApplication {
 
   def reloadProject(proj:Project) = {
     closeProject(proj)
-    openProject(new File(proj.savePath))
+    proj match {
+      case x:Saved => openProject(new File(x.path))
+      case _ => openProject(proj)
+    }
   }
 
 }

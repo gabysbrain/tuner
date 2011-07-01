@@ -14,6 +14,8 @@ import scala.swing.event.ButtonClicked
 
 import tuner.Tuner
 import tuner.project.InProgress
+import tuner.project.Project
+import tuner.project.Saved
 
 class SamplingProgressBar(project:InProgress) extends Frame {
 
@@ -50,15 +52,14 @@ class SamplingProgressBar(project:InProgress) extends Frame {
   reactions += {
     case ButtonClicked(`backgroundButton`) =>
       project.buildInBackground = alwaysBackgroundCheckbox.selected
-      project.save(project.savePath)
-      Tuner.closeProject(project)
-    case ButtonClicked(`stopButton`) => 
-      project.sampleRunner match {
-        case Some(sr) => 
-          sr.stop
-        case None     => // Nothing to stop!
+      project match {
+        case s:Saved => s.save
+        case _       =>
       }
-      Tuner.closeProject(project)
+      Tuner.closeProject(project.asInstanceOf[Project])
+    case ButtonClicked(`stopButton`) => 
+      project.stop
+      Tuner.closeProject(project.asInstanceOf[Project])
   }
 
   updateProgress
@@ -72,7 +73,7 @@ class SamplingProgressBar(project:InProgress) extends Frame {
   }
 
   def updateProgress = {
-    progressLabel.text = project.statusString
+    progressLabel.text = project.asInstanceOf[Project].statusString
 
     val (cur, max) = project.runStatus
 

@@ -19,6 +19,10 @@ case class VisInfo(
 )
 
 object ViewInfo {
+  val DefaultVisInfo = VisInfo (
+    Nil, Nil, None, None, "value", false, false
+  )
+
   def fromJson(project:Viewable, vi:VisInfo) = {
     val v = new ViewInfo(project)
     v._currentSlice = vi.currentSlice.map({x => 

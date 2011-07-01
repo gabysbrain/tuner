@@ -221,34 +221,32 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                            response:String,
                            closestSample:Table.Tuple) = {
 
-    project.gpModels foreach {gpm =>
-      val model = gpm(response)
-      val bounds = sliceBounds((xFld, yFld))
-      val (slice, cm, xf, yf, xr, yr) = if(xFld < yFld) {
-        (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps),
-         xFld, yFld, xRange, yRange)
-      } else {
-        (resp2Plots((yFld, xFld)), colormap(response, resp2Colormaps),
-         yFld, xFld, yRange, xRange)
-      }
+    val model = project.gpModels(response)
+    val bounds = sliceBounds((xFld, yFld))
+    val (slice, cm, xf, yf, xr, yr) = if(xFld < yFld) {
+      (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps),
+       xFld, yFld, xRange, yRange)
+    } else {
+      (resp2Plots((yFld, xFld)), colormap(response, resp2Colormaps),
+       yFld, xFld, yRange, xRange)
+    }
 
-      val data = plotData(model, xr, yr, project.viewInfo.currentSlice)
-      val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
-                              project.viewInfo.currentSlice(yf))
+    val data = plotData(model, xr, yr, project.viewInfo.currentSlice)
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+                            project.viewInfo.currentSlice(yf))
 
-      // Draw the main plot
-      slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
-                 data, xSlice, ySlice, xr._2, yr._2, cm)
-      Widgets.crosshair(this, bounds.minX, bounds.minY, 
-                              bounds.width, bounds.height,
-                              xSlice, ySlice, xr._2, yr._2)
-      if(project.viewInfo.showSampleLine) {
-        Widgets.sampleLine(this, bounds.minX, bounds.minY,
-                                 bounds.width, bounds.height,
-                                 xSlice, ySlice, 
-                                 closestSample(xf), closestSample(yf),
-                                 xr._2, yr._2)
-      }
+    // Draw the main plot
+    slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
+               data, xSlice, ySlice, xr._2, yr._2, cm)
+    Widgets.crosshair(this, bounds.minX, bounds.minY, 
+                            bounds.width, bounds.height,
+                            xSlice, ySlice, xr._2, yr._2)
+    if(project.viewInfo.showSampleLine) {
+      Widgets.sampleLine(this, bounds.minX, bounds.minY,
+                               bounds.width, bounds.height,
+                               xSlice, ySlice, 
+                               closestSample(xf), closestSample(yf),
+                               xr._2, yr._2)
     }
   }
 
@@ -374,22 +372,20 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
   }
 
   private def createColormaps(respColormap:ColorMap) : ColormapMap = {
-    project.responses.flatMap {case (fld, minimize) =>
-      project.gpModels.map {gpm =>
-        val model = gpm(fld)
-        val valCm = new SpecifiedColorMap(respColormap,
-                                          model.funcMin, 
-                                          model.funcMax,
-                                          minimize)
-        val errCm = new SpecifiedColorMap(Config.errorColorMap,
-                                          0f, model.sig2.toFloat,
-                                          false)
-        // TODO: fix the max gain calculation!
-        val maxGain = model.maxGain(project.inputs) / 4
-        val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 
-                                           maxGain, false)
-        (fld, (valCm, errCm, gainCm))
-      }
+    project.responses.map {case (fld, minimize) =>
+      val model = project.gpModels(fld)
+      val valCm = new SpecifiedColorMap(respColormap,
+                                        model.funcMin, 
+                                        model.funcMax,
+                                        minimize)
+      val errCm = new SpecifiedColorMap(Config.errorColorMap,
+                                        0f, model.sig2.toFloat,
+                                        false)
+      // TODO: fix the max gain calculation!
+      val maxGain = model.maxGain(project.inputs) / 4
+      val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 
+                                         maxGain, false)
+      (fld, (valCm, errCm, gainCm))
     } toMap
   }
 

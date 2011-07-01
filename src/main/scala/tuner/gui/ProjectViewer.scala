@@ -155,6 +155,7 @@ class ProjectViewer(project:Viewable) extends Frame {
     case ViewInfo.GainMetric => gainResponseButton.selected = true
   }
 
+  /*
   override def open = {
     super.open
 
@@ -182,6 +183,7 @@ class ProjectViewer(project:Viewable) extends Frame {
       rs.open
     }
   }
+  */
 
   private def openSamplerDialog = {
     val samplerDialog = new SamplerDialog(project, this)

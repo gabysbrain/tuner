@@ -22,7 +22,7 @@ import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
 import tuner.project.NewProject
 
-class ProjectInfoWindow(project:NewProject) extends Frame {
+class ProjectInfoWindow extends Frame {
 
   title = "New Project"
 
@@ -109,25 +109,25 @@ class ProjectInfoWindow(project:NewProject) extends Frame {
 
   reactions += {
     case ButtonClicked(`nextButton`) =>
-      updateInputDims
       val samplerWindow = 
-        new InitialSamplerWindow(project, locationChooser.path)
+        new InitialSamplerWindow(createProject, locationChooser.path)
       close
       samplerWindow.visible = true
     case ButtonClicked(`cancelButton`) => 
       close
       Tuner.top
-    case ControlTableRowChanged(`inputDimTable`, _) =>
-      updateInputDims
-    case ValueChanged(`projectNameField`) =>
-      project.name = projectNameField.text
-    case ValueChanged(`scriptChooser`) =>
-      project.scriptPath = Some(scriptChooser.path)
     case ControlTableRowAdded(`inputDimTable`) =>
       this.pack
   }
 
-  def updateInputDims = {
+  def createProject : NewProject = {
+    val name = projectNameField.text
+    val scriptPath = scriptChooser.path
+    val inputs = inputDims
+    new NewProject(name, scriptPath, inputs)
+  }
+
+  def inputDims : List[(String,Float,Float)] = {
     val controlValues = inputDimTable.controls.map {row =>
       val nameField = row(0).asInstanceOf[TextField]
       val minField = row(1).asInstanceOf[TextField]
@@ -137,7 +137,9 @@ class ProjectInfoWindow(project:NewProject) extends Frame {
          maxField.text.length > 0) {
         // Any conversion problems we ignore
         try {
-          Some((nameField.text.trim, (minField.text.toFloat, maxField.text.toFloat)))
+          Some((nameField.text.trim, 
+                minField.text.toFloat, 
+                maxField.text.toFloat))
         } catch {
           case _ => None
         }
@@ -145,10 +147,7 @@ class ProjectInfoWindow(project:NewProject) extends Frame {
         None
       }
     }
-    val validValues = controlValues.flatten
-    if(validValues.length > 0) {
-      project.inputs = new DimRanges(validValues.toMap)
-    }
+    controlValues.flatten.toList
   }
 }
 

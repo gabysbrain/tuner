@@ -8,5 +8,8 @@ trait InProgress {
   protected def currentTime : Int
 
   def runStatus:(Int,Int) = (currentTime, totalTime)
+
+  def start:Unit
+  def stop:Unit
 }
 

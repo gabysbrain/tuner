@@ -14,6 +14,8 @@ object Region {
   case object Box extends Shape
   case object Ellipse extends Shape
 
+  val DefaultRegionInfo = RegionSpecification("Box", Nil)
+
   def apply(t:Shape, project:Viewable) = t match {
     case Box => new BoxRegion(project)
     case Ellipse => new EllipseRegion(project)
@@ -89,7 +91,7 @@ sealed abstract class Region(project:Viewable) {
 
   def gradient(response:String, fld:String) : Float = {
     val epsilon = 1e-6f
-    val models = project.gpModels.get
+    val models = project.gpModels
     val model = models(response)
     val (minVal,maxVal) = {
       val rng = range(fld)

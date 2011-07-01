@@ -1,5 +1,9 @@
 package tuner
 
+import net.liftweb.json.JsonParser._
+import net.liftweb.json.JsonAST._
+import net.liftweb.json.JsonDSL._
+
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction
 import org.apache.commons.math.analysis.MultivariateRealFunction
 import org.apache.commons.math.analysis.MultivariateVectorialFunction
@@ -13,6 +17,28 @@ import org.apache.commons.math.optimization.general.ConjugateGradientFormula
 import org.rosuda.JRI.RList
 
 import tuner.util.Util
+
+case class GpSpecification(
+  responseDim:String,
+  dimNames:List[String],
+  thetas:List[Double],
+  alphas:List[Double],
+  mean:Double,
+  sigma2:Double,
+  designMatrix:List[List[Double]],
+  responses:List[Double],
+  invCorMtx:List[List[Double]]
+)
+
+object GpModel {
+  def fromJson(json:GpSpecification) = {
+    new GpModel(json.thetas, json.alphas, json.mean, json.sigma2,
+                json.designMatrix.map(_.toArray).toArray,
+                json.responses.toArray,
+                json.invCorMtx.map(_.toArray).toArray,
+                json.dimNames, json.responseDim, Config.errorField)
+  }
+}
 
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data

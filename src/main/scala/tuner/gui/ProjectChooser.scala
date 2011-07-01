@@ -45,7 +45,7 @@ object ProjectChooser extends Frame {
     model = new AbstractTableModel {
       override def getColumnName(col:Int) = columnNames(col)
       def getColumnCount = columnNames.length
-      def getRowCount = rows.length
+      def getRowCount = rows.size
       def getValueAt(row:Int, col:Int) = col match {
         case 0 => rows(row).name
         case 1 => rows(row).modificationDate

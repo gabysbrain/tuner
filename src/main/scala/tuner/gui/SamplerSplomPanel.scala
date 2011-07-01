@@ -14,8 +14,8 @@ class SamplerSplomPanel(project:Sampler)
                   P5Panel.Java2D) {
   
   var splomBounds = Rectangle((0f,0f), (0f,0f))
-  val sploms = project.inputFields.flatMap({fld1 =>
-    project.inputFields.flatMap({fld2 =>
+  val sploms = inputFields.flatMap({fld1 =>
+    inputFields.flatMap({fld2 =>
       if(fld1 < fld2) {
         Some(((fld1, fld2), new Scatterplot(Config.sampleDotColor)))
       } else {
@@ -24,13 +24,15 @@ class SamplerSplomPanel(project:Sampler)
     })
   }).toMap
   val xAxes:Map[String,Axis] = 
-    project.inputFields.foldLeft(Map[String,Axis]()) {case (xa, fld) =>
+    inputFields.foldLeft(Map[String,Axis]()) {case (xa, fld) =>
       xa + (fld -> new Axis(Axis.HorizontalBottom))
     }
   val yAxes:Map[String,Axis] = 
-    project.inputFields.foldLeft(Map[String,Axis]()) {case (ya,fld) =>
+    inputFields.foldLeft(Map[String,Axis]()) {case (ya,fld) =>
       ya + (fld -> new Axis(Axis.VerticalLeft))
     }
+
+  def inputFields = project.sampleRanges.dimNames.sorted
 
   override def setup = {
     loop = false
@@ -57,9 +59,9 @@ class SamplerSplomPanel(project:Sampler)
                                Config.plotSpacing), 
                               totalSize, totalSize)
       val (_, plotBounds) = 
-        FacetLayout.plotBounds(splomBounds, project.inputFields)
-      project.inputFields.foreach {xFld =>
-        project.inputFields.foreach {yFld =>
+        FacetLayout.plotBounds(splomBounds, inputFields)
+      inputFields.foreach {xFld =>
+        inputFields.foreach {yFld =>
           if(xFld < yFld) {
             val bound = plotBounds((xFld, yFld))
             val plot = sploms((xFld, yFld))
@@ -90,12 +92,12 @@ class SamplerSplomPanel(project:Sampler)
                       project.newSamples,
                       (xFld, (dataXMin, dataXMax)),
                       (yFld, (dataYMin, dataYMax)))
-            if(xFld != project.inputFields.last && !xTicks.isEmpty) {
+            if(xFld != inputFields.last && !xTicks.isEmpty) {
               xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
                                      bound.width, Config.axisSize,
                                      xFld, xTicks)
             }
-            if(yFld != project.inputFields.head && !yTicks.isEmpty) {
+            if(yFld != inputFields.head && !yTicks.isEmpty) {
               yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
                                      Config.axisSize, bound.height, 
                                      yFld, yTicks)

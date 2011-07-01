@@ -5,6 +5,13 @@ trait Saved {
 
   val modificationDate = new java.util.Date
 
-  protected def save = this.asInstanceOf[Project].save(path)
+  def save = this.asInstanceOf[Project].save(path)
+
+  override def hashCode : Int = path.hashCode
+
+  override def equals(other:Any) : Boolean = other match {
+    case that:Saved => this.path == that.path
+    case _            => false
+  }
 }
 

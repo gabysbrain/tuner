@@ -149,7 +149,7 @@ class ParetoPanel(project:Viewable)
 
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
-                                 project.designSites.get, 
+                                 project.designSites, 
                                  r1Range, r2Range)
   }
 

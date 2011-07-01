@@ -11,7 +11,8 @@ trait Sampler { self:Project =>
 
   val savePath:String
   val scriptPath:String
-  val region:Region
+
+  def sampleRanges : DimRanges
 
   def addSamples(n:Int, range:DimRanges, method:tuner.Sampler.Method) : Unit = {
     // TODO: find a better solution than just ignoring the missing inputs

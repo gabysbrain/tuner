@@ -17,6 +17,7 @@ import tuner.CandidateGenerator
 import tuner.Config
 import tuner.DimRanges
 import tuner.GpModel
+import tuner.GpSpecification
 import tuner.HistoryManager
 import tuner.HistorySpecification
 import tuner.PreviewImages
@@ -33,17 +34,6 @@ import tuner.util.Path
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
 case class OutputSpecification(name:String, minimize:Boolean)
-case class GpSpecification(
-  responseDim:String,
-  dimNames:List[String],
-  thetas:List[Double],
-  alphas:List[Double],
-  mean:Double,
-  sigma2:Double,
-  designMatrix:List[List[Double]],
-  responses:List[Double],
-  invCorMtx:List[List[Double]]
-)
 case class ProjConfig(
   name:String,
   scriptPath:String,
@@ -62,7 +52,7 @@ object Project {
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  def recent : List[Project] = {
+  def recent : Array[Project] = {
     Config.recentProjects flatMap {rp =>
       try {
         Some(Project.fromFile(rp))
@@ -70,10 +60,12 @@ object Project {
         case e:java.io.FileNotFoundException =>
           None
       }
-    }
+    } toArray
   }
 
   def fromFile(path:String) = {
+    val configFilePath = Path.join(path, Config.projConfigFilename)
+    val json = parse(Source.fromFile(configFilePath).mkString)
     val config = json.extract[ProjConfig]
 
     val sampleFilePath = path + "/" + Config.sampleFilename
@@ -104,7 +96,6 @@ object Project {
       new Viewable(config, path, designSites)
     }
 
-    proj.start
     proj
   }
 
@@ -116,6 +107,9 @@ object Project {
 }
 
 sealed abstract class Project(config:ProjConfig) {
+  
+  // Serializers to get the json parser to work
+  implicit val formats = net.liftweb.json.DefaultFormats
   
   def save(savePath:String) : Unit = {
     val saveFile = savePath + "/" + Config.projConfigFilename
@@ -133,13 +127,6 @@ sealed abstract class Project(config:ProjConfig) {
   } toMap)
 
   val modificationDate:Date
-
-  override def hashCode : Int = savePath.hashCode
-
-  override def equals(other:Any) : Boolean = other match {
-    case that:Project => this.path == that.path
-    case _            => false
-  }
 
   def statusString:String
 
@@ -186,49 +173,6 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
   def currentTime = -1
   def totalTime = -1
 
-  /*
-  private def loadGpModel(factory:Rgp, field:String) : GpModel = {
-    val gpConfig:Option[GpSpecification] = 
-      config.gpModels.find(_.responseDim==field)
-
-    gpConfig match {
-      case Some(c) => 
-        new GpModel(c.thetas, c.alphas, c.mean, c.sigma2,
-                    c.designMatrix.map {_.toArray} toArray, 
-                    c.responses.toArray,
-                    c.invCorMtx.map {_.toArray} toArray, 
-                    c.dimNames, c.responseDim, Config.errorField)
-      case None    => 
-        println("building model for " + field)
-        factory.buildModel(inputFields, field, Config.errorField)
-    }
-  }
-  */
-
-  /*
-  private def buildGpModels(path:String) : SortedMap[String,GpModel] = {
-    val tmpModels = SortedMap[String,GpModel]() ++ 
-      config.gpModels.map({gpSpec =>
-        val model = new GpModel(
-          gpSpec.thetas, gpSpec.alphas, gpSpec.mean, gpSpec.sigma2,
-          gpSpec.designMatrix.map(x => x.toArray).toArray,
-          gpSpec.responses.toArray,
-          gpSpec.invCorMtx.map(x => x.toArray).toArray,
-          gpSpec.dimNames, gpSpec.responseDim, Config.errorField
-        )
-        (gpSpec.responseDim, model)
-      })
-    val unseenFields:Set[String] = 
-      (newFields ++ responseFields).toSet.diff(tmpModels.keys.toSet)
-    val designSiteFile = Path.join(path, Config.designFilename)
-    val gp = new Rgp(designSiteFile)
-
-    tmpModels ++ unseenFields.map({fld => 
-      println("building model for " + fld)
-      (fld, gp.buildModel(inputFields, fld, Config.errorField))
-    }).toMap
-  }
-  */
 }
 
 class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
@@ -251,7 +195,7 @@ class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
   def newFields : List[String] = {
     val knownFields : Set[String] = 
       (responseFields ++ ignoreFields ++ inputFields).toSet
-    designSites.get.fieldNames.filter {fn => !knownFields.contains(fn)}
+    allFields.filter {fn => !knownFields.contains(fn)}
   }
 
 }
@@ -281,12 +225,10 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
   }
 }
 
-class Viewable(config:ProjConfig) extends Project(config) with Saved with Sampler {
+class Viewable(config:ProjConfig, val path:String, val designSites:Table) 
+    extends Project(config) with Saved with Sampler {
 
   import Project._
-
-  // Serializers to get the json parser to work
-  implicit val formats = net.liftweb.json.DefaultFormats
 
   val newSamples = new Table
 
