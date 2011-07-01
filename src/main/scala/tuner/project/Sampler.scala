@@ -9,7 +9,7 @@ trait Sampler { self:Project =>
   val newSamples:Table
   val designSites:Table
 
-  val savePath:String
+  val path:String
   val scriptPath:String
 
   def sampleRanges : DimRanges

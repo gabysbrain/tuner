@@ -140,7 +140,7 @@ sealed abstract class Project(config:ProjConfig) {
 }
 
 class NewProject(name:String, 
-                 val savePath:String,
+                 val path:String,
                  scriptPath:String, 
                  inputDims:List[(String,Float,Float)]) 
     extends Project(ProjConfig(name, scriptPath, 
@@ -165,6 +165,8 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     extends Project(config) with Saved with InProgress {
   
   var gpBuilt = false
+
+  var buildInBackground:Boolean = config.buildInBackground
   
   // Build the gp models
   val designSitesPath = path + "/" + Config.designFilename
@@ -178,6 +180,12 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
   def currentTime = -1
   def totalTime = -1
 
+  def start = buildGpModels
+  def stop = {
+  }
+  
+  private def buildGpModels = {
+  }
 }
 
 class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
@@ -191,9 +199,15 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
 
   val designSites = new Table
 
+  var buildInBackground:Boolean = config.buildInBackground
+
   // See if we should start running some samples
   var sampleRunner:Option[SampleRunner] = None 
   if(buildInBackground) runSamples
+
+  def start = runSamples
+  def stop = {
+  }
 
   private def runSamples = {
     // only run if we aren't running something
@@ -294,6 +308,8 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     }
   }
   */
+
+  def sampleRanges = _region.toRange
 
   def region : Region = _region
   def region_=(r:Region) = {
