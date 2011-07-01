@@ -45,7 +45,7 @@ class SamplerSplomPanel(project:Sampler)
   def draw = {
     loop = false
 
-    val ranges = project.region.toRange
+    val ranges = project.sampleRanges
 
     applet.background(Config.backgroundColor)
 

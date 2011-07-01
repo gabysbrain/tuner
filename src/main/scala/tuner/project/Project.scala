@@ -140,6 +140,7 @@ sealed abstract class Project(config:ProjConfig) {
 }
 
 class NewProject(name:String, 
+                 val savePath:String,
                  scriptPath:String, 
                  inputDims:List[(String,Float,Float)]) 
     extends Project(ProjConfig(name, scriptPath, 
@@ -152,8 +153,12 @@ class NewProject(name:String,
   val modificationDate = new Date
 
   val newSamples = new Table
+  val designSites = new Table
 
   def statusString = "New"
+
+  def sampleRanges = 
+    new DimRanges(inputDims.map(x => (x._1, (x._2, x._3))).toMap)
 }
 
 class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
@@ -172,31 +177,6 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def currentTime = -1
   def totalTime = -1
-
-}
-
-class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
-    extends Project(config) with Saved {
-  
-  def statusString = "New Responses"
-
-  def addResponse(field:String, minimize:Boolean) = {
-    if(!responseFields.contains(field)) {
-      config.outputs = OutputSpecification(field, minimize) :: config.outputs
-    }
-  }
-
-  def addIgnore(field:String) = {
-    if(!ignoreFields.contains(field)) {
-      config.ignoreFields = field :: config.ignoreFields
-    }
-  }
-
-  def newFields : List[String] = {
-    val knownFields : Set[String] = 
-      (responseFields ++ ignoreFields ++ inputFields).toSet
-    allFields.filter {fn => !knownFields.contains(fn)}
-  }
 
 }
 
@@ -223,6 +203,31 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
       sampleRunner = Some(runner)
     }
   }
+}
+
+class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
+    extends Project(config) with Saved {
+  
+  def statusString = "New Responses"
+
+  def addResponse(field:String, minimize:Boolean) = {
+    if(!responseFields.contains(field)) {
+      config.outputs = OutputSpecification(field, minimize) :: config.outputs
+    }
+  }
+
+  def addIgnore(field:String) = {
+    if(!ignoreFields.contains(field)) {
+      config.ignoreFields = field :: config.ignoreFields
+    }
+  }
+
+  def newFields : List[String] = {
+    val knownFields : Set[String] = 
+      (responseFields ++ ignoreFields ++ inputFields).toSet
+    allFields.filter {fn => !knownFields.contains(fn)}
+  }
+
 }
 
 class Viewable(config:ProjConfig, val path:String, val designSites:Table) 

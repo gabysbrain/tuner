@@ -25,11 +25,6 @@ class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
 
   val samplerPanel = new SamplerPanel(project)
 
-  project.inputFields.foreach {fld => 
-    val (mn, mx) = project.inputs.range(fld)
-    project.region.setRadius(fld, mn+mx)
-  }
-
   contents = new BorderPanel {
     val titlePanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue
@@ -54,9 +49,6 @@ class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
 
   reactions += {
     case ButtonClicked(`runButton`) =>
-      project.inputFields.foreach {fld => 
-        project.region.setRadius(fld, 0f)
-      }
       project.save(saveDir + "/" + project.name)
       close
       Tuner.openProject(project)
