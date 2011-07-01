@@ -40,7 +40,7 @@ case class ProjConfig(
   inputs:List[InputSpecification],
   var outputs:List[OutputSpecification],
   var ignoreFields:List[String],
-  gpModels:List[GpSpecification],
+  var gpModels:List[GpSpecification],
   buildInBackground:Boolean,
   currentVis:VisInfo,
   currentRegion:RegionSpecification,
@@ -112,11 +112,27 @@ sealed abstract class Project(config:ProjConfig) {
   implicit val formats = net.liftweb.json.DefaultFormats
   
   def save(savePath:String) : Unit = {
-    val saveFile = savePath + "/" + Config.projConfigFilename
-    val outFile = new FileWriter(saveFile)
+    // Ensure that the project directory exists
+    var pathDir = new File(savePath).mkdir
+
+    val jsonPath = Path.join(savePath, Config.projConfigFilename)
+    val outFile = new FileWriter(jsonPath)
     outFile.write(pretty(render(decompose(config))))
     outFile.close
+    
+    // Try to save the sample tables
+    this match {
+      case s:Sampler => s.saveSampleTables(savePath)
+      case _         => 
+    }
   }
+
+/*
+    if(modelSamples.numRows > 0) {
+      val filepath = Path.join(savePath, Config.respSampleFilename)
+      modelSamples.toCsv(filepath)
+    }
+*/
 
   val name = config.name
 
@@ -155,37 +171,17 @@ class NewProject(name:String,
   val newSamples = new Table
   val designSites = new Table
 
+  override def save(savePath:String) = {
+    super.save(savePath)
+
+    val sampleName = Path.join(savePath, Config.sampleFilename)
+    newSamples.toCsv(sampleName)
+  }
+
   def statusString = "New"
 
   def sampleRanges = 
     new DimRanges(inputDims.map(x => (x._1, (x._2, x._3))).toMap)
-}
-
-class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
-    extends Project(config) with Saved with InProgress {
-  
-  var gpBuilt = false
-
-  var buildInBackground:Boolean = config.buildInBackground
-  
-  // Build the gp models
-  val designSitesPath = path + "/" + Config.designFilename
-  val gp = new Rgp(designSitesPath)
-  //val gps = responseFields.map(fld => (fld, loadGpModel(gp, fld))).toMap
-
-  gpBuilt = true
-
-  def statusString = "Building GP"
-
-  def currentTime = -1
-  def totalTime = -1
-
-  def start = buildGpModels
-  def stop = {
-  }
-  
-  private def buildGpModels = {
-  }
 }
 
 class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
@@ -194,8 +190,14 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
 
   def statusString = "Running Samples"
 
-  def currentTime = 10
-  def totalTime = 100
+  def currentTime = sampleRunner match {
+    case Some(sr) => sr.totalSamples - sr.unrunSamples
+    case None     => -1
+  }
+  def totalTime = sampleRunner match {
+    case Some(sr) => sr.totalSamples
+    case None     => -1
+  }
 
   val designSites = new Table
 
@@ -209,12 +211,54 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
   def stop = {
   }
 
+  def finished = currentTime == totalTime
+
   private def runSamples = {
     // only run if we aren't running something
     if(!sampleRunner.isDefined && newSamples.numRows > 0) {
       val runner = new SampleRunner(this)
       runner.start
       sampleRunner = Some(runner)
+    }
+  }
+}
+
+class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
+    extends Project(config) with Saved with InProgress {
+  
+  var buildInBackground:Boolean = config.buildInBackground
+  
+  //val gps = responseFields.map(fld => (fld, loadGpModel(gp, fld))).toMap
+
+  def statusString = "Building GP"
+
+  def currentTime = -1
+  def totalTime = -1
+
+  def start = buildGpModels
+  def stop = {
+  }
+
+  private var building = true
+
+  def finished = !building
+  
+  private def buildGpModels = {
+    actor {
+      building = true
+      // Build the gp models
+      val designSiteFile = Path.join(path, Config.designFilename)
+      val gp = new Rgp(designSiteFile)
+
+      val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
+
+      val newModels = buildFields.map({fld => 
+        println("building model for " + fld)
+        (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      }).toMap
+      config.gpModels = newModels.values.map(_.toJson).toList
+      save
+      building = false
     }
   }
 }
@@ -268,46 +312,21 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
   val candidateGenerator = new CandidateGenerator(this)
 
-  def statusString = "Ok"
   val previewImages:Option[PreviewImages] = loadImages(path)
 
   // Also set up a table of samples from each gp model
   lazy val modelSamples:Table = loadResponseSamples(path)
 
-  // Save any gp models that got updated
-  //save(savePath)
-  save
-  //path.foreach(_ => save(savePath))
+  save()
 
-  /*
-  def status : Project.Status = {
-    if(newSamples.numRows == 0 && !designSites.forall(_.numRows!=0)) {
-      Project.NeedsInitialSamples
-    } else if(newSamples.numRows > 0) {
-      sampleRunner match {
-        case Some(sr) => 
-          Project.RunningSamples(sr.completedSamples, sr.totalSamples)
-        case None     =>
-          Project.RunningSamples(0, newSamples.numRows)
-      }
-    } else if(!gpModelsReady) {
-      Project.BuildingGp
-    } else {
-      Project.Ok
-    }
-  }
-  */
+  override def save(savePath:String) : Unit = {
+    super.save(savePath)
 
-  /*
-  def inputs : DimRanges = _inputs
-  def inputs_=(dr:DimRanges) = {
-    _inputs = dr
-    region = Region(Region.Box, this)
-    _inputs.dimNames.foreach {fld =>
-      region.setRadius(fld, 0f)
-    }
+    val samplePath = Path.join(savePath, Config.respSampleFilename)
+    modelSamples.toCsv(samplePath)
   }
-  */
+
+  def statusString = "Ok"
 
   def sampleRanges = _region.toRange
 

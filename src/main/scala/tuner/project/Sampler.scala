@@ -1,8 +1,10 @@
 package tuner.project
 
+import tuner.Config
 import tuner.DimRanges
 import tuner.Region
 import tuner.Table
+import tuner.util.Path
 
 trait Sampler { self:Project =>
   
@@ -11,6 +13,16 @@ trait Sampler { self:Project =>
 
   val path:String
   val scriptPath:String
+
+  def saveSampleTables(savePath:String) = {
+    // Also save the samples
+    val sampleName = Path.join(savePath, Config.sampleFilename)
+    newSamples.toCsv(sampleName)
+
+    // Also save the design points
+    val designName = Path.join(savePath, Config.designFilename)
+    designSites.toCsv(designName)
+  }
 
   def sampleRanges : DimRanges
 

@@ -69,7 +69,9 @@ class SamplingProgressBar(project:InProgress) extends Frame {
     while(runScanner) {
       Thread.sleep(1237)
       updateProgress
+      runScanner = !project.finished
     }
+    Tuner.reloadProject(project.asInstanceOf[Project])
   }
 
   def updateProgress = {

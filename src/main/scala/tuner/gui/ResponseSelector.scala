@@ -4,6 +4,7 @@ import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.ButtonGroup
 import scala.swing.Dialog
+import scala.swing.Frame
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.RadioButton
@@ -14,6 +15,7 @@ import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
+import tuner.Tuner
 import tuner.project.NewResponses
 
 object ResponseSelector {
@@ -23,9 +25,8 @@ object ResponseSelector {
   case object Maximize extends Response
 }
 
-class ResponseSelector(project:NewResponses, owner:Window) extends Dialog(owner) {
+class ResponseSelector(project:NewResponses) extends Frame {
   title = "Select Responses"
-  modal = true
 
   val okButton = new Button("Ok")
   val cancelButton = new Button("Cancel")
@@ -75,10 +76,14 @@ class ResponseSelector(project:NewResponses, owner:Window) extends Dialog(owner)
 
   reactions += {
     case ButtonClicked(`okButton`) =>
-      publish(new DialogClosing(this, Dialog.Result.Ok))
-      close
+      selections.foreach {case (fld,resp) => resp match {
+        case ResponseSelector.Minimize => project.addResponse(fld, true)
+        case ResponseSelector.Maximize => project.addResponse(fld, false)
+        case ResponseSelector.Ignore   => project.addIgnore(fld)
+      }}
+      project.save
+      Tuner.reloadProject(project)
     case ButtonClicked(`cancelButton`) =>
-      publish(new DialogClosing(this, Dialog.Result.Cancel))
       close
   }
 

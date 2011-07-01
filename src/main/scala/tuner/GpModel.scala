@@ -83,6 +83,14 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   // Also precompute rInverse . (responses - mean)
   val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
 
+  def toJson = {
+    GpSpecification(
+      respDim, dims, thetas, alphas, mean, sig2,
+      design.map(_.toList).toList, 
+      responses.toList, 
+      rInverse.map(_.toList).toList)
+  }
+
   def maxGain(range:DimRanges):Float = {
     var mx:Float = Float.MinValue
     Sampler.lhc(range, Config.respHistogramSampleDensity, pt => {

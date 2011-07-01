@@ -10,8 +10,9 @@ import scala.swing.Swing
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
-import tuner.project.NewProject
 import tuner.Tuner
+import tuner.project.NewProject
+import tuner.util.Path
 
 class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
   
@@ -49,9 +50,8 @@ class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
 
   reactions += {
     case ButtonClicked(`runButton`) =>
-      project.save(saveDir + "/" + project.name)
-      close
-      Tuner.openProject(project)
+      project.save(Path.join(saveDir, project.name))
+      Tuner.reloadProject(project)
     case ValueChanged(`samplerPanel`) =>
       project.newSamples(samplerPanel.numSamples, samplerPanel.method)
       samplerPanel.splomPanel.redraw

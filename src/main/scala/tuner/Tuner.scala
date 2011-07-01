@@ -8,6 +8,7 @@ import java.io.File
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
+import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
 import tuner.project._
 
@@ -46,16 +47,21 @@ object Tuner extends SimpleSwingApplication {
     }
 
     proj match {
-      case v:Viewable => 
-        val projWindow = new ProjectViewer(v)
-        openProjects += (proj -> projWindow)
+      case nr:NewResponses =>
+        val respWindow = new ResponseSelector(nr)
+        openProjects += (proj -> respWindow)
         ProjectChooser.close
-        projWindow.open
+        respWindow.open
       case ip:InProgress =>
         val waitWindow = new SamplingProgressBar(ip)
         openProjects += (proj -> waitWindow)
         ProjectChooser.close
         waitWindow.open
+      case v:Viewable => 
+        val projWindow = new ProjectViewer(v)
+        openProjects += (proj -> projWindow)
+        ProjectChooser.close
+        projWindow.open
       case _ => 
     }
     /*
@@ -86,16 +92,18 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def closeProject(proj:Project) : Unit = {
-    openProjects.get(proj) match {
-      case Some(window) =>
+    (proj, openProjects.get(proj), newProjectWindow) match {
+      case (np:NewProject, _, Some(npw)) => 
+        npw.close
+      case (_, Some(window), _) =>
         openProjects -= proj
         window.close
         //window.dispose
-      case None         => 
+      case _         => 
         println("project doesn't have a window open...")
     }
     // See if we need to show the project chooser
-    if(openProjects.isEmpty)
+    if(openProjects.isEmpty && !newProjectWindow.isDefined)
       ProjectChooser.open
   }
 

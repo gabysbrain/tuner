@@ -5,7 +5,7 @@ trait Saved {
 
   val modificationDate = new java.util.Date
 
-  def save = this.asInstanceOf[Project].save(path)
+  def save() : Unit = this.asInstanceOf[Project].save(path)
 
   override def hashCode : Int = path.hashCode
 
