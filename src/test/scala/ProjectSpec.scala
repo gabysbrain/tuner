@@ -10,8 +10,7 @@ import scala.actors.Actor
 
 import tuner.Config
 import tuner.DimRanges
-import tuner.project.Project
-import tuner.project.RunningSamples
+import tuner.project._
 import tuner.Region
 import tuner.Sampler
 
@@ -62,12 +61,7 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
   test("test in progress running of samples") {
     val tmpProj = Project.fromFile(projectPath)
 
-    val isRunningSamples = tmpProj match {
-      case _:RunningSamples => true 
-      case _                => false
-    }
-    isRunningSamples should be (true)
-
+    tmpProj.isInstanceOf[RunningSamples] should be (true)
 
     val proj = tmpProj.asInstanceOf[RunningSamples]
     val Some(sr) = proj.sampleRunner
@@ -116,69 +110,59 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
 
 
   test("new project status") {
-    /*
     val numSamples = 5
     val projName = "testing_project"
     val savePath = newProjSavePath + "/" + projName
-    val np = new Project
-    np.name = projName
-    np.scriptPath = Some("/")
-    np.inputs = new DimRanges(Map(("d1" -> (0f, 1f)), 
-                                  ("d2" -> (0f, 1f)), 
-                                  ("d3" -> (0f, 1f)), 
-                                  ("d4" -> (0f, 1f))))
-    np.newSamples(numSamples, Sampler.regularGrid)
-    // Make sure the status is correct
-    np.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
+    val scriptPath = "/"
+    val inputs = List(("d1", 0f, 1f), 
+                      ("d2", 0f, 1f), 
+                      ("d3", 0f, 1f), 
+                      ("d4", 0f, 1f))
+    val np = new NewProject(projName, savePath, scriptPath, inputs)
+    np.newSamples(numSamples, Sampler.random)
+
+    np.newSamples should have ('numRows (5))
+    np.newSamples should have ('fieldNames (inputs.map(_._1)))
+
     np.save(savePath)
 
-    val np2 = new Project(Some(savePath))
-    np2.newSamples.numRows should be (math.pow(numSamples,4).toInt)
-    // Make sure the status is correct
-    np2.status should be (Project.RunningSamples(0, math.pow(numSamples,4).toInt))
-    */
-    (pending)
+    val np2 = Project.fromFile(savePath)
+
+    np2.isInstanceOf[RunningSamples] should be (true)
+
+    val sp = np2.asInstanceOf[RunningSamples]
+    sp.newSamples.numRows should be (numSamples)
+    sp.runStatus should be ((0, 5))
+    sp.finished should not be ('finished)
   }
 
-  /*
   test("new project range should be full input range") {
-    val dimRanges = new DimRanges(Map(("d1" -> (0f, 1f)), 
-                                      ("d2" -> (0f, 1f)), 
-                                      ("d3" -> (0f, 1f)), 
-                                      ("d4" -> (0f, 1f))))
+    val dimRanges = List(("d1", 0f, 1f), 
+                         ("d2", 0f, 1f), 
+                         ("d3", 0f, 1f), 
+                         ("d4", 0f, 1f))
     val numSamples = 5
     val projName = "testing_project"
     val savePath = newProjSavePath + "/" + projName
-    val np = new Project
-    np.name = projName
-    np.scriptPath = Some("/")
-    np.inputs = dimRanges
+    val scriptPath = "/"
+    val np = new NewProject(projName, savePath, scriptPath, dimRanges)
 
-    //np.region.shape should be (x:BoxRegion)
-    
     // Make sure all the ranges equal each other
-    dimRanges.dimNames.foreach {fld =>
-      np.region.range(fld) should be (dimRanges.range(fld))
+    dimRanges.foreach {case (fld, min, max) =>
+      np.sampleRanges.range(fld) should be ((min, max))
     }
   }
-  */
 
   test("make sure a project without images loads up correctly") {
-    /*
     val projPath = getClass.getResource("/no_images_proj").getPath
-    val proj = new Project(Some(projPath))
-    proj.previewImages should be (None)
-    */
-    (pending)
+    val proj = Project.fromFile(projPath).asInstanceOf[Viewable]
+    proj should have ('previewImages (None))
   }
 
   test("make sure a project with images loads up correctly") {
-    /*
     val projPath = getClass.getResource("/has_images_proj").getPath
-    val proj = new Project(Some(projPath))
-    proj.previewImages.isDefined should be (true)
-    */
-    (pending)
+    val proj = Project.fromFile(projPath).asInstanceOf[Viewable]
+    proj.previewImages should be ('defined)
   }
 
 }
