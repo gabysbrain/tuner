@@ -62,12 +62,14 @@ class SamplingProgressBar(project:InProgress) extends Frame {
       Tuner.closeProject(project.asInstanceOf[Project])
   }
 
+  project.start
+
   updateProgress
 
   private var runScanner = true
   private val scanner:Actor = actor {
     while(runScanner) {
-      Thread.sleep(1237)
+      Thread.sleep(500)
       updateProgress
       runScanner = !project.finished
     }

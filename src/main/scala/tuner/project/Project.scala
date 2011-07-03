@@ -68,7 +68,7 @@ object Project {
     val json = parse(Source.fromFile(configFilePath).mkString)
     val config = json.extract[ProjConfig]
 
-    val sampleFilePath = path + "/" + Config.sampleFilename
+    val sampleFilePath = Path.join(path, Config.sampleFilename)
     val samples = try {
       Table.fromCsv(sampleFilePath)
     } catch {
@@ -210,6 +210,7 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
     case Some(sr) => sr.totalSamples - sr.unrunSamples
     case None     => 0
   }
+
   def totalTime = sampleRunner match {
     case Some(sr) => sr.totalSamples
     case None     => newSamples.numRows
@@ -223,6 +224,18 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
   var sampleRunner:Option[SampleRunner] = None 
   if(buildInBackground) runSamples
 
+  override def save(savePath:String) = {
+    super.save(savePath)
+
+    // Also save the samples
+    val sampleName = Path.join(savePath, Config.sampleFilename)
+    newSamples.toCsv(sampleName)
+
+    // Also save the design points
+    val designName = Path.join(savePath, Config.designFilename)
+    designSites.toCsv(designName)
+  }
+
   def start = runSamples
   def stop = {
   }
@@ -230,7 +243,7 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
   def finished = currentTime == totalTime
 
   def next = {
-    save
+    save()
     Project.fromFile(path).asInstanceOf[BuildingGp]
   }
 
@@ -353,8 +366,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   override def save(savePath:String) : Unit = {
     super.save(savePath)
 
-    val samplePath = Path.join(savePath, Config.respSampleFilename)
-    modelSamples.toCsv(samplePath)
+    saveSampleTables(savePath)
   }
 
   def next = {

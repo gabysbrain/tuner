@@ -124,7 +124,7 @@ class ProjectInfoWindow extends Frame {
     val name = projectNameField.text
     val scriptPath = scriptChooser.path
     val inputs = inputDims
-    new NewProject(name, scriptPath, locationChooser.path, inputs)
+    new NewProject(name, locationChooser.path, scriptPath, inputs)
   }
 
   def inputDims : List[(String,Float,Float)] = {
