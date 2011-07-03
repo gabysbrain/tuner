@@ -63,7 +63,7 @@ object Project {
     } toArray
   }
 
-  def fromFile(path:String) = {
+  def fromFile(path:String) : Project = {
     val configFilePath = Path.join(path, Config.projConfigFilename)
     val json = parse(Source.fromFile(configFilePath).mkString)
     val config = json.extract[ProjConfig]
@@ -134,6 +134,11 @@ sealed abstract class Project(config:ProjConfig) {
     }
   }
 
+  /**
+   * The next stage in the project's evolution
+   */
+  def next : Project
+
 /*
     if(modelSamples.numRows > 0) {
       val filepath = Path.join(savePath, Config.respSampleFilename)
@@ -189,12 +194,16 @@ class NewProject(name:String,
 
   def sampleRanges = 
     new DimRanges(inputDims.map(x => (x._1, (x._2, x._3))).toMap)
+  
+  def next = {
+    save(path)
+    Project.fromFile(path).asInstanceOf[RunningSamples]
+  }
 }
 
 class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
     extends Project(config) with Saved with InProgress {
   
-
   def statusString = "Running Samples"
 
   def currentTime = sampleRunner match {
@@ -219,6 +228,11 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
   }
 
   def finished = currentTime == totalTime
+
+  def next = {
+    save
+    Project.fromFile(path).asInstanceOf[BuildingGp]
+  }
 
   private def runSamples = {
     // only run if we aren't running something
@@ -250,6 +264,11 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def finished = !building
   
+  def next = {
+    save
+    Project.fromFile(path).asInstanceOf[NewResponses]
+  }
+
   private def buildGpModels = {
     actor {
       building = true
@@ -293,6 +312,11 @@ class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
     allFields.filter {fn => !knownFields.contains(fn)}
   }
 
+  def next = {
+    save
+    Project.fromFile(path).asInstanceOf[Viewable]
+  }
+
 }
 
 class Viewable(config:ProjConfig, val path:String, val designSites:Table) 
@@ -331,6 +355,11 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
     val samplePath = Path.join(savePath, Config.respSampleFilename)
     modelSamples.toCsv(samplePath)
+  }
+
+  def next = {
+    save()
+    Project.fromFile(path).asInstanceOf[RunningSamples]
   }
 
   def statusString = "Ok"

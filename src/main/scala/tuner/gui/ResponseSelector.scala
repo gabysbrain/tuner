@@ -82,7 +82,7 @@ class ResponseSelector(project:NewResponses) extends Frame {
         case ResponseSelector.Ignore   => project.addIgnore(fld)
       }}
       project.save
-      Tuner.reloadProject(project)
+      Tuner.nextStage(project)
     case ButtonClicked(`cancelButton`) =>
       close
   }

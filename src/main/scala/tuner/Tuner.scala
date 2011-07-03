@@ -64,27 +64,6 @@ object Tuner extends SimpleSwingApplication {
         projWindow.open
       case _ => 
     }
-    /*
-    proj.status match {
-      case Project.Ok =>
-        val projWindow = new ProjectViewer(proj)
-        openProjects += (proj -> projWindow)
-        ProjectChooser.close
-        projWindow.open
-      case Project.RunningSamples(_,_) =>
-        proj.runSamples
-        val waitWindow = new SamplingProgressBar(proj)
-        openProjects += (proj -> waitWindow)
-        ProjectChooser.close
-        waitWindow.open
-      case Project.BuildingGp =>
-        val waitWindow = new SamplingProgressBar(proj)
-        openProjects += (proj -> waitWindow)
-        ProjectChooser.close
-        waitWindow.open
-      case _ =>
-    }
-    */
   }
 
   def openProject(file:File) : Unit = {
@@ -107,12 +86,9 @@ object Tuner extends SimpleSwingApplication {
       ProjectChooser.open
   }
 
-  def reloadProject(proj:Project) = {
+  def nextStage(proj:Project) = {
     closeProject(proj)
-    proj match {
-      case x:Saved => openProject(new File(x.path))
-      case _ => openProject(proj)
-    }
+    openProject(proj.next)
   }
 
 }

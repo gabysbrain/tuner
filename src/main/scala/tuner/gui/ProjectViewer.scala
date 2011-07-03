@@ -192,7 +192,7 @@ class ProjectViewer(project:Viewable) extends Frame {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save()
-          Tuner.reloadProject(project)
+          Tuner.nextStage(project)
         case Dialog.Result.Cancel =>
           project.newSamples.clear
       }
