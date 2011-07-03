@@ -82,15 +82,24 @@ object Project {
       case _:java.io.FileNotFoundException => new Table
     }
 
-    val specifiedFields = config.inputs.length + 
-                          config.outputs.length + 
-                          config.ignoreFields.length
+    // Figure out how many rows we've built the models on
+    val gpDesignRows = config.gpModels.map(_.designMatrix.length) match {
+      case Nil => 0
+      case x   => x.min
+    }
+    println(configFilePath)
+    println("gpd: " + gpDesignRows)
+
+    val specifiedFields:List[String] = 
+      config.inputs.map(_.name) ++ 
+      config.outputs.map(_.name) ++ 
+      config.ignoreFields
 
     val proj = if(samples.numRows > 0) {
       new RunningSamples(config, path, samples)
-    } else if(config.gpModels.length < config.outputs.length) {
+    } else if(gpDesignRows < designSites.numRows) {
       new BuildingGp(config, path, designSites)
-    } else if(designSites.fieldNames.length > specifiedFields) {
+    } else if(!designSites.fieldNames.diff(specifiedFields).isEmpty) {
       new NewResponses(config, path, designSites.fieldNames)
     } else {
       new Viewable(config, path, designSites)

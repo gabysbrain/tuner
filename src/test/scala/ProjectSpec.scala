@@ -153,6 +153,20 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     }
   }
 
+  test("make sure projects in different stages are the right types") {
+    val p1 = Project.fromFile(getClass.getResource("/build_gp_proj").getPath)
+    p1.asInstanceOf[BuildingGp]
+
+    val p2 = Project.fromFile(getClass.getResource("/in_progress_orig").getPath)
+    p2.asInstanceOf[RunningSamples]
+
+    val p3 = Project.fromFile(getClass.getResource("/has_images_proj").getPath)
+    p3.asInstanceOf[Viewable]
+
+    val p4 = Project.fromFile(getClass.getResource("/no_images_proj").getPath)
+    p4.asInstanceOf[Viewable]
+  }
+
   test("make sure a project without images loads up correctly") {
     val projPath = getClass.getResource("/no_images_proj").getPath
     val proj = Project.fromFile(projPath).asInstanceOf[Viewable]
