@@ -87,8 +87,6 @@ object Project {
       case Nil => 0
       case x   => x.min
     }
-    println(configFilePath)
-    println("gpd: " + gpDesignRows)
 
     val specifiedFields:List[String] = 
       config.inputs.map(_.name) ++ 
@@ -201,11 +199,11 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
 
   def currentTime = sampleRunner match {
     case Some(sr) => sr.totalSamples - sr.unrunSamples
-    case None     => -1
+    case None     => 0
   }
   def totalTime = sampleRunner match {
     case Some(sr) => sr.totalSamples
-    case None     => -1
+    case None     => newSamples.numRows
   }
 
   val designSites = new Table

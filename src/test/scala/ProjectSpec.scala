@@ -82,30 +82,31 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
   }
 
   test("test in progress progress query") {
-    /*
-    val proj = Project.fromFile(projectPath)
-    val Some(sr) = proj.sampleRunner
     val random = new scala.util.Random
+    val tmpProj = Project.fromFile(projectPath)
+
+    tmpProj.isInstanceOf[RunningSamples] should be (true)
+
+    val proj = tmpProj.asInstanceOf[RunningSamples]
+    val Some(sr) = proj.sampleRunner
 
     Thread.sleep(10)
 
     // Make sure the inititial status is ok
-    proj.status should be (Project.RunningSamples(0, 100))
-    sr.getState should be (Actor.State.Runnable)
+    proj should have ('runStatus (0, 100))
+    sr should have ('getState (Actor.State.Runnable))
     
     // Sleep for 5 seconds and then more samples should have finished
     Thread.sleep(5000)
 
     val done = sr.completedSamples
-    proj.status should be (Project.RunningSamples(done, 100))
+    proj should have ('runStatus (done, 100))
 
     // Sleep some more
     Thread.sleep(5000 + random.nextInt(5000))
 
     val done2 = sr.completedSamples
-    proj.status should be (Project.RunningSamples(done2, 100))
-    */
-    (pending)
+    proj should have ('runStatus (done2, 100))
   }
 
 
@@ -131,6 +132,8 @@ class InProgressProjectSpec extends FunSuite with BeforeAndAfterEach {
     np2.isInstanceOf[RunningSamples] should be (true)
 
     val sp = np2.asInstanceOf[RunningSamples]
+    sp should have ('buildInBackground (false))
+    sp should have ('sampleRunner (None))
     sp.newSamples.numRows should be (numSamples)
     sp.runStatus should be ((0, 5))
     sp.finished should not be ('finished)
