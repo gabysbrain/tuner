@@ -168,7 +168,7 @@ sealed abstract class Project(config:ProjConfig) {
 }
 
 class NewProject(name:String, 
-                 val path:String,
+                 basePath:String,
                  scriptPath:String, 
                  inputDims:List[(String,Float,Float)]) 
     extends Project(ProjConfig(name, scriptPath, 
@@ -177,6 +177,8 @@ class NewProject(name:String,
                                ViewInfo.DefaultVisInfo,
                                Region.DefaultRegionInfo,
                                None)) with Sampler {
+
+  val path = Path.join(basePath, name)
 
   val modificationDate = new Date
 
