@@ -33,5 +33,17 @@ object AxisTicks {
       rTicks.asDoubleArray.toList.map {_.toFloat}
     }
   }
+
+  def ticksAndRange(min:Float, max:Float, width:Float, fontSize:Float) 
+      : (List[Float], (Float,Float)) = {
+    
+    val myTicks = ticks(min, max, width, fontSize)
+    val range = if(myTicks.isEmpty) {
+      (min, max)
+    } else {
+      (myTicks.min, myTicks.max)
+    }
+    (myTicks, range)
+  }
 }
 

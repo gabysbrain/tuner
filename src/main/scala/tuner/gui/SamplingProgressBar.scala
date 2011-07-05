@@ -83,10 +83,10 @@ class SamplingProgressBar(project:InProgress) extends Frame {
 
     if(max > 0) {
       progressBar.indeterminate = false
-    } else {
-      progressBar.indeterminate = true
       progressBar.max = max
       progressBar.value = cur
+    } else {
+      progressBar.indeterminate = true
     }
     this.pack
   }

@@ -40,7 +40,9 @@ class ParetoPanel(project:Viewable)
   //var pareto2dData:Matrix2D = null
   //var cspColorMap:SpecifiedColorMap = null
   var xAxisTicks:List[Float] = Nil
+  var xAxisRange:(Float,Float) = (0f,0f)
   var yAxisTicks:List[Float] = Nil
+  var yAxisRange:(Float,Float) = (0f,0f)
 
   override def setup = {
     frameRate = 30
@@ -99,20 +101,17 @@ class ParetoPanel(project:Viewable)
   def draw2dPareto(resp1:String, resp2:String) {
     val r1Model = models(resp1)
     val r2Model = models(resp2)
-    val xAxisTicks = AxisTicks.ticks(r1Model.funcMin, r1Model.funcMax,
-                                     xAxisBox.width, Config.smallFontSize)
-    val yAxisTicks = AxisTicks.ticks(r2Model.funcMin, r2Model.funcMax,
-                                     yAxisBox.height, Config.smallFontSize)
-    val r1Range = (resp1, if(xAxisTicks.isEmpty) {
-                            (r1Model.funcMin,r1Model.funcMax)
-                          } else {
-                            (xAxisTicks.min,xAxisTicks.max)
-                          })
-    val r2Range = (resp2, if(yAxisTicks.isEmpty) {
-                            (r2Model.funcMin,r2Model.funcMax)
-                          } else {
-                            (yAxisTicks.min,yAxisTicks.max)
-                          })
+
+    val (xt, xr) = AxisTicks.ticksAndRange(
+      r1Model.funcMin, r1Model.funcMax,
+      xAxisBox.width, Config.smallFontSize)
+    xAxisTicks = xt
+    xAxisRange = xr
+    val (yt, yr) = AxisTicks.ticksAndRange(
+        r2Model.funcMin, r2Model.funcMax,
+        yAxisBox.height, Config.smallFontSize)
+    yAxisTicks = yt
+    yAxisRange = yr
 
       /*
     if((resp1, resp2) != pareto2dFields) {
@@ -150,7 +149,8 @@ class ParetoPanel(project:Viewable)
     sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                  plotBox.width, plotBox.height, 
                                  project.designSites, 
-                                 r1Range, r2Range)
+                                 (resp1, xAxisRange), 
+                                 (resp2, yAxisRange))
   }
 
   override def mouseClicked(mouseX:Int, mouseY:Int, 
@@ -170,16 +170,8 @@ class ParetoPanel(project:Viewable)
     val r1Model = models(response1)
     val r2Model = models(response2)
 
-    val (minX, maxX) = if(!xAxisTicks.isEmpty) {
-      (xAxisTicks.min, xAxisTicks.max)
-    } else {
-      (r1Model.funcMin, r1Model.funcMax)
-    }
-    val (minY, maxY) = if(!yAxisTicks.isEmpty) {
-      (yAxisTicks.min, yAxisTicks.max)
-    } else {
-      (r2Model.funcMin, r2Model.funcMax)
-    }
+    val (minX, maxX) = xAxisRange
+    val (minY, maxY) = yAxisRange
 
     // See if we hit upon any sample points
     var minDist = Float.MaxValue
@@ -198,7 +190,7 @@ class ParetoPanel(project:Viewable)
         tmp = (xx, yy)
       }
     }
-    println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
+    //println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
     //println("mp: " + minInfo)
     // Figure out if we're inside a point
     if(minDist < Config.scatterplotDotSize*2) {

@@ -206,7 +206,8 @@ class NewProject(name:String,
 class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
     extends Project(config) with Saved with InProgress {
   
-  def statusString = "Running Samples"
+  def statusString = 
+    "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
 
   def currentTime = sampleRunner match {
     case Some(sr) => sr.totalSamples - sr.unrunSamples
