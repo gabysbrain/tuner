@@ -5,19 +5,16 @@ import scala.actors.Actor._
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.CheckBox
-import scala.swing.Frame
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ProgressBar
-import scala.swing.Window
 import scala.swing.event.ButtonClicked
 
-import tuner.Tuner
 import tuner.project.InProgress
 import tuner.project.Project
 import tuner.project.Saved
 
-class SamplingProgressBar(project:InProgress) extends Frame {
+class SamplingProgressBar(project:InProgress) extends Window(project) {
 
   //modal = true
   //width = 800
@@ -56,10 +53,10 @@ class SamplingProgressBar(project:InProgress) extends Frame {
         case s:Saved => s.save
         case _       =>
       }
-      Tuner.closeProject(project.asInstanceOf[Project])
+      close
     case ButtonClicked(`stopButton`) => 
       project.stop
-      Tuner.closeProject(project.asInstanceOf[Project])
+      close
   }
 
   project.start
@@ -73,7 +70,7 @@ class SamplingProgressBar(project:InProgress) extends Frame {
       updateProgress
       runScanner = !project.finished
     }
-    Tuner.nextStage(project.asInstanceOf[Project])
+    openNextStage
   }
 
   def updateProgress = {
@@ -90,5 +87,6 @@ class SamplingProgressBar(project:InProgress) extends Frame {
     }
     this.pack
   }
+
 }
 

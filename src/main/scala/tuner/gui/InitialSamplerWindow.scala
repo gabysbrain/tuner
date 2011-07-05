@@ -4,17 +4,16 @@ import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.Label
-import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
-import tuner.Tuner
 import tuner.project.NewProject
 import tuner.util.Path
 
-class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
+class InitialSamplerWindow(project:NewProject, saveDir:String) 
+        extends Window(project) {
   
   title = "Select Samples"
 
@@ -51,10 +50,11 @@ class InitialSamplerWindow(project:NewProject, saveDir:String) extends Frame {
   reactions += {
     case ButtonClicked(`runButton`) =>
       project.save(Path.join(saveDir, project.name))
-      Tuner.nextStage(project)
+      openNextStage
     case ValueChanged(`samplerPanel`) =>
       project.newSamples(samplerPanel.numSamples, samplerPanel.method)
       samplerPanel.splomPanel.redraw
   }
+
 }
 

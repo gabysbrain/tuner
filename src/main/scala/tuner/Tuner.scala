@@ -22,8 +22,13 @@ object Tuner extends SimpleSwingApplication {
     super.main(args)
   }
 
-  var openProjects:Map[Project,Window] = Map()
-  var newProjectWindow:Option[ProjectInfoWindow] = None
+  var openWindows:Set[tuner.gui.Window] = Set()
+
+  reactions += {
+    case WindowClosed(tw:tuner.gui.Window) => 
+      openWindows -= tw
+      maybeShowProjectWindow
+  }
 
   //def top = ProjectChooser
   def top = { 
@@ -35,7 +40,6 @@ object Tuner extends SimpleSwingApplication {
   def startNewProject = {
     println("Starting new project")
     val window = new ProjectInfoWindow
-    newProjectWindow = Some(window)
     window.open
   }
 
@@ -49,47 +53,38 @@ object Tuner extends SimpleSwingApplication {
     proj match {
       case nr:NewResponses =>
         val respWindow = new ResponseSelector(nr)
-        openProjects += (proj -> respWindow)
         ProjectChooser.close
         respWindow.open
       case ip:InProgress =>
         val waitWindow = new SamplingProgressBar(ip)
-        openProjects += (proj -> waitWindow)
         ProjectChooser.close
         waitWindow.open
       case v:Viewable => 
         val projWindow = new ProjectViewer(v)
-        openProjects += (proj -> projWindow)
         ProjectChooser.close
         projWindow.open
       case _ => 
     }
+
+    maybeShowProjectWindow
   }
 
   def openProject(file:File) : Unit = {
     openProject(Project.fromFile(file.getAbsolutePath))
   }
 
-  def closeProject(proj:Project) : Unit = {
-    (proj, openProjects.get(proj), newProjectWindow) match {
-      case (np:NewProject, _, Some(npw)) => 
-        npw.close
-      case (_, Some(window), _) =>
-        openProjects -= proj
-        window.close
-        //window.dispose
-      case _         => 
-        println("project doesn't have a window open...")
-    }
+  def listenTo(tunerWin:tuner.gui.Window) : Unit = {
+    openWindows += tunerWin
+    super.listenTo(tunerWin)
+    maybeShowProjectWindow
+  }
+
+  private def maybeShowProjectWindow = {
     // See if we need to show the project chooser
-    if(openProjects.isEmpty && !newProjectWindow.isDefined)
+    if(openWindows.isEmpty)
       ProjectChooser.open
+    else
+      ProjectChooser.close
   }
-
-  def nextStage(proj:Project) = {
-    closeProject(proj)
-    openProject(proj.next)
-  }
-
 }
 

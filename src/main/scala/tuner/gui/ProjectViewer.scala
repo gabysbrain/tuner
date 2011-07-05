@@ -7,7 +7,6 @@ import scala.swing.CheckBox
 import scala.swing.Dialog
 import scala.swing.FlowPanel
 import scala.swing.Label
-import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.SplitPane
@@ -18,7 +17,6 @@ import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
 import tuner.Config
-import tuner.Tuner
 import tuner.ViewInfo
 import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
@@ -26,7 +24,7 @@ import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 import tuner.project.Viewable
 
-class ProjectViewer(project:Viewable) extends Frame {
+class ProjectViewer(project:Viewable) extends Window(project) {
   
   title = project.name
   menuBar = MainMenu
@@ -155,36 +153,6 @@ class ProjectViewer(project:Viewable) extends Frame {
     case ViewInfo.GainMetric => gainResponseButton.selected = true
   }
 
-  /*
-  override def open = {
-    super.open
-
-    // See if there are new responses we need to deal with
-    if(project.newFields.length > 0) {
-      println("new fields detected")
-      val rs = new ResponseSelector(project, this)
-      listenTo(rs)
-      reactions += {
-        case DialogClosing(`rs`, result) => result match {
-          case Dialog.Result.Ok => 
-            rs.selections.foreach {case (fld, sel) => sel match {
-              case ResponseSelector.Ignore => 
-                project.ignoreFields = fld :: project.ignoreFields
-              case ResponseSelector.Minimize => 
-                project.responses = (fld, true) :: project.responses
-              case ResponseSelector.Maximize => 
-                project.responses = (fld, false) :: project.responses
-            }}
-            project.save(project.savePath)
-          case Dialog.Result.Cancel =>
-            this.close
-        }
-      }
-      rs.open
-    }
-  }
-  */
-
   private def openSamplerDialog = {
     val samplerDialog = new SamplerDialog(project, this)
     listenTo(samplerDialog)
@@ -192,7 +160,7 @@ class ProjectViewer(project:Viewable) extends Frame {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save()
-          Tuner.nextStage(project)
+          openNextStage
         case Dialog.Result.Cancel =>
           project.newSamples.clear
       }

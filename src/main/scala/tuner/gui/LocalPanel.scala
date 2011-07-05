@@ -9,7 +9,6 @@ import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
-import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.SelectionChanged

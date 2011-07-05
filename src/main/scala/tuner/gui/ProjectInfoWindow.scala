@@ -149,5 +149,6 @@ class ProjectInfoWindow extends Frame {
     }
     controlValues.flatten.toList
   }
+
 }
 

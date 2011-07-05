@@ -4,14 +4,12 @@ import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.ButtonGroup
 import scala.swing.Dialog
-import scala.swing.Frame
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.TextField
-import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 
@@ -25,7 +23,7 @@ object ResponseSelector {
   case object Maximize extends Response
 }
 
-class ResponseSelector(project:NewResponses) extends Frame {
+class ResponseSelector(project:NewResponses) extends Window(project) {
   title = "Select Responses"
 
   val okButton = new Button("Ok")
@@ -82,7 +80,7 @@ class ResponseSelector(project:NewResponses) extends Frame {
         case ResponseSelector.Ignore   => project.addIgnore(fld)
       }}
       project.save
-      Tuner.nextStage(project)
+      openNextStage
     case ButtonClicked(`cancelButton`) =>
       close
   }
@@ -98,5 +96,6 @@ class ResponseSelector(project:NewResponses) extends Frame {
       }
     } toList
   }
+
 }
 

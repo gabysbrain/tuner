@@ -167,6 +167,19 @@ sealed abstract class Project(config:ProjConfig) {
 
 }
 
+abstract class InProgress(config:ProjConfig) extends Project(config) {
+  var buildInBackground:Boolean
+
+  protected def totalTime : Int
+  protected def currentTime : Int
+
+  def runStatus:(Int,Int) = (currentTime, totalTime)
+  def finished:Boolean
+
+  def start:Unit
+  def stop:Unit
+}
+
 class NewProject(name:String, 
                  basePath:String,
                  scriptPath:String, 
@@ -204,7 +217,7 @@ class NewProject(name:String,
 }
 
 class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
-    extends Project(config) with Saved with InProgress {
+    extends InProgress(config) with Saved {
   
   def statusString = 
     "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
@@ -261,7 +274,7 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
 }
 
 class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
-    extends Project(config) with Saved with InProgress {
+    extends InProgress(config) with Saved {
   
   var buildInBackground:Boolean = config.buildInBackground
   

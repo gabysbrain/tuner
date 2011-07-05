@@ -6,14 +6,14 @@ import scala.swing.Button
 import scala.swing.Dialog
 import scala.swing.Orientation
 import scala.swing.Swing
-import scala.swing.Window
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
 import tuner.project.Viewable
 
-class SamplerDialog(project:Viewable, owner:Window) extends Dialog(owner) {
+class SamplerDialog(project:Viewable, owner:scala.swing.Window) 
+        extends Dialog(owner) {
 
   title = "Add Samples"
   modal = true
@@ -53,5 +53,6 @@ class SamplerDialog(project:Viewable, owner:Window) extends Dialog(owner) {
 
   def numSamples = mainPanel.numSamples
   def method = mainPanel.method
+
 }
 
