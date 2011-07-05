@@ -293,8 +293,17 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
   def finished = !building
   
   def next = {
-    save
+    save()
     Project.fromFile(path)
+  }
+
+  override def save(savePath:String) = {
+    super.save(savePath)
+
+    // create an empty model samples table
+    val fakeTable = new Table
+    val filepath = Path.join(savePath, Config.respSampleFilename)
+    fakeTable.toCsv(filepath)
   }
 
   private def buildGpModels = {
@@ -311,7 +320,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
         (fld, gp.buildModel(inputFields, fld, Config.errorField))
       }).toMap
       config.gpModels = newModels.values.map(_.toJson).toList
-      save
+      save()
       building = false
     }
   }
@@ -456,7 +465,12 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     // First try to load up an old file
     val samples = try {
       val filepath = Path.join(path, Config.respSampleFilename)
-      Table.fromCsv(filepath)
+      val tmp = Table.fromCsv(filepath)
+      if(tmp.numRows == 0) {
+        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+      } else {
+        tmp
+      }
     } catch {
       case e:java.io.FileNotFoundException => 
         tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
