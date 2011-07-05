@@ -374,14 +374,18 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   val previewImages:Option[PreviewImages] = loadImages(path)
 
   // Also set up a table of samples from each gp model
-  lazy val modelSamples:Table = loadResponseSamples(path)
+  val modelSamples:Table = loadResponseSamples(path)
 
   save()
 
   override def save(savePath:String) : Unit = {
     super.save(savePath)
 
-    saveSampleTables(savePath)
+    // Save the model samples
+    if(modelSamples.numRows > 0) {
+      val filepath = Path.join(savePath, Config.respSampleFilename)
+      modelSamples.toCsv(filepath)
+    }
   }
 
   def next = {
