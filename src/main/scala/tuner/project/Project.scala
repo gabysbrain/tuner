@@ -94,7 +94,7 @@ object Project {
       config.ignoreFields
 
     val proj = if(samples.numRows > 0) {
-      new RunningSamples(config, path, samples)
+      new RunningSamples(config, path, samples, designSites)
     } else if(gpDesignRows < designSites.numRows) {
       new BuildingGp(config, path, designSites)
     } else if(!designSites.fieldNames.diff(specifiedFields).isEmpty) {
@@ -216,7 +216,8 @@ class NewProject(name:String,
   }
 }
 
-class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table) 
+class RunningSamples(config:ProjConfig, val path:String, 
+                     val newSamples:Table, val designSites:Table) 
     extends InProgress(config) with Saved {
   
   def statusString = 
@@ -231,8 +232,6 @@ class RunningSamples(config:ProjConfig, val path:String, val newSamples:Table)
     case Some(sr) => sr.totalSamples
     case None     => newSamples.numRows
   }
-
-  val designSites = new Table
 
   var buildInBackground:Boolean = config.buildInBackground
 
@@ -295,7 +294,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
   
   def next = {
     save
-    Project.fromFile(path).asInstanceOf[NewResponses]
+    Project.fromFile(path)
   }
 
   private def buildGpModels = {
