@@ -7,6 +7,8 @@ import java.io.File
 
 import tuner.project.RunningSamples
 
+class SamplingException(output:String, exitCode:Int) extends Exception
+
 class SampleRunner(project:RunningSamples) extends Actor {
   
   val sampleFile = File.createTempFile("tuner_samples", ".csv")
@@ -17,11 +19,13 @@ class SampleRunner(project:RunningSamples) extends Actor {
   var completedSamples:Int = 0
 
   var currentProcess:Process = null
+  val scriptOutput = new StringBuffer
 
   val pb = new ProcessBuilder(project.scriptPath,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
   pb.directory(new File(project.path))
+  pb.redirectErrorStream(true)
 
   def stop = {
     if(currentProcess != null)
@@ -37,10 +41,12 @@ class SampleRunner(project:RunningSamples) extends Actor {
       val subSamples = subsample
       subSamples.toCsv(sampleFile.getAbsolutePath)
       currentProcess = pb.start
+      readOutput(currentProcess)
       currentProcess.waitFor // Run until we're done
 
       if(currentProcess.exitValue != 0) {
-        throw new Exception("Script exited with value " + currentProcess.exitValue)
+        throw new SamplingException(scriptOutput.toString, 
+                                    currentProcess.exitValue)
       }
       currentProcess = null
 
@@ -74,6 +80,21 @@ class SampleRunner(project:RunningSamples) extends Actor {
       subSamples.addRow(samples.tuple(r).toList)
     }
     subSamples
+  }
+
+  private def readOutput(proc:Process) : Unit = {
+    actor {
+      // Too lazy to figure this out so this is from:
+      // http://www.qualitybrain.com/?p=84
+      val streamReader = new java.io.InputStreamReader(proc.getInputStream)
+      val bufferedReader = new java.io.BufferedReader(streamReader)
+      var line:String = null
+      while({line = bufferedReader.readLine; line != null}){
+        scriptOutput.append(line)
+        scriptOutput.append("\n")
+      }
+      bufferedReader.close
+    }
   }
 
 }
