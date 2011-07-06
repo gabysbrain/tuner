@@ -7,8 +7,6 @@ import java.io.File
 
 import tuner.project.RunningSamples
 
-class SamplingException(output:String, exitCode:Int) extends Exception
-
 class SampleRunner(project:RunningSamples) extends Actor {
   
   val sampleFile = File.createTempFile("tuner_samples", ".csv")
@@ -16,11 +14,11 @@ class SampleRunner(project:RunningSamples) extends Actor {
 
   val samples = project.newSamples
 
-  var completedSamples:Int = 0
+  private var currentProcess:Process = null
 
-  var currentProcess:Process = null
-  val scriptOutput = new StringBuffer
-
+  val cmd = project.scriptPath + " " + 
+            sampleFile.getAbsolutePath + " " + 
+            designFile.getAbsolutePath
   val pb = new ProcessBuilder(project.scriptPath,
                               sampleFile.getAbsolutePath, 
                               designFile.getAbsolutePath)
@@ -32,35 +30,39 @@ class SampleRunner(project:RunningSamples) extends Actor {
       currentProcess.destroy
   }
 
-  def unrunSamples = samples.numRows
-
-  def totalSamples = completedSamples + unrunSamples
-
   def act = {
-    while(samples.numRows > 0) {
+    var error = false
+    while(samples.numRows > 0 && !error) {
       val subSamples = subsample
+      project ! ConsoleLine("> " + cmd)
       subSamples.toCsv(sampleFile.getAbsolutePath)
       currentProcess = pb.start
-      readOutput(currentProcess)
+      readOutput(currentProcess.getInputStream)
+      readOutput(currentProcess.getErrorStream)
       currentProcess.waitFor // Run until we're done
 
       if(currentProcess.exitValue != 0) {
-        throw new SamplingException(scriptOutput.toString, 
-                                    currentProcess.exitValue)
-      }
-      currentProcess = null
+        error = true
+        project ! SamplingError(currentProcess.exitValue)
+      } else {
+        currentProcess = null
 
-      // Now the sampling is all done, load up the new points
-      val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)
-      for(r <- 0 until newDesTbl.numRows) {
-        val tpl = newDesTbl.tuple(r)
-        project.designSites.addRow(tpl.toList)
-        samples.removeRow(0) // Always the first row
-      }
-      project.save()
-      completedSamples += newDesTbl.numRows
+        // Now the sampling is all done, load up the new points
+        val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)
+        for(r <- 0 until newDesTbl.numRows) {
+          val tpl = newDesTbl.tuple(r)
+          project.designSites.addRow(tpl.toList)
+          samples.removeRow(0) // Always the first row
+        }
+        project.save()
+        project ! SamplesCompleted(newDesTbl.numRows)
 
-      // TODO: delete the file?
+        // TODO: delete the file?
+      }
+    }
+    // We're only done if there was no error
+    if(!error) {
+      project ! SamplingComplete
     }
   }
 
@@ -82,18 +84,19 @@ class SampleRunner(project:RunningSamples) extends Actor {
     subSamples
   }
 
-  private def readOutput(proc:Process) : Unit = {
+  private def readOutput(stream:java.io.InputStream) : Unit = {
     actor {
       // Too lazy to figure this out so this is from:
       // http://www.qualitybrain.com/?p=84
-      val streamReader = new java.io.InputStreamReader(proc.getInputStream)
+      val streamReader = new java.io.InputStreamReader(stream)
       val bufferedReader = new java.io.BufferedReader(streamReader)
       var line:String = null
       while({line = bufferedReader.readLine; line != null}){
-        scriptOutput.append(line)
-        scriptOutput.append("\n")
+        println("here " + line)
+        project ! ConsoleLine(line)
       }
       bufferedReader.close
+      println("done reading")
     }
   }
 

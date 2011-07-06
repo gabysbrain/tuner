@@ -10,6 +10,9 @@ import scala.swing.Orientation
 import scala.swing.ProgressBar
 import scala.swing.event.ButtonClicked
 
+import tuner.ConsoleLine
+import tuner.Progress
+import tuner.ProgressComplete
 import tuner.project.InProgress
 import tuner.project.Project
 import tuner.project.Saved
@@ -31,19 +34,23 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   val progressLabel = new Label {
     text = "   "
   }
+  val console = new HideableConsole
 
   listenTo(backgroundButton)
   listenTo(stopButton)
 
-  contents = new BoxPanel(Orientation.Horizontal) {
-    contents += new BoxPanel(Orientation.Vertical) {
-      contents += progressBar
-      contents += progressLabel
-    }
+  contents = new BoxPanel(Orientation.Vertical) {
+    contents += new BoxPanel(Orientation.Horizontal) {
+      contents += new BoxPanel(Orientation.Vertical) {
+        contents += progressBar
+        contents += progressLabel
+      }
 
-    contents += alwaysBackgroundCheckbox
-    contents += backgroundButton
-    contents += stopButton
+      contents += alwaysBackgroundCheckbox
+      contents += backgroundButton
+      contents += stopButton
+    }
+    contents += console
   }
 
   reactions += {
@@ -59,32 +66,39 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       close
   }
 
+  val progressListener = actor {
+    loop {
+      react {
+        case Progress(currentTime, totalTime, msg, ok) =>
+          updateProgress(currentTime, totalTime, msg, ok)
+        case ConsoleLine(line) => 
+          console.text += line
+          console.text += "\n"
+        case ProgressComplete =>
+          openNextStage
+      }
+    }
+  }
+  project.addListener(progressListener)
   project.start
 
-  updateProgress
-
-  private var runScanner = true
-  private val scanner:Actor = actor {
-    while(runScanner) {
-      Thread.sleep(500)
-      updateProgress
-      runScanner = !project.finished
-    }
-    openNextStage
-  }
-
-  def updateProgress = {
-    progressLabel.text = project.asInstanceOf[Project].statusString
-
-    val (cur, max) = project.runStatus
-
-    if(max > 0) {
-      progressBar.indeterminate = false
-      progressBar.max = max
-      progressBar.value = cur
+  def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {
+    if(ok) {
+      progressLabel.foreground = java.awt.Color.black
+      progressLabel.text = msg
+      if(max > 0) {
+        progressBar.indeterminate = false
+        progressBar.max = max
+        progressBar.value = cur
+      } else {
+        progressBar.indeterminate = true
+      }
     } else {
+      progressLabel.foreground = java.awt.Color.red
+      progressLabel.text = "Error: " + msg
       progressBar.indeterminate = true
     }
+
     this.pack
   }
 

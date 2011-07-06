@@ -9,22 +9,30 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
-import scala.actors.Actor.actor
+import scala.actors.Actor
+import scala.actors.Actor._
 import scala.collection.immutable.SortedMap
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 import tuner.CandidateGenerator
 import tuner.Config
+import tuner.ConsoleLine
 import tuner.DimRanges
 import tuner.GpModel
 import tuner.GpSpecification
 import tuner.HistoryManager
 import tuner.HistorySpecification
 import tuner.PreviewImages
+import tuner.Progress
+import tuner.ProgressComplete
 import tuner.Region
 import tuner.RegionSpecification
 import tuner.Rgp
 import tuner.SampleRunner
+import tuner.SamplesCompleted
+import tuner.SamplingComplete
+import tuner.SamplingError
 import tuner.Table
 import tuner.ViewInfo
 import tuner.VisInfo
@@ -160,17 +168,17 @@ sealed abstract class Project(config:ProjConfig) {
 
 }
 
-abstract class InProgress(config:ProjConfig) extends Project(config) {
+abstract class InProgress(config:ProjConfig) 
+    extends Project(config) with Actor {
+
   var buildInBackground:Boolean
 
-  protected def totalTime : Int
-  protected def currentTime : Int
-
-  def runStatus:(Int,Int) = (currentTime, totalTime)
-  def finished:Boolean
-
-  def start:Unit
+  //def start:Unit
   def stop:Unit
+
+  private var eventListeners:ArrayBuffer[Actor] = ArrayBuffer()
+  def addListener(a:Actor) = eventListeners.append(a)
+  protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
 }
 
 class NewProject(name:String, 
@@ -213,24 +221,17 @@ class RunningSamples(config:ProjConfig, val path:String,
                      val newSamples:Table, val designSites:Table) 
     extends InProgress(config) with Saved {
   
-  def statusString = 
-    "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
-  
-  def currentTime = sampleRunner match {
-    case Some(sr) => sr.totalSamples - sr.unrunSamples
-    case None     => 0
-  }
-
-  def totalTime = sampleRunner match {
-    case Some(sr) => sr.totalSamples
-    case None     => newSamples.numRows
-  }
-
   var buildInBackground:Boolean = config.buildInBackground
 
   // See if we should start running some samples
   var sampleRunner:Option[SampleRunner] = None 
-  if(buildInBackground) runSamples
+  if(buildInBackground) start
+
+  def statusString = 
+    "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
+  
+  val totalTime = newSamples.numRows
+  var currentTime = 0
 
   override def save(savePath:String) = {
     super.save(savePath)
@@ -244,15 +245,36 @@ class RunningSamples(config:ProjConfig, val path:String,
     designSites.toCsv(designName)
   }
 
-  def start = runSamples
-  def stop = {
+  override def start = {
+    runSamples
+    super.start
   }
-
-  def finished = currentTime == totalTime
+  def stop = {}
 
   def next = {
     save()
     Project.fromFile(path).asInstanceOf[BuildingGp]
+  }
+
+  def act = {
+    // Publish one of these right at the beginning just to get things going
+    publish(Progress(currentTime, totalTime, statusString, true))
+
+    var finished = false
+    loopWhile(!finished) {
+      react {
+        case x:ConsoleLine => 
+          publish(x)
+        case SamplesCompleted(num) => 
+          publish(Progress(currentTime, totalTime, statusString, true))
+        case SamplingError(exitCode) =>
+          val msg = "Sampler script exited with code: " + exitCode
+          publish(Progress(currentTime, totalTime, msg, false))
+        case SamplingComplete =>
+          finished = true
+          publish(ProgressComplete)
+      }
+    }
   }
 
   private def runSamples = {
@@ -274,17 +296,25 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def statusString = "Building GP"
 
-  def currentTime = -1
-  def totalTime = -1
+  def stop = {}
 
-  def start = buildGpModels
-  def stop = {
+  def act = {
+    publish(Progress(-1, -1, statusString, true))
+    // Build the gp models
+    val designSiteFile = Path.join(path, Config.designFilename)
+    val gp = new Rgp(designSiteFile)
+
+    val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
+
+    val newModels = buildFields.map({fld => 
+      println("building model for " + fld)
+      (fld, gp.buildModel(inputFields, fld, Config.errorField))
+    }).toMap
+    config.gpModels = newModels.values.map(_.toJson).toList
+    save()
+    publish(ProgressComplete)
   }
 
-  private var building = true
-
-  def finished = !building
-  
   def next = {
     save()
     Project.fromFile(path)
@@ -299,24 +329,6 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     fakeTable.toCsv(filepath)
   }
 
-  private def buildGpModels = {
-    actor {
-      building = true
-      // Build the gp models
-      val designSiteFile = Path.join(path, Config.designFilename)
-      val gp = new Rgp(designSiteFile)
-
-      val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
-
-      val newModels = buildFields.map({fld => 
-        println("building model for " + fld)
-        (fld, gp.buildModel(inputFields, fld, Config.errorField))
-      }).toMap
-      config.gpModels = newModels.values.map(_.toJson).toList
-      save()
-      building = false
-    }
-  }
 }
 
 class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
