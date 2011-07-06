@@ -26,8 +26,12 @@ object Tuner extends SimpleSwingApplication {
 
   reactions += {
     case WindowClosed(tw:tuner.gui.Window) => 
+      println(tw + " closing")
       openWindows -= tw
-      maybeShowProjectWindow
+      println(openWindows)
+      //maybeShowProjectWindow
+    case WindowClosed(x) =>
+      println("unknown type: " + x)
   }
 
   //def top = ProjectChooser
@@ -66,7 +70,7 @@ object Tuner extends SimpleSwingApplication {
       case _ => 
     }
 
-    maybeShowProjectWindow
+    //maybeShowProjectWindow
   }
 
   def openProject(file:File) : Unit = {
@@ -74,11 +78,14 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {
+    println("listening to " + tunerWin)
     openWindows += tunerWin
+    println(openWindows)
     super.listenTo(tunerWin)
-    maybeShowProjectWindow
+    //maybeShowProjectWindow
   }
 
+  /*
   private def maybeShowProjectWindow = {
     // See if we need to show the project chooser
     if(openWindows.isEmpty)
@@ -86,5 +93,6 @@ object Tuner extends SimpleSwingApplication {
     else
       ProjectChooser.close
   }
+  */
 }
 
