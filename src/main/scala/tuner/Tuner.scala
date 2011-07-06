@@ -26,12 +26,10 @@ object Tuner extends SimpleSwingApplication {
 
   reactions += {
     case WindowClosed(tw:tuner.gui.Window) => 
-      println(tw + " closing")
+      //println(tw + " closing")
       openWindows -= tw
-      println(openWindows)
+      //println(openWindows)
       //maybeShowProjectWindow
-    case WindowClosed(x) =>
-      println("unknown type: " + x)
   }
 
   //def top = ProjectChooser
@@ -78,9 +76,9 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {
-    println("listening to " + tunerWin)
+    //println("listening to " + tunerWin)
     openWindows += tunerWin
-    println(openWindows)
+    //println(openWindows)
     super.listenTo(tunerWin)
     //maybeShowProjectWindow
   }

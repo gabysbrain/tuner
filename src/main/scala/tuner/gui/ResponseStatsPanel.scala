@@ -7,7 +7,7 @@ import scala.swing.ScrollPane
 
 import scala.collection.immutable.SortedMap
 
-import tuner.gui.event.ReadyToDraw
+//import tuner.gui.event.ReadyToDraw
 import tuner.project.Viewable
 
 class ResponseStatsPanel(project:Viewable) 
@@ -49,6 +49,7 @@ class ResponseStatsPanel(project:Viewable)
     }
   }
 
+  /*
   reactions += {
     case ReadyToDraw(rhp:ResponseHistogramPanel) =>
       updateHistograms(rhp)
@@ -62,5 +63,6 @@ class ResponseStatsPanel(project:Viewable)
       panel.yAxisTicks = newTicks
     }
   }
+  */
 }
 
