@@ -14,9 +14,6 @@ class ResponseStatsPanel(project:Viewable)
     extends ScrollPane {
     //extends BoxPanel(Orientation.Vertical) {
   
-  var curMin = Float.MaxValue
-  var curMax = Float.MinValue
-
   val histogramPanels:SortedMap[String,ResponseHistogramPanel] = {
     val gpm = project.gpModels
     SortedMap[String,ResponseHistogramPanel]() ++
@@ -33,8 +30,6 @@ class ResponseStatsPanel(project:Viewable)
       histogramPanels.foreach {case (fld,panel) =>
         //panels += new CollapsiblePanel.CPanel(fld, panel)
         val p = new org.japura.gui.CollapsiblePanel(fld)
-        p.collapse
-        p.setAnimationEnabled(false)
         p.addCollapsiblePanelListener(new org.japura.gui.event.CollapsiblePanelAdapter {
           override def panelCollapsed(event:org.japura.gui.event.CollapsiblePanelEvent) = {
             panel.visible = false
@@ -43,6 +38,8 @@ class ResponseStatsPanel(project:Viewable)
             panel.visible = true
           }
         })
+        p.collapseImmediately
+        p.setAnimationEnabled(false)
         p.add(panel.peer)
         peer.add(p)
       }

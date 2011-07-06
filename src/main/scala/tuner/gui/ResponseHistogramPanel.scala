@@ -43,7 +43,7 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
     yAxisTicks = List(minY, (minY+maxY)/2, maxY)
     val endTime = System.currentTimeMillis
     //println("resp histo setup: " + (endTime-startTime) + "ms")
-    publish(new ReadyToDraw(this))
+    //publish(new ReadyToDraw(this))
   }
 
   override def visible_=(v:Boolean) = {
