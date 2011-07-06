@@ -42,7 +42,7 @@ case class ProjConfig(
   var ignoreFields:List[String],
   var gpModels:List[GpSpecification],
   buildInBackground:Boolean,
-  currentVis:VisInfo,
+  var currentVis:VisInfo,
   currentRegion:RegionSpecification,
   history:Option[HistorySpecification]
 )
@@ -381,6 +381,9 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   save()
 
   override def save(savePath:String) : Unit = {
+    // Update the view info
+    config.currentVis = viewInfo.toJson
+
     super.save(savePath)
 
     // Save the model samples

@@ -99,26 +99,26 @@ class ViewInfo(project:Viewable) {
   }
 
   def toJson = {
+    val sliceList = currentSlice.map {case (fld,v) => 
+      SliceSpecification(fld, v)
+    } toList
+    val zoomList = currentZoom.dimNames.map {fld =>
+      ZoomSpecification(fld, currentZoom.min(fld), currentZoom.max(fld))
+    } toList
     val strMetric = currentMetric match {
       case ValueMetric => "value"
       case ErrorMetric => "error"
       case GainMetric => "gain"
     }
 
-    ("currentSlice" -> (currentSlice.map {case (fld,v) =>
-      ("name" -> fld) ~
-      ("value" -> v)
-    }).toList) ~
-    ("currentZoom" -> (currentZoom.dimNames.map {fld =>
-      ("name" -> fld) ~
-      ("lowValue" -> currentZoom.min(fld)) ~
-      ("highValue" -> currentZoom.max(fld))
-    }).toList) ~
-    ("response1" -> response1View) ~
-    ("response2" -> response2View) ~
-    ("currentMetric" -> strMetric) ~
-    ("showSampleLine" -> showSampleLine) ~
-    ("showRegion" -> showRegion)
+    VisInfo(
+      sliceList,
+      zoomList,
+      response1View,
+      response2View,
+      strMetric,
+      showSampleLine,
+      showRegion)
   }
 }
 
