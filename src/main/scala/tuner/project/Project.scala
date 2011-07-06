@@ -139,13 +139,6 @@ sealed abstract class Project(config:ProjConfig) {
    */
   def next : Project
 
-/*
-    if(modelSamples.numRows > 0) {
-      val filepath = Path.join(savePath, Config.respSampleFilename)
-      modelSamples.toCsv(filepath)
-    }
-*/
-
   val name = config.name
 
   val scriptPath = config.scriptPath
@@ -222,7 +215,7 @@ class RunningSamples(config:ProjConfig, val path:String,
   
   def statusString = 
     "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
-
+  
   def currentTime = sampleRunner match {
     case Some(sr) => sr.totalSamples - sr.unrunSamples
     case None     => 0
