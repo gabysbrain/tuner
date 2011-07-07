@@ -2,8 +2,10 @@ package tuner.gui
 
 import scala.swing.BorderPanel
 import scala.swing.CheckBox
+import scala.swing.ScrollPane
 import scala.swing.TextArea
 import scala.swing.event.ButtonClicked
+import scala.swing.event.UIElementResized
 
 class HideableConsole extends BorderPanel {
   val hideButton = new CheckBox("Show Console") {
@@ -13,16 +15,19 @@ class HideableConsole extends BorderPanel {
     editable = false
   }
 
-  console.visible = hideButton.selected
-
   listenTo(hideButton)
 
+  val scrollConsole = new ScrollPane {
+    contents = console
+    visible = hideButton.selected
+  }
   layout(hideButton) = BorderPanel.Position.North
-  layout(console) = BorderPanel.Position.Center
+  layout(scrollConsole) = BorderPanel.Position.Center
 
   reactions += {
     case ButtonClicked(`hideButton`) =>
-      console.visible = hideButton.selected
+      scrollConsole.visible = hideButton.selected
+      publish(UIElementResized(this))
   }
 
   def text_=(t:String) = console.text = t

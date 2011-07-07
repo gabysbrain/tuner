@@ -155,6 +155,10 @@ abstract class P5Panel (
                                   MouseButton(mouseButton))
       }
 
+      override def mouseReleased = {
+        P5Panel.this.mouseReleased(mouseX, mouseY, MouseButton(mouseButton))
+      }
+
       override def mouseMoved = {
         P5Panel.this.mouseMoved(pmouseX, pmouseY, 
                                 mouseX, mouseY,
@@ -241,6 +245,7 @@ abstract class P5Panel (
                  mouseX:Int, mouseY:Int,
                  button:MouseButton.Value) = {}
   def mousePressed(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
+  def mouseReleased(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
 
   def keyPressed(key:Char) = {}
 

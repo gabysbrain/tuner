@@ -60,15 +60,15 @@ class PlotControlsPanel(project:Viewable)
 
   reactions += {
     case SelectionChanged(`resp1Combo`) => resp1Combo.selection.item match {
-      case "None" => project.viewInfo.response1View = None
-      case x      => project.viewInfo.response1View = Some(x)
+        case "None" => project.viewInfo.response1View = None
+        case x      => project.viewInfo.response1View = Some(x)
+      }
       publish(new ValueChanged(PlotControlsPanel.this))
-    }
     case SelectionChanged(`resp2Combo`) => resp2Combo.selection.item match {
-      case "None" => project.viewInfo.response2View = None
-      case x      => project.viewInfo.response2View = Some(x)
+        case "None" => project.viewInfo.response2View = None
+        case x      => project.viewInfo.response2View = Some(x)
+      }
       publish(new ValueChanged(PlotControlsPanel.this))
-    }
   }
 
   val (slicePanel, zoomPanel) = {

@@ -92,11 +92,9 @@ class SampleRunner(project:RunningSamples) extends Actor {
       val bufferedReader = new java.io.BufferedReader(streamReader)
       var line:String = null
       while({line = bufferedReader.readLine; line != null}){
-        println("here " + line)
         project ! ConsoleLine(line)
       }
       bufferedReader.close
-      println("done reading")
     }
   }
 

@@ -9,6 +9,7 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ProgressBar
 import scala.swing.event.ButtonClicked
+import scala.swing.event.UIElementResized
 
 import tuner.ConsoleLine
 import tuner.Progress
@@ -38,6 +39,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
 
   listenTo(backgroundButton)
   listenTo(stopButton)
+  listenTo(console)
 
   contents = new BoxPanel(Orientation.Vertical) {
     contents += new BoxPanel(Orientation.Horizontal) {
@@ -64,6 +66,8 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
     case ButtonClicked(`stopButton`) => 
       project.stop
       close
+    case UIElementResized(_) =>
+      this.pack
   }
 
   val progressListener = actor {
@@ -81,6 +85,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   }
   project.addListener(progressListener)
   project.start
+  this.pack
 
   def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {
     if(ok) {

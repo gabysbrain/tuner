@@ -114,11 +114,14 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(regionGlyphButton)
   listenTo(sampleLineGlyphButton)
   listenTo(paretoPanel)
+  listenTo(controlPanel.controlsTab)
   listenTo(controlPanel.historyTab)
   listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
   listenTo(plotControls)
 
+  val controlsTab = controlPanel.controlsTab
+  val localTab = controlPanel.localTab
   reactions += {
     case CandidateChanged(_, newCand) =>
       project.updateCandidates(newCand)
@@ -134,16 +137,25 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case HistoryAdd(_, sliceInfo) =>
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
+    case ValueChanged(`controlsTab`) =>
+      mainPlotPanel.redraw
+    case ValueChanged(`localTab`) =>
+      mainPlotPanel.redraw
     case ButtonClicked(`mainResponseButton`) =>
       project.viewInfo.currentMetric = ViewInfo.ValueMetric
+      mainPlotPanel.redraw
     case ButtonClicked(`errResponseButton`) =>
       project.viewInfo.currentMetric = ViewInfo.ErrorMetric
+      mainPlotPanel.redraw
     case ButtonClicked(`gainResponseButton`) =>
       project.viewInfo.currentMetric = ViewInfo.GainMetric
+      mainPlotPanel.redraw
     case ButtonClicked(`sampleLineGlyphButton`) =>
       project.viewInfo.showSampleLine = sampleLineGlyphButton.selected
+      mainPlotPanel.redraw
     case ButtonClicked(`regionGlyphButton`) =>
       project.viewInfo.showRegion = regionGlyphButton.selected
+      mainPlotPanel.redraw
   }
 
   // Update which metric we're looking at

@@ -37,6 +37,7 @@ class LocalPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
         case ValueChanged(`slider`) => 
           project.region.setRadius(fld, slider.value)
           statsTable.updateStats
+          publish(new ValueChanged(LocalPanel.this))
       }
       (fld, slider)
     }

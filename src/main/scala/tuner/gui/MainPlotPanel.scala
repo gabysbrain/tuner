@@ -86,8 +86,16 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                xDim:(String,(Float,Float)), 
                yDim:(String,(Float,Float)), 
                slice:Map[String,Float]) : Matrix2D = {
-    val sample = model.sampleSlice(xDim, yDim, slice.toList, 
-                                   project.viewInfo.estimateSampleDensity)
+    // Progressive rendering
+    val idealSize = project.viewInfo.estimateSampleDensity
+    /*
+    val sampleSize = if(mouseDown) {
+      math.max(idealSize / 10, 4)
+    } else {
+      idealSize
+    }
+    */
+    val sample = model.sampleSlice(xDim, yDim, slice.toList, idealSize)
     val data = project.viewInfo.currentMetric match {
       case ViewInfo.ValueMetric => sample._1
       case ViewInfo.ErrorMetric => sample._2
@@ -98,10 +106,14 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
 
   override def setup = {
     super.setup
-    frameRate = 30
+    //frameRate = 30
+    loop = false
   }
 
+  def redraw = applet.loop
+
   def draw = {
+    loop = false
 
     // Need to clear the font cache when resizing.  
     // Otherwise wakiness will ensue
@@ -398,6 +410,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
       //val (mouseX, mouseY) = mousePos
       handleBarMouse(mouseX, mouseY)
       handlePlotMouse(mouseX, mouseY)
+      redraw
     }
   }
 
@@ -406,13 +419,9 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
     // Now figure out if we need to deal with any mouse 
     // movements in the colorbars
     if(button == P5Panel.MouseButton.Left) {
-      //val (mouseX, mouseY) = mousePos
-      //if(keyCode == P5Panel.KeyCode.Shift) {
-        //publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
-      //} else {
-        handleBarMouse(mouseX, mouseY)
-        handlePlotMouse(mouseX, mouseY)
-      //}
+      handleBarMouse(mouseX, mouseY)
+      handlePlotMouse(mouseX, mouseY)
+      redraw
     }
   }
 

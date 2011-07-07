@@ -266,6 +266,7 @@ class RunningSamples(config:ProjConfig, val path:String,
         case x:ConsoleLine => 
           publish(x)
         case SamplesCompleted(num) => 
+          currentTime += num
           publish(Progress(currentTime, totalTime, statusString, true))
         case SamplingError(exitCode) =>
           val msg = "Sampler script exited with code: " + exitCode
