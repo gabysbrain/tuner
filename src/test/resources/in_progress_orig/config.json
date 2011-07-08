@@ -1,7 +1,7 @@
 {
   "name":"test2",
   "scriptPath":"run_samples.sh",
-  "buildInBackground":true,
+  "buildInBackground":false,
   "inputs":[{
     "name":"p1",
     "minRange":0.0,
