@@ -16,6 +16,8 @@ libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.8.1" % "1.5" % "test"
 
+libraryDependencies += "org.scala-tools.testing" % "scalacheck_2.8.1" % "1.8" % "test"
+
 scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
