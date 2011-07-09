@@ -16,5 +16,10 @@ object Util {
 
   def rangedFieldsType(size:Int) : Gen[List[(String,Float,Float)]] = 
     Gen.listOfN(size, rangedFieldType)
+
+  def pathType : Gen[String] = for {
+    len <- Gen.choose(1, 5)
+    paths <- Gen.listOfN(len, Arbitary.arbitrary[String])
+  } yield paths.map(_.replace(" ", "_")).reduceLeft(_+"/"+_) + ".sh"
 }
 
