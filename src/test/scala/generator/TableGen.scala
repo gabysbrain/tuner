@@ -7,7 +7,7 @@ import tuner.Table
 object TableGen {
   
   def tableType(rows:Int) : Gen[Table] = for {
-    d <- Gen.choose(1, 10)
+    d <- Gen.choose(2, 10)
     fields <- Util.fieldListType(d)
     vals <- Gen.listOfN(rows, Gen.listOfN(d, Arbitrary.arbitrary[Float]))
   } yield {

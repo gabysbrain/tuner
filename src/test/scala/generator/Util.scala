@@ -19,7 +19,7 @@ object Util {
 
   def pathType : Gen[String] = for {
     len <- Gen.choose(1, 5)
-    paths <- Gen.listOfN(len, Arbitary.arbitrary[String])
+    paths <- Gen.listOfN(len, Arbitrary.arbitrary[String])
   } yield paths.map(_.replace(" ", "_")).reduceLeft(_+"/"+_) + ".sh"
 }
 
