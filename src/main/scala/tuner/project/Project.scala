@@ -459,7 +459,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     gpModels.map {case (fld, model) =>
       val (est, err) = model.runSample(point)
       (fld -> (est.toFloat, err.toFloat, 
-               model.calcExpectedGain(est.toFloat, err.toFloat)))
+               model.calcExpectedGain(est, err).toFloat))
     }
   }
 
