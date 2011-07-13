@@ -57,6 +57,8 @@ class SamplerPanel(project:tuner.project.Sampler)
   listenTo(methodSelector.selection)
 
   var lastSamples:Int = numSamples
+  var lastSampleTime:Option[Long] = sampleTimeField.millis
+  var lastTotalTime:Option[Long] = ttlRunTimeField.millis
   var lastSelection:String = methodString
 
   // Keep track of all the text field update times
@@ -69,7 +71,7 @@ class SamplerPanel(project:tuner.project.Sampler)
   reactions += {
     case SelectionChanged(`methodSelector`) => 
       handleSamplesChanged
-    case EditDone(`sampleNumField`) =>
+    case ValueChanged(`sampleNumField`) =>
       handleSamplesChanged
       if(!internalChange) {
         sampleNumModTime = System.currentTimeMillis
@@ -80,25 +82,31 @@ class SamplerPanel(project:tuner.project.Sampler)
           updateSampleTime
         internalChange = false
       }
-    case EditDone(`sampleTimeField`) =>
-      if(!internalChange) {
-        sampleTimeModTime = System.currentTimeMillis
-        internalChange = true
-        if(sampleNumModTime > ttlTimeModTime)
-        updateTotalTime
-          else
-          updateNumSamples
-        internalChange = false
+    case ValueChanged(`sampleTimeField`) =>
+      if(lastSampleTime != sampleTimeField.millis) {
+        lastSampleTime = sampleTimeField.millis
+        if(!internalChange) {
+          sampleTimeModTime = System.currentTimeMillis
+          internalChange = true
+          if(sampleNumModTime > ttlTimeModTime)
+          updateTotalTime
+            else
+            updateNumSamples
+          internalChange = false
+        }
       }
-    case EditDone(`ttlRunTimeField`) => 
-      if(!internalChange) {
-        ttlTimeModTime = System.currentTimeMillis
-        internalChange = true
-        if(sampleNumModTime > sampleTimeModTime)
-          updateSampleTime
-        else
-          updateNumSamples
-        internalChange = false
+    case ValueChanged(`ttlRunTimeField`) => 
+      if(lastTotalTime != ttlRunTimeField.millis) {
+        lastTotalTime = ttlRunTimeField.millis
+        if(!internalChange) {
+          ttlTimeModTime = System.currentTimeMillis
+          internalChange = true
+          if(sampleNumModTime > sampleTimeModTime)
+            updateSampleTime
+          else
+            updateNumSamples
+          internalChange = false
+        }
       }
   }
 
@@ -123,8 +131,6 @@ class SamplerPanel(project:tuner.project.Sampler)
   }
 
   private def handleSamplesChanged = {
-    println("ls: " + lastSamples + " " + numSamples)
-    println("le: " + lastSelection + " " + methodString)
     // Only publish if something actually changed
     if(lastSamples != numSamples || lastSelection != methodString) {
       lastSamples = numSamples
