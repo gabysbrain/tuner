@@ -10,6 +10,7 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.TextField
+import scala.swing.event.EditDone
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
@@ -68,7 +69,7 @@ class SamplerPanel(project:tuner.project.Sampler)
   reactions += {
     case SelectionChanged(`methodSelector`) => 
       handleSamplesChanged
-    case ValueChanged(`sampleNumField`) =>
+    case EditDone(`sampleNumField`) =>
       handleSamplesChanged
       if(!internalChange) {
         sampleNumModTime = System.currentTimeMillis
@@ -79,7 +80,7 @@ class SamplerPanel(project:tuner.project.Sampler)
           updateSampleTime
         internalChange = false
       }
-    case ValueChanged(`sampleTimeField`) =>
+    case EditDone(`sampleTimeField`) =>
       if(!internalChange) {
         sampleTimeModTime = System.currentTimeMillis
         internalChange = true
@@ -89,7 +90,7 @@ class SamplerPanel(project:tuner.project.Sampler)
           updateNumSamples
         internalChange = false
       }
-    case ValueChanged(`ttlRunTimeField`) => 
+    case EditDone(`ttlRunTimeField`) => 
       if(!internalChange) {
         ttlTimeModTime = System.currentTimeMillis
         internalChange = true
@@ -122,6 +123,8 @@ class SamplerPanel(project:tuner.project.Sampler)
   }
 
   private def handleSamplesChanged = {
+    println("ls: " + lastSamples + " " + numSamples)
+    println("le: " + lastSelection + " " + methodString)
     // Only publish if something actually changed
     if(lastSamples != numSamples || lastSelection != methodString) {
       lastSamples = numSamples
