@@ -7,8 +7,8 @@ import tuner.Rgp
 
 object GpModelGen {
 
-  def gpModelType(n:Int) : Gen[GpModel] = for {
-    data <- TableGen.tableType(n)
+  def gpModelType : Gen[GpModel] = for {
+    data <- TableGen.tableType
     fields = data.fieldNames
     inD <- Gen.choose(1, fields.length-1)
     inFields = fields.take(inD)
