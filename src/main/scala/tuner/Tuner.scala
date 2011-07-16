@@ -5,6 +5,7 @@ import scala.swing.event._
 
 import java.io.File
 
+import tuner.gui.MainMenu
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
@@ -28,6 +29,7 @@ object Tuner extends SimpleSwingApplication {
     case WindowClosed(tw:tuner.gui.Window) => 
       //println(tw + " closing")
       openWindows -= tw
+      MainMenu.updateWindows
       //println(openWindows)
       //maybeShowProjectWindow
   }
@@ -79,6 +81,7 @@ object Tuner extends SimpleSwingApplication {
     //println("listening to " + tunerWin)
     openWindows += tunerWin
     //println(openWindows)
+    MainMenu.updateWindows
     super.listenTo(tunerWin)
     //maybeShowProjectWindow
   }
