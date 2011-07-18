@@ -1,6 +1,7 @@
 package tuner
 
 import scala.swing._
+import scala.swing.KeyStroke._
 import scala.swing.event._
 
 import java.io.File
@@ -32,6 +33,7 @@ object Tuner extends SimpleSwingApplication {
       MainMenu.updateWindows
       //println(openWindows)
       //maybeShowProjectWindow
+      if(openWindows.isEmpty) ProjectChooser.open
   }
 
   //def top = ProjectChooser
@@ -95,5 +97,6 @@ object Tuner extends SimpleSwingApplication {
       ProjectChooser.close
   }
   */
+
 }
 

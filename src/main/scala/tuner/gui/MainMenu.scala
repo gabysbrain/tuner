@@ -1,6 +1,7 @@
 package tuner.gui
 
 import scala.swing.Action
+import scala.swing.KeyStroke._
 import scala.swing.Menu
 import scala.swing.MenuBar
 import scala.swing.MenuItem
@@ -15,11 +16,14 @@ object MainMenu extends MenuBar {
   
   // File menu
   contents += new Menu("File") {
-    contents += new MenuItem("New Project…")
+    contents += new MenuItem(new Action("New Project...") {
+      accelerator = Some(CtrlKey('N'))
+      override def apply = Tuner.startNewProject
+    })
 
     contents += new Separator
 
-    contents += new MenuItem("Open Project…")
+    //contents += new MenuItem(Action("Open Project…") {Tuner.open})
     contents += new MenuItem("Recent Projects")
 
     contents += new Separator
@@ -29,7 +33,7 @@ object MainMenu extends MenuBar {
 
     contents += new Separator
 
-    contents += new MenuItem("Quit")
+    //contents += new MenuItem(Action("Quit") {Tuner.quit})
   }
 
   // Edit menu
@@ -52,6 +56,7 @@ object MainMenu extends MenuBar {
       ProjectChooser.open
     })
 
+    /*
     windowMenu.contents += new Separator
 
     windowMenu.contents += new MenuItem("Info Window")
@@ -59,6 +64,7 @@ object MainMenu extends MenuBar {
     windowMenu.contents += new MenuItem("Control Window")
     windowMenu.contents += new MenuItem("Candidate Points")
     windowMenu.contents += new MenuItem("History Browser")
+    */
 
     windowMenu.contents += new Separator
 
