@@ -17,6 +17,7 @@ object R {
 
   // Any special arguments to R go in this array
   val RARGS = List("--no-save", "--slave")
+  val RequiredPackages:Seq[String] = List("mlegp", "lhs", "labeling")
 
   print("loading R library...")
   try {

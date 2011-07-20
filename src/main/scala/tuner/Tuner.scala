@@ -49,6 +49,17 @@ object Tuner extends SimpleSwingApplication {
     window.open
   }
 
+  def openProject() : Unit = {
+    val fc = new FileChooser {
+      title = "Select Project"
+      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+    }
+    fc.showOpenDialog(null) match {
+      case FileChooser.Result.Approve => openProject(fc.selectedFile)
+      case _ =>
+    }
+  }
+
   def openProject(proj:Project) : Unit = {
     println("opening project")
     proj match {
@@ -77,6 +88,12 @@ object Tuner extends SimpleSwingApplication {
 
   def openProject(file:File) : Unit = {
     openProject(Project.fromFile(file.getAbsolutePath))
+  }
+
+  def saveCurrent : Unit = {
+  }
+
+  def saveCurrentAs : Unit = {
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {

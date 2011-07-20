@@ -1,10 +1,13 @@
 package tuner.gui
 
 import scala.swing.Action
+import scala.swing.CutAction
+import scala.swing.CopyAction
 import scala.swing.KeyStroke._
 import scala.swing.Menu
 import scala.swing.MenuBar
 import scala.swing.MenuItem
+import scala.swing.PasteAction
 import scala.swing.Separator
 
 import tuner.Tuner
@@ -17,30 +20,42 @@ object MainMenu extends MenuBar {
   // File menu
   contents += new Menu("File") {
     contents += new MenuItem(new Action("New Project...") {
-      accelerator = Some(CtrlKey('N'))
+      accelerator = Some(CommandKey('N'))
       override def apply = Tuner.startNewProject
     })
 
     contents += new Separator
 
-    //contents += new MenuItem(Action("Open Project…") {Tuner.open})
+    contents += new MenuItem(new Action("Open Project…") {
+      accelerator = Some(CommandKey('O'))
+      def apply() = Tuner.openProject
+    })
     contents += new MenuItem("Recent Projects")
 
     contents += new Separator
     
-    contents += new MenuItem("Save")
-    contents += new MenuItem("Save As…")
+    contents += new MenuItem(new Action("Save") {
+      accelerator = Some(CommandKey('S'))
+      override def apply = Tuner.saveCurrent
+    })
+    contents += new MenuItem(new Action("Save As…") {
+      accelerator = Some(ShiftCommandKey('S'))
+      override def apply = Tuner.saveCurrentAs
+    })
 
     contents += new Separator
 
-    //contents += new MenuItem(Action("Quit") {Tuner.quit})
+    contents += new MenuItem(new Action("Quit") {
+      accelerator = Some(CommandKey('Q'))
+      override def apply = Tuner.quit
+    })
   }
 
   // Edit menu
   contents += new Menu("Edit") {
-    contents += new MenuItem("Cut")
-    contents += new MenuItem("Copy")
-    contents += new MenuItem("Paste")
+    contents += new MenuItem(CutAction("Cut"))
+    contents += new MenuItem(CopyAction("Copy"))
+    contents += new MenuItem(PasteAction("Paste"))
   }
 
   // Window menu
@@ -70,7 +85,9 @@ object MainMenu extends MenuBar {
 
     // Add all the open windows
     Tuner.openWindows.foreach {window => 
-      windowMenu.contents += new MenuItem(window.project.name)
+      windowMenu.contents += new MenuItem(Action(window.project.name) {
+        window.toFront
+      })
     }
   }
 }

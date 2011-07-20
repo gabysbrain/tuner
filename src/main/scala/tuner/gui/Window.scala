@@ -15,7 +15,12 @@ abstract class Window(val project:Project) extends Frame {
     close
   }
 
-  override def closeOperation = {println("disposing " + this); dispose}
+  override def closeOperation = dispose
+
+  def toFront = {
+    visible = true
+    peer.toFront
+  }
 
 }
 

@@ -90,16 +90,7 @@ object ProjectChooser extends Frame {
       openButton.enabled = row != -1
   }
 
-  def openOtherProject = {
-    val fc = new FileChooser {
-      title = "Select Project"
-      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
-    }
-    fc.showOpenDialog(projectTable) match {
-      case FileChooser.Result.Approve => Tuner.openProject(fc.selectedFile)
-      case _ =>
-    }
-  }
+  def openOtherProject = Tuner.openProject
 
   def openSelectedProject = {
     val row = projectTable.selection.rows.leadIndex
