@@ -209,7 +209,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
             if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
-            //println("r1 draw time: " + (endTime-startTime) + "ms")
+            println("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
@@ -218,7 +218,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
             if(project.viewInfo.showRegion)
               drawMask(xFld, yFld)
             val endTime = System.currentTimeMillis
-            //println("r2 draw time: " + (endTime-startTime) + "ms")
+            println("r2 draw time: " + (endTime-startTime) + "ms")
           }
         } else {
           drawAxes(xRange)

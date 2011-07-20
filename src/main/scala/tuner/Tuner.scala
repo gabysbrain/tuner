@@ -1,10 +1,12 @@
 package tuner
 
 import scala.swing._
+import scala.swing.KeyStroke._
 import scala.swing.event._
 
 import java.io.File
 
+import tuner.gui.MainMenu
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
@@ -28,8 +30,10 @@ object Tuner extends SimpleSwingApplication {
     case WindowClosed(tw:tuner.gui.Window) => 
       //println(tw + " closing")
       openWindows -= tw
+      MainMenu.updateWindows
       //println(openWindows)
       //maybeShowProjectWindow
+      if(openWindows.isEmpty) ProjectChooser.open
   }
 
   //def top = ProjectChooser
@@ -79,6 +83,7 @@ object Tuner extends SimpleSwingApplication {
     //println("listening to " + tunerWin)
     openWindows += tunerWin
     //println(openWindows)
+    MainMenu.updateWindows
     super.listenTo(tunerWin)
     //maybeShowProjectWindow
   }
@@ -92,5 +97,6 @@ object Tuner extends SimpleSwingApplication {
       ProjectChooser.close
   }
   */
+
 }
 

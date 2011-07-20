@@ -92,13 +92,13 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   }
 
   def maxGain(range:DimRanges):Float = {
-    var mx:Float = Float.MinValue
+    var mx = Double.MinValue
     Sampler.lhc(range, Config.respHistogramSampleDensity, pt => {
       val (est, err) = runSample(pt)
-      val expgain = calcExpectedGain(est.toFloat, err.toFloat)
+      val expgain = calcExpectedGain(est, err)
       mx = math.max(mx, expgain)
     })
-    mx
+    mx.toFloat
   }
 
   // Store the most recently seen max value for the function
@@ -111,30 +111,43 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
                   numSamples:Int)
       : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
     
-    val filteredSlice = slices.filter {x =>
-      x._1 != rowDim._1 && x._1 != colDim._1
+    val arrSlice = Array.fill(dims.length)(0.0)
+    val sliceMap = slices.toMap
+    dims.zipWithIndex.foreach {case (fld, i) =>
+      arrSlice(i) = sliceMap(fld)
     }
+    val xDim = dims.indexOf(rowDim._1)
+    val yDim = dims.indexOf(colDim._1)
+
     // generate one matrix from scratch and then copy the rest
     val startTime = System.currentTimeMillis
     val response = Sampler.regularSlice(rowDim, colDim, numSamples)
     val errors = new Matrix2D(response.rowIds, response.colIds)
+    val gains = new Matrix2D(response.rowIds, response.colIds)
 
     response.rowIds.zipWithIndex.foreach {tmpx =>
       val (xval,x) = tmpx
       response.colIds.zipWithIndex.foreach {tmpy =>
         val (yval, y) = tmpy
-        val pt = (rowDim._1, xval) :: (colDim._1, yval) :: filteredSlice
-        val (est, err) = runSample(pt)
+        arrSlice(xDim) = xval
+        arrSlice(yDim) = yval
+        val (est, err) = estimatePoint(arrSlice)
         response.set(x, y, est.toFloat)
         errors.set(x, y, err.toFloat)
+        val expgain = calcExpectedGain(est, err)
+        if(!expgain.isNaN) {
+          gains.set(x, y, expgain.toFloat)
+        } else {
+          gains.set(x, y, 0f)
+        }
       }
     }
 
     val endTime = System.currentTimeMillis
-    //println("pred time: " + (endTime - startTime) + "ms")
+    println("pred time (n=" + numSamples + "): " + (endTime - startTime) + "ms")
     ((respDim, response), 
      (Config.errorField, errors), 
-     (Config.gainField, calcExpectedGain(response, errors)))
+     (Config.gainField, gains))
   }
 
   def sampleTable(samples:Table) : Table = {
@@ -179,9 +192,9 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
 
   // Compute the correlation wrt each design point
   private def estimatePoint(point:Array[Double]) : (Double,Double) = {
-    var ptCors = design.map({corrFunction(_,point)})
-    var est = mean + sig2 * LinAlg.dotProd(ptCors, corrResponses)
-    var err = sig2 * (1 - sig2 * LinAlg.dotProd(ptCors, 
+    val ptCors = design.map({corrFunction(_,point)})
+    val est = mean + sig2 * LinAlg.dotProd(ptCors, corrResponses)
+    val err = sig2 * (1 - sig2 * LinAlg.dotProd(ptCors, 
                                    LinAlg.dotProd(rInverse, ptCors)))
     if(err < 0) (est, 0)
     else        (est, math.sqrt(err))
@@ -218,6 +231,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     pt.zip(outVals).map {case ((fld,_),v2) => (fld, v2)}
   }
 
+  /*
   def calcExpectedGain(ests:Matrix2D, errs:Matrix2D) : Matrix2D = {
     val funcMax = ests.max
     val gainMatrix = new Matrix2D(ests.rowIds, ests.colIds)
@@ -237,6 +251,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
     gainMatrix
   }
+  */
 
   // Compute the density for a set of dimensions
   // This is assuming the GP model
@@ -287,20 +302,20 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     computeAnova
   }
 
-  def calcExpectedGain(est:Float, stddev:Float) : Float = {
+  def calcExpectedGain(est:Double, stddev:Double) : Double = {
     // These will come in handy later
     def erf(v:Double) : Double = {
       val a = (8*(math.Pi - 3)) / (3*math.Pi*(4 - math.Pi))
       val tmp = (4 / math.Pi + a * v * v) / (1 + a * v * v)
       v/math.abs(v) * math.sqrt(1 - math.exp(-(v*v) * tmp))
     }
-    def pdf(v:Float) : Double = 1/(2*math.Pi) * math.exp(-(v*v) / 2)
-    def cdf(v:Float) : Double = 0.5 * (1 + erf(v / math.sqrt(2)))
+    def pdf(v:Double) : Double = 1/(2*math.Pi) * math.exp(-(v*v) / 2)
+    def cdf(v:Double) : Double = 0.5 * (1 + erf(v / math.sqrt(2)))
 
     val curFuncMax = funcMax
-    val t1 = (est - curFuncMax).toFloat
-    val t2 = cdf((est - curFuncMax) / stddev).toFloat
-    val t3 = stddev * pdf((est - curFuncMax) / stddev).toFloat
+    val t1 = (est - curFuncMax)
+    val t2 = cdf((est - curFuncMax) / stddev)
+    val t3 = stddev * pdf((est - curFuncMax) / stddev)
 
     //println("t1 " + t1 + " t2 " + t2 + " t3 " + t3)
     math.abs(t1 * t2 + t3)
