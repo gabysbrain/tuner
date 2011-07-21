@@ -20,6 +20,7 @@ object Tuner extends SimpleSwingApplication {
     // Set up the menu bar for a mac
     System.setProperty("apple.laf.useScreenMenuBar", "true")
     System.setProperty("apple.awt.showGrowBox", "true")
+    System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
     super.main(args)
   }

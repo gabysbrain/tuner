@@ -43,6 +43,7 @@
   <packs>
     <pack name="base" required="yes">
       <description>Base Files</description>
+      <file src="target/Tuner-assembly-0.9.jar" targetdir="$INSTALL_PATH"/>
     </pack>
   </packs>
 
