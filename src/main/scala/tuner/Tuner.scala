@@ -1,6 +1,7 @@
 package tuner
 
 import scala.swing._
+import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 
@@ -93,6 +94,16 @@ object Tuner extends SimpleSwingApplication {
 
   def saveProjectAs(project:Project) : Unit = {
     println("here")
+    val fc = new FileChooser {
+      title = "Select Save Path"
+      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+    }
+    fc.showOpenDialog(null) match {
+      case FileChooser.Result.Approve =>
+        val path = fc.selectedFile.getAbsolutePath
+        project.save(path)
+      case _ =>
+    }
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {

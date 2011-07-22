@@ -83,8 +83,10 @@ class MainMenu(project:Option[Project]) extends MenuBar {
       case Some(proj) => 
         contents += new MenuItem(new Action("Save") {
           accelerator = Some(CommandKey('S'))
-          //override def apply = proj.save()
-          override def apply = {}
+          override def apply = proj match {
+            case p:Saved => p.save()
+            case _ => Tuner.saveProjectAs(proj)
+          }
         })
         contents += new MenuItem(new Action("Save As…") {
           accelerator = Some(ShiftCommandKey('S'))
