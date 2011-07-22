@@ -1,8 +1,10 @@
 package tuner.gui
 
+import scala.collection.mutable.Buffer
 import scala.collection.mutable.ListBuffer
 
 import scala.swing.Action
+import scala.swing.Component
 import scala.swing.CutAction
 import scala.swing.CopyAction
 import scala.swing.KeyStroke._
@@ -13,6 +15,8 @@ import scala.swing.PasteAction
 import scala.swing.Separator
 
 import tuner.Tuner
+import tuner.project.Project
+import tuner.project.Saved
 
 object WindowMenu {
   val menus = new ListBuffer[MainMenu]()
@@ -53,8 +57,11 @@ object WindowMenu {
 /**
  * The main menu for the application
  */
-class MainMenu extends MenuBar {
+class MainMenu(project:Option[Project]) extends MenuBar {
   
+  def this(p:Project) = this(Some(p))
+  def this() = this(None)
+
   // File menu
   contents += new Menu("File") {
     contents += new MenuItem(new Action("New Project...") {
@@ -72,14 +79,31 @@ class MainMenu extends MenuBar {
 
     contents += new Separator
     
-    contents += new MenuItem(new Action("Save") {
-      accelerator = Some(CommandKey('S'))
-      override def apply = Tuner.saveCurrent
-    })
-    contents += new MenuItem(new Action("Save As…") {
-      accelerator = Some(ShiftCommandKey('S'))
-      override def apply = Tuner.saveCurrentAs
-    })
+    project match {
+      case Some(proj) => 
+        contents += new MenuItem(new Action("Save") {
+          accelerator = Some(CommandKey('S'))
+          //override def apply = proj.save()
+          override def apply = {}
+        })
+        contents += new MenuItem(new Action("Save As…") {
+          accelerator = Some(ShiftCommandKey('S'))
+          override def apply = Tuner.saveProjectAs(proj)
+        })
+      case None       =>
+        contents += new MenuItem(new Action("Save") {
+          accelerator = Some(CommandKey('S'))
+          override def apply = {}
+        }) {
+          enabled = false
+        }
+        contents += new MenuItem(new Action("Save As…") {
+          accelerator = Some(ShiftCommandKey('S'))
+          override def apply = {}
+        }) {
+          enabled = false
+        }
+    }
 
     contents += new Separator
 

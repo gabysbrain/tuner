@@ -17,15 +17,11 @@ object KeyStroke {
     def character : java.lang.Character = new java.lang.Character(key)
   }
   case class CommandKey(key:Char) extends BaseKey {
-    override val mask = if(isMac) InputEvent.META_MASK
-                        else      InputEvent.CTRL_MASK
+    override val mask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     def character : java.lang.Character = new java.lang.Character(key)
   }
   case class ShiftCommandKey(key:Char) extends BaseKey {
-    override val mask = InputEvent.SHIFT_MASK | (
-      if(isMac) InputEvent.META_MASK
-      else      InputEvent.CTRL_MASK
-    )
+    override val mask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK;
     def character : java.lang.Character = new java.lang.Character(key)
   }
   

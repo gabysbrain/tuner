@@ -18,7 +18,7 @@ object Tuner extends SimpleSwingApplication {
 
   override def main(args:Array[String]) = {
     // Set up the menu bar for a mac
-    //System.setProperty("apple.laf.useScreenMenuBar", "true")
+    System.setProperty("apple.laf.useScreenMenuBar", "true")
     System.setProperty("apple.awt.showGrowBox", "true")
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
@@ -91,10 +91,8 @@ object Tuner extends SimpleSwingApplication {
     openProject(Project.fromFile(file.getAbsolutePath))
   }
 
-  def saveCurrent : Unit = {
-  }
-
-  def saveCurrentAs : Unit = {
+  def saveProjectAs(project:Project) : Unit = {
+    println("here")
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {
