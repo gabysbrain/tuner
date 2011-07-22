@@ -17,7 +17,7 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
   
   title = "Select Samples"
 
-  menuBar = MainMenu
+  menuBar = new MainMenu
 
   val prevButton = new Button("Prev")
   val clusterButton = new Button("Save for Cluster")

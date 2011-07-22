@@ -14,6 +14,8 @@ libraryDependencies += "org.apache.commons" % "commons-math" % "2.2"
 
 libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
+//libraryDependencies += "com.nativelibs4java" % "javacl" % "1.0.0-RC1"
+
 libraryDependencies += "org.scalatest" % "scalatest_2.8.1" % "1.5" % "test"
 
 libraryDependencies += "org.scala-tools.testing" % "scalacheck_2.8.1" % "1.8" % "test"

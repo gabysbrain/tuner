@@ -1,5 +1,7 @@
 package tuner.gui
 
+import scala.collection.mutable.ListBuffer
+
 import scala.swing.Action
 import scala.swing.CutAction
 import scala.swing.CopyAction
@@ -12,10 +14,46 @@ import scala.swing.Separator
 
 import tuner.Tuner
 
+object WindowMenu {
+  val menus = new ListBuffer[MainMenu]()
+
+  def updateWindows : Unit = menus.foreach(updateWindows(_))
+
+  def updateWindows(menu:MainMenu) : Unit = {
+    
+    val windowMenu = menu.windowMenu
+    windowMenu.contents.clear
+
+    windowMenu.contents += new MenuItem(Action("Project Chooser…") {
+      ProjectChooser.open
+    })
+
+    /*
+    windowMenu.contents += new Separator
+
+    windowMenu.contents += new MenuItem("Info Window")
+    windowMenu.contents += new MenuItem("Local Region Analyzer")
+    windowMenu.contents += new MenuItem("Control Window")
+    windowMenu.contents += new MenuItem("Candidate Points")
+    windowMenu.contents += new MenuItem("History Browser")
+    */
+
+    windowMenu.contents += new Separator
+
+    // Add all the open windows
+    Tuner.openWindows.foreach {window => 
+      windowMenu.contents += new MenuItem(Action(window.project.name) {
+        window.toFront
+      })
+    }
+  }
+
+}
+
 /**
  * The main menu for the application
  */
-object MainMenu extends MenuBar {
+class MainMenu extends MenuBar {
   
   // File menu
   contents += new Menu("File") {
@@ -61,34 +99,9 @@ object MainMenu extends MenuBar {
   // Window menu
   val windowMenu = new Menu("Window")
   contents += windowMenu
-  updateWindows
+  WindowMenu.updateWindows(this)
 
-  def updateWindows = {
-    
-    windowMenu.contents.clear
+  WindowMenu.menus += this
 
-    windowMenu.contents += new MenuItem(Action("Project Chooser…") {
-      ProjectChooser.open
-    })
-
-    /*
-    windowMenu.contents += new Separator
-
-    windowMenu.contents += new MenuItem("Info Window")
-    windowMenu.contents += new MenuItem("Local Region Analyzer")
-    windowMenu.contents += new MenuItem("Control Window")
-    windowMenu.contents += new MenuItem("Candidate Points")
-    windowMenu.contents += new MenuItem("History Browser")
-    */
-
-    windowMenu.contents += new Separator
-
-    // Add all the open windows
-    Tuner.openWindows.foreach {window => 
-      windowMenu.contents += new MenuItem(Action(window.project.name) {
-        window.toFront
-      })
-    }
-  }
 }
 

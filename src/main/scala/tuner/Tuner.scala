@@ -6,7 +6,7 @@ import scala.swing.event._
 
 import java.io.File
 
-import tuner.gui.MainMenu
+import tuner.gui.WindowMenu
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
@@ -18,7 +18,7 @@ object Tuner extends SimpleSwingApplication {
 
   override def main(args:Array[String]) = {
     // Set up the menu bar for a mac
-    System.setProperty("apple.laf.useScreenMenuBar", "true")
+    //System.setProperty("apple.laf.useScreenMenuBar", "true")
     System.setProperty("apple.awt.showGrowBox", "true")
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
@@ -31,7 +31,7 @@ object Tuner extends SimpleSwingApplication {
     case WindowClosed(tw:tuner.gui.Window) => 
       //println(tw + " closing")
       openWindows -= tw
-      MainMenu.updateWindows
+      WindowMenu.updateWindows
       //println(openWindows)
       //maybeShowProjectWindow
       if(openWindows.isEmpty) ProjectChooser.open
@@ -101,7 +101,7 @@ object Tuner extends SimpleSwingApplication {
     //println("listening to " + tunerWin)
     openWindows += tunerWin
     //println(openWindows)
-    MainMenu.updateWindows
+    WindowMenu.updateWindows
     super.listenTo(tunerWin)
     //maybeShowProjectWindow
   }

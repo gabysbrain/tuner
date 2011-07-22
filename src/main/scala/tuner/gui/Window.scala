@@ -15,7 +15,13 @@ abstract class Window(val project:Project) extends Frame {
     close
   }
 
-  override def closeOperation = dispose
+  override def closeOperation = {
+    menuBar match {
+      case mb:tuner.gui.MainMenu => WindowMenu.menus -= mb
+      case _ =>
+    }
+    dispose
+  }
 
   def toFront = {
     visible = true

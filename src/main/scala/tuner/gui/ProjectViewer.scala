@@ -27,7 +27,7 @@ import tuner.project.Viewable
 class ProjectViewer(project:Viewable) extends Window(project) {
   
   title = project.name
-  menuBar = MainMenu
+  menuBar = new MainMenu
 
   val mainResponseButton = new RadioButton("Value")
   val errResponseButton = new RadioButton("Error")

@@ -25,7 +25,7 @@ object ProjectChooser extends Frame {
 
   title = "Select Project"
 
-  menuBar = MainMenu
+  menuBar = new MainMenu
   centerOnScreen
 
   // All the buttons

@@ -26,7 +26,7 @@ class ProjectInfoWindow extends Frame {
 
   title = "New Project"
 
-  menuBar = MainMenu
+  menuBar = new MainMenu
 
   resizable = true
 
