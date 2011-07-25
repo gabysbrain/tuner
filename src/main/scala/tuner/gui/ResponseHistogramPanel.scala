@@ -53,35 +53,40 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
 
   def draw = {
     val startTime = System.currentTimeMillis
+    val viewport = peer.getVisibleRect
 
-    val plotWidth = width - (Config.plotSpacing * 2) - Config.axisSize
-    val plotHeight = height - (Config.plotSpacing * 2) - 
-                              Config.axisSize - 
-                              Config.respHistogramHandleSize._2
-    yAxisBounds = Rectangle((Config.plotSpacing, Config.plotSpacing),
-                            Config.axisSize, plotHeight)
-    plotBounds = Rectangle((yAxisBounds.maxX, Config.plotSpacing),
-                           plotWidth, plotHeight)
-    xAxisBounds = Rectangle((plotBounds.minX, plotBounds.maxY),
-                            plotWidth, Config.axisSize)
-    sliderBounds = Rectangle((xAxisBounds.minX, xAxisBounds.minY),
-                             plotWidth, Config.respHistogramHandleSize._2)
-
-    applet.background(Config.backgroundColor)
-    histogram.draw(this, plotBounds.minX, plotBounds.minY, 
-                   plotBounds.width, plotBounds.height, 
-                   counts.values.map(_.toFloat).toList,
-                   yAxisTicks.min, yAxisTicks.max)
-        // Figure out how to draw the y axis
-    //val maxCount = counts.values.max
-    yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
-                     yAxisBounds.width, yAxisBounds.height,
-                     "Pct", yAxisTicks)
-    //val xTicks = minResponse +: h.breaks :+ maxResponse
-    xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
-                     xAxisBounds.width, xAxisBounds.height,
-                     responseField, xAxisTicks)
-    drawSlider
+    if(viewport.width >= width && viewport.height >= height) {
+      val plotWidth = width - (Config.plotSpacing * 2) - Config.axisSize
+      val plotHeight = height - (Config.plotSpacing * 2) - 
+                                Config.axisSize - 
+                                Config.respHistogramHandleSize._2
+      yAxisBounds = Rectangle((Config.plotSpacing, Config.plotSpacing),
+                              Config.axisSize, plotHeight)
+      plotBounds = Rectangle((yAxisBounds.maxX, Config.plotSpacing),
+                             plotWidth, plotHeight)
+      xAxisBounds = Rectangle((plotBounds.minX, plotBounds.maxY),
+                              plotWidth, Config.axisSize)
+      sliderBounds = Rectangle((xAxisBounds.minX, xAxisBounds.minY),
+                               plotWidth, Config.respHistogramHandleSize._2)
+  
+      applet.background(Config.backgroundColor)
+      histogram.draw(this, plotBounds.minX, plotBounds.minY, 
+                     plotBounds.width, plotBounds.height, 
+                     counts.values.map(_.toFloat).toList,
+                     yAxisTicks.min, yAxisTicks.max)
+          // Figure out how to draw the y axis
+      //val maxCount = counts.values.max
+      yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
+                       yAxisBounds.width, yAxisBounds.height,
+                       "Pct", yAxisTicks)
+      //val xTicks = minResponse +: h.breaks :+ maxResponse
+      xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
+                       xAxisBounds.width, xAxisBounds.height,
+                       responseField, xAxisTicks)
+      drawSlider
+    } else {
+      visible = false
+    }
     val endTime = System.currentTimeMillis
     //println("hist draw time: " + (endTime - startTime) + "ms")
   }
