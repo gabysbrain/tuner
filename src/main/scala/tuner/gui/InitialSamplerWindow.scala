@@ -45,12 +45,16 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
   }
 
   listenTo(runButton)
+  listenTo(clusterButton)
   listenTo(samplerPanel)
 
   reactions += {
     case ButtonClicked(`runButton`) =>
       project.save(Path.join(saveDir, project.name))
       openNextStage
+    case ButtonClicked(`clusterButton`) =>
+      samplerPanel.saveSamples
+      this.close
     case ValueChanged(`samplerPanel`) =>
       project.newSamples(samplerPanel.numSamples, samplerPanel.method)
       samplerPanel.splomPanel.redraw

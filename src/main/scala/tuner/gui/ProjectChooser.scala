@@ -23,9 +23,12 @@ import tuner.project.Project
  */
 object ProjectChooser extends Frame {
 
+  var projects = Project.recent
+
   title = "Select Project"
 
-  menuBar = new MainMenu
+  val myMenu = new MainMenu
+  menuBar = myMenu
   centerOnScreen
 
   // All the buttons
@@ -38,20 +41,20 @@ object ProjectChooser extends Frame {
   }
 
   // The project list table
-  val projectTable = new Table {
+  val projectTableModel = new AbstractTableModel {
     val columnNames = List("Name", "Last Modified", "Status")
-    val rows = Project.recent
 
-    model = new AbstractTableModel {
-      override def getColumnName(col:Int) = columnNames(col)
-      def getColumnCount = columnNames.length
-      def getRowCount = rows.size
-      def getValueAt(row:Int, col:Int) = col match {
-        case 0 => rows(row).name
-        case 1 => rows(row).modificationDate
-        case 2 => rows(row).statusString
-      }
+    override def getColumnName(col:Int) = columnNames(col)
+    def getColumnCount = columnNames.length
+    def getRowCount = projects.size
+    def getValueAt(row:Int, col:Int) = col match {
+      case 0 => projects(row).name
+      case 1 => projects(row).modificationDate
+      case 2 => projects(row).statusString
     }
+  }
+  val projectTable = new Table {
+    model = projectTableModel
   }
 
   // Set up the rest of the UI
@@ -81,20 +84,38 @@ object ProjectChooser extends Frame {
   listenTo(openButton)
   listenTo(projectTable.selection)
 
+  val importSamplesItem = myMenu.importSamples
   reactions += {
     case ButtonClicked(`newProjectButton`) => Tuner.startNewProject
     case ButtonClicked(`openOtherButton`) => openOtherProject
     case ButtonClicked(`openButton`) => openSelectedProject
+    case ButtonClicked(`importSamplesItem`) =>
+      projects.foreach {proj => proj match {
+        case sp:tuner.project.Saved => sp.save()
+        case _ =>
+      }}
+      projects = Project.recent
+      projectTableModel.fireTableDataChanged
     case TableRowsSelected(`projectTable`, _, _) =>
       val row = projectTable.selection.rows.leadIndex
       openButton.enabled = row != -1
+      importSamplesItem.enabled = false
+      if(row != -1) {
+        val proj = projects(row)
+        proj match {
+          case p:tuner.project.Sampler => 
+            importSamplesItem.action = MainMenu.ImportSamplesAction(p)
+            importSamplesItem.enabled = true
+          case _ =>
+        }
+      }
   }
 
   def openOtherProject = Tuner.openProject
 
   def openSelectedProject = {
     val row = projectTable.selection.rows.leadIndex
-    val proj = Project.recent(row)
+    val proj = projects(row)
     Tuner.openProject(proj)
   }
 

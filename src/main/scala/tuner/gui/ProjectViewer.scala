@@ -27,7 +27,11 @@ import tuner.project.Viewable
 class ProjectViewer(project:Viewable) extends Window(project) {
   
   title = project.name
-  menuBar = new MainMenu(project)
+  val myMenu = new MainMenu(project) {
+    importSamples.action = MainMenu.ImportSamplesAction(project)
+    enabled = true
+  }
+  menuBar = myMenu
 
   val mainResponseButton = new RadioButton("Value")
   val errResponseButton = new RadioButton("Error")
@@ -119,9 +123,11 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
   listenTo(plotControls)
+  listenTo(myMenu.importSamples)
 
   val controlsTab = controlPanel.controlsTab
   val localTab = controlPanel.localTab
+  val importSamplesItem = myMenu.importSamples
   reactions += {
     case CandidateChanged(_, newCand) =>
       project.updateCandidates(newCand)
@@ -156,6 +162,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ButtonClicked(`regionGlyphButton`) =>
       project.viewInfo.showRegion = regionGlyphButton.selected
       mainPlotPanel.redraw
+    case ButtonClicked(`importSamplesItem`) =>
+      this.close
   }
 
   // Update which metric we're looking at

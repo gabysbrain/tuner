@@ -8,6 +8,7 @@ import scala.swing.Component
 import scala.swing.CutAction
 import scala.swing.CopyAction
 import scala.swing.KeyStroke._
+import scala.swing.FileChooser
 import scala.swing.Menu
 import scala.swing.MenuBar
 import scala.swing.MenuItem
@@ -54,6 +55,26 @@ object WindowMenu {
 
 }
 
+object MainMenu {
+  object ImportSamplesAction {
+    def apply(project:tuner.project.Sampler) = {
+      Action("Import Samples…") {
+        val fc = new FileChooser {
+          title = "Select Samples"
+        }
+        fc.showOpenDialog(null) match {
+          case FileChooser.Result.Approve =>
+            project.importSamples(fc.selectedFile)
+          case _ =>
+        }
+        project match {
+          case p:tuner.project.Saved => p.save()
+        }
+      }
+    }
+  }
+}
+
 /**
  * The main menu for the application
  */
@@ -62,9 +83,24 @@ class MainMenu(project:Option[Project]) extends MenuBar {
   def this(p:Project) = this(Some(p))
   def this() = this(None)
 
+  val importSamples = new MenuItem("Import Samples…") {
+    enabled = false
+  }
+  /*
+  Action("Import Samples…") {
+    val fc = new FileChooser {
+      title = "Select samples file"
+    }
+    fc.showOpenDialog(null) match {
+      case FileChooser.Result.Approve =>
+      case _ =>
+    }
+  }
+  */
+
   // File menu
   contents += new Menu("File") {
-    contents += new MenuItem(new Action("New Project...") {
+    contents += new MenuItem(new Action("New Project…") {
       accelerator = Some(CommandKey('N'))
       override def apply = Tuner.startNewProject
     })
@@ -106,6 +142,10 @@ class MainMenu(project:Option[Project]) extends MenuBar {
           enabled = false
         }
     }
+
+    contents += new Separator
+
+    contents += importSamples
 
     contents += new Separator
 

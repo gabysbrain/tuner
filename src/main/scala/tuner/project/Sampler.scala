@@ -49,5 +49,13 @@ trait Sampler { self:Project =>
   def newSamples(n:Int, method:tuner.Sampler.Method) : Unit = {
     newSamples(n, inputs, method)
   }
+
+  def importSamples(file:java.io.File) = {
+    val newDesTbl = Table.fromCsv(file.getAbsolutePath)
+    for(r <- 0 until newDesTbl.numRows) {
+      val tpl = newDesTbl.tuple(r)
+      designSites.addRow(tpl.toList)
+    }
+  }
 }
 
