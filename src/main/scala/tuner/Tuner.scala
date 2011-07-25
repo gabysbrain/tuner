@@ -35,6 +35,7 @@ object Tuner extends SimpleSwingApplication {
       WindowMenu.updateWindows
       //println(openWindows)
       //maybeShowProjectWindow
+      deafTo(tw)
       if(openWindows.isEmpty) ProjectChooser.open
   }
 
