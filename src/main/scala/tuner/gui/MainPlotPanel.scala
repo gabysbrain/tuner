@@ -133,7 +133,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
     sliceBounds = sb
 
     // See if we should highlight the 2 plots
-    mousedPlot.foreach {case (fld1, fld2) => highlightPlot(fld1, fld2)}
+    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(fld1, fld2)}
 
     // Draw the colorbars
     project.viewInfo.response1View.foreach {r =>
@@ -193,17 +193,21 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                                     Config.colorbarWidth, responseSize)
   }
 
-  private def highlightPlot(field1:String, field2:String) = {
+  private def drawPlotHighlight(field1:String, field2:String) = {
     val bounds1 = sliceBounds((field1, field2))
     val bounds2 = sliceBounds((field2, field1))
-    fill(0)
+    val offset = Config.plotSpacing / 2f
     noStroke
     rectMode(P5Panel.RectMode.Corners)
-    val offset = Config.plotSpacing / 2f
-    rect(bounds1.minX-offset, bounds1.minY-offset, 
-         bounds1.maxX+offset, bounds1.maxY+offset)
-    rect(bounds2.minX-offset, bounds2.minY-offset, 
-         bounds2.maxX+offset, bounds2.maxY+offset)
+
+    List(bounds1, bounds2).foreach {bounds =>
+      fill(0)
+      rect(bounds.minX-offset, bounds.minY-offset, 
+           bounds.maxX+offset, bounds.maxY+offset)
+      fill(255)
+      rect(bounds.minX-1, bounds.minY-1, 
+           bounds.maxX+1, bounds.maxY+1)
+    }
   }
 
   private def drawResponses = {
