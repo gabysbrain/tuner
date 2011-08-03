@@ -144,7 +144,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
 
     val endTime = System.currentTimeMillis
-    println("pred time (n=" + numSamples + "): " + (endTime - startTime) + "ms")
+    //println("pred time (n=" + numSamples + "): " + (endTime - startTime) + "ms")
     ((respDim, response), 
      (Config.errorField, errors), 
      (Config.gainField, gains))

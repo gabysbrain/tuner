@@ -5,6 +5,7 @@ import scala.swing.ComboBox
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.FloatRangeSlider
+import scala.swing.ScrollPane
 import scala.swing.Swing
 import scala.swing.TablePanel
 import scala.swing.event.SelectionChanged
@@ -107,20 +108,18 @@ class PlotControlsPanel(project:Viewable)
     contents += Swing.HGlue
 
     border = Swing.TitledBorder(border, "Response")
+    //minimumSize = preferredSize
   }
 
-  /*
-  contents += new BoxPanel(Orientation.Horizontal) {
-    Swing.HGlue
-    contents += slicePanel
-    Swing.HGlue
-    contents += zoomPanel
-    Swing.HGlue
-  }
-  */
-  contents += new TablePanel(2, 1) {
-    layout(slicePanel) = (0, 0)
-    layout(zoomPanel) = (1, 0)
+  val myWidth = Config.mainPlotDims._1 - 30
+  contents += new ScrollPane {
+    //contents = new TablePanel(2, 1) {
+    contents = new TablePanel(List(myWidth/2.0, myWidth/2.0), 
+                              List(TablePanel.Size.Fill)) {
+      layout(slicePanel) = (0, 0)
+      layout(zoomPanel) = (1, 0)
+    }
+    //horizontalScrollBarPolicy = ScrollPane.BarPolicy.Never
   }
 
   contents += responsePanel
