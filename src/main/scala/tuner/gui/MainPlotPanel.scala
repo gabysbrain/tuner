@@ -65,6 +65,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
   var plotBounds = Rectangle((0f,0f), 0f, 0f)
   var sliceBounds = Map[(String,String),Rectangle]()
   var sliceSize = 0f
+  var mousedPlot:Option[(String,String)] = None
 
   reactions += {
     case UIElementMoved(_) => 
@@ -131,10 +132,10 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
     sliceSize = ss
     sliceBounds = sb
 
-    // We might need to draw the region mask
-    
+    // See if we should highlight the 2 plots
+    mousedPlot.foreach {case (fld1, fld2) => highlightPlot(fld1, fld2)}
 
-    // First see if we're drawing the colorbars
+    // Draw the colorbars
     project.viewInfo.response1View.foreach {r =>
       resp1Colorbar.draw(this, leftColorbarBounds.minX, 
                                leftColorbarBounds.minY,
@@ -150,6 +151,7 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                                r, colormap(r, resp2Colormaps))
     }
 
+    // Draw the responses
     drawResponses
 
     val endTime = System.currentTimeMillis
@@ -189,6 +191,19 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                                        Config.colorbarSpacing, 
                                      rightAxisBounds.minY),
                                     Config.colorbarWidth, responseSize)
+  }
+
+  private def highlightPlot(field1:String, field2:String) = {
+    val bounds1 = sliceBounds((field1, field2))
+    val bounds2 = sliceBounds((field2, field1))
+    fill(0)
+    noStroke
+    rectMode(P5Panel.RectMode.Corners)
+    val offset = Config.plotSpacing / 2f
+    rect(bounds1.minX-offset, bounds1.minY-offset, 
+         bounds1.maxX+offset, bounds1.maxY+offset)
+    rect(bounds2.minX-offset, bounds2.minY-offset, 
+         bounds2.maxX+offset, bounds2.maxY+offset)
   }
 
   private def drawResponses = {
@@ -399,6 +414,17 @@ class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1,
                                          maxGain, false)
       (fld, (valCm, errCm, gainCm))
     } toMap
+  }
+
+  override def mouseMoved(prevMouseX:Int, prevMouseY:Int, 
+                          mouseX:Int, mouseY:Int, 
+                          button:P5Panel.MouseButton.Value) = {
+    val pb = sliceBounds.find {case (_,b) => b.isInside(mouseX, mouseY)}
+    val newPos = pb.map {tmp => tmp._1}
+    if(newPos != mousedPlot) {
+      mousedPlot = newPos
+      redraw
+    }
   }
 
   override def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
