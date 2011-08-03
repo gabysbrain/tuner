@@ -231,7 +231,7 @@
     "response2":"Error6",
     "currentMetric":"value",
     "showSampleLine":false,
-    "showRegion":true
+    "showRegion":false
   },
   "currentRegion":{
     "shape":"Box",
