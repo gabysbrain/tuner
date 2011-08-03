@@ -23,7 +23,10 @@ import java.awt.Dimension
 
 class LocalPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
   
-  val statsTable = new RegionStatsTable(project)
+  val statsTable = new RegionStatsTable(project) {
+    //minimumSize = new Dimension(620, 100)
+    //preferredSize = new Dimension(620, 100)
+  }
 
   val radiusSliders:SortedMap[String,SpinSlider] = 
     SortedMap[String,SpinSlider]() ++
@@ -64,41 +67,34 @@ class LocalPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
       publish(new AddSamples(this))
   }
 
-  contents += Swing.VGlue
+  //contents += Swing.VGlue
   contents += new BoxPanel(Orientation.Horizontal) {
-    contents += Swing.HGlue
     contents += {
       val cellWidths:List[Double] = List(0.25, TablePanel.Size.Fill)
       val hgts:List[Double] = List.fill(radiusSliders.size)(25)
       val cellHeights:List[Double] = 
         hgts :+ TablePanel.Size.Fill
 
-      new TablePanel(cellWidths, cellHeights) {
-        radiusSliders.zipWithIndex.foreach {case ((fld, slider), i) =>
-          layout(new Label(fld)) = (0, i)
-          layout(slider) = (1, i)
+      new ScrollPane {
+        contents = new TablePanel(cellWidths, cellHeights) {
+          radiusSliders.zipWithIndex.foreach {case ((fld, slider), i) =>
+            layout(new Label(fld)) = (0, i)
+            layout(slider) = (1, i)
+          }
         }
-
+        
         border = Swing.TitledBorder(border, "Radius")
       }
     }
-    contents += Swing.HGlue
     contents += new BoxPanel(Orientation.Vertical) {
-      /*
-      contents += new TablePanel(2, 1) {
-        layout(new Label("Shape")) = (0, 0)
-        layout(shapeSelector) = (1, 0)
-      }
-      */
       contents += Swing.VGlue
       contents += sampleButton
       contents += Swing.VGlue
 
       border = Swing.TitledBorder(border, "Sampling")
     }
-    contents += Swing.HGlue
   }
-  contents += Swing.VGlue
+  //contents += Swing.VGlue
   contents += new ScrollPane {
     contents = statsTable
   }
