@@ -1,5 +1,7 @@
 package tuner
 
+import java.awt.Toolkit
+
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -20,6 +22,8 @@ object Config {
   val respSampleFilename = "response_samples.csv"
   val imageDirname = "images"
 
+  val smallScreen = Toolkit.getDefaultToolkit.getScreenSize.height < 800
+
   val gpRScript = 
     ResourceLoader.fileResource("/sparkle.R").replace("\\", "/")
 
@@ -28,7 +32,7 @@ object Config {
 
   val rowField = "rowNum"
 
-  val maxEstimateSamples = 10000
+  val maxEstimateSamples = if(smallScreen) 4000 else 10000
 
   val sampleImageSize = 120
 
@@ -36,7 +40,11 @@ object Config {
 
   val paretoDims = (289, 289)
 
-  val mainPlotDims = (800, 600)
+  val mainPlotDims = if(smallScreen) {
+    (600, 380)
+  } else {
+    (800, 600)
+  }
   //val mainPlotDims = (600, 380)
   val plotSpacing = 5
   val controlPanelHeight = 220
