@@ -1,12 +1,14 @@
 package tuner
 
 import scala.swing._
+import scala.swing.Dialog
 import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 
 import java.io.File
 
+import tuner.error.ProjectLoadException
 import tuner.gui.WindowMenu
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectInfoWindow
@@ -90,7 +92,13 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def openProject(file:File) : Unit = {
-    openProject(Project.fromFile(file.getAbsolutePath))
+    try {
+      openProject(Project.fromFile(file.getAbsolutePath))
+    } catch {
+      case ple:ProjectLoadException =>
+        val msg = "Could not load project at %s (error: %s)".format(file.getAbsolutePath, ple.msg)
+        Dialog.showMessage(message=msg, messageType=Dialog.Message.Error)
+    }
   }
 
   def saveProjectAs(project:Project) : Unit = {

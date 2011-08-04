@@ -36,6 +36,7 @@ import tuner.SamplingError
 import tuner.Table
 import tuner.ViewInfo
 import tuner.VisInfo
+import tuner.error.ProjectLoadException
 import tuner.util.Density2D
 import tuner.util.Path
 
@@ -74,7 +75,12 @@ object Project {
   def fromFile(path:String) : Project = {
     val configFilePath = Path.join(path, Config.projConfigFilename)
     val json = parse(Source.fromFile(configFilePath).mkString)
-    val config = json.extract[ProjConfig]
+    val config = try {
+      json.extract[ProjConfig]
+    } catch {
+      case me:net.liftweb.json.MappingException =>
+        throw new ProjectLoadException(me.msg, me)
+    }
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
     val samples = try {
