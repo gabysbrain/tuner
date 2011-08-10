@@ -98,6 +98,13 @@ class ViewInfo(project:Viewable) {
     _currentZoom.update(fld, low, high)
   }
 
+  def inView(pt:List[(String,Float)]) : Boolean = pt.forall {case (fld,v) =>
+    !currentZoom.contains(fld) || {
+      val (mn, mx) = currentZoom.range(fld)
+      v >= mn && v <= mx
+    }
+  }
+
   def toJson = {
     val sliceList = currentSlice.map {case (fld,v) => 
       SliceSpecification(fld, v)

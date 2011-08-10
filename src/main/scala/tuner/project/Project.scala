@@ -460,6 +460,17 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     minRow.toList
   }
 
+  def viewFilterDesignSites : (Table,Table) = {
+    val active = new Table
+    val inactive = new Table
+    for(r <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(r).toList
+      if(viewInfo.inView(tpl)) active.addRow(tpl)
+      else                     inactive.addRow(tpl)
+    }
+    (active, inactive)
+  }
+
   def estimatePoint(point:List[(String,Float)]) 
         : Map[String,(Float,Float,Float)] = {
     gpModels.map {case (fld, model) =>

@@ -94,6 +94,7 @@ object Config {
   val scatterplotDotSize = 6.5f
 
   val paretoSampleColor = 0xffDD1C77
+  val paretoInactiveSampleColor = 0xffDDDDDD
 
   val sampleDotColor = 0xffDD1C77
 

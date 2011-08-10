@@ -24,7 +24,9 @@ class ParetoPanel(project:Viewable)
 
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
-  val sampleScatterplot = new Scatterplot(Config.paretoSampleColor)
+  val activeSampleScatterplot = new Scatterplot(Config.paretoSampleColor, true)
+  val inactiveSampleScatterplot = 
+    new Scatterplot(Config.paretoInactiveSampleColor, false)
   val histogram = new Bars(Config.respHistogramBarStroke,
                            Config.respHistogramBarFill)
   //val csp = new ContinuousPlot
@@ -146,11 +148,18 @@ class ParetoPanel(project:Viewable)
     fill(255)
     rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
 
-    sampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
-                                 plotBox.width, plotBox.height, 
-                                 project.designSites, 
-                                 (resp1, xAxisRange), 
-                                 (resp2, yAxisRange))
+    val (activeDesign, inactiveDesign) = project.viewFilterDesignSites
+    // Draw the inactive samples first so they're behind
+    inactiveSampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
+                                         plotBox.width, plotBox.height, 
+                                         inactiveDesign, 
+                                         (resp1, xAxisRange), 
+                                         (resp2, yAxisRange))
+    activeSampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
+                                       plotBox.width, plotBox.height, 
+                                       activeDesign, 
+                                       (resp1, xAxisRange), 
+                                       (resp2, yAxisRange))
   }
 
   override def mouseClicked(mouseX:Int, mouseY:Int, 
@@ -179,15 +188,17 @@ class ParetoPanel(project:Viewable)
     var tmp:(Float,Float) = (-1f, -1f)
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
-      val (dataX, dataY) = (tpl(response1), tpl(response2))
-      val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
-      val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
-      val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
-
-      if(dist < minDist) {
-        minDist = dist
-        minInfo = (dataX, dataY)
-        tmp = (xx, yy)
+      if(project.viewInfo.inView(tpl.toList)) {
+        val (dataX, dataY) = (tpl(response1), tpl(response2))
+        val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
+        val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
+        val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
+  
+        if(dist < minDist) {
+          minDist = dist
+          minInfo = (dataX, dataY)
+          tmp = (xx, yy)
+        }
       }
     }
     //println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)

@@ -5,7 +5,7 @@ import tuner.Table
 import tuner.gui.P5Panel
 import tuner.util.ColorLib
 
-class Scatterplot(dotColor:Int) {
+class Scatterplot(dotColor:Int, resizeOnMouse:Boolean=false) {
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            data:Table, 
@@ -33,7 +33,8 @@ class Scatterplot(dotColor:Int) {
       if(xx >= x && xx <= x+w && yy >= y && yy <= y+h) {
         val dotSize = {
           val (mousex, mousey) = applet.mousePos
-          if(math.abs(xx-mousex) < Config.scatterplotDotSize &&
+          if(resizeOnMouse && 
+             math.abs(xx-mousex) < Config.scatterplotDotSize &&
              math.abs(yy-mousey) < Config.scatterplotDotSize) {
             Config.scatterplotDotSize * 1.4
           } else {

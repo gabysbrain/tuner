@@ -33,6 +33,8 @@ class DimRanges(r:Map[String,DimRanges.Range]) {
 
   var ranges = r
 
+  def contains(dim:String) : Boolean = ranges.contains(dim)
+
   def range(dim:String) : (Float,Float) = {
     ranges(dim)
   }
