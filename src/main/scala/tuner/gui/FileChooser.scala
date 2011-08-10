@@ -21,6 +21,7 @@ object FileChooser {
   }
 
   def loadDirectory(title:String = "Load") : Option[String] = {
+    System.setProperty("apple.awt.fileDialogForDirectories", "true")
     val fc = new FileDialog(null:java.awt.Dialog, title, FileDialog.LOAD)
     fc.setFilenameFilter(new java.io.FilenameFilter {
       def accept(dir:java.io.File, name:String) : Boolean = {
@@ -29,6 +30,7 @@ object FileChooser {
     })
     fc.setVisible(true)
     val fn = fc.getFile
+    System.setProperty("apple.awt.fileDialogForDirectories", "false")
     if(fn == null) None
     else           Some(fn)
   }
