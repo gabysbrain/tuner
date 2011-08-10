@@ -5,7 +5,6 @@ import date.scala.swing.TimeField
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.ComboBox
-import scala.swing.FileChooser
 import scala.swing.TablePanel
 import scala.swing.Label
 import scala.swing.Orientation
@@ -132,13 +131,8 @@ class SamplerPanel(project:tuner.project.Sampler)
   }
 
   def saveSamples = {
-    val fc = new FileChooser {
-      title = "Save Samples"
-    }
-    fc.showSaveDialog(this) match {
-      case FileChooser.Result.Approve =>
-        project.newSamples.toCsv(fc.selectedFile.getAbsolutePath)
-      case _ =>
+    FileChooser.saveFile("Save Samples") foreach {filename =>
+      project.newSamples.toCsv(filename)
     }
   }
 

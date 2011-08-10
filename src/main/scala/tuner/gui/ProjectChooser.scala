@@ -3,7 +3,6 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
-import scala.swing.FileChooser
 import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.ScrollPane

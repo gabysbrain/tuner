@@ -2,7 +2,6 @@ package tuner.gui
 
 import scala.swing.Button
 import scala.swing.BoxPanel
-import scala.swing.FileChooser
 import scala.swing.Orientation
 import scala.swing.Publisher
 import scala.swing.TextField
@@ -15,7 +14,7 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
   val chooseButton = new Button("Browse…")
 
   var title = ""
-  var fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
+  var fileSelector = FileChooser.loadFile _
 
   contents += filenameField
   contents += chooseButton
@@ -26,16 +25,9 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
 
   reactions += {
     case ButtonClicked(_) => 
-      val sm = fileSelectionMode
       val ttl = title
-      val fc = new FileChooser {
-        title = ttl
-        fileSelectionMode = sm
-      }
-      fc.showOpenDialog(filenameField) match {
-        case FileChooser.Result.Approve => 
-          filenameField.text = fc.selectedFile.getAbsolutePath
-        case _ => 
+      fileSelector(ttl) foreach {filename =>
+        filenameField.text = filename
       }
     case ValueChanged(`filenameField`) =>
       publish(new ValueChanged(this))

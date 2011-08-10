@@ -8,7 +8,6 @@ import scala.swing.Component
 import scala.swing.CutAction
 import scala.swing.CopyAction
 import scala.swing.KeyStroke._
-import scala.swing.FileChooser
 import scala.swing.Menu
 import scala.swing.MenuBar
 import scala.swing.MenuItem
@@ -59,13 +58,8 @@ object MainMenu {
   object ImportSamplesAction {
     def apply(project:tuner.project.Sampler) = {
       Action("Import Samples…") {
-        val fc = new FileChooser {
-          title = "Select Samples"
-        }
-        fc.showOpenDialog(null) match {
-          case FileChooser.Result.Approve =>
-            project.importSamples(fc.selectedFile)
-          case _ =>
+        FileChooser.loadFile("Select Samples") foreach {filename =>
+          project.importSamples(new java.io.File(filename))
         }
         project match {
           case p:tuner.project.Saved => p.save()

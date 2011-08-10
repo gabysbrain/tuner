@@ -3,7 +3,6 @@ package tuner.gui
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.Button
-import scala.swing.FileChooser
 import scala.swing.Label
 import scala.swing.Frame
 import scala.swing.Orientation
@@ -33,7 +32,7 @@ class ProjectInfoWindow extends Frame {
   val projectNameField = new TextField
   val locationChooser = new PathPanel
   val scriptChooser = new PathPanel {
-    fileSelectionMode = FileChooser.SelectionMode.FilesOnly
+    fileSelector = FileChooser.loadDirectory _
   }
   val nextButton = new Button("Next")
   val cancelButton = new Button("Cancel")
