@@ -98,6 +98,7 @@ object P5Panel {
   }
   */
 
+  val Pi = PConstants.PI
   val HalfPi = PConstants.HALF_PI
 
   type Color = Int
@@ -282,7 +283,12 @@ abstract class P5Panel (
   def popMatrix = applet.popMatrix
   def translate(x:Float, y:Float) = applet.translate(x, y)
   def translate(x:Float, y:Float, z:Float) = applet.translate(x, y, z)
+  def scale(x:Float, y:Float) = applet.scale(x, y)
+  def scale(x:Float, y:Float, z:Float) = applet.scale(x, y, z)
   def rotate(radians:Float) = applet.rotate(radians)
+  def rotateX(radians:Float) = applet.rotateX(radians)
+  def rotateY(radians:Float) = applet.rotateY(radians)
+  def rotateZ(radians:Float) = applet.rotateZ(radians)
 
   def blend(srcImg:PImage, x:Int, y:Int, width:Int, height:Int, 
                            dx:Int, dy:Int, dwidth:Int, dheight:Int, 

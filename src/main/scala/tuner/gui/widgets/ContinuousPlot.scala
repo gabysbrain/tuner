@@ -10,23 +10,35 @@ class ContinuousPlot {
 
   //var colorMap = cm
 
-  var bounds:Rectangle = Rectangle((0f,0f),(0f,0f))
+  private var _bounds:Rectangle = Rectangle((0f,0f),(0f,0f))
+  def bounds = _bounds
 
   def mapx(width:Float, range:(Float,Float), v:Float) : Float = 
     P5Panel.map(v, range._1, range._2, 0, width)
 
   def mapy(height:Float, range:(Float,Float), v:Float) : Float = 
     P5Panel.map(v, range._2, range._1, 0, height)
-
+  /*
+  */
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            data:Matrix2D, xSlice:Float, ySlice:Float, 
            xRange:(Float,Float), yRange:(Float,Float),
            colormap:SpecifiedColorMap) = {
-    bounds = Rectangle((x,y), (x+w,y+h))
+    _bounds = Rectangle((x,y), (x+w,y+h))
 
     //val startTime = System.currentTimeMillis
     applet.pushMatrix
+
+    // Figure out the translation rules
     applet.translate(x, y)
+    /*
+    applet.translate(-xRange._1, -yRange._1)
+    applet.rotateX(P5Panel.Pi)
+    applet.translate(0, -h)
+    applet.scale(w/(xRange._2-xRange._1), h/(yRange._2-yRange._1))
+    println("x rng: " + xRange)
+    println("y rng: " + yRange)
+    */
 
     // Draw the heatmap
     applet.noStroke
@@ -70,6 +82,8 @@ class ContinuousPlot {
     // set the fill on each vertex separately
     applet.fill(colormap.color(cc))
     applet.vertex(mapx(w, xRange, x), mapy(h, yRange, y))
+    //println("vertex: " + x + " " + y)
+    //applet.vertex(x, y)
   }
 
   def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)
