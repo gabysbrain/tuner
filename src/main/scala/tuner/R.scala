@@ -39,8 +39,23 @@ object R {
   }
   println("done")
 
+  ensurePackages
+
   //System.setOut(new PrintStream(new RConsoleOutputStream(engine.getRni, 0)))
   //System.setErr(new PrintStream(new RConsoleOutputStream(engine.getRni, 1)))
+
+  def ensurePackages = RequiredPackages.foreach {pkg => installPackage(pkg)}
+
+  def installPackage(pkg:String) = {
+    val checkCmd = "is.element('%s', installed.packages()[,1])"
+    val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
+
+    val hasPkg:Boolean = runCommand(checkCmd.format(pkg)).asBool.isTRUE
+    if(!hasPkg) {
+      println("installing %s".format(pkg))
+      runCommand(instCmd.format(pkg))
+    }
+  }
 
   def runCommand(cmd:String) : REXP = {
     //println(cmd)
