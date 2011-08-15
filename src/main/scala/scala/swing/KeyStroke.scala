@@ -10,19 +10,19 @@ object KeyStroke {
 
   sealed abstract trait BaseKey {
     val mask = 0
-    def character : java.lang.Character
+    def character : Int
   }
   case class CtrlKey(key:Char) extends BaseKey {
     override val mask = InputEvent.CTRL_MASK
-    def character : java.lang.Character = new java.lang.Character(key)
+    def character : Int = key.toInt
   }
   case class CommandKey(key:Char) extends BaseKey {
     override val mask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    def character : java.lang.Character = new java.lang.Character(key)
+    def character : Int = key.toInt
   }
   case class ShiftCommandKey(key:Char) extends BaseKey {
     override val mask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | InputEvent.SHIFT_MASK;
-    def character : java.lang.Character = new java.lang.Character(key)
+    def character : Int = key.toInt
   }
   
   private def isMac : Boolean = {
