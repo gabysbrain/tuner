@@ -13,6 +13,8 @@ import org.rosuda.JRI.RMainLoopCallbacks
 
 import java.io.PrintStream
 
+import tuner.error.RInitException
+
 object R {
 
   // Any special arguments to R go in this array
@@ -23,19 +25,26 @@ object R {
   try {
     System.loadLibrary("jri")
   } catch {
-    case se:SecurityException => se.printStackTrace
+    case se:SecurityException => 
+      throw new RInitException("Could not load jri due to security", se)
     case le:UnsatisfiedLinkError => le.printStackTrace
+      throw new RInitException("Could not load jri due to link error", le)
     case ne:NullPointerException => ne.printStackTrace
+      throw new RInitException("Could not load jri due to null pointer", ne)
     case e:Exception => e.printStackTrace
+      throw new RInitException("Could not load jri. unknown reason", e)
   }
   println("done")
 
   print("initializing R...")
-  //val engine = new JRIEngine(RARGS.toArray)
   val engine = new Rengine(RARGS.toArray, false, new RTextConsole)
   if (!engine.waitForR()) {
-    System.out.println("Cannot load R")
-    throw new Exception("Cannot load R")
+    // A common cause is not setting the R_HOME variable
+    if(System.getenv("R_HOME") == null) {
+      throw new RInitException("Cannot load R. R_HOME not set.")
+    } else {
+      throw new RInitException("Cannot load R")
+    }
   }
   println("done")
 
@@ -44,6 +53,9 @@ object R {
   //System.setOut(new PrintStream(new RConsoleOutputStream(engine.getRni, 0)))
   //System.setErr(new PrintStream(new RConsoleOutputStream(engine.getRni, 1)))
 
+  /**
+   * Make sure all the required packages are installed
+   */
   def ensurePackages = RequiredPackages.foreach {pkg => installPackage(pkg)}
 
   def installPackage(pkg:String) = {

@@ -6,7 +6,7 @@
     <appname>Tuner</appname>
     <appversion>0.9</appversion>
     <authors>
-      <author name="Tom Torsney-Weir" email="torsneyt@gmail.com" />
+      <author name="Tom Torsney-Weir" email="ttorsney@sfu.ca" />
     </authors>
   </info>
 
@@ -16,12 +16,10 @@
     <langpack iso3="eng"/>
   </locale>
 
-  <!--
   <resources>
-    <res id="LicencePanel.licence" src="Licence.txt"/>
-    <res id="InfoPanel.info" src="Readme.txt"/>
+    <res id="LicencePanel.licence" src="gpl-2.0.txt"/>
+    <res id="InfoPanel.info" src="README.txt"/>
  </resources>
- -->
 
   <!-- 
     The panels section.
