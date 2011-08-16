@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>LSEnvironment</key>
+	<dict>
+		<key>R_HOME</key>
+		<string>/Library/Frameworks/R.framework/Resources</string>
+	</dict>
+	<key>CFBundleName</key>
+	<string>Tuner</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.tuner</string>
+	<key>CFBundleVersion</key>
+	<string>100.0</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>tuner_icon.icns</string>
+	<key>Java</key>
+	<dict>
+		<key>VMOptions</key>
+		<string>-Djava.library.path=/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri:$APP_PACKAGE/Contents/Resources/Java -Xmx2Gm</string>
+		<key>MainClass</key>
+		<string>tuner.Tuner</string>
+		<key>JVMVersion</key>
+		<string>1.5+</string>
+		<key>ClassPath</key>
+		<string>$JAVAROOT/Tuner-assembly-0.9.jar</string>
+		<key>Properties</key>
+		<dict>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -25,6 +25,10 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("apple.awt.showGrowBox", "true")
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
+
+    // Make sure all the packages are installed correctly
+    R.ensurePackages
+
     super.main(args)
   }
 
