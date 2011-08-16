@@ -13,7 +13,7 @@ import org.rosuda.JRI.RMainLoopCallbacks
 
 import java.io.PrintStream
 
-import tuner.error.RInitException
+import tuner.error._
 
 object R {
 
@@ -27,11 +27,11 @@ object R {
   } catch {
     case se:SecurityException => 
       throw new RInitException("Could not load jri due to security", se)
-    case le:UnsatisfiedLinkError => le.printStackTrace
-      throw new RInitException("Could not load jri due to link error", le)
-    case ne:NullPointerException => ne.printStackTrace
+    case le:UnsatisfiedLinkError => 
+      throw new MissingJriException(le)
+    case ne:NullPointerException => 
       throw new RInitException("Could not load jri due to null pointer", ne)
-    case e:Exception => e.printStackTrace
+    case e:Exception => 
       throw new RInitException("Could not load jri. unknown reason", e)
   }
   println("done")
@@ -58,12 +58,17 @@ object R {
    */
   def ensurePackages = RequiredPackages.foreach {pkg => installPackage(pkg)}
 
-  def installPackage(pkg:String) = {
+  def missingPackages = RequiredPackages.filter {pkg => !hasPackage(pkg)}
+
+  def hasPackage(pkg:String) : Boolean = {
     val checkCmd = "is.element('%s', installed.packages()[,1])"
+    runCommand(checkCmd.format(pkg)).asBool.isTRUE
+  }
+
+  def installPackage(pkg:String) = {
     val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
 
-    val hasPkg:Boolean = runCommand(checkCmd.format(pkg)).asBool.isTRUE
-    if(!hasPkg) {
+    if(!hasPackage(pkg)) {
       println("installing %s".format(pkg))
       runCommand(instCmd.format(pkg))
     }
