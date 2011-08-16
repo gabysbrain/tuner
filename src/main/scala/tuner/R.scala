@@ -17,6 +17,8 @@ import tuner.error._
 
 object R {
 
+  val MacRHome = "/Library/Frameworks/R.framework/Resources"
+
   // Any special arguments to R go in this array
   val RARGS = List("--no-save", "--slave")
   val RequiredPackages:Seq[String] = List("mlegp", "lhs", "labeling")
@@ -52,6 +54,21 @@ object R {
 
   //System.setOut(new PrintStream(new RConsoleOutputStream(engine.getRni, 0)))
   //System.setErr(new PrintStream(new RConsoleOutputStream(engine.getRni, 1)))
+
+  /**
+   * Returns the path to the R installation
+   */
+  def rPath : Option[String] = OS.detect match {
+    case OS.Mac =>
+      val home = new java.io.File(MacRHome)
+      if(home.exists && home.isDirectory) Some(MacRHome)
+      else                                None
+    case OS.Win =>
+      val regKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
+      val programs = WindowsRegistry.readRegistry(regKey, "")
+      println(programs)
+      None
+  }
 
   /**
    * Make sure all the required packages are installed
