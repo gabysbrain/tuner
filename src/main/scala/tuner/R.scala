@@ -13,6 +13,8 @@ import org.rosuda.JRI.RMainLoopCallbacks
 
 import java.io.PrintStream
 
+import tuner.error._
+
 object R {
 
   // Any special arguments to R go in this array
@@ -23,24 +25,54 @@ object R {
   try {
     System.loadLibrary("jri")
   } catch {
-    case se:SecurityException => se.printStackTrace
-    case le:UnsatisfiedLinkError => le.printStackTrace
-    case ne:NullPointerException => ne.printStackTrace
-    case e:Exception => e.printStackTrace
+    case se:SecurityException => 
+      throw new RInitException("Could not load jri due to security", se)
+    case le:UnsatisfiedLinkError => 
+      throw new MissingJriException(le)
+    case ne:NullPointerException => 
+      throw new RInitException("Could not load jri due to null pointer", ne)
+    case e:Exception => 
+      throw new RInitException("Could not load jri. unknown reason", e)
   }
   println("done")
 
   print("initializing R...")
-  //val engine = new JRIEngine(RARGS.toArray)
   val engine = new Rengine(RARGS.toArray, false, new RTextConsole)
   if (!engine.waitForR()) {
-    System.out.println("Cannot load R")
-    throw new Exception("Cannot load R")
+    // A common cause is not setting the R_HOME variable
+    if(System.getenv("R_HOME") == null) {
+      throw new RInitException("Cannot load R. R_HOME not set.")
+    } else {
+      throw new RInitException("Cannot load R")
+    }
   }
   println("done")
 
+  ensurePackages
+
   //System.setOut(new PrintStream(new RConsoleOutputStream(engine.getRni, 0)))
   //System.setErr(new PrintStream(new RConsoleOutputStream(engine.getRni, 1)))
+
+  /**
+   * Make sure all the required packages are installed
+   */
+  def ensurePackages = RequiredPackages.foreach {pkg => installPackage(pkg)}
+
+  def missingPackages = RequiredPackages.filter {pkg => !hasPackage(pkg)}
+
+  def hasPackage(pkg:String) : Boolean = {
+    val checkCmd = "is.element('%s', installed.packages()[,1])"
+    runCommand(checkCmd.format(pkg)).asBool.isTRUE
+  }
+
+  def installPackage(pkg:String) = {
+    val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
+
+    if(!hasPackage(pkg)) {
+      println("installing %s".format(pkg))
+      runCommand(instCmd.format(pkg))
+    }
+  }
 
   def runCommand(cmd:String) : REXP = {
     //println(cmd)
