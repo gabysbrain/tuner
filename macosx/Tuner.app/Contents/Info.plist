@@ -4,9 +4,9 @@
 <dict>
 	<key>LSEnvironment</key>
 	<dict>
-      <key>R_HOME</key>
-      <string>/Library/Frameworks/R.framework/Resources</string>
-    </dict>
+		<key>R_HOME</key>
+		<string>/Library/Frameworks/R.framework/Resources</string>
+	</dict>
 	<key>CFBundleName</key>
 	<string>Tuner</string>
 	<key>CFBundleIdentifier</key>
@@ -30,7 +30,7 @@
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
-		<string>-Djava.library.path=/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri -Xmx2Gm</string>
+		<string>-Djava.library.path=/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri:$APP_PACKAGE/Contents/Resources/Java -Xmx2Gm</string>
 		<key>MainClass</key>
 		<string>tuner.Tuner</string>
 		<key>JVMVersion</key>
