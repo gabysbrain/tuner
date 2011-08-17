@@ -8,7 +8,7 @@ import java.io.StringWriter;
  * From http://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java
  * @author Oleg Ryaboy, based on work by Miguel Enriquez 
  */
-public class WindowsReqistry {
+public class WindowsRegistry {
 
     /**
      * 
@@ -69,7 +69,7 @@ public class WindowsReqistry {
     public static void main(String[] args) {
 
         // Sample usage
-        String value = WindowsReqistry.readRegistry("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\" 
+        String value = WindowsRegistry.readRegistry("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\" 
                  + "Explorer\\Shell Folders", "Personal");
         System.out.println(value);
     }

@@ -8,6 +8,7 @@ import scala.swing.event._
 
 import java.io.File
 
+import tuner.error.MissingJriException
 import tuner.error.ProjectLoadException
 import tuner.gui.WindowMenu
 import tuner.gui.ProjectChooser
@@ -15,6 +16,8 @@ import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
 import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
+import tuner.gui.R.InstallPackageDialog
+import tuner.gui.R.RNotInstalledDialog
 import tuner.project._
 
 object Tuner extends SimpleSwingApplication {
@@ -45,11 +48,24 @@ object Tuner extends SimpleSwingApplication {
       if(openWindows.isEmpty) ProjectChooser.open
   }
 
-  //def top = ProjectChooser
   def top = { 
-    //openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/test_proj/")))
-    //openProject(new Project(Some("/Users/tom/Projects/tuner/test_data/ahmed/")))
-    ProjectChooser
+    // Make sure R and rJava are installed otherwise all bets are off
+    if(!R.rPath.isDefined) {
+      RNotInstalledDialog
+    } else {
+      try {
+        val missingPackages = R.missingPackages
+        if(missingPackages.isEmpty) {
+          ProjectChooser
+        } else {
+          new InstallPackageDialog(missingPackages)
+        }
+      } catch {
+        case e:MissingJriException => 
+          new InstallPackageDialog(List("rJava"))
+      }
+    }
+    RNotInstalledDialog
   }
 
   def startNewProject = {

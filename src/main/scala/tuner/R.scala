@@ -15,9 +15,27 @@ import java.io.PrintStream
 
 import tuner.error._
 
+object Rapp {
+  def installPackage(pkg:String) = cmd match {
+    case Some(app) =>
+      val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
+      val cmd = app + " -e \"" + instCmd + "\""
+    case None => throw new MissingRException(null)
+  }
+
+  def cmd : Option[String] = R.rPath map {path =>
+    val appName = OS.detect match {
+      case OS.Mac => "bin/R64"
+      case OS.Win => ""
+    }
+    new java.io.File(path, appName).getAbsolutePath
+  }
+}
+
 object R {
 
   val MacRHome = "/Library/Frameworks/R.framework/Resources"
+  val WinRegKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 
   // Any special arguments to R go in this array
   val RARGS = List("--no-save", "--slave")
@@ -64,8 +82,7 @@ object R {
       if(home.exists && home.isDirectory) Some(MacRHome)
       else                                None
     case OS.Win =>
-      val regKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
-      val programs = WindowsRegistry.readRegistry(regKey, "")
+      val programs = WindowsRegistry.readRegistry(WinRegKey, "")
       println(programs)
       None
   }
