@@ -30,6 +30,7 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
     // Make sure all the packages are installed correctly
+    println("app path " + R.appPath)
     R.ensurePackages
 
     super.main(args)
