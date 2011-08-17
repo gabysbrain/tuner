@@ -58,11 +58,15 @@ object Tuner extends SimpleSwingApplication {
         if(missingPackages.isEmpty) {
           ProjectChooser
         } else {
-          new InstallPackageDialog(missingPackages)
+          new InstallPackageDialog(missingPackages) {
+            val installPackage : String=>Unit = R.installPackage(_)
+          }
         }
       } catch {
         case e:MissingJriException => 
-          new InstallPackageDialog(List("rJava"))
+          new InstallPackageDialog(List("rJava")) {
+            val installPackage = Rapp.installPackage(_)
+          }
       }
     }
     RNotInstalledDialog

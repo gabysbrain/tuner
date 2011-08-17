@@ -14,9 +14,11 @@ import tuner.Tuner
 object RNotInstalledDialog extends Frame {
 
   val message = """
+    <html>
     R is not installed.  Please install R before using Tuner.<br/>
 
     R can be found at <a href="http://cran.r-project.org">CRAN</a>
+    </html>
   """
   val messagePanel = new Label(message)
   val quitButton = new Button("Quit")
