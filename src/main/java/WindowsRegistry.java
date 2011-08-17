@@ -8,7 +8,29 @@ import java.io.StringWriter;
  * From http://stackoverflow.com/questions/62289/read-write-to-windows-registry-using-java
  * @author Oleg Ryaboy, based on work by Miguel Enriquez 
  */
-public class WindowsReqistry {
+public class WindowsRegistry {
+
+    /**
+     * 
+     * @param location path in the registry
+     * @return registry value or null if not found
+     */
+    public static final String readRegistry(String location){
+        try {
+            // Run reg query, then read output with StreamReader (internal class)
+            Process process = Runtime.getRuntime().exec("reg query " + location);
+
+            StreamReader reader = new StreamReader(process.getInputStream());
+            reader.start();
+            process.waitFor();
+            reader.join();
+            return reader.getResult();
+        }
+        catch (Exception e) {
+            return null;
+        }
+
+    }
 
     /**
      * 
@@ -19,6 +41,8 @@ public class WindowsReqistry {
     public static final String readRegistry(String location, String key){
         try {
             // Run reg query, then read output with StreamReader (internal class)
+            String cmd = "reg query " + '"'+ location + "\" /v " + key;
+            System.out.println("cmd " + cmd);
             Process process = Runtime.getRuntime().exec("reg query " + 
                     '"'+ location + "\" /v " + key);
 
@@ -28,17 +52,18 @@ public class WindowsReqistry {
             reader.join();
             String output = reader.getResult();
 
+            String parsed[] = output.split("\\s\\s+", 5);
             // Output has the following format:
             // \n<Version information>\n\n<key>\t<registry type>\t<value>
-            if( ! output.contains("\t")){
-                    return null;
+            if(parsed.length != 5){
+                return null;
             }
 
             // Parse out the value
-            String[] parsed = output.split("\t");
-            return parsed[parsed.length-1];
+            return parsed[parsed.length-1].trim();
         }
         catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
 
@@ -59,7 +84,7 @@ public class WindowsReqistry {
                     sw.write(c);
             }
             catch (IOException e) { 
-        }
+            }
         }
 
         public String getResult() {
@@ -69,7 +94,7 @@ public class WindowsReqistry {
     public static void main(String[] args) {
 
         // Sample usage
-        String value = WindowsReqistry.readRegistry("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\" 
+        String value = WindowsRegistry.readRegistry("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\" 
                  + "Explorer\\Shell Folders", "Personal");
         System.out.println(value);
     }

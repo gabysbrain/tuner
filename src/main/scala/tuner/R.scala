@@ -58,16 +58,23 @@ object R {
   /**
    * Returns the path to the R installation
    */
-  def rPath : Option[String] = OS.detect match {
-    case OS.Mac =>
-      val home = new java.io.File(MacRHome)
-      if(home.exists && home.isDirectory) Some(MacRHome)
-      else                                None
-    case OS.Win =>
-      val regKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
-      val programs = WindowsRegistry.readRegistry(regKey, "")
-      println(programs)
-      None
+  def appPath : Option[String] = OS.detect match {
+    case OS.Mac => macAppPath
+    case OS.Win => winAppPath
+  }
+
+  def macAppPath : Option[String] = {
+    val home = new java.io.File(MacRHome)
+    if(home.exists && home.isDirectory) Some(MacRHome)
+    else                                None
+  }
+
+  def winAppPath : Option[String] = {
+    val regKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
+    val programs = WindowsRegistry.readRegistry(regKey).split("\n")
+    programs.find {k => k.toLowerCase.contains("r for win")} map {rkey =>
+      WindowsRegistry.readRegistry(rkey.trim, "InstallLocation")
+    }
   }
 
   /**
