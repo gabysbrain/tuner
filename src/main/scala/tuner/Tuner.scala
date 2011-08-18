@@ -59,7 +59,7 @@ object Tuner extends SimpleSwingApplication {
         ProjectChooser
       } else {
         new InstallPackageDialog(missingPackages) {
-          val installPackage : String=>Unit = R.installPackage(_)
+          val installPackage = R.installPackage(_)
         }
       }
     }

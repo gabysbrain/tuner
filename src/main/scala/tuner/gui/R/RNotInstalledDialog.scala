@@ -29,6 +29,8 @@ object RNotInstalledDialog extends Frame {
     case ButtonClicked(`quitButton`) => Tuner.quit
   }
 
+  defaultButton = quitButton
+
   contents = new BorderPanel {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue

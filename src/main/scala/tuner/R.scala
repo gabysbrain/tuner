@@ -19,12 +19,11 @@ object Rapp {
   val MacRHome = "/Library/Frameworks/R.framework/Resources"
   val WinRegKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 
-  def installPackage(pkg:String) = cmd match {
+  def installPackage(pkg:String) :Unit = cmd match {
     case Some(app) =>
       val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
       val cmd = app + " -e \"" + instCmd + "\""
       val proc = Runtime.getRuntime.exec(cmd)
-      proc.start
       proc.waitFor
     case None => throw new MissingRException(null)
   }
@@ -118,7 +117,7 @@ object R {
     runCommand(checkCmd.format(pkg)).asBool.isTRUE
   }
 
-  def installPackage(pkg:String) = {
+  def installPackage(pkg:String) : Unit = {
     val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
 
     if(!hasPackage(pkg)) {
