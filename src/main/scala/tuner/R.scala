@@ -23,6 +23,9 @@ object Rapp {
     case Some(app) =>
       val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
       val cmd = app + " -e \"" + instCmd + "\""
+      val proc = Runtime.getRuntime.exec(cmd)
+      proc.start
+      proc.waitFor
     case None => throw new MissingRException(null)
   }
 
