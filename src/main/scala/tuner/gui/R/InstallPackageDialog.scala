@@ -29,8 +29,11 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
   val quitButton = new Button("Quit")
   val installButton = new Button("Install")
   val cancelButton = new Button("Cancel")
+  val restartButton = new Button("Restart Tuner")
 
-  // Various stages of this dialog
+  // == Various stages of this dialog ==
+
+  // Asks the user if they want to install the packages
   val messageStage = new BorderPanel {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue
@@ -42,6 +45,7 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
     layout(buttonPanel) = BorderPanel.Position.South
   }
 
+  // displays which package is being installed
   val installStage = new BorderPanel {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue
@@ -56,12 +60,25 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
     }
 
     layout(statusPanel) = BorderPanel.Position.Center
-    layout(statusPanel) = BorderPanel.Position.South
+    layout(buttonPanel) = BorderPanel.Position.South
+  }
+
+  // asks for restart (which is the only option)
+  val successStage = new BorderPanel {
+    val msgPanel = new Label("Packages are installed. Restart?")
+    val buttonPanel = new BoxPanel(Orientation.Horizontal) {
+      contents += Swing.HGlue
+      contents += restartButton
+      contents += Swing.HGlue
+    }
+    layout(msgPanel) = BorderPanel.Position.Center
+    layout(buttonPanel) = BorderPanel.Position.South
   }
 
   listenTo(quitButton)
   listenTo(installButton)
   listenTo(cancelButton)
+  listenTo(restartButton)
 
   reactions += {
     case ButtonClicked(`quitButton`) => 
@@ -70,12 +87,18 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
       Tuner.quit
     case ButtonClicked(`installButton`) => 
       contents = installStage
+      defaultButton = None
       packages.foreach {pkg =>
         installStatusPanel.text = "Installing " + pkg + "..."
         installPackage(pkg)
       }
+      contents = successStage
+      defaultButton = restartButton
+    case ButtonClicked(`restartButton`) =>
+      Tuner.quit
   }
 
   contents = messageStage
+  defaultButton = installButton
 }
 
