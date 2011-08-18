@@ -29,10 +29,6 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
-    // Make sure all the packages are installed correctly
-    println("app path " + R.appPath)
-    R.ensurePackages
-
     super.main(args)
   }
 
@@ -51,26 +47,22 @@ object Tuner extends SimpleSwingApplication {
 
   def top = { 
     // Make sure R and rJava are installed otherwise all bets are off
-    if(!R.rPath.isDefined) {
+    if(!Rapp.path.isDefined) {
       RNotInstalledDialog
-    } else {
-      try {
-        val missingPackages = R.missingPackages
-        if(missingPackages.isEmpty) {
-          ProjectChooser
-        } else {
-          new InstallPackageDialog(missingPackages) {
-            val installPackage : String=>Unit = R.installPackage(_)
-          }
+    } else if(!Rapp.jriOk) {
+        new InstallPackageDialog(List("rJava")) {
+          val installPackage = Rapp.installPackage(_)
         }
-      } catch {
-        case e:MissingJriException => 
-          new InstallPackageDialog(List("rJava")) {
-            val installPackage = Rapp.installPackage(_)
-          }
+    } else {
+      val missingPackages = R.missingPackages
+      if(missingPackages.isEmpty) {
+        ProjectChooser
+      } else {
+        new InstallPackageDialog(missingPackages) {
+          val installPackage : String=>Unit = R.installPackage(_)
+        }
       }
     }
-    RNotInstalledDialog
   }
 
   def startNewProject = {

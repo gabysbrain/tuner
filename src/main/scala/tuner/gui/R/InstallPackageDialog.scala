@@ -17,9 +17,13 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
 
   val installPackage:String=>Unit
 
-  val installMessage = packages.reduceLeft(_ + ", " + _) + """
-    are required and not installed.  Would you like to install them?
-  """
+  val installMessage = {
+    val words = if(packages.length > 1) ("are", "them")
+                else                    ("is", "it")
+    packages.reduceLeft(_ + ", " + _) + " " + words._1 +
+      " required and not installed.  Would you like to install " + 
+      words._2 + "?"
+  }
   val installMessagePanel = new Label(installMessage)
   val installStatusPanel = new Label("")
   val quitButton = new Button("Quit")
@@ -31,6 +35,7 @@ abstract class InstallPackageDialog(packages:Seq[String]) extends Frame {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue
       contents += quitButton
+      contents += installButton
       contents += Swing.HGlue
     }
     layout(installMessagePanel) = BorderPanel.Position.Center

@@ -16,6 +16,9 @@ import java.io.PrintStream
 import tuner.error._
 
 object Rapp {
+  val MacRHome = "/Library/Frameworks/R.framework/Resources"
+  val WinRegKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
+
   def installPackage(pkg:String) = cmd match {
     case Some(app) =>
       val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
@@ -23,19 +26,46 @@ object Rapp {
     case None => throw new MissingRException(null)
   }
 
-  def cmd : Option[String] = R.rPath map {path =>
+  def cmd : Option[String] = Rapp.path map {path =>
     val appName = OS.detect match {
       case OS.Mac => "bin/R64"
       case OS.Win => ""
     }
     new java.io.File(path, appName).getAbsolutePath
   }
+
+  /**
+   * Returns the path to the R installation
+   */
+  def path : Option[String] = OS.detect match {
+    case OS.Mac => macPath
+    case OS.Win => winPath
+  }
+
+  def macPath : Option[String] = {
+    val home = new java.io.File(MacRHome)
+    if(home.exists && home.isDirectory) Some(MacRHome)
+    else                                None
+  }
+  def winPath : Option[String] = {
+    val programs = WindowsRegistry.readRegistry(WinRegKey).split("\n")
+    programs.find {k => k.toLowerCase.contains("r for win")} map {rkey =>
+      WindowsRegistry.readRegistry(rkey.trim, "InstallLocation")
+    }
+  }
+
+  def jriOk : Boolean = {
+    try {
+      System.loadLibrary("jri")
+      true
+    } catch {
+      case le:UnsatisfiedLinkError => false
+    }
+  }
+
 }
 
 object R {
-
-  val MacRHome = "/Library/Frameworks/R.framework/Resources"
-  val WinRegKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 
   // Any special arguments to R go in this array
   val RARGS = List("--no-save", "--slave")
@@ -72,26 +102,6 @@ object R {
 
   //System.setOut(new PrintStream(new RConsoleOutputStream(engine.getRni, 0)))
   //System.setErr(new PrintStream(new RConsoleOutputStream(engine.getRni, 1)))
-
-  /**
-   * Returns the path to the R installation
-   */
-  def appPath : Option[String] = OS.detect match {
-    case OS.Mac => macAppPath
-    case OS.Win => winAppPath
-  }
-
-  def macAppPath : Option[String] = {
-    val home = new java.io.File(MacRHome)
-    if(home.exists && home.isDirectory) Some(MacRHome)
-    else                                None
-  }
-  def winAppPath : Option[String] = {
-      val programs = WindowsRegistry.readRegistry(regKey, "")
-    programs.find {k => k.toLowerCase.contains("r for win")} map {rkey =>
-      WindowsRegistry.readRegistry(rkey.trim, "InstallLocation")
-    }
-  }
 
   /**
    * Make sure all the required packages are installed
