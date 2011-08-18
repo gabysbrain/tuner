@@ -23,15 +23,16 @@ object Rapp {
     case Some(app) =>
       val instCmd = "install.packages('%s', repos='http://cran.r-project.org')"
       val cmd = app + " -e \"" + instCmd + "\""
+      println(cmd)
       val proc = Runtime.getRuntime.exec(cmd)
-      proc.waitFor
+      println("cmd finished with " + proc.waitFor)
     case None => throw new MissingRException(null)
   }
 
   def cmd : Option[String] = Rapp.path map {path =>
     val appName = OS.detect match {
       case OS.Mac => "bin/R64"
-      case OS.Win => ""
+      case OS.Win => "bin\\x64\\R.exe"
     }
     new java.io.File(path, appName).getAbsolutePath
   }
