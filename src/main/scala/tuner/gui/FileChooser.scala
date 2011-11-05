@@ -7,17 +7,17 @@ object FileChooser {
   def saveFile(title:String = "Save") : Option[String] = {
     val fc = new FileDialog(null:java.awt.Dialog, title, FileDialog.SAVE)
     fc.setVisible(true)
-    val fn = fc.getFile
+    val (fd, fn) = (fc.getDirectory, fc.getFile)
     if(fn == null) None
-    else           println(fn); Some(fn)
+    else           Some(new java.io.File(fd, fn).getAbsolutePath)
   }
 
   def loadFile(title:String = "Load") : Option[String] = {
     val fc = new FileDialog(null:java.awt.Dialog, title, FileDialog.LOAD)
     fc.setVisible(true)
-    val fn = fc.getFile
+    val (fd, fn) = (fc.getDirectory, fc.getFile)
     if(fn == null) None
-    else           Some(fn)
+    else           Some(new java.io.File(fd, fn).getAbsolutePath)
   }
 
   def loadDirectory(title:String = "Load") : Option[String] = {
@@ -29,10 +29,10 @@ object FileChooser {
       }
     })
     fc.setVisible(true)
-    val fn = fc.getFile
+    val (fd, fn) = (fc.getDirectory, fc.getFile)
     System.setProperty("apple.awt.fileDialogForDirectories", "false")
     if(fn == null) None
-    else           Some(fn)
+    else           Some(new java.io.File(fd, fn).getAbsolutePath)
   }
 
 }
