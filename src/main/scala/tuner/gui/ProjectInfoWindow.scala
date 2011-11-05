@@ -30,10 +30,10 @@ class ProjectInfoWindow extends Frame {
   resizable = true
 
   val projectNameField = new TextField
-  val locationChooser = new PathPanel
-  val scriptChooser = new PathPanel {
+  val locationChooser = new PathPanel {
     fileSelector = FileChooser.loadDirectory _
   }
+  val scriptChooser = new PathPanel
   val nextButton = new Button("Next")
   val cancelButton = new Button("Cancel")
 
