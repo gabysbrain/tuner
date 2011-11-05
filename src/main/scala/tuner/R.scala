@@ -15,6 +15,12 @@ import java.io.PrintStream
 
 import tuner.error._
 
+object RInstall {
+  
+  def validate = {
+  }
+}
+
 object R {
 
   // Any special arguments to R go in this array
