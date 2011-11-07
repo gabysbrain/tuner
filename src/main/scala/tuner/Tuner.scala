@@ -6,6 +6,8 @@ import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 
+import javax.swing.UIManager
+
 import java.io.File
 
 import tuner.error.MissingJriException
@@ -29,6 +31,8 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
+    UIManager.setLookAndFeel(
+      UIManager.getSystemLookAndFeelClassName())
     super.main(args)
   }
 
