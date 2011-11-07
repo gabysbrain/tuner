@@ -17,6 +17,7 @@ import tuner.error._
 
 object Rapp {
   val MacRHome = "/Library/Frameworks/R.framework/Resources"
+  val LinRHome = "/usr/lib64/R"
   val WinRegKey = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\"
 
   def installPackage(pkg:String) :Unit = cmd match {
@@ -33,6 +34,7 @@ object Rapp {
     val appName = OS.detect match {
       case OS.Mac => "bin/R64"
       case OS.Win => "bin\\x64\\R.exe"
+      case OS.Unix => "bin/R"
     }
     new java.io.File(path, appName).getAbsolutePath
   }
@@ -41,8 +43,9 @@ object Rapp {
    * Returns the path to the R installation
    */
   def path : Option[String] = OS.detect match {
-    case OS.Mac => macPath
-    case OS.Win => winPath
+    case OS.Mac  => macPath
+    case OS.Win  => winPath
+    case OS.Unix => linPath
   }
 
   def macPath : Option[String] = {
@@ -55,6 +58,11 @@ object Rapp {
     programs.find {k => k.toLowerCase.contains("r for win")} map {rkey =>
       WindowsRegistry.readRegistry(rkey.trim, "InstallLocation")
     }
+  }
+  def linPath : Option[String] = {
+    val home = new java.io.File(LinRHome)
+    if(home.exists && home.isDirectory) Some(LinRHome)
+    else                                None
   }
 
   def jriOk : Boolean = {

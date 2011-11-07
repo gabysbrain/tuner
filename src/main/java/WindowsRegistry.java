@@ -91,6 +91,7 @@ public class WindowsRegistry {
             return sw.toString();
         }
     }
+    /*
     public static void main(String[] args) {
 
         // Sample usage
@@ -98,5 +99,6 @@ public class WindowsRegistry {
                  + "Explorer\\Shell Folders", "Personal");
         System.out.println(value);
     }
+    */
 }
 
