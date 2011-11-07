@@ -31,8 +31,8 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
-    UIManager.setLookAndFeel(
-      UIManager.getSystemLookAndFeelClassName())
+    //UIManager.setLookAndFeel(
+      //UIManager.getSystemLookAndFeelClassName())
     super.main(args)
   }
 
