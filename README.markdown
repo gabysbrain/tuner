@@ -8,30 +8,87 @@ measures.  This is especially important in cases where one desires an optimum
 that is invariant to parameter settings (so things stay good over a wide range
 of parameter settings).
 
-## Dependencies ##
+## File layout ##
 
-* Java
-* R (64-bit version)
+The Tuner deployment files consist of the following:
+
+    .
+    | -- run_tuner.bat
+    | -- run_tuner.mac.sh
+    | -- run_tuner.linux.sh
+    | -- Tuner-assembly-0.9.jar
+    | -- lib/
+         | -- opengl/
+              | -- linux32/
+              | -- linux64/
+              | -- macosx/
+              | -- windows32/
+              | -- windows64/
+
+run_tuner.bat
+:  Tuner startup script for windows
+
+run_tuner.mac.sh
+:  Tuner startup script for mac
+
+run_tuner.linux.sh
+:  Tuner startup script for linux
+
+Tuner-assembly-0.9.jar
+:  The one and only jar file needed
+
+lib/opengl
+:  These contain the opengl linking libraries for various architectures.  
+   Make sure that java.library.path is pointing to the right one.
+
+## Run dependencies ##
+
+* Java (version 6 tested)
+* R (64-bit version) (2.13 and 2.14 tested)
+* rJava
+
+The startup scripts take care of setting the R_HOME environment variable,
+which is needed for rJava to work.  They also take care up setting
+java.library.path to point to the linking opengl libraries and the jri linking
+library.  They also start java with 2GB of heap space as the default is really
+too small to do anything.
 
 There are also a number of R packages Tuner uses, but it should install them
-automatically:
-* rJava
+automatically if it can't find them:
+
 * lhs
 * mlegp
 * labeling
 
-For building Tuner needs Scala and simple build tool installed.  The sbt
-build script should take care of downloading all the required libraries.
-
 ## Installation ##
 
+Here are the steps to get Tuner running:
 1. install java
 2. install R (make sure you are using the 64-bit version)
-3. install the required R packages: lhs, mlegp, rJava, and labeling. To do 
-   this you can type , for example, install.packages('labeling') at the 
-   R prompt to install the labeling package.
+3. install the rJava R package. To do this type install.packages('rJava') 
+   at the R prompt.
 4. Open up the start_tuner.bat file and change R_HOME and JRI appropriately. 
-   JRI should end up in the same place relative to R_HOME. I think R_HOME 
-   should be something like 'C:\Program Files\R\R-2.10.0' on windows.
+   JRI should end up in the same place relative to R_HOME. R_HOME 
+   should be something like 'C:\Program Files\R\R-2.14.0' on windows.
 
+## Usage ##
+
+There is a pre-built project for testing purposes.  If you can open it and
+everything draws correctly then Tuner should be at least mostly working.  Here
+is how to open an external project:
+
+1. Click on the 'open other' button in the project browser
+   ![](doc/images/open_other_button.png)
+
+2. Navigate to test_data and click on the test_proj directory.  Then click
+   choose
+   ![](doc/images/open_test_project.png)
+
+3. A window such as the following should open
+   ![](doc/images/test_project_viewer.png)
+
+## Build dependencies ##
+
+For building Tuner needs Scala and simple build tool installed.  The sbt
+build script should take care of downloading all the required libraries.
 
