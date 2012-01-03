@@ -28,11 +28,11 @@ import scala.swing.event.UIElementResized
 
 import processing.core.PConstants
 
-class MainPlotPanel(project:Viewable) extends P5Panel(Config.mainPlotDims._1, 
-                                                      Config.mainPlotDims._2, 
-                                                      //P5Panel.P3D) 
-                                                      P5Panel.OpenGL) 
-                                     with Publisher {
+class ProcessingMainPlotPanel(project:Viewable) 
+    extends P5Panel(Config.mainPlotDims._1, 
+                    Config.mainPlotDims._2, 
+                    P5Panel.OpenGL) 
+    with Publisher {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
