@@ -11,8 +11,6 @@ import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
-import tuner.gui.event.HistoryAdd
-import tuner.gui.event.SliceChanged
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
@@ -22,49 +20,33 @@ import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
 import tuner.util.ColorLib
 
-import scala.swing.Publisher
 import scala.swing.event.UIElementMoved
 import scala.swing.event.UIElementResized
 
 import processing.core.PConstants
 
-class ProcessingMainPlotPanel(project:Viewable) 
+class ProcessingMainPlotPanel(val project:Viewable) 
     extends P5Panel(Config.mainPlotDims._1, 
                     Config.mainPlotDims._2, 
                     P5Panel.OpenGL) 
-    with Publisher {
+    with MainPlotPanel {
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
-  type ColormapMap = Map[String,(SpecifiedColorMap,SpecifiedColorMap,SpecifiedColorMap)]
-  // This is the response field, gp model, x axes, y axes, and plots
-  //type ResponseInfo = (String,GpModel,AxisMap,AxisMap,Colorbar,PlotInfoMap)
-
 
   // Everything response 1 needs 
-  val resp1Colormaps = createColormaps(Config.response1ColorMap)
   val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Left)
   val resp1XAxes = createAxes(Axis.HorizontalBottom)
   val resp1YAxes = createAxes(Axis.VerticalLeft)
   val resp1Plots = createPlots
 
   // Everything response 2 needs
-  val resp2Colormaps = createColormaps(Config.response2ColorMap)
   val resp2Colorbar:Colorbar = new Colorbar(Colorbar.Right)
   val resp2XAxes = createAxes(Axis.HorizontalTop)
   val resp2YAxes = createAxes(Axis.VerticalRight)
   val resp2Plots = createPlots
 
   // Cache a bunch of statistics on where the plots are for hit detection
-  var leftColorbarBounds = Rectangle((0f,0f), 0f, 0f)
-  var rightColorbarBounds = Rectangle((0f,0f), 0f, 0f)
-  var topAxisBounds = Rectangle((0f,0f), 0f, 0f)
-  var bottomAxisBounds = Rectangle((0f,0f), 0f, 0f)
-  var leftAxisBounds = Rectangle((0f,0f), 0f, 0f)
-  var rightAxisBounds = Rectangle((0f,0f), 0f, 0f)
-  var plotBounds = Rectangle((0f,0f), 0f, 0f)
-  var sliceBounds = Map[(String,String),Rectangle]()
-  var sliceSize = 0f
   var mousedPlot:Option[(String,String)] = None
 
   reactions += {
@@ -127,7 +109,7 @@ class ProcessingMainPlotPanel(project:Viewable)
     val startTime = System.currentTimeMillis
 
     // Update all the bounding boxes
-    updateBounds
+    updateBounds(width, height)
     val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
     sliceSize = ss
     sliceBounds = sb
@@ -156,41 +138,6 @@ class ProcessingMainPlotPanel(project:Viewable)
 
     val endTime = System.currentTimeMillis
     //println("draw time: " + (endTime - startTime) + "ms")
-  }
-
-  private def updateBounds = {
-    val maxResponseWidth = width -
-      ((project.viewInfo.currentZoom.length-1) * Config.plotSpacing) -
-      (Config.axisSize * 2) -
-      (Config.plotSpacing * 2) -
-      (Config.colorbarSpacing * 4) -
-      (Config.colorbarWidth * 2)
-    val maxResponseHeight = height - 
-      ((project.viewInfo.currentZoom.length-1) * Config.plotSpacing) -
-      (Config.axisSize * 2) -
-      (Config.plotSpacing * 2)
-    val responseSize = math.min(maxResponseWidth, maxResponseHeight)
-
-    // Now space everything out top to bottom, left to right
-    leftColorbarBounds = Rectangle((Config.colorbarSpacing, 
-                                    Config.plotSpacing+Config.axisSize),
-                                   Config.colorbarWidth,
-                                   responseSize)
-    leftAxisBounds = Rectangle((leftColorbarBounds.maxX+Config.colorbarSpacing,
-                                Config.plotSpacing+Config.axisSize),
-                               Config.axisSize, responseSize)
-    topAxisBounds = Rectangle((leftAxisBounds.maxX, Config.plotSpacing),
-                              responseSize, Config.axisSize)
-    plotBounds = Rectangle((topAxisBounds.minX, leftAxisBounds.minY),
-                           responseSize, responseSize)
-    bottomAxisBounds = Rectangle((plotBounds.minX, plotBounds.maxY),
-                                 responseSize, Config.axisSize)
-    rightAxisBounds = Rectangle((plotBounds.maxX, plotBounds.minY),
-                                Config.axisSize, responseSize)
-    rightColorbarBounds = Rectangle((rightAxisBounds.maxX+
-                                       Config.colorbarSpacing, 
-                                     rightAxisBounds.minY),
-                                    Config.colorbarWidth, responseSize)
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
@@ -402,24 +349,6 @@ class ProcessingMainPlotPanel(project:Viewable)
     fields.map {fld => (fld, new Axis(position))} toMap
   }
 
-  private def createColormaps(respColormap:ColorMap) : ColormapMap = {
-    project.responses.map {case (fld, minimize) =>
-      val model = project.gpModels(fld)
-      val valCm = new SpecifiedColorMap(respColormap,
-                                        model.funcMin, 
-                                        model.funcMax,
-                                        minimize)
-      val errCm = new SpecifiedColorMap(Config.errorColorMap,
-                                        0f, model.sig2.toFloat,
-                                        false)
-      // TODO: fix the max gain calculation!
-      val maxGain = model.maxGain(project.inputs) / 4
-      val gainCm = new SpecifiedColorMap(Config.gainColorMap, 0f, 
-                                         maxGain, false)
-      (fld, (valCm, errCm, gainCm))
-    } toMap
-  }
-
   override def mouseMoved(prevMouseX:Int, prevMouseY:Int, 
                           mouseX:Int, mouseY:Int, 
                           button:P5Panel.MouseButton.Value) = {
@@ -457,7 +386,7 @@ class ProcessingMainPlotPanel(project:Viewable)
 
   override def keyPressed(key:Char) = {
     if(key == 'h' || key == 'H') {
-      publish(new HistoryAdd(this, project.viewInfo.currentSlice.toList))
+      publishHistoryAdd(this)
     }
   }
 
@@ -475,7 +404,7 @@ class ProcessingMainPlotPanel(project:Viewable)
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
                                            highZoomY, lowZoomY)
-            publish(new SliceChanged(this, List((xfld, newX), (yfld, newY))))
+            publishSliceChanged(this, (xfld, newX), (yfld, newY))
           } else if(xfld > yfld && project.viewInfo.response2View.isDefined) {
             // x and y fields are reversed here!!!
             val (lowZoomX, highZoomX) = project.viewInfo.currentZoom.range(yfld)
@@ -484,7 +413,7 @@ class ProcessingMainPlotPanel(project:Viewable)
                                            lowZoomX, highZoomX)
             val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
                                            highZoomY, lowZoomY)
-            publish(new SliceChanged(this, List((yfld, newX), (xfld, newY))))
+            publishSliceChanged(this, (yfld, newX), (xfld, newY))
           }
         }
       }

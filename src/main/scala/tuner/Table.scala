@@ -104,9 +104,8 @@ class Table {
     data.foldLeft(Set[String]())({(st:Set[String],tpl:Table.Tuple) => st ++ tpl.keys.toSet}).toList
   }
 
-  def numRows : Int = {
-    data.size
-  }
+  def numRows : Int = data.size
+  def numFields : Int = fieldNames.size
 
   def values(col:String) : SortedSet[Float] = {
     new TreeSet[Float] ++ data.map({_.get(col)}).flatten

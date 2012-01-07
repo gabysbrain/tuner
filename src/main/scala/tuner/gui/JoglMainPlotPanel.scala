@@ -1,0 +1,143 @@
+package tuner.gui
+
+import com.jogamp.common.nio.Buffers
+import javax.media.opengl.{GL,GL2}
+import javax.media.opengl.glu.GLU
+import javax.media.opengl.GLAutoDrawable
+import javax.media.opengl.GLEventListener
+import javax.media.opengl.GLProfile
+import javax.media.opengl.GLCapabilities
+import javax.media.opengl.awt.GLJPanel
+
+import tuner.project.Viewable
+import tuner.geom.Rectangle
+import tuner.gui.util.FacetLayout
+import tuner.gui.util.Glsl
+import tuner.gui.util.Matrix4
+
+object Jogl {
+  val profile = GLProfile.getDefault
+  val capabilities = new GLCapabilities(profile)
+
+  def canRun = profile.hasGLSL 
+}
+
+class JoglMainPlotPanel(val project:Viewable)
+    extends GLJPanel(Jogl.capabilities) 
+    with MainPlotPanel {
+
+  val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
+
+  // These need to wait for the GL context to be set up
+  var plotShader:Option[Glsl] = None
+  var basicShader:Option[Glsl] = None
+
+  // The buffers we're using
+  var vertexArray = -1
+  var resp1VertexBuffer = -1
+  var resp2VertexBuffer = -1
+
+  // All the plot transforms
+  var plotTransforms = Map[(String,String),Matrix4]()
+
+  addGLEventListener(new GLEventListener {
+    def reshape(drawable:GLAutoDrawable, x:Int, y:Int, width:Int, height:Int) =
+      setup(drawable.getGL.getGL2, width, height)
+    def init(drawable:GLAutoDrawable) = {}
+    def dispose(drawable:GLAutoDrawable) = {}
+    def display(drawable:GLAutoDrawable) = 
+      render(drawable.getGL.getGL2, drawable.getWidth, drawable.getHeight)
+  })
+
+  def setup(gl:GL2, width:Int, height:Int) = {
+    gl.glViewport(0, 0, width, height)
+
+    // Update all the bounding boxes
+    updateBounds(width, height)
+    val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
+    sliceSize = ss
+    sliceBounds = sb
+    plotTransforms = computePlotTransforms(sliceBounds, width, height)
+
+    // Load in the shader programs
+    //plotShader = new Glsl(gl)
+    //basicShader = new Glsl(gl)
+  }
+
+  def render(gl:GL2, width:Int, height:Int) = {
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
+  }
+
+  def initBuffers(gl:GL2) = {
+    val vao = Array(0)
+    gl.glGenVertexArrays(1, vao, 0)
+    vertexArray = vao(0)
+
+    val vbo = Array(0, 0)
+    gl.glGenBuffers(2, vbo, 0)
+    resp1VertexBuffer = vbo(0)
+    resp2VertexBuffer = vbo(1)
+  }
+
+  def setupPlotVertices(gl:GL2) = {
+
+    // Need one float per dim and value
+    val fields = project.inputFields
+    val pointSize = fields.size + 1
+    val numFloats = project.designSites.numRows * pointSize
+    val tmpBufR1 = Buffers.newDirectFloatBuffer(numFloats)
+    val tmpBufR2 = Buffers.newDirectFloatBuffer(numFloats)
+    project.viewInfo.response1View.foreach {r1Fld =>
+      for(r <- 0 until project.designSites.numRows) {
+        val tpl = project.designSites.tuple(r)
+        fields.foreach {fld => tmpBufR1.put(tpl(fld))}
+        tmpBufR1.put(tpl(r1Fld))
+      }
+      tmpBufR1.rewind
+
+      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, resp1VertexBuffer)
+      gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
+                      tmpBufR1, GL.GL_STATIC_DRAW)
+    }
+    project.viewInfo.response2View.foreach {r2Fld =>
+      for(r <- 0 until project.designSites.numRows) {
+        val tpl = project.designSites.tuple(r)
+        fields.foreach {fld => tmpBufR2.put(tpl(fld))}
+        tmpBufR2.put(tpl(r2Fld))
+      }
+      tmpBufR2.rewind
+
+      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, resp2VertexBuffer)
+      gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
+                      tmpBufR2, GL.GL_STATIC_DRAW)
+    }
+  }
+
+  /**
+   * The plots themselves will be drawn in data space so these 
+   * move everything into the proper coordinate system
+   */
+  def computePlotTransforms(
+        sb:Map[(String,String),Rectangle], 
+        width:Float, height:Float) = sb.map {case ((xFld,yFld),bounds) =>
+    val (minX,maxX) = project.viewInfo.currentZoom.range(xFld)
+    val (minY,maxY) = project.viewInfo.currentZoom.range(yFld)
+
+    // transforms to move from data space to 0,1 space
+    val dataTrans = Matrix4.translate(-minX, -minY, 0)
+    val dataScale = Matrix4.scale(1/(maxX-minX), 1/(maxY-minY), 1)
+
+    // Put the bounds in 0,1 terms
+    val pctBounds = bounds / (width, height)
+
+    // moves the plots into place
+    val plotTrans = Matrix4.translate(pctBounds.minX, pctBounds.minY, 0)
+    val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
+
+    // The final transformation
+    val ttl = projectionMatrix * plotTrans * plotScale * dataScale * dataTrans
+    (xFld,yFld) -> ttl
+  }
+
+}
+
