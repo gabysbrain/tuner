@@ -33,9 +33,8 @@ class JoglMainPlotPanel(val project:Viewable)
   var basicShader:Option[Glsl] = None
 
   // The buffers we're using
-  var vertexArray = -1
-  var resp1VertexBuffer = -1
-  var resp2VertexBuffer = -1
+  var vertexArray:Option[Int] = None
+  var vertexBuffer:Option[Int] = None
 
   // All the plot transforms
   var plotTransforms = Map[(String,String),Matrix4]()
@@ -60,57 +59,59 @@ class JoglMainPlotPanel(val project:Viewable)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
     // Load in the shader programs
-    //plotShader = new Glsl(gl)
+    plotShader = Some(Glsl.fromResource(gl, "/shaders/plot.vert.glsl",
+                                            "/shaders/plot.frag.glsl"))
     //basicShader = new Glsl(gl)
+
+    setupPlotVertices(gl)
   }
 
   def render(gl:GL2, width:Int, height:Int) = {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+    // Draw the continuous plots first
+    renderContinuousPlots(gl)
   }
 
   def initBuffers(gl:GL2) = {
     val vao = Array(0)
     gl.glGenVertexArrays(1, vao, 0)
-    vertexArray = vao(0)
+    vertexArray = Some(vao(0))
 
-    val vbo = Array(0, 0)
-    gl.glGenBuffers(2, vbo, 0)
-    resp1VertexBuffer = vbo(0)
-    resp2VertexBuffer = vbo(1)
+    val vbo = Array(0)
+    gl.glGenBuffers(1, vbo, 0)
+    vertexBuffer = Some(vbo(0))
   }
 
   def setupPlotVertices(gl:GL2) = {
 
-    // Need one float per dim and value
+    // Need one float per dim and value plus one for each of 2 responses
     val fields = project.inputFields
-    val pointSize = fields.size + 1
+    val pointSize = fields.size + 2
     val numFloats = project.designSites.numRows * pointSize
-    val tmpBufR1 = Buffers.newDirectFloatBuffer(numFloats)
-    val tmpBufR2 = Buffers.newDirectFloatBuffer(numFloats)
+    val tmpBuf = Buffers.newDirectFloatBuffer(numFloats)
+    for(r <- 0 until project.designSites.numRows) {
+      val tpl = project.designSites.tuple(r)
+      fields.foreach {fld => tmpBuf.put(tpl(fld))}
+    }
     project.viewInfo.response1View.foreach {r1Fld =>
       for(r <- 0 until project.designSites.numRows) {
         val tpl = project.designSites.tuple(r)
-        fields.foreach {fld => tmpBufR1.put(tpl(fld))}
-        tmpBufR1.put(tpl(r1Fld))
+        tmpBuf.put(tpl(r1Fld))
       }
-      tmpBufR1.rewind
-
-      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, resp1VertexBuffer)
-      gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
-                      tmpBufR1, GL.GL_STATIC_DRAW)
     }
-    project.viewInfo.response2View.foreach {r2Fld =>
+    project.viewInfo.response1View.foreach {r2Fld =>
       for(r <- 0 until project.designSites.numRows) {
         val tpl = project.designSites.tuple(r)
-        fields.foreach {fld => tmpBufR2.put(tpl(fld))}
-        tmpBufR2.put(tpl(r2Fld))
+        tmpBuf.put(tpl(r2Fld))
       }
-      tmpBufR2.rewind
-
-      gl.glBindBuffer(GL.GL_ARRAY_BUFFER, resp2VertexBuffer)
-      gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
-                      tmpBufR2, GL.GL_STATIC_DRAW)
     }
+
+    tmpBuf.rewind
+
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
+    gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
+                    tmpBuf, GL.GL_STATIC_DRAW)
   }
 
   /**
@@ -139,5 +140,79 @@ class JoglMainPlotPanel(val project:Viewable)
     (xFld,yFld) -> ttl
   }
 
+  def renderContinuousPlots(gl:GL2) = {
+    val fields = project.inputFields
+    val resp1Start = project.designSites.numRows * fields.size
+    val resp2Start = project.designSites.numRows * (fields.size+1)
+
+    // set up all the contexts
+    gl.glUseProgram(plotShader.get.programId)
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
+    gl.glBindVertexArray(vertexArray.get)
+
+    // Every 4 fields goes into one attribute
+    for(i <- 0 until (fields.size / 4.0).ceil.toInt) {
+      val vPosId = plotShader.get.attribId("vPos" + i)
+      gl.glEnableVertexAttribArray(vPosId)
+      gl.glVertexAttribPointer(vPosId, 4, GL.GL_FLOAT, GL.GL_FALSE,
+                               fields.size * Buffers.SIZEOF_FLOAT,
+                               i * 4 * Buffers.SIZEOF_FLOAT)
+    }
+
+    // Send down the current slice
+    gl.glUniform1fv(plotShader.get.uniformId("slice"), 
+                    fields.size,
+                    fields.map(project.viewInfo.currentSlice(_)).toArray,
+                    0)
+
+    // Everything else is plot-dependent
+    project.inputFields.zipwithIndex.foreach {case (xFld, xi) =>
+      project.inputFields.zipwithIndex.foreach {case (yFld, yi) =>
+        if(xFld < yFld) project.viewInfo.response1View.foreach {resp =>
+          renderSinglePlot(gl, xFld, yFld, resp, xi, yi)
+        }
+        if(yFld < xFld) project.viewInfo.response2View.foreach {resp =>
+          renderSinglePlot(gl, xFld, yFld, resp, xi, yi)
+        }
+      }
+    }
+  }
+
+  /**
+   * Draw a single continuous plot
+   */
+  def renderSinglePlot(gl:GL2, 
+                       xFld:String, yFld:String, respField:String, 
+                       xi:Int, yi:Int) = {
+    val fields = project.inputFields
+    val respId = plotShader.get.attribId("response")
+    gl.glEnableVertexAttribArray(respId)
+    // Response 1
+    if(xFld < yFld) {
+      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, GL.GL_FALSE,
+                               Buffers.SIZEOF_FLOAT,
+                               fields.size * Buffers.SIZEOF_FLOAT)
+    }
+    // Response 2
+    if(yFld < xFld) {
+      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, GL.GL_FALSE,
+                               Buffers.SIZEOF_FLOAT,
+                               (fields.size+1) * Buffers.SIZEOF_FLOAT)
+    }
+
+    // set the uniforms specific to this plot
+    val trans = plotTransforms((xFld,yFld))
+    val model = project.gpModels(respField)
+    gl.glUniform4fv(plotShader.get.uniformId("trans"), trans)
+    gl.glUniform1i(plotShader.get.uniformId("d1"), xi)
+    gl.glUniform1i(plotShader.get.uniformId("d2"), yi)
+    gl.glUniform1f(plotShader.get.uniformId("d1Width"), 
+                   model.theta(xFld).toFloat)
+    gl.glUniform1f(plotShader.get.uniformId("d2Width"), 
+                   model.theta(yFld).toFloat)
+
+    // Finally, can draw!
+    gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
+  }
 }
 
