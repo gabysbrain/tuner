@@ -105,6 +105,8 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   def funcMax:Float = responses.max.toFloat
   def funcMin:Float = responses.min.toFloat
 
+  def theta(dim:String) = thetas(dims.indexOf(dim))
+
   def sampleSlice(rowDim:(String,(Float,Float)), 
                   colDim:(String,(Float,Float)),
                   slices:List[(String,Float)], 
