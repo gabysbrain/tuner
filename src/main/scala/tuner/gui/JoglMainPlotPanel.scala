@@ -154,7 +154,7 @@ class JoglMainPlotPanel(val project:Viewable)
     for(i <- 0 until (fields.size / 4.0).ceil.toInt) {
       val vPosId = plotShader.get.attribId("vPos" + i)
       gl.glEnableVertexAttribArray(vPosId)
-      gl.glVertexAttribPointer(vPosId, 4, GL.GL_FLOAT, GL.GL_FALSE,
+      gl.glVertexAttribPointer(vPosId, 4, GL.GL_FLOAT, false,
                                fields.size * Buffers.SIZEOF_FLOAT,
                                i * 4 * Buffers.SIZEOF_FLOAT)
     }
@@ -166,8 +166,8 @@ class JoglMainPlotPanel(val project:Viewable)
                     0)
 
     // Everything else is plot-dependent
-    project.inputFields.zipwithIndex.foreach {case (xFld, xi) =>
-      project.inputFields.zipwithIndex.foreach {case (yFld, yi) =>
+    project.inputFields.zipWithIndex.foreach {case (xFld, xi) =>
+      project.inputFields.zipWithIndex.foreach {case (yFld, yi) =>
         if(xFld < yFld) project.viewInfo.response1View.foreach {resp =>
           renderSinglePlot(gl, xFld, yFld, resp, xi, yi)
         }
@@ -189,13 +189,13 @@ class JoglMainPlotPanel(val project:Viewable)
     gl.glEnableVertexAttribArray(respId)
     // Response 1
     if(xFld < yFld) {
-      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, GL.GL_FALSE,
+      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
                                Buffers.SIZEOF_FLOAT,
                                fields.size * Buffers.SIZEOF_FLOAT)
     }
     // Response 2
     if(yFld < xFld) {
-      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, GL.GL_FALSE,
+      gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
                                Buffers.SIZEOF_FLOAT,
                                (fields.size+1) * Buffers.SIZEOF_FLOAT)
     }
@@ -203,7 +203,8 @@ class JoglMainPlotPanel(val project:Viewable)
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
     val model = project.gpModels(respField)
-    gl.glUniform4fv(plotShader.get.uniformId("trans"), trans)
+    gl.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 16, false, 
+                          trans.toArray, 0)
     gl.glUniform1i(plotShader.get.uniformId("d1"), xi)
     gl.glUniform1i(plotShader.get.uniformId("d2"), yi)
     gl.glUniform1f(plotShader.get.uniformId("d1Width"), 

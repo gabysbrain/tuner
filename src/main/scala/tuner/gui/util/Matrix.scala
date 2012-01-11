@@ -48,5 +48,7 @@ class Matrix4( v1:Float,  v2:Float,  v3:Float,  v4:Float,
          vv(12).toFloat, vv(13).toFloat, vv(14).toFloat, vv(15).toFloat)
 
   def *(m:Matrix4) : Matrix4 = times(m)
+
+  def toArray = getRowPackedCopy.map(_.toFloat)
 }
 
