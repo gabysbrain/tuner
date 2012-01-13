@@ -47,7 +47,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  val mainPlotPanel = new ProcessingMainPlotPanel(project)
+  //val mainPlotPanel = new ProcessingMainPlotPanel(project)
+  val mainPlotPanel = new JoglMainPlotPanel(project)
 
   val controlPanel = new ControlPanel(project)
   // Need this reference for later

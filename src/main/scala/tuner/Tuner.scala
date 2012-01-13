@@ -60,6 +60,7 @@ object Tuner extends SimpleSwingApplication {
     } else {
       val missingPackages = R.missingPackages
       if(missingPackages.isEmpty) {
+        openProject(Project.fromFile("/Users/tom/Projects/tuner.jogl/test_data/britta_proj"))
         ProjectChooser
       } else {
         new InstallPackageDialog(missingPackages) {

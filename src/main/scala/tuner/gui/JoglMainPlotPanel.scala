@@ -9,6 +9,10 @@ import javax.media.opengl.GLProfile
 import javax.media.opengl.GLCapabilities
 import javax.media.opengl.awt.GLJPanel
 
+import scala.swing.Component
+import scala.swing.BorderPanel
+
+import tuner.Config
 import tuner.project.Viewable
 import tuner.geom.Rectangle
 import tuner.gui.util.GPPlotGlsl
@@ -24,8 +28,14 @@ object Jogl {
 }
 
 class JoglMainPlotPanel(val project:Viewable)
-    extends GLJPanel(Jogl.capabilities) 
-    with MainPlotPanel {
+    extends BorderPanel with MainPlotPanel {
+
+  lazy val joglPanel = new GLJPanel(Jogl.capabilities) with SuperMixin
+  //joglPanel.setPreferredSize(new java.awt.Dimension(Config.mainPlotDims._1, 
+                                                    //Config.mainPlotDims._2))
+  lazy val component = new Component {
+    override lazy val peer = joglPanel
+  }
 
   val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
 
@@ -40,7 +50,7 @@ class JoglMainPlotPanel(val project:Viewable)
   // All the plot transforms
   var plotTransforms = Map[(String,String),Matrix4]()
 
-  addGLEventListener(new GLEventListener {
+  joglPanel.addGLEventListener(new GLEventListener {
     def reshape(drawable:GLAutoDrawable, x:Int, y:Int, width:Int, height:Int) =
       setup(drawable.getGL.getGL2, width, height)
     def init(drawable:GLAutoDrawable) = {}
@@ -49,7 +59,18 @@ class JoglMainPlotPanel(val project:Viewable)
       render(drawable.getGL.getGL2, drawable.getWidth, drawable.getHeight)
   })
 
+  //this.preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
+                                              //Config.mainPlotDims._2)
+  //joglPanel.setSize(Config.mainPlotDims._1, Config.mainPlotDims._2)
+  //joglPanel.setVisible(true)
+  //println(joglPanel.getSize)
+  println(contents(0))
+  println(contents(0).size)
+  layout(component) = BorderPanel.Position.Center
+
   def setup(gl:GL2, width:Int, height:Int) = {
+    println("here")
+    /*
     gl.glViewport(0, 0, width, height)
 
     // Update all the bounding boxes
@@ -66,14 +87,20 @@ class JoglMainPlotPanel(val project:Viewable)
     //basicShader = new Glsl(gl)
 
     setupPlotVertices(gl)
+    */
   }
 
   def render(gl:GL2, width:Int, height:Int) = {
+    println("drawing!")
+    /*
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     // Draw the continuous plots first
     renderContinuousPlots(gl)
+    */
   }
+
+  def redraw = {}
 
   def initBuffers(gl:GL2) = {
     val vao = Array(0)

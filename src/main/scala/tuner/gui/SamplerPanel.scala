@@ -2,7 +2,6 @@ package tuner.gui
 
 import date.scala.swing.TimeField
 
-import scala.swing.BorderPanel
 import scala.swing.BoxPanel
 import scala.swing.ComboBox
 import scala.swing.TablePanel

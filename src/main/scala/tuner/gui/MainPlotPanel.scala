@@ -31,6 +31,8 @@ trait MainPlotPanel extends Publisher {
   var sliceBounds = Map[(String,String),Rectangle]()
   var sliceSize = 0f
   
+  def redraw : Unit
+
   def publishHistoryAdd(sender:scala.swing.Component) =
     publish(new HistoryAdd(sender, project.viewInfo.currentSlice.toList))
 
