@@ -11,6 +11,7 @@ import javax.media.opengl.awt.GLJPanel
 
 import tuner.project.Viewable
 import tuner.geom.Rectangle
+import tuner.gui.util.GPPlotGlsl
 import tuner.gui.util.FacetLayout
 import tuner.gui.util.Glsl
 import tuner.gui.util.Matrix4
@@ -59,8 +60,9 @@ class JoglMainPlotPanel(val project:Viewable)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
     // Load in the shader programs
-    plotShader = Some(Glsl.fromResource(gl, "/shaders/plot.vert.glsl",
-                                            "/shaders/plot.frag.glsl"))
+    plotShader = Some(GPPlotGlsl.fromResource(
+        gl, project.inputFields.size, 
+        "/shaders/plot.geom.glsl", "/shaders/plot.frag.glsl"))
     //basicShader = new Glsl(gl)
 
     setupPlotVertices(gl)
@@ -152,9 +154,9 @@ class JoglMainPlotPanel(val project:Viewable)
 
     // Every 4 fields goes into one attribute
     for(i <- 0 until (fields.size / 4.0).ceil.toInt) {
-      val vPosId = plotShader.get.attribId("vPos" + i)
-      gl.glEnableVertexAttribArray(vPosId)
-      gl.glVertexAttribPointer(vPosId, 4, GL.GL_FLOAT, false,
+      val ptId = plotShader.get.attribId("p" + i)
+      gl.glEnableVertexAttribArray(ptId)
+      gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
                                fields.size * Buffers.SIZEOF_FLOAT,
                                i * 4 * Buffers.SIZEOF_FLOAT)
     }

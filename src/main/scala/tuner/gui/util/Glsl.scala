@@ -16,22 +16,39 @@ object Glsl {
     outString.toString
   }
 
+  def fromResource(gl:GL2, vertex:String, geom:String, fragment:String) = {
+    val vertSource = readResource(vertex)
+    val geomSource = readResource(geom)
+    val fragSource = readResource(fragment)
+    new Glsl(gl, vertSource, Some(geomSource), fragSource)
+  }
+
   def fromResource(gl:GL2, vertex:String, fragment:String) = {
     val vertSource = readResource(vertex)
     val fragSource = readResource(fragment)
     new Glsl(gl, vertSource, fragSource)
   }
+
 }
 
-class Glsl(gl:GL2, vertexSource:String, fragmentSource:String) {
+class Glsl(gl:GL2, vertexSource:String, 
+                   geometrySource:Option[String], 
+                   fragmentSource:String) {
 
   val vertShaderId = createShader(GL2.GL_VERTEX_PROGRAM_ARB, vertexSource)
+  val geomShaderId = geometrySource.map {gs => 
+    createShader(GL2.GL_GEOMETRY_PROGRAM_NV, gs)
+  }
   val fragShaderId = createShader(GL2.GL_FRAGMENT_PROGRAM_ARB, fragmentSource)
   val programId = gl.glCreateProgram
   gl.glAttachShader(programId, vertShaderId)
+  geomShaderId.foreach {gid => gl.glAttachShader(programId, gid)}
   gl.glAttachShader(programId, fragShaderId)
   gl.glLinkProgram(programId)
   gl.glValidateProgram(programId)
+
+  def this(gl:GL2, vertexSource:String, fragmentSource:String) = 
+        this(gl, vertexSource, None, fragmentSource)
 
   def createShader(typeId:Int, source:String) = {
     val shaderId = gl.glCreateShader(typeId)
