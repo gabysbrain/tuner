@@ -1,19 +1,21 @@
 package tuner.gui.util
 
 import javax.media.opengl.GL
-import javax.media.opengl.GL2
+import javax.media.opengl.GL2ES2
+import javax.media.opengl.GLAutoDrawable
 
 /**
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
  */
 object GPPlotGlsl {
-  def fromResource(gl:GL2, numDims:Int, geom:String, fragment:String) = {
+  def fromResource(drawable:GLAutoDrawable, 
+                   numDims:Int, geom:String, fragment:String) = {
     val vertSource = new GPPlotVertexShader(numDims).toString
     val geomSource = Glsl.readResource(geom)
     val fragSource = Glsl.readResource(fragment)
 
-    new Glsl(gl, vertSource, Some(geomSource), fragSource)
+    new Glsl(drawable, vertSource, Some(geomSource), fragSource)
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt

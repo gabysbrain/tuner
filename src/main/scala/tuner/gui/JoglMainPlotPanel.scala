@@ -1,7 +1,7 @@
 package tuner.gui
 
 import com.jogamp.common.nio.Buffers
-import javax.media.opengl.{GL,GL2}
+import javax.media.opengl.{GL,GL2,GL2ES2,DebugGL2ES2}
 import javax.media.opengl.glu.GLU
 import javax.media.opengl.GLAutoDrawable
 import javax.media.opengl.GLEventListener
@@ -24,18 +24,22 @@ object Jogl {
   val profile = GLProfile.getDefault
   val capabilities = new GLCapabilities(profile)
 
-  def canRun = profile.hasGLSL 
+  if(!canRun) {
+    throw new AssertionError("incompatable opengl version")
+  }
+
+  def canRun = profile.hasGLSL && profile.isGL2ES2
 }
 
 class JoglMainPlotPanel(val project:Viewable)
     extends BorderPanel with MainPlotPanel {
 
-  lazy val joglPanel = new GLJPanel(Jogl.capabilities) with SuperMixin
   //joglPanel.setPreferredSize(new java.awt.Dimension(Config.mainPlotDims._1, 
                                                     //Config.mainPlotDims._2))
-  lazy val component = new Component {
-    override lazy val peer = joglPanel
+  val component = new Component {
+    override lazy val peer = new GLJPanel(Jogl.capabilities) with SuperMixin
   }
+  val joglPanel = component.peer
 
   val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
 
@@ -52,25 +56,24 @@ class JoglMainPlotPanel(val project:Viewable)
 
   joglPanel.addGLEventListener(new GLEventListener {
     def reshape(drawable:GLAutoDrawable, x:Int, y:Int, width:Int, height:Int) =
-      setup(drawable.getGL.getGL2, width, height)
+      setup(drawable, width, height)
     def init(drawable:GLAutoDrawable) = {}
     def dispose(drawable:GLAutoDrawable) = {}
     def display(drawable:GLAutoDrawable) = 
-      render(drawable.getGL.getGL2, drawable.getWidth, drawable.getHeight)
+      render(drawable, drawable.getWidth, drawable.getHeight)
   })
 
-  //this.preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
-                                              //Config.mainPlotDims._2)
+  this.preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
+                                              Config.mainPlotDims._2)
   //joglPanel.setSize(Config.mainPlotDims._1, Config.mainPlotDims._2)
   //joglPanel.setVisible(true)
   //println(joglPanel.getSize)
+  layout(component) = BorderPanel.Position.Center
   println(contents(0))
   println(contents(0).size)
-  layout(component) = BorderPanel.Position.Center
 
-  def setup(gl:GL2, width:Int, height:Int) = {
-    println("here")
-    /*
+  def setup(drawable:GLAutoDrawable, width:Int, height:Int) = {
+    val gl = drawable.getGL
     gl.glViewport(0, 0, width, height)
 
     // Update all the bounding boxes
@@ -82,27 +85,26 @@ class JoglMainPlotPanel(val project:Viewable)
 
     // Load in the shader programs
     plotShader = Some(GPPlotGlsl.fromResource(
-        gl, project.inputFields.size, 
+        drawable, project.inputFields.size, 
         "/shaders/plot.geom.glsl", "/shaders/plot.frag.glsl"))
     //basicShader = new Glsl(gl)
 
-    setupPlotVertices(gl)
-    */
+    initBuffers(drawable)
+    setupPlotVertices(drawable)
   }
 
-  def render(gl:GL2, width:Int, height:Int) = {
-    println("drawing!")
-    /*
+  def render(drawable:GLAutoDrawable, width:Int, height:Int) = {
+    val gl = drawable.getGL
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     // Draw the continuous plots first
-    renderContinuousPlots(gl)
-    */
+    renderContinuousPlots(drawable)
   }
 
   def redraw = {}
 
-  def initBuffers(gl:GL2) = {
+  def initBuffers(drawable:GLAutoDrawable) = {
+    val gl = drawable.getGL.getGL2
     val vao = Array(0)
     gl.glGenVertexArrays(1, vao, 0)
     vertexArray = Some(vao(0))
@@ -112,7 +114,8 @@ class JoglMainPlotPanel(val project:Viewable)
     vertexBuffer = Some(vbo(0))
   }
 
-  def setupPlotVertices(gl:GL2) = {
+  def setupPlotVertices(drawable:GLAutoDrawable) = {
+    val gl = drawable.getGL.getGL2
 
     // Need one float per dim and value plus one for each of 2 responses
     val fields = project.inputFields
@@ -169,7 +172,9 @@ class JoglMainPlotPanel(val project:Viewable)
     (xFld,yFld) -> ttl
   }
 
-  def renderContinuousPlots(gl:GL2) = {
+  def renderContinuousPlots(drawable:GLAutoDrawable) = {
+    val gl = drawable.getGL.getGL2
+
     val fields = project.inputFields
     val resp1Start = project.designSites.numRows * fields.size
     val resp2Start = project.designSites.numRows * (fields.size+1)
@@ -198,10 +203,10 @@ class JoglMainPlotPanel(val project:Viewable)
     project.inputFields.zipWithIndex.foreach {case (xFld, xi) =>
       project.inputFields.zipWithIndex.foreach {case (yFld, yi) =>
         if(xFld < yFld) project.viewInfo.response1View.foreach {resp =>
-          renderSinglePlot(gl, xFld, yFld, resp, xi, yi)
+          renderSinglePlot(drawable, xFld, yFld, resp, xi, yi)
         }
         if(yFld < xFld) project.viewInfo.response2View.foreach {resp =>
-          renderSinglePlot(gl, xFld, yFld, resp, xi, yi)
+          renderSinglePlot(drawable, xFld, yFld, resp, xi, yi)
         }
       }
     }
@@ -210,9 +215,10 @@ class JoglMainPlotPanel(val project:Viewable)
   /**
    * Draw a single continuous plot
    */
-  def renderSinglePlot(gl:GL2, 
+  def renderSinglePlot(drawable:GLAutoDrawable,
                        xFld:String, yFld:String, respField:String, 
                        xi:Int, yi:Int) = {
+    val gl = drawable.getGL.getGL2
     val fields = project.inputFields
     val respId = plotShader.get.attribId("response")
     gl.glEnableVertexAttribArray(respId)

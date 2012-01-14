@@ -1,7 +1,7 @@
 package tuner.gui.util
 
-import javax.media.opengl.GL
-import javax.media.opengl.GL2
+import javax.media.opengl.{GL,GL2,GL2ES2, DebugGL2ES2}
+import javax.media.opengl.GLAutoDrawable
 
 object Glsl {
   def readResource(name:String) = {
@@ -16,30 +16,34 @@ object Glsl {
     outString.toString
   }
 
-  def fromResource(gl:GL2, vertex:String, geom:String, fragment:String) = {
+  def fromResource(drawable:GLAutoDrawable, 
+                   vertex:String, geom:String, fragment:String) = {
     val vertSource = readResource(vertex)
     val geomSource = readResource(geom)
     val fragSource = readResource(fragment)
-    new Glsl(gl, vertSource, Some(geomSource), fragSource)
+    new Glsl(drawable, vertSource, Some(geomSource), fragSource)
   }
 
-  def fromResource(gl:GL2, vertex:String, fragment:String) = {
+  def fromResource(drawable:GLAutoDrawable, 
+                   vertex:String, fragment:String) = {
     val vertSource = readResource(vertex)
     val fragSource = readResource(fragment)
-    new Glsl(gl, vertSource, fragSource)
+    new Glsl(drawable, vertSource, fragSource)
   }
 
 }
 
-class Glsl(gl:GL2, vertexSource:String, 
-                   geometrySource:Option[String], 
-                   fragmentSource:String) {
+class Glsl(drawable:GLAutoDrawable, 
+           vertexSource:String, 
+           geometrySource:Option[String], 
+           fragmentSource:String) {
 
-  val vertShaderId = createShader(GL2.GL_VERTEX_PROGRAM_ARB, vertexSource)
+  val gl = new DebugGL2ES2(drawable.getGL.getGL2ES2)
+  val vertShaderId = createShader(GL2ES2.GL_VERTEX_SHADER, vertexSource)
   val geomShaderId = geometrySource.map {gs => 
     createShader(GL2.GL_GEOMETRY_PROGRAM_NV, gs)
   }
-  val fragShaderId = createShader(GL2.GL_FRAGMENT_PROGRAM_ARB, fragmentSource)
+  val fragShaderId = createShader(GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
   val programId = gl.glCreateProgram
   gl.glAttachShader(programId, vertShaderId)
   geomShaderId.foreach {gid => gl.glAttachShader(programId, gid)}
@@ -47,8 +51,9 @@ class Glsl(gl:GL2, vertexSource:String,
   gl.glLinkProgram(programId)
   gl.glValidateProgram(programId)
 
-  def this(gl:GL2, vertexSource:String, fragmentSource:String) = 
-        this(gl, vertexSource, None, fragmentSource)
+  def this(drawable:GLAutoDrawable, 
+           vertexSource:String, fragmentSource:String) = 
+        this(drawable, vertexSource, None, fragmentSource)
 
   def createShader(typeId:Int, source:String) = {
     val shaderId = gl.glCreateShader(typeId)
