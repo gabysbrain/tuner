@@ -3,6 +3,7 @@ package tuner.gui.util
 import com.jogamp.opengl.util.glsl.ShaderUtil
 import javax.media.opengl.{GL,GL2,GL2ES2, DebugGL2ES2}
 import javax.media.opengl.GLAutoDrawable
+import javax.media.opengl.GLException
 
 object Glsl {
   def readResource(name:String) = {
@@ -11,10 +12,10 @@ object Glsl {
     val buf:Array[Byte] = Array.fill(1024)(0)
     var len = stream.read(buf)
     while(len > 0) {
-      outString.append(buf)
+      outString.append(new String(buf))
       len = stream.read(buf)
     }
-    outString.toString
+    outString.toString.trim
   }
 
   def fromResource(drawable:GLAutoDrawable, 
@@ -61,11 +62,20 @@ class Glsl(drawable:GLAutoDrawable,
     gl.glShaderSource(shaderId, 1, Array(source), null)
     gl.glCompileShader(shaderId)
     val ok = ShaderUtil.isShaderStatusValid(gl, shaderId, GL2ES2.GL_COMPILE_STATUS)
-    if(!ok) throw new Exception(ShaderUtil.getShaderInfoLog(gl, shaderId))
+    if(!ok) {
+      throw new javax.media.opengl.GLException(
+        println(source) + "\n\n" +
+        ShaderUtil.getShaderInfoLog(gl, shaderId))
+    }
     shaderId
   }
 
-  def attribId(name:String) : Int = gl.glGetAttribLocation(programId, name)
+  def attribId(name:String) : Int = try {
+    gl.glGetAttribLocation(programId, name)
+  } catch {
+    case e:GLException => 
+      throw new GLException("attribute " + name + " not found", e)
+  }
 
   def uniformId(name:String) : Int = gl.glGetUniformLocation(programId, name)
 

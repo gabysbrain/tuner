@@ -12,7 +12,6 @@ object GPPlotGlsl {
   def fromResource(drawable:GLAutoDrawable, 
                    numDims:Int, fragment:String) = {
     val vertSource = new GPPlotVertexShader(numDims).toString
-    println(vertSource)
     //val geomSource = Glsl.readResource(geom)
     val fragSource = Glsl.readResource(fragment)
 
