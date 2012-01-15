@@ -1,5 +1,6 @@
 package tuner.gui.util
 
+import com.jogamp.opengl.util.glsl.ShaderUtil
 import javax.media.opengl.{GL,GL2,GL2ES2, DebugGL2ES2}
 import javax.media.opengl.GLAutoDrawable
 
@@ -59,6 +60,8 @@ class Glsl(drawable:GLAutoDrawable,
     val shaderId = gl.glCreateShader(typeId)
     gl.glShaderSource(shaderId, 1, Array(source), null)
     gl.glCompileShader(shaderId)
+    val ok = ShaderUtil.isShaderStatusValid(gl, shaderId, GL2ES2.GL_COMPILE_STATUS)
+    if(!ok) throw new Exception(ShaderUtil.getShaderInfoLog(gl, shaderId))
     shaderId
   }
 

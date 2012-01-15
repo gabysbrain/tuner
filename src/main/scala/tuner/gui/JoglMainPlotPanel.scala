@@ -86,7 +86,7 @@ class JoglMainPlotPanel(val project:Viewable)
     // Load in the shader programs
     plotShader = Some(GPPlotGlsl.fromResource(
         drawable, project.inputFields.size, 
-        "/shaders/plot.geom.glsl", "/shaders/plot.frag.glsl"))
+        "/shaders/plot.frag.glsl"))
     //basicShader = new Glsl(gl)
 
     initBuffers(drawable)
