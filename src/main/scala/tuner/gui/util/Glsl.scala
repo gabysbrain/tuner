@@ -52,6 +52,11 @@ class Glsl(drawable:GLAutoDrawable,
   gl.glAttachShader(programId, fragShaderId)
   gl.glLinkProgram(programId)
   gl.glValidateProgram(programId)
+  val ok = ShaderUtil.isProgramValid(gl, programId) &&
+           ShaderUtil.isProgramStatusValid(gl, programId, GL2ES2.GL_LINK_STATUS)
+  if(!ok) {
+    throw new GLException(ShaderUtil.getProgramInfoLog(gl, programId))
+  }
 
   def this(drawable:GLAutoDrawable, 
            vertexSource:String, fragmentSource:String) = 
@@ -74,6 +79,8 @@ class Glsl(drawable:GLAutoDrawable,
     gl.glGetAttribLocation(programId, name)
   } catch {
     case e:GLException => 
+      val progOk = gl.glIsProgram(programId)
+      val ok2 = ShaderUtil.isProgramStatusValid(gl, programId, GL2ES2.GL_LINK_STATUS)
       throw new GLException("attribute " + name + " not found", e)
   }
 
