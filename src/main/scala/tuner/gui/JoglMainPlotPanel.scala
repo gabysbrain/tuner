@@ -35,8 +35,8 @@ object Jogl {
 class JoglMainPlotPanel(val project:Viewable)
     extends BorderPanel with MainPlotPanel {
 
-  //joglPanel.setPreferredSize(new java.awt.Dimension(Config.mainPlotDims._1, 
-                                                    //Config.mainPlotDims._2))
+  val debugGl = true
+
   val component = new Component {
     override lazy val peer = new GLJPanel(Jogl.capabilities) with SuperMixin
   }
@@ -66,16 +66,12 @@ class JoglMainPlotPanel(val project:Viewable)
 
   this.preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
                                               Config.mainPlotDims._2)
-  //joglPanel.setSize(Config.mainPlotDims._1, Config.mainPlotDims._2)
-  //joglPanel.setVisible(true)
-  //println(joglPanel.getSize)
   layout(component) = BorderPanel.Position.Center
-  println(contents(0))
-  println(contents(0).size)
 
   def setup(drawable:GLAutoDrawable, width:Int, height:Int) = {
     //drawable.setGL(new TraceGL2(drawable.getGL.getGL2, System.err))
-    drawable.setGL(new DebugGL2(drawable.getGL.getGL2))
+    if(debugGl) drawable.setGL(new DebugGL2(drawable.getGL.getGL2))
+
     val gl = drawable.getGL.getGL2
     gl.glViewport(0, 0, width, height)
 
@@ -97,7 +93,8 @@ class JoglMainPlotPanel(val project:Viewable)
   }
 
   def render(drawable:GLAutoDrawable, width:Int, height:Int) = {
-    drawable.setGL(new DebugGL2(drawable.getGL.getGL2))
+    if(debugGl) drawable.setGL(new DebugGL2(drawable.getGL.getGL2))
+
     val gl = drawable.getGL
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
