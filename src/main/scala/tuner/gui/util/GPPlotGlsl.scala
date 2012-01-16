@@ -1,7 +1,6 @@
 package tuner.gui.util
 
-import javax.media.opengl.GL
-import javax.media.opengl.GL2ES2
+import javax.media.opengl.{GL,GL2,GL2ES2}
 import javax.media.opengl.GLAutoDrawable
 
 /**
@@ -9,7 +8,7 @@ import javax.media.opengl.GLAutoDrawable
  * the vertex shader gets dynamically created
  */
 object GPPlotGlsl {
-  def fromResource(drawable:GLAutoDrawable, 
+  def fromResource(drawable:GLAutoDrawable,
                    numDims:Int, fragment:String) = {
     val vertSource = new GPPlotVertexShader(numDims).toString
     //println(vertSource)
@@ -21,6 +20,7 @@ object GPPlotGlsl {
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
+  def padCount(numDims:Int) = (4 - (numDims%4)) % 4
 
 }
 
@@ -33,6 +33,7 @@ class GPPlotVertexShader(numDims:Int) {
   
   // Attributes
   %s
+  attribute float response;
   attribute vec2 geomOffset;
 
   // Uniforms
@@ -66,7 +67,7 @@ class GPPlotVertexShader(numDims:Int) {
     vec2 slice = vec2(getSliceValue(d1), getSliceValue(d2));
     vec2 theta = vec2(getThetaValue(d1), getThetaValue(d2));
 
-    baseAlpha = exp(-sliceSqDist);
+    baseAlpha = response * exp(-sliceSqDist);
     vec2 maxExtent = sqrt(-log(EPSILON / baseAlpha) / theta);
 
     vec2 offset = clamp(dataPos + geomOffset, dataMin, dataMax);
