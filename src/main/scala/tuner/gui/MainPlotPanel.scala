@@ -3,6 +3,7 @@ package tuner.gui
 import tuner.Config
 import tuner.ColorMap
 import tuner.SpecifiedColorMap
+import tuner.ViewInfo
 import tuner.geom.Rectangle
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
@@ -32,6 +33,15 @@ trait MainPlotPanel extends Publisher {
   var sliceSize = 0f
   
   def redraw : Unit
+
+  def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
+    val (value, error, gain) = map(response)
+    project.viewInfo.currentMetric match {
+      case ViewInfo.ValueMetric => value
+      case ViewInfo.ErrorMetric => error
+      case ViewInfo.GainMetric => gain
+    }
+  }
 
   def publishHistoryAdd(sender:scala.swing.Component) =
     publish(new HistoryAdd(sender, project.viewInfo.currentSlice.toList))
