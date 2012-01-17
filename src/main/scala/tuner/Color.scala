@@ -22,5 +22,13 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
   def blue = b
   def alpha = a
 
+  def toInt : Int = {
+    val aa = (a*255).toInt << 24  // Binary: 11111111000000000000000000000000
+    val rr = (r*255).toInt << 16  // Binary: 00000000110011000000000000000000
+    val gg = (g*255).toInt << 8   // Binary: 00000000000000001100110000000000
+    val bb = (b*255).toInt
+    aa | rr | gg | bb
+  }
+
 }
 

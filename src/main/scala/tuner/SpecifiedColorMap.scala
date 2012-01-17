@@ -46,7 +46,7 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
    */
   def colorEnd = if(invert) minVal else maxVal
 
-  def color(v:Float) : Int = {
+  def color(v:Float) : Color = {
     val cv = P5Panel.constrain(v, minVal, maxVal)
     if(!invert && cv < filterVal) {
       Config.filterColor

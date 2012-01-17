@@ -73,6 +73,7 @@ class GPPlotVertexShader(numDims:Int) {
     vec2 offset = clamp(dataPos + geomOffset, dataMin, dataMax);
     vertexDist = distance(offset, slice) / sqrt(theta);
     gl_Position = trans * vec4(offset, 0.0, 1.0);
+    //gl_Position = vec4(0.5 * geomOffset, 0.0, 1.0);
   }
   """
   

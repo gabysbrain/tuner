@@ -9,17 +9,20 @@ import javax.media.opengl.GLEventListener
 import javax.media.opengl.GLProfile
 import javax.media.opengl.GLCapabilities
 import javax.media.opengl.awt.GLJPanel
+import javax.media.opengl.fixedfunc.GLMatrixFunc
 
 import scala.swing.Component
 import scala.swing.BorderPanel
 
 import tuner.Config
+import tuner.SpecifiedColorMap
 import tuner.project.Viewable
 import tuner.geom.Rectangle
 import tuner.gui.util.GPPlotGlsl
 import tuner.gui.util.FacetLayout
 import tuner.gui.util.Glsl
 import tuner.gui.util.Matrix4
+import tuner.gui.widgets.Colorbar
 
 object Jogl {
   val profile = GLProfile.getDefault
@@ -44,9 +47,11 @@ class JoglMainPlotPanel(val project:Viewable)
 
   val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
 
+  // Convenient to keep track of the current size
+  var panelSize = (0f, 0f)
+
   // These need to wait for the GL context to be set up
   var plotShader:Option[Glsl] = None
-  var basicShader:Option[Glsl] = None
 
   // The buffers we're using
   //var vertexArray:Option[Int] = None
@@ -74,6 +79,7 @@ class JoglMainPlotPanel(val project:Viewable)
 
     val gl = drawable.getGL.getGL2
     gl.glViewport(0, 0, width, height)
+    panelSize = (width, height)
 
     // Update all the bounding boxes
     updateBounds(width, height)
@@ -86,7 +92,6 @@ class JoglMainPlotPanel(val project:Viewable)
     plotShader = Some(GPPlotGlsl.fromResource(
         drawable, project.inputFields.size, 
         "/shaders/plot.frag.glsl"))
-    //basicShader = new Glsl(gl)
 
     initBuffers(drawable)
     setupPlotVertices(drawable)
@@ -99,7 +104,27 @@ class JoglMainPlotPanel(val project:Viewable)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     // Draw the continuous plots first
-    renderContinuousPlots(drawable)
+    //renderContinuousPlots(drawable)
+    /*
+    val gl2 = drawable.getGL.getGL2
+    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl2.glLoadMatrixf(projectionMatrix.toArray, 0)
+    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl2.glLoadIdentity
+    gl2.glBegin(GL2.GL_QUADS)
+    gl2.glColor3f(1f, 0f, 0f)
+    gl2.glVertex3f(0.25f, 0.75f, 0f)
+    gl2.glColor3f(1f, 1f, 0f)
+    gl2.glVertex3f(0.25f, 0.25f, 0f)
+    gl2.glColor3f(0f, 1f, 0f)
+    gl2.glVertex3f(0.75f, 0.25f, 0f)
+    gl2.glColor3f(0f, 0f, 1f)
+    gl2.glVertex3f(0.75f, 0.75f, 0f)
+    gl2.glEnd
+    */
+
+    // Now draw the colormaps
+    renderLegends(drawable)
   }
 
   def redraw = {}
@@ -280,7 +305,99 @@ class JoglMainPlotPanel(val project:Viewable)
     }
 
     // Finally, can draw!
-    gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
+    gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
+  }
+
+  def renderLegends(drawable:GLAutoDrawable) = {
+    val gl = drawable.getGL.getGL2
+
+    // Use the fixed functionality for compactness
+    gl.glUseProgram(0)
+
+    // Put everything on a 0,1 coordinate scale
+    gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl.glLoadMatrixf(projectionMatrix.toArray, 0)
+    // All the colorbar rendering code is copied from processing 
+    // so it needs to be in pixel coordinates
+    val modelView = Matrix4.scale(1f/panelSize._1, 1f/panelSize._2, 1f)
+    gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl.glLoadMatrixf(modelView.toArray, 0)
+
+    project.viewInfo.response1View.foreach {r =>
+      renderSingleLegend(drawable, leftColorbarBounds, Colorbar.Left, 
+                                   r, colormap(r, resp1Colormaps))
+    }
+    project.viewInfo.response2View.foreach {r =>
+      renderSingleLegend(drawable, rightColorbarBounds, Colorbar.Right,
+                                   r, colormap(r, resp2Colormaps))
+    }
+  }
+
+  def renderSingleLegend(drawable:GLAutoDrawable, bounds:Rectangle, 
+                         placement:Colorbar.Placement, respField:String,
+                         colormap:SpecifiedColorMap) = {
+    val gl = drawable.getGL.getGL2
+    val barWidth = bounds.width - 
+                   Config.colorbarLabelSpace._2 -
+                   Config.colorbarTickSize -
+                   Config.colorbarHandleSize._1
+    val barHeight = bounds.height -
+                    Config.colorbarLabelSpace._1 -
+                    Config.smallFontSize -
+                    Config.colorbarHandleSize._2 / 2
+    val barStartY = bounds.minY + 
+                    Config.colorbarLabelSpace._1 + 
+                    Config.smallFontSize
+    placement match {
+      case Colorbar.Left =>
+        renderColorbar(gl, bounds.maxX - barWidth, bounds.maxX, 
+                           barStartY, barStartY + barHeight,
+                           colormap)
+      case Colorbar.Right =>
+        renderColorbar(gl, bounds.minX, bounds.minX + barWidth, 
+                           barStartY, barStartY + barHeight,
+                           colormap)
+    }
+  }
+
+  def renderColorbar(gl:GL2, minX:Float, maxX:Float, 
+                             minY:Float, maxY:Float, 
+                             colormap:SpecifiedColorMap) = {
+    // Maybe draw the filterd out colors
+    if(colormap.isFiltered) {
+      val yy1 = P5Panel.map(colormap.filterStart, 
+                            colormap.minVal, colormap.maxVal, 
+                            maxY, minY)
+      val yy2 = P5Panel.map(colormap.filterVal, 
+                            colormap.minVal, colormap.maxVal, 
+                            maxY, minY)
+      gl.glColor3f(colormap.filterColor.r, 
+                   colormap.filterColor.g, 
+                   colormap.filterColor.b)
+      gl.glBegin(GL2.GL_QUADS)
+      gl.glVertex3f(minX, yy1, 0f)
+      gl.glVertex3f(maxX, yy1, 0f)
+      gl.glVertex3f(maxX, yy2, 0f)
+      gl.glVertex3f(minX, yy2, 0f)
+      gl.glEnd
+    }
+    // Draw the rest of the colormap
+    val yy1 = P5Panel.map(colormap.filterVal, 
+                          colormap.minVal, colormap.maxVal, 
+                          maxY, minY)
+    val yy2 = P5Panel.map(colormap.colorEnd, 
+                          colormap.minVal, colormap.maxVal, 
+                          maxY, minY)
+    gl.glBegin(GL2.GL_QUADS)
+    val c1 = colormap.color(colormap.filterVal)
+    val c2 = colormap.color(colormap.colorEnd)
+    gl.glColor3f(c1.r, c1.g, c1.b)
+    gl.glVertex3f(minX, yy1, 0f)
+    gl.glVertex3f(maxX, yy1, 0f)
+    gl.glColor3f(c2.r, c2.g, c2.b)
+    gl.glVertex3f(maxX, yy2, 0f)
+    gl.glVertex3f(minX, yy2, 0f)
+    gl.glEnd
   }
 }
 

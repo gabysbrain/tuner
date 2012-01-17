@@ -59,7 +59,7 @@ object Config {
   val errorColorMap = BlueColorMap
   val gainColorMap = GreenColorMap
   val lineColor = 255
-  val filterColor = 151
+  val filterColor = Color(151)
   val regionAlpha = 0.8f * 255
   val regionColor = 0xAAABCDFC
 

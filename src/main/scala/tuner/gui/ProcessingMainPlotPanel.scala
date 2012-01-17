@@ -56,15 +56,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
       clearFonts
   }
 
-  def colormap(response:String, map:ColormapMap) : SpecifiedColorMap = {
-    val (value, error, gain) = map(response)
-    project.viewInfo.currentMetric match {
-      case ViewInfo.ValueMetric => value
-      case ViewInfo.ErrorMetric => error
-      case ViewInfo.GainMetric => gain
-    }
-  }
-
   def plotData(model:GpModel,
                xDim:(String,(Float,Float)), 
                yDim:(String,(Float,Float)), 
