@@ -1,5 +1,6 @@
 package tuner.gui.util
 
+import com.jogamp.common.nio.Buffers
 import javax.media.opengl.{GL,GL2}
 import javax.media.opengl.GLAutoDrawable
 
@@ -18,6 +19,19 @@ object GlText {
   case object Left extends HAlign
   case object HCenter extends HAlign
   case object Right extends HAlign
+
+  def drawString(drawable:GLAutoDrawable, text:String, 
+                 font:PFont, size:Float,
+                 x:Float, y:Float,
+                 vAlign:VAlign, hAlign:HAlign) = {
+    val txt = new GlText(text, font, size)
+    txt.vAlign = vAlign
+    txt.hAlign = hAlign
+    txt.draw(drawable, x, y)
+  }
+
+  def width(text:String, font:PFont, size:Float) = 
+    new GlText(text, font, size).width
 
 }
 
@@ -87,11 +101,12 @@ class GlText(text:String, font:PFont, size:Float) {
     // Assign the glyph to the texture
     val img = glyph.image
     img.loadPixels
+    val imgBuf = Buffers.newDirectIntBuffer(img.pixels)
     gl.glBindTexture(GL.GL_TEXTURE_2D, textureId)
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 3, 
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB8, 
                     img.width, img.height, 
-                    0, GL.GL_RGB, 
-                    GL.GL_UNSIGNED_BYTE, img.pixels)
+                    0, GL.GL_RGBA, 
+                    GL.GL_UNSIGNED_INT, imgBuf)
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
 

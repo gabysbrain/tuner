@@ -21,6 +21,7 @@ import tuner.geom.Rectangle
 import tuner.gui.util.GPPlotGlsl
 import tuner.gui.util.FacetLayout
 import tuner.gui.util.Glsl
+import tuner.gui.util.GlText
 import tuner.gui.util.Matrix4
 import tuner.gui.widgets.Colorbar
 
@@ -337,7 +338,14 @@ class JoglMainPlotPanel(val project:Viewable)
                          placement:Colorbar.Placement, respField:String,
                          colormap:SpecifiedColorMap) = {
     val gl = drawable.getGL.getGL2
-    val barWidth = bounds.width - 
+
+    // Figure out how wide the text labels will be
+    /*
+    val labelWidth = GlText.width("-" + "M" * Config.colorbarTickDigits._1 +
+                                  "." + "M" * Config.colorbarTickDigits._2)
+    */
+
+    val barWidth = bounds.width - //labelWidth -
                    Config.colorbarLabelSpace._2 -
                    Config.colorbarTickSize -
                    Config.colorbarHandleSize._1
