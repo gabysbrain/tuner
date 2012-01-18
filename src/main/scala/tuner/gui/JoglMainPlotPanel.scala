@@ -55,6 +55,14 @@ class JoglMainPlotPanel(project:Viewable)
     ensurePlotVertices(gl.getGL2)
   }
 
+  def disableGl(gl:GL) = {
+    // No more shaders
+    gl.getGL2ES2.glUseProgram(0)
+
+    // No more vertex buffers
+    gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
+  }
+
   def ensureBuffers(gl:GL2) = {
     //val vao = Array(0)
     //gl.glGenVertexArrays(1, vao, 0)
@@ -217,6 +225,8 @@ class JoglMainPlotPanel(project:Viewable)
 
     // Finally, can draw!
     gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
+
+    disableGl(gl)
   }
 
 }
