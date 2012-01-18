@@ -224,6 +224,8 @@ abstract class P5Panel (
   def setup = {}
   def draw
 
+  def g = applet.g
+
   // TODO: make this look up the actual value
   def loop = true
   def loop_=(b:Boolean) = {

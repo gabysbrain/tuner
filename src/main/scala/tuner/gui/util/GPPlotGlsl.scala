@@ -8,15 +8,14 @@ import javax.media.opengl.GLAutoDrawable
  * the vertex shader gets dynamically created
  */
 object GPPlotGlsl {
-  def fromResource(drawable:GLAutoDrawable,
-                   numDims:Int, fragment:String) = {
+  def fromResource(gl:GL, numDims:Int, fragment:String) = {
     val vertSource = new GPPlotVertexShader(numDims).toString
     //println(vertSource)
     //val geomSource = Glsl.readResource(geom)
     val fragSource = Glsl.readResource(fragment)
 
     //new Glsl(drawable, vertSource, Some(geomSource), fragSource)
-    new Glsl(drawable, vertSource, None, fragSource)
+    new Glsl(gl, vertSource, None, fragSource)
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt

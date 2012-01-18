@@ -148,7 +148,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  private def drawResponses = {
+  protected def drawResponses = {
     // Find the closest sample
     val closestSample = project.closestSample(
       project.viewInfo.currentSlice.toList).toMap
@@ -184,11 +184,11 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  private def drawResponse(xFld:String, yFld:String, 
-                           xRange:(String,(Float,Float)), 
-                           yRange:(String,(Float,Float)), 
-                           response:String,
-                           closestSample:Table.Tuple) = {
+  protected def drawResponse(xFld:String, yFld:String, 
+                             xRange:(String,(Float,Float)), 
+                             yRange:(String,(Float,Float)), 
+                             response:String,
+                             closestSample:Table.Tuple) = {
 
     val model = project.gpModels(response)
     val bounds = sliceBounds((xFld, yFld))

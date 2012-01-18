@@ -18,81 +18,77 @@ object Glsl {
     outString.toString.trim
   }
 
-  def fromResource(drawable:GLAutoDrawable, 
-                   vertex:String, geom:String, fragment:String) = {
+  def fromResource(gl:GL, vertex:String, geom:String, fragment:String) = {
     val vertSource = readResource(vertex)
     val geomSource = readResource(geom)
     val fragSource = readResource(fragment)
-    new Glsl(drawable, vertSource, Some(geomSource), fragSource)
+    new Glsl(gl, vertSource, Some(geomSource), fragSource)
   }
 
-  def fromResource(drawable:GLAutoDrawable, 
-                   vertex:String, fragment:String) = {
+  def fromResource(gl:GL, vertex:String, fragment:String) = {
     val vertSource = readResource(vertex)
     val fragSource = readResource(fragment)
-    new Glsl(drawable, vertSource, fragSource)
+    new Glsl(gl, vertSource, fragSource)
   }
 
 }
 
-class Glsl(drawable:GLAutoDrawable, 
+class Glsl(gl:GL,
            vertexSource:String, 
            geometrySource:Option[String], 
            fragmentSource:String) {
 
+  val es2 = gl.getGL2ES2
   val vertShaderId = 
-    createShader(drawable, GL2ES2.GL_VERTEX_SHADER, vertexSource)
+    createShader(es2, GL2ES2.GL_VERTEX_SHADER, vertexSource)
   val geomShaderId = geometrySource.map {gs => 
-    createShader(drawable, GL2.GL_GEOMETRY_PROGRAM_NV, gs)
+    createShader(es2, GL2.GL_GEOMETRY_PROGRAM_NV, gs)
   }
   val fragShaderId = 
-    createShader(drawable, GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
+    createShader(es2, GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
   val programId = {
-    val gl = drawable.getGL.getGL2ES2
-    val progId = gl.glCreateProgram
-    gl.glAttachShader(progId, vertShaderId)
-    geomShaderId.foreach {gid => gl.glAttachShader(progId, gid)}
-    gl.glAttachShader(progId, fragShaderId)
-    gl.glLinkProgram(progId)
-    gl.glValidateProgram(progId)
-    val ok = ShaderUtil.isProgramValid(gl, progId) &&
-             ShaderUtil.isProgramStatusValid(gl, progId, GL2ES2.GL_LINK_STATUS)
+    val progId = es2.glCreateProgram
+    es2.glAttachShader(progId, vertShaderId)
+    geomShaderId.foreach {gid => es2.glAttachShader(progId, gid)}
+    es2.glAttachShader(progId, fragShaderId)
+    es2.glLinkProgram(progId)
+    es2.glValidateProgram(progId)
+    val ok = ShaderUtil.isProgramValid(es2, progId) &&
+             ShaderUtil.isProgramStatusValid(es2, progId, GL2ES2.GL_LINK_STATUS)
     if(!ok) {
-      throw new GLException(ShaderUtil.getProgramInfoLog(gl, progId))
+      throw new GLException(ShaderUtil.getProgramInfoLog(es2, progId))
     }
     progId
   }
 
-  def this(drawable:GLAutoDrawable, 
-           vertexSource:String, fragmentSource:String) = 
-        this(drawable, vertexSource, None, fragmentSource)
+  def this(gl:GL, vertexSource:String, fragmentSource:String) = 
+        this(gl, vertexSource, None, fragmentSource)
 
-  def createShader(drawable:GLAutoDrawable, typeId:Int, source:String) = {
-    val gl = drawable.getGL.getGL2ES2
-    val shaderId = gl.glCreateShader(typeId)
-    gl.glShaderSource(shaderId, 1, Array(source), null)
-    gl.glCompileShader(shaderId)
-    val ok = ShaderUtil.isShaderStatusValid(gl, shaderId, GL2ES2.GL_COMPILE_STATUS)
+  protected def createShader(es2:GL2ES2, typeId:Int, source:String) = {
+    val shaderId = es2.glCreateShader(typeId)
+    es2.glShaderSource(shaderId, 1, Array(source), null)
+    es2.glCompileShader(shaderId)
+    val ok = ShaderUtil.isShaderStatusValid(es2, shaderId, GL2ES2.GL_COMPILE_STATUS)
     if(!ok) {
       throw new javax.media.opengl.GLException(
         println(source) + "\n\n" +
-        ShaderUtil.getShaderInfoLog(gl, shaderId))
+        ShaderUtil.getShaderInfoLog(es2, shaderId))
     }
     shaderId
   }
 
-  def attribId(drawable:GLAutoDrawable, name:String) : Int = {
-    val gl = drawable.getGL.getGL2ES2
-    val id = gl.glGetAttribLocation(programId, name)
+  def attribId(gl:GL, name:String) : Int = {
+    val es2 = gl.getGL2ES2
+    val id = es2.glGetAttribLocation(programId, name)
     if(id < 0) {
       throw new GLException("attribute " + name + " not found")
     }
     id
   }
 
-  def uniformId(drawable:GLAutoDrawable, name:String) : Int = {
-    val gl = drawable.getGL.getGL2ES2
-    val id = gl.glGetUniformLocation(programId, name)
+  def uniformId(gl:GL, name:String) : Int = {
+    val es2 = gl.getGL2ES2
+    val id = es2.glGetUniformLocation(programId, name)
     if(id < 0) {
       throw new GLException("uniform " + name + " not found")
     }
