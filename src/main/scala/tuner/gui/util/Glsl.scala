@@ -2,6 +2,7 @@ package tuner.gui.util
 
 import com.jogamp.opengl.util.glsl.ShaderUtil
 import javax.media.opengl.{GL,GL2,GL2ES2}
+import javax.media.opengl.DebugGL2ES2
 import javax.media.opengl.GLAutoDrawable
 import javax.media.opengl.GLException
 
@@ -38,14 +39,16 @@ class Glsl(gl:GL,
            geometrySource:Option[String], 
            fragmentSource:String) {
 
-  val es2 = gl.getGL2ES2
+  //val es2 = gl.getGL2ES2
+  val es2 = new DebugGL2ES2(gl.getGL2ES2)
+
   val vertShaderId = 
-    createShader(es2, GL2ES2.GL_VERTEX_SHADER, vertexSource)
+    createShader(GL2ES2.GL_VERTEX_SHADER, vertexSource)
   val geomShaderId = geometrySource.map {gs => 
-    createShader(es2, GL2.GL_GEOMETRY_PROGRAM_NV, gs)
+    createShader(GL2.GL_GEOMETRY_PROGRAM_NV, gs)
   }
   val fragShaderId = 
-    createShader(es2, GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
+    createShader(GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
   val programId = {
     val progId = es2.glCreateProgram
     es2.glAttachShader(progId, vertShaderId)
@@ -64,7 +67,7 @@ class Glsl(gl:GL,
   def this(gl:GL, vertexSource:String, fragmentSource:String) = 
         this(gl, vertexSource, None, fragmentSource)
 
-  protected def createShader(es2:GL2ES2, typeId:Int, source:String) = {
+  protected def createShader(typeId:Int, source:String) = {
     val shaderId = es2.glCreateShader(typeId)
     es2.glShaderSource(shaderId, 1, Array(source), null)
     es2.glCompileShader(shaderId)
@@ -77,8 +80,9 @@ class Glsl(gl:GL,
     shaderId
   }
 
-  def attribId(gl:GL, name:String) : Int = {
-    val es2 = gl.getGL2ES2
+  //def attribId(gl:GL, name:String) : Int = {
+    //val es2 = gl.getGL2ES2
+  def attribId(name:String) : Int = {
     val id = es2.glGetAttribLocation(programId, name)
     if(id < 0) {
       throw new GLException("attribute " + name + " not found")
@@ -86,8 +90,9 @@ class Glsl(gl:GL,
     id
   }
 
-  def uniformId(gl:GL, name:String) : Int = {
-    val es2 = gl.getGL2ES2
+  //def uniformId(gl:GL, name:String) : Int = {
+    //val es2 = gl.getGL2ES2
+  def uniformId(name:String) : Int = {
     val id = es2.glGetUniformLocation(programId, name)
     if(id < 0) {
       throw new GLException("uniform " + name + " not found")

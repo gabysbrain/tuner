@@ -1,6 +1,8 @@
 package tuner.gui
 
 import com.jogamp.common.nio.Buffers
+import javax.media.opengl.DebugGL2
+import javax.media.opengl.TraceGL2
 import javax.media.opengl.{GL,GL2}
 
 import processing.opengl.PGraphicsOpenGL
@@ -29,6 +31,8 @@ class JoglMainPlotPanel(project:Viewable)
   //var vertexArray:Option[Int] = None
   var vertexBuffer:Option[Int] = None
 
+  var lastResponse:String = ""
+
   // All the plot transforms
   var plotTransforms = Map[(String,String),Matrix4]()
 
@@ -47,12 +51,13 @@ class JoglMainPlotPanel(project:Viewable)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
     // Load in the shader programs
-    plotShader = Some(GPPlotGlsl.fromResource(
-        gl, project.inputFields.size, 
-        "/shaders/plot.frag.glsl"))
+    if(!plotShader.isDefined) {
+      plotShader = Some(GPPlotGlsl.fromResource(
+          gl, project.inputFields.size, 
+          "/shaders/plot.frag.glsl"))
+    }
 
     ensureBuffers(gl.getGL2)
-    ensurePlotVertices(gl.getGL2)
   }
 
   def disableGl(gl:GL) = {
@@ -72,16 +77,17 @@ class JoglMainPlotPanel(project:Viewable)
       val vbo = Array(0)
       gl.glGenBuffers(1, vbo, 0)
       vertexBuffer = Some(vbo(0))
+      setupPlotVertices(gl)
     }
   }
 
-  def ensurePlotVertices(gl:GL2) = {
+  def setupPlotVertices(gl:GL2) = {
 
-    // Need one float per dim and value plus one for each of 
-    // 2 responses plus the geometry offsets
+    // Need one float per dim and value plus one for the
+    // response value plus the geometry offsets
     val fields = project.inputFields
     val padFields = GPPlotGlsl.padCount(fields.size)
-    val pointSize = fields.size + padFields + 2 + 2
+    val pointSize = fields.size + padFields + 2 + 1
     val numFloats = 6 * project.designSites.numRows * pointSize
     val tmpBuf = Buffers.newDirectFloatBuffer(numFloats)
     for(r <- 0 until project.designSites.numRows) {
@@ -93,17 +99,9 @@ class JoglMainPlotPanel(project:Viewable)
         tmpBuf.put(pt._2)
       }
     }
-    project.viewInfo.response1View.foreach {r1Fld =>
-      for(r <- 0 until project.designSites.numRows) {
-        val tpl = project.designSites.tuple(r)
-        tmpBuf.put(tpl(r1Fld))
-      }
-    }
-    project.viewInfo.response1View.foreach {r2Fld =>
-      for(r <- 0 until project.designSites.numRows) {
-        val tpl = project.designSites.tuple(r)
-        tmpBuf.put(tpl(r2Fld))
-      }
+    // Put 0s at the end until we're ready to copy in the response values
+    for(r <- 0 until project.designSites.numRows) {
+      tmpBuf.put(0f)
     }
 
     tmpBuf.rewind
@@ -111,6 +109,24 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
     gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
                     tmpBuf, GL.GL_STATIC_DRAW)
+  }
+
+  def updateResponseValues(gl:GL2, response:String) = {
+    val respBuf = Buffers.newDirectFloatBuffer(6 * project.designSites.numRows)
+    for(r <- 0 until project.designSites.numRows) {
+      val tpl = project.designSites.tuple(r)
+      respBuf.put(tpl(response))
+    }
+    respBuf.rewind
+
+    // figure out the offset in the actual vertex buffer
+    val fields = project.inputFields
+    val padFields = GPPlotGlsl.padCount(fields.size)
+    val pointSize = fields.size + padFields + 2
+    val offset = 6 * project.designSites.numRows * pointSize
+    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
+    gl.glBufferSubData(GL.GL_ARRAY_BUFFER, offset, 
+                       6 * project.designSites.numRows, respBuf)
   }
 
   /**
@@ -149,20 +165,18 @@ class JoglMainPlotPanel(project:Viewable)
     // set up all the contexts
     gl.glUseProgram(plotShader.get.programId)
     gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
-    //gl.glBindVertexArray(vertexArray.get)
 
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      val ptId = plotShader.get.attribId(gl, "p" + i)
-      //gl.glEnableVertexAttribArray(ptId)
+      val ptId = plotShader.get.attribId("p" + i)
       gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
                                (fieldSize + 2) * Buffers.SIZEOF_FLOAT,
                                i * 4 * Buffers.SIZEOF_FLOAT)
 
       // Send down the current slice
-      val sId = plotShader.get.uniformId(gl, "slice" + i)
+      val sId = plotShader.get.uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4 + 0), 
                           sliceArray(i*4+1), 
                           sliceArray(i*4+2),
@@ -171,10 +185,31 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     // Also assign the geometry offset here
-    gl.glVertexAttribPointer(plotShader.get.attribId(gl, "geomOffset"),
+    gl.glVertexAttribPointer(plotShader.get.attribId("geomOffset"),
                              2, GL.GL_FLOAT, false,
                              (fieldSize + 2) * Buffers.SIZEOF_FLOAT,
                              fieldSize * Buffers.SIZEOF_FLOAT)
+
+    // Assign the response
+    val respId = plotShader.get.attribId("response")
+    gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
+                             Buffers.SIZEOF_FLOAT,
+                             fields.size * Buffers.SIZEOF_FLOAT)
+  }
+
+  override protected def drawResponses = {
+    // setup the opengl context for drawing
+    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
+    val gl2 = new TraceGL2(gl.getGL2, System.out)
+    // Make sure all the opengl stuff is set up
+    ensureGl(gl)
+    setupRenderingState(gl2)
+
+    // the old looping code works fine
+    super.drawResponses
+    
+    // clean up after ourselves
+    disableGl(gl)
   }
 
   /**
@@ -185,30 +220,31 @@ class JoglMainPlotPanel(project:Viewable)
                                       yRange:(String,(Float,Float)),
                                       response:String,
                                       closestSample:Table.Tuple) = {
-    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val gl2 = gl.getGL2
-    // Make sure all the opengl stuff is set up
-    ensureGl(gl)
 
+    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
+    val gl2 = new DebugGL2(gl.getGL2)
+
+    // Make sure the response value hasn't changed
+    if(response != lastResponse) {
+      println("new response: " + response)
+      updateResponseValues(gl2, response)
+      lastResponse = response
+    }
     val fields = project.inputFields
     val xi = fields.indexOf(xRange._1)
     val yi = fields.indexOf(yRange._1)
-    val respId = plotShader.get.attribId(gl, "response")
-    gl2.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
-                              Buffers.SIZEOF_FLOAT,
-                              fields.size * Buffers.SIZEOF_FLOAT)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
     val model = project.gpModels(response)
-    gl2.glUniformMatrix4fv(plotShader.get.uniformId(gl, "trans"), 
+    gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
-    gl2.glUniform1i(plotShader.get.uniformId(gl, "d1"), xi)
-    gl2.glUniform1i(plotShader.get.uniformId(gl, "d2"), yi)
-    gl2.glUniform2f(plotShader.get.uniformId(gl, "dataMin"), 
+    gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
+    gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
+    gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
                     project.designSites.min(xFld),
                     project.designSites.min(yFld))
-    gl2.glUniform2f(plotShader.get.uniformId(gl, "dataMax"), 
+    gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     project.designSites.max(xFld),
                     project.designSites.max(yFld))
 
@@ -216,7 +252,7 @@ class JoglMainPlotPanel(project:Viewable)
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      val tId = plotShader.get.uniformId(gl, "theta" + i)
+      val tId = plotShader.get.uniformId("theta" + i)
       gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
                            thetaArray(i*4+1), 
                            thetaArray(i*4+2),
@@ -225,8 +261,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // Finally, can draw!
     gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
-
-    disableGl(gl)
+    gl.glFlush
   }
 
 }

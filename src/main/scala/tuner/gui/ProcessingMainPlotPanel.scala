@@ -127,6 +127,12 @@ class ProcessingMainPlotPanel(val project:Viewable)
     // Draw the responses
     drawResponses
 
+    // Draw the axes
+    project.inputFields.foreach {fld =>
+      val rng = (fld, project.viewInfo.currentZoom.range(fld))
+      drawAxes(rng)
+    }
+
     val endTime = System.currentTimeMillis
     //println("draw time: " + (endTime - startTime) + "ms")
   }
@@ -177,8 +183,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
             val endTime = System.currentTimeMillis
             //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
-        } else {
-          drawAxes(xRange)
         }
       }
     }
