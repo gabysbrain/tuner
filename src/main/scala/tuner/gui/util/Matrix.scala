@@ -13,7 +13,7 @@ object Matrix4 {
                 v4, v8, v12, v16)
   }
 
-  def identity = Matrix.identity(4, 4)
+  def identity = new Matrix4(Matrix.identity(4, 4).getRowPackedCopy)
 
   def scale(x:Float, y:Float, z:Float) = new Matrix4(
     x, 0, 0, 0,
@@ -50,5 +50,16 @@ class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float,
   def *(m:Matrix4) : Matrix4 = times(m)
 
   def toArray = getRowPackedCopy.map(_.toFloat)
+
+  override def toString = {
+    (0 until getRowDimension).map({r =>
+      "|" + 
+      (0 until getColumnDimension).map {c => 
+        get(r, c).toString
+      }.reduceLeft(_ + " " + _) + 
+      "|"
+    }).reduceLeft(_ + "\n" + _)
+  }
+
 }
 
