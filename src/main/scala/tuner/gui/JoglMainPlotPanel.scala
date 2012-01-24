@@ -4,6 +4,7 @@ import com.jogamp.common.nio.Buffers
 import javax.media.opengl.DebugGL2
 import javax.media.opengl.TraceGL2
 import javax.media.opengl.{GL,GL2}
+import javax.media.opengl.fixedfunc.GLMatrixFunc
 
 import processing.opengl.PGraphicsOpenGL
 
@@ -37,18 +38,16 @@ class JoglMainPlotPanel(project:Viewable)
   var plotTransforms = Map[(String,String),Matrix4]()
 
   def ensureGl(gl:GL) = {
-    //drawable.setGL(new TraceGL2(drawable.getGL.getGL2, System.err))
-    //if(debugGl) drawable.setGL(new DebugGL2(drawable.getGL.getGL2))
-
-    //gl.glViewport(0, 0, width, height)
-    //panelSize = (width, height)
-
-    // Update all the bounding boxes
-    //updateBounds(width, height)
-    //val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
-    //sliceSize = ss
-    //sliceBounds = sb
+    val gl2 = gl.getGL2
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
+
+    // processing resets the projection matrices
+    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl2.glPushMatrix
+    gl2.glLoadIdentity
+    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl2.glPushMatrix
+    gl2.glLoadIdentity
 
     // Load in the shader programs
     if(!plotShader.isDefined) {
@@ -61,6 +60,13 @@ class JoglMainPlotPanel(project:Viewable)
   }
 
   def disableGl(gl:GL) = {
+    // Put the matrices back where we found them
+    val gl2 = gl.getGL2
+    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl2.glPopMatrix
+    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl2.glPopMatrix
+
     // No more shaders
     gl.getGL2ES2.glUseProgram(0)
 
@@ -87,22 +93,34 @@ class JoglMainPlotPanel(project:Viewable)
     // response value plus the geometry offsets
     val fields = project.inputFields
     val padFields = GPPlotGlsl.padCount(fields.size)
-    val pointSize = fields.size + padFields + 2 + 1
-    val numFloats = 6 * project.designSites.numRows * pointSize
+    //val pointSize = fields.size + padFields + 2 + 1
+    //val numFloats = 6 * project.designSites.numRows * pointSize
+    val pointSize = 4
+    val numFloats = project.designSites.numRows * pointSize
     val tmpBuf = Buffers.newDirectFloatBuffer(numFloats)
     for(r <- 0 until project.designSites.numRows) {
       val tpl = project.designSites.tuple(r)
+      /*
       List((-1f,1f),(-1f,-1f),(1f,1f),(-1f,-1f),(1f,1f),(1f,-1f)).foreach{pt =>
         fields.foreach {fld => tmpBuf.put(tpl(fld))}
         (0 until padFields).foreach {_ => tmpBuf.put(0f)}
         tmpBuf.put(pt._1)
         tmpBuf.put(pt._2)
       }
+      */
+      //tmpBuf.put(tpl(fields(0)))
+      //tmpBuf.put(tpl(fields(1)))
+      tmpBuf.put(0.5f)
+      tmpBuf.put(0.5f)
+      tmpBuf.put(0f)
+      tmpBuf.put(1f)
     }
     // Put 0s at the end until we're ready to copy in the response values
+    /*
     for(r <- 0 until project.designSites.numRows) {
       tmpBuf.put(0f)
     }
+    */
 
     tmpBuf.rewind
 
@@ -151,21 +169,22 @@ class JoglMainPlotPanel(project:Viewable)
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformation
-    val ttl = projectionMatrix * plotTrans * plotScale * dataScale * dataTrans
+    val ttl = projectionMatrix * plotTrans * plotScale * dataTrans * dataScale
     (xFld,yFld) -> ttl
   }
 
   def setupRenderingState(gl:GL2) = {
 
     val fields = project.inputFields
-    val fieldSize = fields.size + GPPlotGlsl.padCount(fields.size)
-    val resp1Start = project.designSites.numRows * fields.size
-    val resp2Start = project.designSites.numRows * (fields.size+1)
 
     // set up all the contexts
     gl.glUseProgram(plotShader.get.programId)
     gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
+    val ptId = plotShader.get.attribId("vPos")
+    gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
+                             4 * Buffers.SIZEOF_FLOAT, 0)
 
+    /*
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
@@ -195,12 +214,15 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
                              Buffers.SIZEOF_FLOAT,
                              fields.size * Buffers.SIZEOF_FLOAT)
+    */
   }
 
   override protected def drawResponses = {
     // setup the opengl context for drawing
-    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val gl2 = new TraceGL2(gl.getGL2, System.out)
+    val pgl = g.asInstanceOf[PGraphicsOpenGL]
+    val gl = pgl.beginGL
+    //val gl2 = new TraceGL2(gl.getGL2, System.out)
+    val gl2 = new DebugGL2(gl.getGL2)
     // Make sure all the opengl stuff is set up
     ensureGl(gl)
     setupRenderingState(gl2)
@@ -210,6 +232,33 @@ class JoglMainPlotPanel(project:Viewable)
     
     // clean up after ourselves
     disableGl(gl)
+
+    /*
+    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl2.glPushMatrix
+    gl2.glLoadIdentity
+    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl2.glPushMatrix
+    gl2.glLoadIdentity
+
+    gl2.glBegin(GL2.GL_QUADS)
+    gl2.glColor3f(1f, 0f, 0f)
+    gl2.glVertex3f(-0.5f, -0.5f, 0f)
+    gl2.glColor3f(1f, 1f, 0f)
+    gl2.glVertex3f(-0.5f, 0.5f, 0f)
+    gl2.glColor3f(0f, 1f, 0f)
+    gl2.glVertex3f(0.5f, 0.5f, 0f)
+    gl2.glColor3f(0f, 0f, 1f)
+    gl2.glVertex3f(0.5f, -0.5f, 0f)
+    gl2.glEnd
+
+    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
+    gl2.glPopMatrix
+    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl2.glPopMatrix
+    */
+
+    pgl.endGL
   }
 
   /**
@@ -223,22 +272,26 @@ class JoglMainPlotPanel(project:Viewable)
 
     val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
     val gl2 = new DebugGL2(gl.getGL2)
+    val es1 = gl.getGL2ES1
 
     // Make sure the response value hasn't changed
+    /*
     if(response != lastResponse) {
       println("new response: " + response)
       updateResponseValues(gl2, response)
       lastResponse = response
     }
+    */
     val fields = project.inputFields
     val xi = fields.indexOf(xRange._1)
     val yi = fields.indexOf(yRange._1)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
-    val model = project.gpModels(response)
+    //val model = project.gpModels(response)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
+    /*
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
     gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
     gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
@@ -247,8 +300,10 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     project.designSites.max(xFld),
                     project.designSites.max(yFld))
+    */
 
     // Send down all the theta values
+    /*
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
@@ -258,9 +313,27 @@ class JoglMainPlotPanel(project:Viewable)
                            thetaArray(i*4+2),
                            thetaArray(i*4+3))
     }
+    */
 
     // Finally, can draw!
-    gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
+    //gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
+    es1.glPointSize(5f)
+    //gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
+
+    gl2.glBegin(GL.GL_POINTS)
+    for(i <- 0 until project.designSites.numRows) {
+      val tpl = project.designSites.tuple(i)
+      gl2.glVertex3f(tpl(fields(0)), tpl(fields(1)), 0f)
+    }
+    /*
+    gl2.glBegin(GL2.GL_QUADS)
+    gl2.glVertex3f(0f, 0f, 0f)
+    gl2.glVertex3f(0f, 1f, 0f)
+    gl2.glVertex3f(1f, 1f, 0f)
+    gl2.glVertex3f(1f, 0f, 0f)
+    */
+    gl2.glEnd
+
     gl.glFlush
   }
 

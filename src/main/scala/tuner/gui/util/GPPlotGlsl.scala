@@ -28,6 +28,20 @@ class GPPlotVertexShader(numDims:Int) {
   val template = """
   #version 120
 
+  // Attributes
+  attribute vec4 vPos;
+  
+  // Uniforms
+  uniform mat4 trans;
+
+  void main() {
+    gl_Position = trans * vPos;
+  }
+  """
+  /*
+  val template = """
+  #version 120
+
   const float EPSILON = 1e-9;
   
   // Attributes
@@ -72,11 +86,12 @@ class GPPlotVertexShader(numDims:Int) {
     vec2 offset = clamp(dataPos + geomOffset, dataMin, dataMax);
     vertexDist = distance(offset, slice) / sqrt(theta);
     gl_Position = trans * vec4(offset, 0.0, 1.0);
-    //gl_Position = vec4(0.5 * geomOffset, 0.0, 1.0);
   }
   """
+  */
   
   override def toString = 
+    /*
     template.format(
       attribSrc(numDims), 
       sliceSrc(numDims),
@@ -85,6 +100,8 @@ class GPPlotVertexShader(numDims:Int) {
       getDimsFuncSrc(numDims, "getSliceValue", "slice"),
       getDimsFuncSrc(numDims, "getThetaValue", "theta"),
       ttlDistSrc(numDims))
+    */
+    template
 
   private def attribSrc(numDims:Int) = 
     (0 until GPPlotGlsl.numVec4(numDims)).map("attribute vec4 p" + _ + ";").
