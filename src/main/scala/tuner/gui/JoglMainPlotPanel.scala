@@ -5,6 +5,7 @@ import javax.media.opengl.DebugGL2
 import javax.media.opengl.TraceGL2
 import javax.media.opengl.{GL,GL2}
 import javax.media.opengl.fixedfunc.GLMatrixFunc
+import javax.media.opengl.fixedfunc.GLPointerFunc
 
 import processing.opengl.PGraphicsOpenGL
 
@@ -72,6 +73,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // No more vertex buffers
     gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
+    gl2.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
   }
 
   def ensureBuffers(gl:GL2) = {
@@ -108,10 +110,11 @@ class JoglMainPlotPanel(project:Viewable)
         tmpBuf.put(pt._2)
       }
       */
-      //tmpBuf.put(tpl(fields(0)))
-      //tmpBuf.put(tpl(fields(1)))
-      tmpBuf.put(0.5f)
-      tmpBuf.put(0.5f)
+      tmpBuf.put(tpl(fields(0)))
+      tmpBuf.put(tpl(fields(1)))
+      //println(tpl(fields(0)) + tpl(fields(1)))
+      //tmpBuf.put(0.5f)
+      //tmpBuf.put(0.5f)
       tmpBuf.put(0f)
       tmpBuf.put(1f)
     }
@@ -178,11 +181,13 @@ class JoglMainPlotPanel(project:Viewable)
     val fields = project.inputFields
 
     // set up all the contexts
+    gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
     gl.glUseProgram(plotShader.get.programId)
     gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
     val ptId = plotShader.get.attribId("vPos")
     gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
-                             4 * Buffers.SIZEOF_FLOAT, 0)
+                             0, 0)
+                             //4 * Buffers.SIZEOF_FLOAT, 0)
 
     /*
     // Every 4 fields goes into one attribute
@@ -318,21 +323,22 @@ class JoglMainPlotPanel(project:Viewable)
     // Finally, can draw!
     //gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
     es1.glPointSize(5f)
-    //gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
+    println(project.designSites.numRows)
+    gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
 
+    /*
     gl2.glBegin(GL.GL_POINTS)
     for(i <- 0 until project.designSites.numRows) {
       val tpl = project.designSites.tuple(i)
       gl2.glVertex3f(tpl(fields(0)), tpl(fields(1)), 0f)
     }
-    /*
     gl2.glBegin(GL2.GL_QUADS)
     gl2.glVertex3f(0f, 0f, 0f)
     gl2.glVertex3f(0f, 1f, 0f)
     gl2.glVertex3f(1f, 1f, 0f)
     gl2.glVertex3f(1f, 0f, 0f)
-    */
     gl2.glEnd
+    */
 
     gl.glFlush
   }
