@@ -64,6 +64,11 @@ class Glsl(gl:GL,
     progId
   }
 
+  // Build up all the vertex attributes since attribute lookup doesn't seem to
+  // work for some strange reason
+  val attribIds = (0 until attribSize).map(id => (attrib(id) -> id)).toMap
+  println(attribIds)
+
   def this(gl:GL, vertexSource:String, fragmentSource:String) = 
         this(gl, vertexSource, None, fragmentSource)
 
@@ -80,18 +85,23 @@ class Glsl(gl:GL,
     shaderId
   }
 
-  //def attribId(gl:GL, name:String) : Int = {
-    //val es2 = gl.getGL2ES2
-  def attribId(name:String) : Int = {
-    val id = es2.glGetAttribLocation(programId, name)
-    if(id < 0) {
-      throw new GLException("attribute " + name + " not found")
-    }
-    id
+  def attribSize = {
+    var tmp = Array(-1)
+    es2.glGetProgramiv(programId, GL2ES2.GL_ACTIVE_ATTRIBUTES, tmp, 0)
+    tmp(0)
   }
 
-  //def uniformId(gl:GL, name:String) : Int = {
-    //val es2 = gl.getGL2ES2
+  def attrib(id:Int) = {
+    var len = Array.fill(1024)(-1)
+    var typ = Array.fill(1024)(-1)
+    var sz = Array.fill(1024)(-1)
+    var nm:Array[Byte] = Array.fill(1024)(0)
+    es2.glGetActiveAttrib(programId, id, 1024, len, 0, sz, 0, typ, 0, nm, 0)
+    new String(nm).trim
+  }
+
+  def attribId(name:String) : Int = attribIds(name)
+
   def uniformId(name:String) : Int = {
     val id = es2.glGetUniformLocation(programId, name)
     if(id < 0) {

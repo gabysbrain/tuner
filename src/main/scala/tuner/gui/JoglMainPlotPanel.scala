@@ -39,6 +39,7 @@ class JoglMainPlotPanel(project:Viewable)
   var plotTransforms = Map[(String,String),Matrix4]()
 
   def ensureGl(gl:GL) = {
+    //val gl2 = new TraceGL2(gl.getGL2, System.out)
     val gl2 = gl.getGL2
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
@@ -83,9 +84,9 @@ class JoglMainPlotPanel(project:Viewable)
 
     if(!vertexBuffer.isDefined) {
       val vbo = Array(0)
-      gl.glGenBuffers(1, vbo, 0)
-      vertexBuffer = Some(vbo(0))
-      setupPlotVertices(gl)
+      //gl.glGenBuffers(1, vbo, 0)
+      //vertexBuffer = Some(vbo(0))
+      //setupPlotVertices(gl)
     }
   }
 
@@ -110,11 +111,9 @@ class JoglMainPlotPanel(project:Viewable)
         tmpBuf.put(pt._2)
       }
       */
+      //println("p: " + tpl(fields(0)) + " " + tpl(fields(1)))
       tmpBuf.put(tpl(fields(0)))
       tmpBuf.put(tpl(fields(1)))
-      //println(tpl(fields(0)) + tpl(fields(1)))
-      //tmpBuf.put(0.5f)
-      //tmpBuf.put(0.5f)
       tmpBuf.put(0f)
       tmpBuf.put(1f)
     }
@@ -163,6 +162,10 @@ class JoglMainPlotPanel(project:Viewable)
     // transforms to move from data space to 0,1 space
     val dataTrans = Matrix4.translate(-minX, -minY, 0)
     val dataScale = Matrix4.scale(1/(maxX-minX), 1/(maxY-minY), 1)
+    //println("===")
+    //println(dataTrans)
+    //println("---")
+    //println(dataScale)
 
     // Put the bounds in 0,1 terms
     val pctBounds = bounds / (width, height)
@@ -181,12 +184,11 @@ class JoglMainPlotPanel(project:Viewable)
     val fields = project.inputFields
 
     // set up all the contexts
-    gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
+    //gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
     gl.glUseProgram(plotShader.get.programId)
-    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
-    val ptId = plotShader.get.attribId("vPos")
-    gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
-                             0, 0)
+    //gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
+    //val ptId = plotShader.get.attribId("vPos")
+    //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
                              //4 * Buffers.SIZEOF_FLOAT, 0)
 
     /*
@@ -238,31 +240,6 @@ class JoglMainPlotPanel(project:Viewable)
     // clean up after ourselves
     disableGl(gl)
 
-    /*
-    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
-    gl2.glPushMatrix
-    gl2.glLoadIdentity
-    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl2.glPushMatrix
-    gl2.glLoadIdentity
-
-    gl2.glBegin(GL2.GL_QUADS)
-    gl2.glColor3f(1f, 0f, 0f)
-    gl2.glVertex3f(-0.5f, -0.5f, 0f)
-    gl2.glColor3f(1f, 1f, 0f)
-    gl2.glVertex3f(-0.5f, 0.5f, 0f)
-    gl2.glColor3f(0f, 1f, 0f)
-    gl2.glVertex3f(0.5f, 0.5f, 0f)
-    gl2.glColor3f(0f, 0f, 1f)
-    gl2.glVertex3f(0.5f, -0.5f, 0f)
-    gl2.glEnd
-
-    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
-    gl2.glPopMatrix
-    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl2.glPopMatrix
-    */
-
     pgl.endGL
   }
 
@@ -275,14 +252,15 @@ class JoglMainPlotPanel(project:Viewable)
                                       response:String,
                                       closestSample:Table.Tuple) = {
 
+    //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
     val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
     val gl2 = new DebugGL2(gl.getGL2)
+    //val gl2 = new TraceGL2(gl.getGL2, System.out)
     val es1 = gl.getGL2ES1
 
     // Make sure the response value hasn't changed
     /*
     if(response != lastResponse) {
-      println("new response: " + response)
       updateResponseValues(gl2, response)
       lastResponse = response
     }
@@ -296,19 +274,17 @@ class JoglMainPlotPanel(project:Viewable)
     //val model = project.gpModels(response)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
-    /*
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
     gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
+    /*
     gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
                     project.designSites.min(xFld),
                     project.designSites.min(yFld))
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     project.designSites.max(xFld),
                     project.designSites.max(yFld))
-    */
 
     // Send down all the theta values
-    /*
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
@@ -320,28 +296,85 @@ class JoglMainPlotPanel(project:Viewable)
     }
     */
 
+    es1.glPointSize(7f)
+    //gl2.glBegin(GL2.GL_QUADS)
+    gl2.glBegin(GL.GL_POINTS)
+    for(r <- 0 until project.designSites.numRows) {
+      val tpl = project.designSites.tuple(r)
+      // Draw all the point data
+      for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+        val ptId = plotShader.get.attribId("data" + i)
+        val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
+          tpl(fields(j))
+        } ++ List(0f, 0f, 0f, 0f)
+        gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
+                                   fieldVals(2), fieldVals(3))
+      }
+    }
+    gl2.glEnd
+  }
+
+  /*
+  override protected def drawResponse(xFld:String, yFld:String,
+                                      xRange:(String,(Float,Float)),
+                                      yRange:(String,(Float,Float)),
+                                      response:String,
+                                      closestSample:Table.Tuple) = {
+
+    //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
+    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
+    val gl2 = new DebugGL2(gl.getGL2)
+    //val gl2 = new TraceGL2(gl.getGL2, System.out)
+    val es1 = gl.getGL2ES1
+
+    // Make sure the response value hasn't changed
+    if(response != lastResponse) {
+      updateResponseValues(gl2, response)
+      lastResponse = response
+    }
+    val fields = project.inputFields
+    val xi = fields.indexOf(xRange._1)
+    val yi = fields.indexOf(yRange._1)
+
+    // set the uniforms specific to this plot
+    val trans = plotTransforms((xFld,yFld))
+    //val model = project.gpModels(response)
+    gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
+                           1, false, trans.toArray, 0)
+    gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
+    gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
+    gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
+                    project.designSites.min(xFld),
+                    project.designSites.min(yFld))
+    gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
+                    project.designSites.max(xFld),
+                    project.designSites.max(yFld))
+
+    // Send down all the theta values
+    val thetaArray = (fields.map(model.theta(_).toFloat) ++
+                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
+    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+      val tId = plotShader.get.uniformId("theta" + i)
+      gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
+                           thetaArray(i*4+1), 
+                           thetaArray(i*4+2),
+                           thetaArray(i*4+3))
+    }
+
     // Finally, can draw!
     //gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
     es1.glPointSize(5f)
-    println(project.designSites.numRows)
-    gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
+    //gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
 
-    /*
-    gl2.glBegin(GL.GL_POINTS)
-    for(i <- 0 until project.designSites.numRows) {
-      val tpl = project.designSites.tuple(i)
-      gl2.glVertex3f(tpl(fields(0)), tpl(fields(1)), 0f)
-    }
-    gl2.glBegin(GL2.GL_QUADS)
-    gl2.glVertex3f(0f, 0f, 0f)
-    gl2.glVertex3f(0f, 1f, 0f)
-    gl2.glVertex3f(1f, 1f, 0f)
-    gl2.glVertex3f(1f, 0f, 0f)
-    gl2.glEnd
-    */
-
-    gl.glFlush
+    //gl2.glBegin(GL.GL_POINTS)
+    //for(i <- 0 until project.designSites.numRows) {
+      //val tpl = project.designSites.tuple(i)
+      //println("p2: " + tpl(fields(0)) + " " + tpl(fields(1)))
+      //gl2.glVertex3f(tpl(fields(xi)), tpl(fields(yi)), 0f)
+    //}
+    //gl2.glEnd
   }
+  */
 
 }
 

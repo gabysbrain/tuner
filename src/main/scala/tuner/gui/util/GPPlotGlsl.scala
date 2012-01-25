@@ -29,13 +29,19 @@ class GPPlotVertexShader(numDims:Int) {
   #version 120
 
   // Attributes
-  attribute vec4 vPos;
+  %s
   
   // Uniforms
   uniform mat4 trans;
+  uniform int d1;
+  uniform int d2;
+
+  // Function to get data values
+  %s
 
   void main() {
-    gl_Position = trans * vPos;
+    vec4 dataPos = vec4(getDimValue(d1), getDimValue(d2), 0.0, 1.0);
+    gl_Position = trans * dataPos;
   }
   """
   /*
@@ -101,10 +107,12 @@ class GPPlotVertexShader(numDims:Int) {
       getDimsFuncSrc(numDims, "getThetaValue", "theta"),
       ttlDistSrc(numDims))
     */
-    template
+    template.format(
+      attribSrc(numDims),
+      getDimsFuncSrc(numDims, "getDimValue", "data"))
 
   private def attribSrc(numDims:Int) = 
-    (0 until GPPlotGlsl.numVec4(numDims)).map("attribute vec4 p" + _ + ";").
+    (0 until GPPlotGlsl.numVec4(numDims)).map("attribute vec4 data" + _ + ";").
       reduceLeft(_ + "\n" + _)
   private def sliceSrc(numDims:Int) =
     (0 until GPPlotGlsl.numVec4(numDims)).map("uniform vec4 slice" + _ + ";").
@@ -118,7 +126,7 @@ class GPPlotVertexShader(numDims:Int) {
    */
   private def ttlDistSrc(numDims:Int) =
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
-      "vec4 dist%d = theta%d * (p%d - slice%d);".format(dd, dd, dd, dd)
+      "vec4 dist%d = theta%d * (data%d - slice%d);".format(dd, dd, dd, dd)
     }.reduceLeft(_ + "\n" + _) +
     "float sliceSqDist = " + 
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
