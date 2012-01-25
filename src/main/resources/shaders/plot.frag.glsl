@@ -1,13 +1,15 @@
 
 #version 120
 
-varying float baseAlpha;
-varying vec2 vertexDist;
+varying float centerSqDist;
+varying vec2 vertexSqDist;
+varying vec2 theta;
 
 void main() {
-  float ttlDist = dot(vertexDist, vertexDist);
-  //float alpha = baseAlpha * exp(-ttlDist);
-  float alpha = 0.1;
+  vec2 weightedDist = theta * vertexSqDist;
+  float ttlDist = centerSqDist + vertexSqDist.x + vertexSqDist.y;
+  //float alpha = exp(-ttlDist);
+  float alpha = 0.3;
   gl_FragColor = vec4(1.0, 0.0, 0.0, alpha);
 }
 

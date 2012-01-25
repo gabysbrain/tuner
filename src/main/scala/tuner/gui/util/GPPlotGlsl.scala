@@ -28,14 +28,13 @@ class GPPlotVertexShader(numDims:Int) {
   val template = """
   #version 120
 
-  const float EPSILON = 1e-9;
-  
   // Attributes
   %s
   //attribute float response;
   attribute vec2 geomOffset;
 
   // Uniforms
+  uniform float maxSqDist;
   uniform mat4 trans;
   uniform int d1;
   uniform int d2;
@@ -45,8 +44,9 @@ class GPPlotVertexShader(numDims:Int) {
   %s
 
   // Outputs
-  varying float baseAlpha;
-  varying vec2 vertexDist;
+  varying float centerSqDist;
+  varying vec2 vertexSqDist;
+  varying vec2 theta;
 
   // Function to get data values
   %s
@@ -64,14 +64,13 @@ class GPPlotVertexShader(numDims:Int) {
     // Assign all the projected stuff
     vec2 dataPos = vec2(getDimValue(d1), getDimValue(d2));
     vec2 slice = vec2(getSliceValue(d1), getSliceValue(d2));
-    vec2 theta = vec2(getThetaValue(d1), getThetaValue(d2));
+    theta = vec2(getThetaValue(d1), getThetaValue(d2));
 
-    //baseAlpha = response * exp(-sliceSqDist);
-    baseAlpha = exp(-sliceSqDist);
-    vec2 maxExtent = sqrt(-log(EPSILON / baseAlpha) / theta);
-
-    vec2 offset = clamp(dataPos + geomOffset, dataMin, dataMax);
-    vertexDist = distance(offset, slice) / sqrt(theta);
+    // This won't get rasterized if the distance is too great
+    vec2 actOffset = centerSqDist < maxSqDist ? geomOffset : vec2(0.0, 0.0);
+    vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
+    vec2 vertDist = offset - dataPos;
+    vertexSqDist = vertDist * vertDist;
     gl_Position = trans * vec4(offset, 0.0, 1.0);
   }
   """
@@ -102,8 +101,8 @@ class GPPlotVertexShader(numDims:Int) {
   private def ttlDistSrc(numDims:Int) =
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
       "vec4 dist%d = theta%d * (data%d - slice%d);".format(dd, dd, dd, dd)
-    }.reduceLeft(_ + "\n" + _) +
-    "float sliceSqDist = " + 
+    }.reduceLeft(_ + "\n" + _) + "\n" +
+    "centerSqDist = " + 
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
       "dot(dist%d, dist%d)".format(dd, dd)
     }.reduceLeft(_ + " + " + _) + ";\n"
