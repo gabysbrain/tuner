@@ -100,11 +100,12 @@ class GPPlotVertexShader(numDims:Int) {
    */
   private def ttlDistSrc(numDims:Int) =
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
-      "vec4 dist%d = theta%d * (data%d - slice%d);".format(dd, dd, dd, dd)
+      "vec4 rawDist%d = data%d - slice%d;".format(dd, dd, dd) + "\n" +
+      "vec4 sqDist%d = theta%d * rawDist%d * rawDist%d;".format(dd, dd, dd, dd)
     }.reduceLeft(_ + "\n" + _) + "\n" +
     "centerSqDist = " + 
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
-      "dot(dist%d, dist%d)".format(dd, dd)
+      "sqDist%d.x + sqDist%d.y + sqDist%d.z + sqDist%d.w".format(dd, dd, dd, dd)
     }.reduceLeft(_ + " + " + _) + ";\n"
 
   /**
