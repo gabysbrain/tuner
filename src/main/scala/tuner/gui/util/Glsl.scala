@@ -78,7 +78,9 @@ class Glsl(gl:GL,
     val ok = ShaderUtil.isShaderStatusValid(es2, shaderId, GL2ES2.GL_COMPILE_STATUS)
     if(!ok) {
       throw new javax.media.opengl.GLException(
-        println(source) + "\n\n" +
+        source.split("\n").zipWithIndex.map {case (ln:String, no:Int) =>
+          println((no+1) + ": " + ln)
+        }.reduceLeft(_ + "\n" + _) + "\n\n" +
         ShaderUtil.getShaderInfoLog(es2, shaderId))
     }
     shaderId
