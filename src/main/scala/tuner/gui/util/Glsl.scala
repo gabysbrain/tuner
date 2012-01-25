@@ -67,7 +67,6 @@ class Glsl(gl:GL,
   // Build up all the vertex attributes since attribute lookup doesn't seem to
   // work for some strange reason
   val attribIds = (0 until attribSize).map(id => (attrib(id) -> id)).toMap
-  println(attribIds)
 
   def this(gl:GL, vertexSource:String, fragmentSource:String) = 
         this(gl, vertexSource, None, fragmentSource)

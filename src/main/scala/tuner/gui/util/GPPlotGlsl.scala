@@ -28,31 +28,11 @@ class GPPlotVertexShader(numDims:Int) {
   val template = """
   #version 120
 
-  // Attributes
-  %s
-  
-  // Uniforms
-  uniform mat4 trans;
-  uniform int d1;
-  uniform int d2;
-
-  // Function to get data values
-  %s
-
-  void main() {
-    vec4 dataPos = vec4(getDimValue(d1), getDimValue(d2), 0.0, 1.0);
-    gl_Position = trans * dataPos;
-  }
-  """
-  /*
-  val template = """
-  #version 120
-
   const float EPSILON = 1e-9;
   
   // Attributes
   %s
-  attribute float response;
+  //attribute float response;
   attribute vec2 geomOffset;
 
   // Uniforms
@@ -86,7 +66,8 @@ class GPPlotVertexShader(numDims:Int) {
     vec2 slice = vec2(getSliceValue(d1), getSliceValue(d2));
     vec2 theta = vec2(getThetaValue(d1), getThetaValue(d2));
 
-    baseAlpha = response * exp(-sliceSqDist);
+    //baseAlpha = response * exp(-sliceSqDist);
+    baseAlpha = exp(-sliceSqDist);
     vec2 maxExtent = sqrt(-log(EPSILON / baseAlpha) / theta);
 
     vec2 offset = clamp(dataPos + geomOffset, dataMin, dataMax);
@@ -94,22 +75,16 @@ class GPPlotVertexShader(numDims:Int) {
     gl_Position = trans * vec4(offset, 0.0, 1.0);
   }
   """
-  */
   
   override def toString = 
-    /*
     template.format(
       attribSrc(numDims), 
       sliceSrc(numDims),
       thetaSrc(numDims),
-      getDimsFuncSrc(numDims, "getDimValue", "p"),
+      getDimsFuncSrc(numDims, "getDimValue", "data"),
       getDimsFuncSrc(numDims, "getSliceValue", "slice"),
       getDimsFuncSrc(numDims, "getThetaValue", "theta"),
       ttlDistSrc(numDims))
-    */
-    template.format(
-      attribSrc(numDims),
-      getDimsFuncSrc(numDims, "getDimValue", "data"))
 
   private def attribSrc(numDims:Int) = 
     (0 until GPPlotGlsl.numVec4(numDims)).map("attribute vec4 data" + _ + ";").

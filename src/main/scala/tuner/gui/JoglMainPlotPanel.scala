@@ -191,15 +191,14 @@ class JoglMainPlotPanel(project:Viewable)
     //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
                              //4 * Buffers.SIZEOF_FLOAT, 0)
 
-    /*
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      val ptId = plotShader.get.attribId("p" + i)
-      gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
-                               (fieldSize + 2) * Buffers.SIZEOF_FLOAT,
-                               i * 4 * Buffers.SIZEOF_FLOAT)
+      //val ptId = plotShader.get.attribId("p" + i)
+      //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
+                               //(fieldSize + 2) * Buffers.SIZEOF_FLOAT,
+                               //i * 4 * Buffers.SIZEOF_FLOAT)
 
       // Send down the current slice
       val sId = plotShader.get.uniformId("slice" + i)
@@ -210,6 +209,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     }
 
+    /*
     // Also assign the geometry offset here
     gl.glVertexAttribPointer(plotShader.get.attribId("geomOffset"),
                              2, GL.GL_FLOAT, false,
@@ -271,12 +271,11 @@ class JoglMainPlotPanel(project:Viewable)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
-    //val model = project.gpModels(response)
+    val model = project.gpModels(response)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
     gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
-    /*
     gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
                     project.designSites.min(xFld),
                     project.designSites.min(yFld))
@@ -294,21 +293,24 @@ class JoglMainPlotPanel(project:Viewable)
                            thetaArray(i*4+2),
                            thetaArray(i*4+3))
     }
-    */
 
-    es1.glPointSize(7f)
-    //gl2.glBegin(GL2.GL_QUADS)
-    gl2.glBegin(GL.GL_POINTS)
+    //es1.glPointSize(7f)
+    gl2.glBegin(GL2.GL_QUADS)
+    //gl2.glBegin(GL.GL_POINTS)
     for(r <- 0 until project.designSites.numRows) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
-      for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-        val ptId = plotShader.get.attribId("data" + i)
-        val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
-          tpl(fields(j))
-        } ++ List(0f, 0f, 0f, 0f)
-        gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
-                                   fieldVals(2), fieldVals(3))
+      List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
+        val offsetId = plotShader.get.attribId("geomOffset")
+        gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
+        for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+          val ptId = plotShader.get.attribId("data" + i)
+          val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
+            tpl(fields(j))
+          } ++ List(0f, 0f, 0f, 0f)
+          gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
+                                     fieldVals(2), fieldVals(3))
+        }
       }
     }
     gl2.glEnd
