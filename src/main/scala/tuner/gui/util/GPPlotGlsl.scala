@@ -67,7 +67,7 @@ class GPPlotVertexShader(numDims:Int) {
     theta = vec2(getThetaValue(d1), getThetaValue(d2));
 
     // This won't get rasterized if the distance is too great
-    vec2 actOffset = centerSqDist < maxSqDist ? geomOffset : vec2(0.0, 0.0);
+    vec2 actOffset = centerSqDist < maxSqDist ? vec2(0.1, 0.1) * dataMax * geomOffset : vec2(0.0, 0.0);
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vec2 vertDist = offset - dataPos;
     vertexSqDist = vertDist * vertDist;

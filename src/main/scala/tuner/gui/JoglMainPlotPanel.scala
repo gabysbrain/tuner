@@ -305,23 +305,18 @@ class JoglMainPlotPanel(project:Viewable)
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-        val offsetId = plotShader.get.attribId("geomOffset")
-        gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
-        // go in reverse order so that vertex is called last
-        for(i <- (0 until GPPlotGlsl.numVec4(fields.size)).reverse) {
+        for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
           val ptId = plotShader.get.attribId("data" + i)
           val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
-          // Need to call glVertex to flush
-          if(ptId == 0) {
-            gl2.glVertex4f(fieldVals(0), fieldVals(1), 
-                           fieldVals(2), fieldVals(3))
-          } else {
-            gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
-                                       fieldVals(2), fieldVals(3))
-          }
+          
+          gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
+                                     fieldVals(2), fieldVals(3))
         }
+        // Need to call this last to flush
+        val offsetId = plotShader.get.attribId("geomOffset")
+        gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
       }
     }
     gl2.glEnd
