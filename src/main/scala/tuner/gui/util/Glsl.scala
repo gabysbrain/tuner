@@ -23,7 +23,7 @@ object Glsl {
     val vertSource = readResource(vertex)
     val geomSource = readResource(geom)
     val fragSource = readResource(fragment)
-    new Glsl(gl, vertSource, Some(geomSource), fragSource)
+    new Glsl(gl, vertSource, Some(geomSource), fragSource, List())
   }
 
   def fromResource(gl:GL, vertex:String, fragment:String) = {
@@ -37,7 +37,8 @@ object Glsl {
 class Glsl(gl:GL,
            vertexSource:String, 
            geometrySource:Option[String], 
-           fragmentSource:String) {
+           fragmentSource:String,
+           bindings:List[(String,Int)]) {
 
   //val es2 = gl.getGL2ES2
   val es2 = new DebugGL2ES2(gl.getGL2ES2)
@@ -54,6 +55,10 @@ class Glsl(gl:GL,
     es2.glAttachShader(progId, vertShaderId)
     geomShaderId.foreach {gid => es2.glAttachShader(progId, gid)}
     es2.glAttachShader(progId, fragShaderId)
+    // Fix any bindings before linking
+    bindings.foreach {case (nm,idx) =>
+      es2.glBindAttribLocation(progId, idx, nm)
+    }
     es2.glLinkProgram(progId)
     es2.glValidateProgram(progId)
     val ok = ShaderUtil.isProgramValid(es2, progId) &&
@@ -69,7 +74,7 @@ class Glsl(gl:GL,
   val attribIds = (0 until attribSize).map(id => (attrib(id) -> id)).toMap
 
   def this(gl:GL, vertexSource:String, fragmentSource:String) = 
-        this(gl, vertexSource, None, fragmentSource)
+        this(gl, vertexSource, None, fragmentSource, List())
 
   protected def createShader(typeId:Int, source:String) = {
     val shaderId = es2.glCreateShader(typeId)

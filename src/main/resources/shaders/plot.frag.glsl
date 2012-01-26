@@ -10,6 +10,7 @@ void main() {
   float ttlDist = centerSqDist + vertexSqDist.x + vertexSqDist.y;
   float alpha = exp(-ttlDist);
   //float alpha = 0.4;
+  //float alpha = 1.0;
   gl_FragColor = vec4(1.0, 0.0, 0.0, alpha);
 }
 

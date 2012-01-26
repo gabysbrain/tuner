@@ -124,14 +124,14 @@ class ProcessingMainPlotPanel(val project:Viewable)
                                r, colormap(r, resp2Colormaps))
     }
 
-    // Draw the responses
-    drawResponses
-
     // Draw the axes
     project.inputFields.foreach {fld =>
       val rng = (fld, project.viewInfo.currentZoom.range(fld))
       drawAxes(rng)
     }
+
+    // Draw the responses
+    drawResponses
 
     val endTime = System.currentTimeMillis
     //println("draw time: " + (endTime - startTime) + "ms")

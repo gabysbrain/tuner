@@ -15,7 +15,7 @@ object GPPlotGlsl {
     val fragSource = Glsl.readResource(fragment)
 
     //new Glsl(drawable, vertSource, Some(geomSource), fragSource)
-    new Glsl(gl, vertSource, None, fragSource)
+    new Glsl(gl, vertSource, None, fragSource, List(("geomOffset", 0)))
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -67,7 +67,8 @@ class GPPlotVertexShader(numDims:Int) {
     theta = vec2(getThetaValue(d1), getThetaValue(d2));
 
     // This won't get rasterized if the distance is too great
-    vec2 actOffset = centerSqDist < maxSqDist ? vec2(0.1, 0.1) * dataMax * geomOffset : vec2(0.0, 0.0);
+    vec2 actOffset = centerSqDist < maxSqDist ? dataMax * geomOffset : vec2(0.0, 0.0);
+    //vec2 actOffset = dataMax * geomOffset;
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vec2 vertDist = offset - dataPos;
     vertexSqDist = vertDist * vertDist;

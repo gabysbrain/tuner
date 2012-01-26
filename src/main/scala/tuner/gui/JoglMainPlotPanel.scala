@@ -183,6 +183,9 @@ class JoglMainPlotPanel(project:Viewable)
 
     val fields = project.inputFields
 
+    gl.glEnable(GL.GL_BLEND);
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+    
     // set up all the contexts
     //gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
     gl.glUseProgram(plotShader.get.programId)
@@ -194,6 +197,7 @@ class JoglMainPlotPanel(project:Viewable)
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
+    println("slice " + sliceArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       //val ptId = plotShader.get.attribId("p" + i)
       //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
@@ -202,7 +206,7 @@ class JoglMainPlotPanel(project:Viewable)
 
       // Send down the current slice
       val sId = plotShader.get.uniformId("slice" + i)
-      gl.glUniform4f(sId, sliceArray(i*4 + 0), 
+      gl.glUniform4f(sId, sliceArray(i*4+0), 
                           sliceArray(i*4+1), 
                           sliceArray(i*4+2),
                           sliceArray(i*4+3))
@@ -210,7 +214,7 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     // figure out the maximum distance to render a point
-    val maxSqDist = -math.log(1e-3)
+    val maxSqDist = -math.log(1e-9)
     gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
 
     /*
@@ -269,9 +273,15 @@ class JoglMainPlotPanel(project:Viewable)
       lastResponse = response
     }
     */
+    val (xr, yr) = if(xRange._1 < yRange._1) {
+      (xRange, yRange)
+    } else {
+      (yRange, xRange)
+    }
     val fields = project.inputFields
-    val xi = fields.indexOf(xRange._1)
-    val yi = fields.indexOf(yRange._1)
+    val xi = fields.indexOf(xr._1)
+    val yi = fields.indexOf(yr._1)
+    println("xr: " + xr + " yr: " + yr)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
@@ -281,15 +291,14 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
     gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
     gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
-                    project.designSites.min(xFld),
-                    project.designSites.min(yFld))
+                    xr._2._1, yr._2._1)
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
-                    project.designSites.max(xFld),
-                    project.designSites.max(yFld))
+                    xr._2._2, yr._2._2)
 
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
+    println("theta " + thetaArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       val tId = plotShader.get.uniformId("theta" + i)
       gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
@@ -298,10 +307,13 @@ class JoglMainPlotPanel(project:Viewable)
                            thetaArray(i*4+3))
     }
 
-    //es1.glPointSize(7f)
+    es1.glPointSize(3f)
+    //gl2.glDisable(GL.GL_CULL_FACE)
+    //gl2.glFrontFace(GL.GL_CW)
     gl2.glBegin(GL2.GL_QUADS)
     //gl2.glBegin(GL.GL_POINTS)
     for(r <- 0 until project.designSites.numRows) {
+    //for(r <- 0 until 1) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
@@ -311,6 +323,7 @@ class JoglMainPlotPanel(project:Viewable)
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
+          println("fv " + fieldVals)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
