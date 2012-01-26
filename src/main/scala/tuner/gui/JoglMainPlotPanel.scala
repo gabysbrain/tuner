@@ -168,7 +168,10 @@ class JoglMainPlotPanel(project:Viewable)
     //println(dataScale)
 
     // Put the bounds in 0,1 terms
-    val pctBounds = bounds / (width, height)
+    // bounds are defined upside down since that's how processing likes it
+    val tmp = Rectangle((bounds.minX, height-bounds.minY),
+                        (bounds.maxX, height-bounds.maxY))
+    val pctBounds = tmp.flipVertical / (width, height)
 
     // moves the plots into place
     val plotTrans = Matrix4.translate(pctBounds.minX, pctBounds.minY, 0)
@@ -287,6 +290,7 @@ class JoglMainPlotPanel(project:Viewable)
     val trans = plotTransforms((xFld,yFld))
     val model = project.gpModels(response)
     //println(model.corrResponses.toList)
+    //println("trans: " + trans)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
@@ -311,16 +315,16 @@ class JoglMainPlotPanel(project:Viewable)
     // send down the mean and sigma^2
     //gl2.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
     gl2.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
-    println("mean: " + model.mean)
-    println("sig: " + model.sig2)
+    //println("mean: " + model.mean)
+    //println("sig: " + model.sig2)
 
-    es1.glPointSize(3f)
-    gl2.glBegin(GL2.GL_QUADS)
-    //gl2.glBegin(GL.GL_POINTS)
+    es1.glPointSize(7f)
+    //gl2.glBegin(GL2.GL_QUADS)
+    gl2.glBegin(GL.GL_POINTS)
     val corrResponses = model.corrResponses
-    println("res: " + corrResponses.toList)
+    //println("res: " + corrResponses.toList)
     //for(r <- 0 until project.designSites.numRows) {
-    for(r <- 0 until 1) {
+    for(r <- 55 until 56) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
@@ -330,15 +334,16 @@ class JoglMainPlotPanel(project:Viewable)
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
-          println("fv " + fieldVals)
+          //println("fv " + fieldVals)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
         val respId = plotShader.get.attribId("corrResp")
         gl2.glVertexAttrib1f(respId, corrResponses(r).toFloat)
+        //println("res: " + corrResponses(r))
         // Need to call this last to flush
         val offsetId = plotShader.get.attribId("geomOffset")
-        gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
+        gl2.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
       }
     }
     gl2.glEnd

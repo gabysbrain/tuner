@@ -19,7 +19,7 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
   def maxX = bottomRight.x
   def minY = topLeft.y
   def maxY = bottomRight.y
-  def /(x:Float, y:Float) = new Rectangle(
+  def /(x:Float, y:Float) : Rectangle = new Rectangle(
     Point(topLeft.x / x, topLeft.y / y),
     Point(bottomRight.x / x, bottomRight.y / y)
   )
@@ -27,6 +27,11 @@ class Rectangle(val topLeft:Point, val bottomRight:Point) {
   def center : (Float,Float) = (
     (topLeft.x+bottomRight.x) / 2,
     (topLeft.y+bottomRight.y) / 2
+  )
+
+  def flipVertical : Rectangle = new Rectangle(
+    Point(topLeft.x, bottomRight.y), 
+    Point(bottomRight.x, topLeft.y)
   )
 
   def isInside(x:Float, y:Float) : Boolean = {
