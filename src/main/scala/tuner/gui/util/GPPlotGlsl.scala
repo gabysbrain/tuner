@@ -15,7 +15,8 @@ object GPPlotGlsl {
     val fragSource = Glsl.readResource(fragment)
 
     //new Glsl(drawable, vertSource, Some(geomSource), fragSource)
-    new Glsl(gl, vertSource, None, fragSource, List(("geomOffset", 0)))
+    //new Glsl(gl, vertSource, None, fragSource, List(("geomOffset", 0)))
+    new Glsl(gl, vertSource, None, fragSource, List())
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt

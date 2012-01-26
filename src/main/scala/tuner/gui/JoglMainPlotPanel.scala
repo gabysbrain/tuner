@@ -56,6 +56,7 @@ class JoglMainPlotPanel(project:Viewable)
       plotShader = Some(GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
           "/shaders/plot.frag.glsl"))
+      println(plotShader.get.attribIds)
     }
 
     ensureBuffers(gl.getGL2)
@@ -299,6 +300,8 @@ class JoglMainPlotPanel(project:Viewable)
                     xr._2._1, yr._2._1)
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     xr._2._2, yr._2._2)
+    //println("xr: " + xr)
+    //println("yr: " + yr)
 
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
@@ -319,15 +322,16 @@ class JoglMainPlotPanel(project:Viewable)
     //println("sig: " + model.sig2)
 
     es1.glPointSize(7f)
-    //gl2.glBegin(GL2.GL_QUADS)
-    gl2.glBegin(GL.GL_POINTS)
+    gl2.glBegin(GL2.GL_QUADS)
+    //gl2.glBegin(GL.GL_POINTS)
     val corrResponses = model.corrResponses
     //println("res: " + corrResponses.toList)
-    //for(r <- 0 until project.designSites.numRows) {
-    for(r <- 55 until 56) {
+    for(r <- 0 until project.designSites.numRows) {
+    //for(r <- 55 until 56) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
+      //List((-1f,-1f)).foreach{gpt =>
         for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
           val ptId = plotShader.get.attribId("data" + i)
           val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
@@ -338,12 +342,14 @@ class JoglMainPlotPanel(project:Viewable)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
-        val respId = plotShader.get.attribId("corrResp")
-        gl2.glVertexAttrib1f(respId, corrResponses(r).toFloat)
         //println("res: " + corrResponses(r))
-        // Need to call this last to flush
         val offsetId = plotShader.get.attribId("geomOffset")
         gl2.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
+        //gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
+
+        // Need to call this last to flush
+        val respId = plotShader.get.attribId("corrResp")
+        gl2.glVertexAttrib1f(respId, corrResponses(r).toFloat)
       }
     }
     gl2.glEnd

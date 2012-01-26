@@ -52,13 +52,14 @@ class Glsl(gl:GL,
     createShader(GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
   val programId = {
     val progId = es2.glCreateProgram
+    // Fix any bindings before linking
+    bindings.foreach {case (nm,idx) =>
+      println("binding " + nm + " to " + idx)
+      es2.glBindAttribLocation(progId, idx, nm)
+    }
     es2.glAttachShader(progId, vertShaderId)
     geomShaderId.foreach {gid => es2.glAttachShader(progId, gid)}
     es2.glAttachShader(progId, fragShaderId)
-    // Fix any bindings before linking
-    bindings.foreach {case (nm,idx) =>
-      es2.glBindAttribLocation(progId, idx, nm)
-    }
     es2.glLinkProgram(progId)
     es2.glValidateProgram(progId)
     val ok = ShaderUtil.isProgramValid(es2, progId) &&
