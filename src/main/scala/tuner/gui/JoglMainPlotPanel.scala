@@ -311,15 +311,16 @@ class JoglMainPlotPanel(project:Viewable)
     // send down the mean and sigma^2
     //gl2.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
     gl2.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
-    //println("mean: " + model.mean)
+    println("mean: " + model.mean)
     println("sig: " + model.sig2)
 
     es1.glPointSize(3f)
     gl2.glBegin(GL2.GL_QUADS)
     //gl2.glBegin(GL.GL_POINTS)
     val corrResponses = model.corrResponses
-    for(r <- 0 until project.designSites.numRows) {
-    //for(r <- 0 until 1) {
+    println("res: " + corrResponses.toList)
+    //for(r <- 0 until project.designSites.numRows) {
+    for(r <- 0 until 1) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
@@ -329,7 +330,7 @@ class JoglMainPlotPanel(project:Viewable)
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
-          //println("fv " + fieldVals)
+          println("fv " + fieldVals)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
