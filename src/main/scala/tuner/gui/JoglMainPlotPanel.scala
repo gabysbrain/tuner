@@ -215,7 +215,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // figure out the maximum distance to render a point
     val maxSqDist = -math.log(1e-9)
-    gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
+    //gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
 
     /*
     // Also assign the geometry offset here
@@ -307,6 +307,12 @@ class JoglMainPlotPanel(project:Viewable)
                            thetaArray(i*4+2),
                            thetaArray(i*4+3))
     }
+
+    // send down the mean and sigma^2
+    //gl2.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
+    gl2.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
+    //println("mean: " + model.mean)
+    println("sig: " + model.sig2)
 
     es1.glPointSize(3f)
     gl2.glBegin(GL2.GL_QUADS)
