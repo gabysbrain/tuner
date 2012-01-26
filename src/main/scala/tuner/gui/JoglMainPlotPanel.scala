@@ -197,7 +197,7 @@ class JoglMainPlotPanel(project:Viewable)
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    println("slice " + sliceArray.toList)
+    //println("slice " + sliceArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       //val ptId = plotShader.get.attribId("p" + i)
       //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
@@ -281,11 +281,12 @@ class JoglMainPlotPanel(project:Viewable)
     val fields = project.inputFields
     val xi = fields.indexOf(xr._1)
     val yi = fields.indexOf(yr._1)
-    println("xr: " + xr + " yr: " + yr)
+    //println("xr: " + xr + " yr: " + yr)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
     val model = project.gpModels(response)
+    //println(model.corrResponses.toList)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
@@ -298,7 +299,7 @@ class JoglMainPlotPanel(project:Viewable)
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    println("theta " + thetaArray.toList)
+    //println("theta " + thetaArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       val tId = plotShader.get.uniformId("theta" + i)
       gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
@@ -308,10 +309,9 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     es1.glPointSize(3f)
-    //gl2.glDisable(GL.GL_CULL_FACE)
-    //gl2.glFrontFace(GL.GL_CW)
     gl2.glBegin(GL2.GL_QUADS)
     //gl2.glBegin(GL.GL_POINTS)
+    val corrResponses = model.corrResponses
     for(r <- 0 until project.designSites.numRows) {
     //for(r <- 0 until 1) {
       val tpl = project.designSites.tuple(r)
@@ -323,10 +323,12 @@ class JoglMainPlotPanel(project:Viewable)
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
-          println("fv " + fieldVals)
+          //println("fv " + fieldVals)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
+        val respId = plotShader.get.attribId("corrResp")
+        gl2.glVertexAttrib1f(respId, corrResponses(r).toFloat)
         // Need to call this last to flush
         val offsetId = plotShader.get.attribId("geomOffset")
         gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)

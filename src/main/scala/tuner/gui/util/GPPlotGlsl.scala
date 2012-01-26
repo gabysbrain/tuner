@@ -30,7 +30,7 @@ class GPPlotVertexShader(numDims:Int) {
 
   // Attributes
   %s
-  //attribute float response;
+  attribute float corrResp;
   attribute vec2 geomOffset;
 
   // Uniforms
@@ -44,6 +44,7 @@ class GPPlotVertexShader(numDims:Int) {
   %s
 
   // Outputs
+  varying float respValue;
   varying float centerSqDist;
   varying vec2 vertexSqDist;
   varying vec2 theta;
@@ -68,9 +69,9 @@ class GPPlotVertexShader(numDims:Int) {
 
     // This won't get rasterized if the distance is too great
     vec2 actOffset = centerSqDist < maxSqDist ? dataMax * geomOffset : vec2(0.0, 0.0);
-    //vec2 actOffset = dataMax * geomOffset;
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vec2 vertDist = offset - dataPos;
+    respValue = corrResp;
     vertexSqDist = vertDist * vertDist;
     gl_Position = trans * vec4(offset, 0.0, 1.0);
   }
