@@ -29,10 +29,6 @@ class JoglMainPlotPanel(project:Viewable)
   // These need to wait for the GL context to be set up
   var plotShader:Option[Glsl] = None
 
-  // The buffers we're using
-  //var vertexArray:Option[Int] = None
-  var vertexBuffer:Option[Int] = None
-
   var lastResponse:String = ""
 
   // All the plot transforms
@@ -58,8 +54,6 @@ class JoglMainPlotPanel(project:Viewable)
           "/shaders/plot.frag.glsl"))
       println(plotShader.get.attribIds)
     }
-
-    ensureBuffers(gl.getGL2)
   }
 
   def disableGl(gl:GL) = {
@@ -76,78 +70,6 @@ class JoglMainPlotPanel(project:Viewable)
     // No more vertex buffers
     gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
     gl2.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
-  }
-
-  def ensureBuffers(gl:GL2) = {
-    //val vao = Array(0)
-    //gl.glGenVertexArrays(1, vao, 0)
-    //vertexArray = Some(vao(0))
-
-    if(!vertexBuffer.isDefined) {
-      val vbo = Array(0)
-      //gl.glGenBuffers(1, vbo, 0)
-      //vertexBuffer = Some(vbo(0))
-      //setupPlotVertices(gl)
-    }
-  }
-
-  def setupPlotVertices(gl:GL2) = {
-
-    // Need one float per dim and value plus one for the
-    // response value plus the geometry offsets
-    val fields = project.inputFields
-    val padFields = GPPlotGlsl.padCount(fields.size)
-    //val pointSize = fields.size + padFields + 2 + 1
-    //val numFloats = 6 * project.designSites.numRows * pointSize
-    val pointSize = 4
-    val numFloats = project.designSites.numRows * pointSize
-    val tmpBuf = Buffers.newDirectFloatBuffer(numFloats)
-    for(r <- 0 until project.designSites.numRows) {
-      val tpl = project.designSites.tuple(r)
-      /*
-      List((-1f,1f),(-1f,-1f),(1f,1f),(-1f,-1f),(1f,1f),(1f,-1f)).foreach{pt =>
-        fields.foreach {fld => tmpBuf.put(tpl(fld))}
-        (0 until padFields).foreach {_ => tmpBuf.put(0f)}
-        tmpBuf.put(pt._1)
-        tmpBuf.put(pt._2)
-      }
-      */
-      //println("p: " + tpl(fields(0)) + " " + tpl(fields(1)))
-      tmpBuf.put(tpl(fields(0)))
-      tmpBuf.put(tpl(fields(1)))
-      tmpBuf.put(0f)
-      tmpBuf.put(1f)
-    }
-    // Put 0s at the end until we're ready to copy in the response values
-    /*
-    for(r <- 0 until project.designSites.numRows) {
-      tmpBuf.put(0f)
-    }
-    */
-
-    tmpBuf.rewind
-
-    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
-    gl.glBufferData(GL.GL_ARRAY_BUFFER, numFloats * Buffers.SIZEOF_FLOAT,
-                    tmpBuf, GL.GL_STATIC_DRAW)
-  }
-
-  def updateResponseValues(gl:GL2, response:String) = {
-    val respBuf = Buffers.newDirectFloatBuffer(6 * project.designSites.numRows)
-    for(r <- 0 until project.designSites.numRows) {
-      val tpl = project.designSites.tuple(r)
-      respBuf.put(tpl(response))
-    }
-    respBuf.rewind
-
-    // figure out the offset in the actual vertex buffer
-    val fields = project.inputFields
-    val padFields = GPPlotGlsl.padCount(fields.size)
-    val pointSize = fields.size + padFields + 2
-    val offset = 6 * project.designSites.numRows * pointSize
-    gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
-    gl.glBufferSubData(GL.GL_ARRAY_BUFFER, offset, 
-                       6 * project.designSites.numRows, respBuf)
   }
 
   /**
@@ -191,23 +113,13 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
     
     // set up all the contexts
-    //gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
     gl.glUseProgram(plotShader.get.programId)
-    //gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertexBuffer.get)
-    //val ptId = plotShader.get.attribId("vPos")
-    //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
-                             //4 * Buffers.SIZEOF_FLOAT, 0)
 
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     //println("slice " + sliceArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      //val ptId = plotShader.get.attribId("p" + i)
-      //gl.glVertexAttribPointer(ptId, 4, GL.GL_FLOAT, false,
-                               //(fieldSize + 2) * Buffers.SIZEOF_FLOAT,
-                               //i * 4 * Buffers.SIZEOF_FLOAT)
-
       // Send down the current slice
       val sId = plotShader.get.uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4+0), 
@@ -220,20 +132,6 @@ class JoglMainPlotPanel(project:Viewable)
     // figure out the maximum distance to render a point
     val maxSqDist = -math.log(1e-9)
     //gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
-
-    /*
-    // Also assign the geometry offset here
-    gl.glVertexAttribPointer(plotShader.get.attribId("geomOffset"),
-                             2, GL.GL_FLOAT, false,
-                             (fieldSize + 2) * Buffers.SIZEOF_FLOAT,
-                             fieldSize * Buffers.SIZEOF_FLOAT)
-
-    // Assign the response
-    val respId = plotShader.get.attribId("response")
-    gl.glVertexAttribPointer(respId, 1, GL.GL_FLOAT, false,
-                             Buffers.SIZEOF_FLOAT,
-                             fields.size * Buffers.SIZEOF_FLOAT)
-    */
   }
 
   override protected def drawResponses = {
@@ -242,6 +140,7 @@ class JoglMainPlotPanel(project:Viewable)
     val gl = pgl.beginGL
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
     val gl2 = new DebugGL2(gl.getGL2)
+
     // Make sure all the opengl stuff is set up
     ensureGl(gl)
     setupRenderingState(gl2)
@@ -354,68 +253,6 @@ class JoglMainPlotPanel(project:Viewable)
     }
     gl2.glEnd
   }
-
-  /*
-  override protected def drawResponse(xFld:String, yFld:String,
-                                      xRange:(String,(Float,Float)),
-                                      yRange:(String,(Float,Float)),
-                                      response:String,
-                                      closestSample:Table.Tuple) = {
-
-    //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val gl2 = new DebugGL2(gl.getGL2)
-    //val gl2 = new TraceGL2(gl.getGL2, System.out)
-    val es1 = gl.getGL2ES1
-
-    // Make sure the response value hasn't changed
-    if(response != lastResponse) {
-      updateResponseValues(gl2, response)
-      lastResponse = response
-    }
-    val fields = project.inputFields
-    val xi = fields.indexOf(xRange._1)
-    val yi = fields.indexOf(yRange._1)
-
-    // set the uniforms specific to this plot
-    val trans = plotTransforms((xFld,yFld))
-    //val model = project.gpModels(response)
-    gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
-                           1, false, trans.toArray, 0)
-    gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
-    gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
-    gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
-                    project.designSites.min(xFld),
-                    project.designSites.min(yFld))
-    gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
-                    project.designSites.max(xFld),
-                    project.designSites.max(yFld))
-
-    // Send down all the theta values
-    val thetaArray = (fields.map(model.theta(_).toFloat) ++
-                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      val tId = plotShader.get.uniformId("theta" + i)
-      gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
-                           thetaArray(i*4+1), 
-                           thetaArray(i*4+2),
-                           thetaArray(i*4+3))
-    }
-
-    // Finally, can draw!
-    //gl.glDrawArrays(GL.GL_TRIANGLES, 0, project.designSites.numRows * 6)
-    es1.glPointSize(5f)
-    //gl.glDrawArrays(GL.GL_POINTS, 0, project.designSites.numRows)
-
-    //gl2.glBegin(GL.GL_POINTS)
-    //for(i <- 0 until project.designSites.numRows) {
-      //val tpl = project.designSites.tuple(i)
-      //println("p2: " + tpl(fields(0)) + " " + tpl(fields(1)))
-      //gl2.glVertex3f(tpl(fields(xi)), tpl(fields(yi)), 0f)
-    //}
-    //gl2.glEnd
-  }
-  */
 
 }
 
