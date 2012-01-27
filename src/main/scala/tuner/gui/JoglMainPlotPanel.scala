@@ -42,7 +42,8 @@ class JoglMainPlotPanel(project:Viewable)
 
   def ensureGl(gl:GL) = {
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
-    val gl2 = gl.getGL2
+    //val gl2 = gl.getGL2
+    val gl2 = new DebugGL2(gl.getGL2)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
     setupTextureTarget(gl2, width, height)
@@ -80,6 +81,9 @@ class JoglMainPlotPanel(project:Viewable)
     // No more vertex buffers
     gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
     gl2.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
+
+    // No more texture rendering...
+    cleanTextureTarget(gl2)
   }
 
   def setupTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
@@ -95,21 +99,36 @@ class JoglMainPlotPanel(project:Viewable)
     fboTexture = Some(tex(0))
 
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
+    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
+    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
     gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
+    val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(width*height)(0f))
+    fakeBuffer.rewind
     gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 1, width, height, 0, 
-                    GL2GL3.GL_RED, GL.GL_FLOAT, 0)
+                    GL2GL3.GL_RED, GL.GL_FLOAT, fakeBuffer)
+    gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
+
+    gl.glViewport(0, 0, texWidth, texHeight)
+
+    // Disable the useless attributes
+    gl.glDisable(GL.GL_CULL_FACE)
+    gl.glDisable(GL.GL_DEPTH_TEST)
 
     // Now attach the texture to the framebuffer we want
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
     gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
                               GL.GL_TEXTURE_2D, fboTexture.get, 0)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
+    gl.glDrawBuffers(1, Array(GL.GL_COLOR_ATTACHMENT0), 0)
   }
 
   def cleanTextureTarget(gl:GL2) = {
     gl.glDeleteTextures(1, Array(fboTexture.get), 0)
     gl.glDeleteFramebuffers(1, Array(textureFbo.get), 0)
+
+    gl.glEnable(GL.GL_CULL_FACE)
+    gl.glEnable(GL.GL_DEPTH_TEST)
   }
 
   def ensureBuffers(gl:GL2) = {
