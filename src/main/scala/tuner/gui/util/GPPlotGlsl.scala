@@ -47,7 +47,7 @@ class GPPlotVertexShader(numDims:Int) {
   // Outputs
   varying float respValue;
   varying float centerSqDist;
-  varying vec2 vertexSqDist;
+  varying vec2 vertexDist;
   varying vec2 theta;
 
   // Function to get data values
@@ -60,22 +60,22 @@ class GPPlotVertexShader(numDims:Int) {
   %s
 
   void main() {
-    // Compute the squared distance
-    %s
-
     // Assign all the projected stuff
     vec2 dataPos = vec2(getDimValue(d1), getDimValue(d2));
     vec2 slice = vec2(getSliceValue(d1), getSliceValue(d2));
     theta = vec2(getThetaValue(d1), getThetaValue(d2));
+    vec2 dataDist = dataPos - slice;
+
+    // Compute the squared distance
+    vec2 wtDataDist = theta * dataDist * dataDist;
+    %s
 
     // This won't get rasterized if the distance is too great
     //vec2 actOffset = centerSqDist < maxSqDist ? geomOffset : vec2(0.0, 0.0);
     vec2 actOffset = geomOffset;
-    //actOffset = vec2(0.0, 0.0);
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
-    vec2 vertDist = offset - dataPos;
+    vertexDist = offset - dataPos;
     respValue = corrResp;
-    vertexSqDist = vertDist * vertDist;
     gl_Position = trans * vec4(offset, 0.0, 1.0);
   }
   """
@@ -111,7 +111,8 @@ class GPPlotVertexShader(numDims:Int) {
     "centerSqDist = " + 
     (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
       "sqDist%d.x + sqDist%d.y + sqDist%d.z + sqDist%d.w".format(dd, dd, dd, dd)
-    }.reduceLeft(_ + " + " + _) + ";\n"
+    }.reduceLeft(_ + " + " + _) + ";\n" +
+    "centerSqDist = centerSqDist - wtDataDist.x - wtDataDist.y;\n"
 
   /**
    * Generates the source code to separate the dimension values
