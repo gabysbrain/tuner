@@ -3,7 +3,7 @@ package tuner.gui
 import com.jogamp.common.nio.Buffers
 import javax.media.opengl.DebugGL2
 import javax.media.opengl.TraceGL2
-import javax.media.opengl.{GL,GL2,GL2GL3}
+import javax.media.opengl.{GL,GL2,GL2GL3,GL2ES1}
 import javax.media.opengl.fixedfunc.GLMatrixFunc
 import javax.media.opengl.fixedfunc.GLPointerFunc
 
@@ -49,7 +49,8 @@ class JoglMainPlotPanel(project:Viewable)
 
   def ensureGl(gl:GL) = {
     // Make sure opengl can do everything we want it to do
-    println("ok: " + JoglMainPlotPanel.isCapable(gl))
+    if(!JoglMainPlotPanel.isCapable(gl))
+      throw new Exception("OpenGL not advanced enough")
 
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
     //val gl2 = gl.getGL2
@@ -78,6 +79,13 @@ class JoglMainPlotPanel(project:Viewable)
   }
 
   def disableGl(gl:GL) = {
+    // Make sure there are no remaining errors
+    var errCode = gl.glGetError
+    while(errCode != GL.GL_NONE) {
+      println("err: " + errCode)
+      errCode = gl.glGetError
+    }
+
     // Put the matrices back where we found them
     val gl2 = gl.getGL2
     gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
@@ -255,10 +263,11 @@ class JoglMainPlotPanel(project:Viewable)
                                       closestSample:Table.Tuple) = {
 
     //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val gl = g.asInstanceOf[PGraphicsOpenGL].beginGL
+    val pgl = g.asInstanceOf[PGraphicsOpenGL]
+    val gl = pgl.beginGL
     val gl2 = new DebugGL2(gl.getGL2)
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
-    val es1 = gl.getGL2ES1
+    //val es1 = gl.getGL2ES1
 
     // Make sure the response value hasn't changed
     /*
@@ -290,6 +299,8 @@ class JoglMainPlotPanel(project:Viewable)
                     xr._2._1, yr._2._1)
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     xr._2._2, yr._2._2)
+
+
     //println("xr: " + xr)
     //println("yr: " + yr)
 
@@ -311,7 +322,7 @@ class JoglMainPlotPanel(project:Viewable)
     //println("mean: " + model.mean)
     //println("sig: " + model.sig2)
 
-    es1.glPointSize(7f)
+    //es1.glPointSize(7f)
     gl2.glBegin(GL2.GL_QUADS)
     //gl2.glBegin(GL.GL_POINTS)
     val corrResponses = model.corrResponses
@@ -343,6 +354,8 @@ class JoglMainPlotPanel(project:Viewable)
       }
     }
     gl2.glEnd
+
+    pgl.endGL
   }
 
 }
