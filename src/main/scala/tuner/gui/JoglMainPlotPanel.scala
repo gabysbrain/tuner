@@ -58,9 +58,6 @@ class JoglMainPlotPanel(project:Viewable)
     val gl2 = new DebugGL2(gl.getGL2)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
-    // Draw to a texture
-    setupTextureTarget(gl2, width, height)
-
     // processing resets the projection matrices
     gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
     gl2.glPushMatrix
@@ -99,9 +96,6 @@ class JoglMainPlotPanel(project:Viewable)
     // No more vertex buffers
     gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
     gl2.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
-
-    // No more texture rendering...
-    cleanTextureTarget(gl2)
   }
 
   def setupTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
@@ -276,6 +270,10 @@ class JoglMainPlotPanel(project:Viewable)
       lastResponse = response
     }
     */
+
+    // Draw to a texture
+    setupTextureTarget(gl2, width, height)
+
     val (xr, yr) = if(xRange._1 < yRange._1) {
       (xRange, yRange)
     } else {
@@ -354,6 +352,9 @@ class JoglMainPlotPanel(project:Viewable)
       }
     }
     gl2.glEnd
+
+    // No more texture rendering...
+    cleanTextureTarget(gl2)
 
     pgl.endGL
   }
