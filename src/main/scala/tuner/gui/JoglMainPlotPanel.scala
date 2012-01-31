@@ -92,10 +92,6 @@ class JoglMainPlotPanel(project:Viewable)
 
     // No more shaders
     gl.getGL2ES2.glUseProgram(0)
-
-    // No more vertex buffers
-    gl.getGL2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
-    gl2.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY)
   }
 
   def setupTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
@@ -103,14 +99,12 @@ class JoglMainPlotPanel(project:Viewable)
     val fbo = Array(0)
     gl.glGenFramebuffers(1, fbo, 0)
     textureFbo = Some(fbo(0))
-    //println("tex fbo id: " + textureFbo)
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
 
     // Create a texture in which to render
     val tex = Array(0)
     gl.glGenTextures(1, tex, 0)
     fboTexture = Some(tex(0))
-    //println("tex id: " + textureFbo)
 
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
     gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
@@ -178,10 +172,6 @@ class JoglMainPlotPanel(project:Viewable)
     // transforms to move from data space to 0,1 space
     val dataTrans = Matrix4.translate(-minX, -minY, 0)
     val dataScale = Matrix4.scale(1/(maxX-minX), 1/(maxY-minY), 1)
-    //println("===")
-    //println(dataTrans)
-    //println("---")
-    //println(dataScale)
 
     // Put the bounds in 0,1 terms
     // bounds are defined upside down since that's how processing likes it
@@ -211,7 +201,6 @@ class JoglMainPlotPanel(project:Viewable)
     // Every 4 fields goes into one attribute
     val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    //println("slice " + sliceArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       // Send down the current slice
       val sId = plotShader.get.uniformId("slice" + i)
@@ -282,13 +271,10 @@ class JoglMainPlotPanel(project:Viewable)
     val fields = project.inputFields
     val xi = fields.indexOf(xr._1)
     val yi = fields.indexOf(yr._1)
-    //println("xr: " + xr + " yr: " + yr)
 
     // set the uniforms specific to this plot
     val trans = plotTransforms((xFld,yFld))
     val model = project.gpModels(response)
-    //println(model.corrResponses.toList)
-    //println("trans: " + trans)
     gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
                            1, false, trans.toArray, 0)
     gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
@@ -298,14 +284,9 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
                     xr._2._2, yr._2._2)
 
-
-    //println("xr: " + xr)
-    //println("yr: " + yr)
-
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    //println("theta " + thetaArray.toList)
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       val tId = plotShader.get.uniformId("theta" + i)
       gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
@@ -317,34 +298,24 @@ class JoglMainPlotPanel(project:Viewable)
     // send down the mean and sigma^2
     //gl2.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
     gl2.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
-    //println("mean: " + model.mean)
-    //println("sig: " + model.sig2)
 
-    //es1.glPointSize(7f)
     gl2.glBegin(GL2.GL_QUADS)
-    //gl2.glBegin(GL.GL_POINTS)
     val corrResponses = model.corrResponses
-    //println("res: " + corrResponses.toList)
     for(r <- 0 until project.designSites.numRows) {
-    //for(r <- 55 until 56) {
       val tpl = project.designSites.tuple(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-      //List((-1f,-1f)).foreach{gpt =>
         for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
           val ptId = plotShader.get.attribId("data" + i)
           val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
-          //println("fv " + fieldVals)
           gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
-        //println("res: " + corrResponses(r))
         val offsetId = plotShader.get.attribId("geomOffset")
         gl2.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
-        //gl2.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
 
         // Need to call this last to flush
         val respId = plotShader.get.attribId("corrResp")
