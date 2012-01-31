@@ -66,12 +66,6 @@ class ParetoPanel(project:Viewable)
                          Config.axisSize, plotHeight)
     plotBox = Rectangle((plotStartX, plotStartY), plotWidth, plotHeight)
 
-    /*
-    fill(255)
-    rectMode(P5Panel.RectMode.Corner)
-    rect(plotBox.minX, plotBox.minY, plotBox.width, plotBox.height)
-    */
-
     (project.viewInfo.response1View, project.viewInfo.response2View) match {
       case (Some(r1), Some(r2)) => draw2dPareto(r1, r2)
       case (Some(r1), None) => draw1dPareto(r1)
