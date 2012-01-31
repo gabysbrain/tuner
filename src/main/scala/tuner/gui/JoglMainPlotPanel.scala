@@ -16,6 +16,15 @@ import tuner.gui.util.GPPlotGlsl
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
+object JoglMainPlotPanel {
+  
+  def isCapable(gl:GL) = gl.hasGLSL &&
+                         gl.isFunctionAvailable("glBindFramebuffer") &&
+                         gl.isFunctionAvailable("glDrawBuffers") &&
+                         gl.isExtensionAvailable("GL_ARB_texture_float")
+
+}
+
 class JoglMainPlotPanel(project:Viewable) 
     extends ProcessingMainPlotPanel(project) {
 
@@ -39,11 +48,16 @@ class JoglMainPlotPanel(project:Viewable)
   var plotTransforms = Map[(String,String),Matrix4]()
 
   def ensureGl(gl:GL) = {
+    // Make sure opengl can do everything we want it to do
+    println("ok: " + JoglMainPlotPanel.isCapable(gl))
+
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
     //val gl2 = gl.getGL2
+    //val gl2 = new DebugGL2(new TraceGL2(gl.getGL2, System.out))
     val gl2 = new DebugGL2(gl.getGL2)
     plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
+    // Draw to a texture
     setupTextureTarget(gl2, width, height)
 
     // processing resets the projection matrices
@@ -87,22 +101,24 @@ class JoglMainPlotPanel(project:Viewable)
     val fbo = Array(0)
     gl.glGenFramebuffers(1, fbo, 0)
     textureFbo = Some(fbo(0))
+    //println("tex fbo id: " + textureFbo)
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
 
     // Create a texture in which to render
     val tex = Array(0)
     gl.glGenTextures(1, tex, 0)
     fboTexture = Some(tex(0))
+    //println("tex id: " + textureFbo)
 
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
-    gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
-    val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(width*height)(0f))
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT)
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
+    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
+    val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*width*height)(0f))
     fakeBuffer.rewind
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, 1, width, height, 0, 
-                    GL2GL3.GL_RED, GL.GL_FLOAT, fakeBuffer)
+    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, width, height, 0, 
+                    GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
     gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
 
     gl.glViewport(0, 0, texWidth, texHeight)
@@ -117,6 +133,26 @@ class JoglMainPlotPanel(project:Viewable)
                               GL.GL_TEXTURE_2D, fboTexture.get, 0)
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
     gl.glDrawBuffers(1, Array(GL.GL_COLOR_ATTACHMENT0), 0)
+
+    // Make sure the framebuffer is ok
+    gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) match {
+      case GL2GL3.GL_FRAMEBUFFER_UNDEFINED => 
+        throw new Exception("framebuffer undefined")
+      case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT => 
+        throw new Exception("incomplete attachment")
+      case GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT => 
+        throw new Exception("missing attachment")
+      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER => 
+        throw new Exception("incomplete draw buffer")
+      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER => 
+        throw new Exception("incomplete read buffer")
+      case GL.GL_FRAMEBUFFER_UNSUPPORTED => 
+        throw new Exception("unsupported buffer")
+      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
+        throw new Exception("incomplete multisample")
+      case GL.GL_FRAMEBUFFER_COMPLETE =>
+        // all is well
+    }
   }
 
   def cleanTextureTarget(gl:GL2) = {
