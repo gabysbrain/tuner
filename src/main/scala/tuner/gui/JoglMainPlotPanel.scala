@@ -9,6 +9,7 @@ import javax.media.opengl.fixedfunc.GLPointerFunc
 
 import processing.opengl.PGraphicsOpenGL
 
+import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.util.Glsl
@@ -184,10 +185,6 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
 
-    // Put the tests back
-    //gl.glEnable(GL.GL_CULL_FACE)
-    //gl.glEnable(GL.GL_DEPTH_TEST)
-
     gl.glViewport(0, 0, width, height)
   }
 
@@ -279,7 +276,8 @@ class JoglMainPlotPanel(project:Viewable)
     drawResponseToTexture(gl2, xRange, yRange, response, texTrans)
 
     // Now put the texture on a quad
-    drawResponseTexturedQuad(gl2, plotTrans)
+    drawResponseTexturedQuad(gl2, colormap(response, resp1Colormaps), 
+                                  plotTrans)
 
     pgl.endGL
   }
@@ -387,7 +385,9 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glUseProgram(0)
   }
 
-  def drawResponseTexturedQuad(gl:GL2, trans:Matrix4) = {
+  def drawResponseTexturedQuad(gl:GL2, 
+                               colormap:SpecifiedColorMap, 
+                               trans:Matrix4) = {
     val es2 = gl.getGL2ES2
 
     gl.glEnable(GL.GL_TEXTURE_2D)
@@ -398,6 +398,17 @@ class JoglMainPlotPanel(project:Viewable)
     // Bind the texture uniform
     gl.glActiveTexture(GL.GL_TEXTURE0)
     es2.glUniform1i(colormapShader.get.uniformId("values"), 0)
+
+    // Set the colormap properties
+    val (minColor, maxColor) = (colormap.startColor, colormap.endColor)
+    gl.glUniform1f(colormapShader.get.uniformId("filterLevel"), 
+                   colormap.filterVal)
+    gl.glUniform1f(colormapShader.get.uniformId("maxVal"),
+                   colormap.colorEnd)
+    gl.glUniform3f(colormapShader.get.uniformId("minColor"),
+                   minColor.r, minColor.g, minColor.b)
+    gl.glUniform3f(colormapShader.get.uniformId("maxColor"),
+                   maxColor.r, maxColor.g, maxColor.b)
 
     // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
