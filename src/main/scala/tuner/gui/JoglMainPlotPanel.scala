@@ -409,6 +409,10 @@ class JoglMainPlotPanel(project:Viewable)
                    minColor.r, minColor.g, minColor.b)
     gl.glUniform3f(colormapShader.get.uniformId("maxColor"),
                    maxColor.r, maxColor.g, maxColor.b)
+    gl.glUniform3f(colormapShader.get.uniformId("filterColor"),
+                   colormap.filterColor.r, 
+                   colormap.filterColor.g,
+                   colormap.filterColor.b)
 
     // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
