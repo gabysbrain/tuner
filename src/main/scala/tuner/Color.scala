@@ -3,11 +3,15 @@ package tuner
 object Color {
 
   def apply(argb:Int) = {
-    val a = (argb >> 24) & 0xFF
-    val r = (argb >> 16) & 0xFF
-    val g = (argb >> 8) & 0xFF
-    val b = argb & 0xFF
-    new Color(r/255f, g/255f, b/255f, a/255f)
+    if(argb >= 0 && argb < 256) {
+      new Color(argb/255f, argb/255f, argb/255f, 1f)
+    } else {
+      val a = (argb >> 24) & 0xFF
+      val r = (argb >> 16) & 0xFF
+      val g = (argb >> 8) & 0xFF
+      val b = argb & 0xFF
+      new Color(r/255f, g/255f, b/255f, a/255f)
+    }
   }
   def apply(r:Float, g:Float, b:Float, a:Float) = new Color(r, g, b, a)
 
