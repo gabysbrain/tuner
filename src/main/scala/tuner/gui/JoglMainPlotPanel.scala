@@ -276,8 +276,8 @@ class JoglMainPlotPanel(project:Viewable)
     drawResponseToTexture(gl2, xRange, yRange, response, texTrans)
 
     // Now put the texture on a quad
-    drawResponseTexturedQuad(gl2, colormap(response, resp1Colormaps), 
-                                  plotTrans)
+    val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
+    drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
 
     pgl.endGL
   }
