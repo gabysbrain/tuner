@@ -114,15 +114,17 @@ class JoglMainPlotPanel(project:Viewable)
       fboTexture = Some(tex(0))
 
       gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
-      val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*width*height)(0f))
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
+      val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*texWidth*texHeight)(0f))
       fakeBuffer.rewind
-      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, width, height, 0, 
-                      GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
-      gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, 
+                      texWidth, texHeight, 0, 
+                      //GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
+                      GL2GL3.GL_BGRA, GL.GL_UNSIGNED_BYTE, fakeBuffer)
+      //gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
     }
   }
 
@@ -297,7 +299,7 @@ class JoglMainPlotPanel(project:Viewable)
     // Draw to a texture
     enableTextureTarget(gl, width, height)
 
-    gl.glClearColor(0f, 0f, 0f, 0f)
+    gl.glClearColor(1f, 0f, 0f, 1f)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     // Send down the uniforms for this set
@@ -371,7 +373,7 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glEnd
     gl.glFlush
 
-    gl.glDisable(GL.GL_BLEND)
+    //gl.glDisable(GL.GL_BLEND)
     //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
     
     // Disable the texture fb
@@ -383,6 +385,7 @@ class JoglMainPlotPanel(project:Viewable)
 
   def drawResponseTexturedQuad(gl:GL2, trans:Matrix4) = {
     // Enable the texture
+    gl.glEnable(GL.GL_TEXTURE_2D)
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
 
     gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
@@ -393,19 +396,23 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glTexCoord2f(0f, 0f)
     //gl.glColor3f(1f, 0f, 0f)
     gl.glVertex3f(0f, 0f, 0f)
+
     gl.glTexCoord2f(1f, 0f)
-    //gl.glColor3f(1f, 0f, 0f)
+    //gl.glColor3f(0f, 1f, 0f)
     gl.glVertex3f(1f, 0f, 0f)
+
     gl.glTexCoord2f(1f, 1f)
-    //gl.glColor3f(1f, 0f, 0f)
+    //gl.glColor3f(0f, 0f, 1f)
     gl.glVertex3f(1f, 1f, 0f)
+
     gl.glTexCoord2f(0f, 1f)
-    //gl.glColor3f(1f, 0f, 0f)
+    //gl.glColor3f(1f, 0f, 1f)
     gl.glVertex3f(0f, 1f, 0f)
     gl.glEnd
 
     gl.glPopMatrix
     gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
+    gl.glDisable(GL.GL_TEXTURE_2D)
   }
 
 }
