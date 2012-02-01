@@ -36,7 +36,8 @@ class JoglMainPlotPanel(project:Viewable)
   var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
-  var plotShader:Option[Glsl] = None
+  var convolutionShader:Option[Glsl] = None
+  var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
   var textureFbo:Option[Int] = None
@@ -66,11 +67,17 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glLoadIdentity
 
     // Create the shader programs
-    if(!plotShader.isDefined) {
-      plotShader = Some(GPPlotGlsl.fromResource(
+    if(!convolutionShader.isDefined) {
+      convolutionShader = Some(GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
           "/shaders/plot.frag.glsl"))
-      println(plotShader.get.attribIds)
+      println(convolutionShader.get.attribIds)
+    }
+    if(!colormapShader.isDefined) {
+      colormapShader = Some(Glsl.fromResource(
+        gl, "/shaders/cmap.vert.glsl", 
+            "/shaders/cmap.frag.glsl"))
+      println(colormapShader.get.attribIds)
     }
   }
 
@@ -294,7 +301,7 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
     
     // Enable shader program
-    gl.glUseProgram(plotShader.get.programId)
+    gl.glUseProgram(convolutionShader.get.programId)
 
     // Draw to a texture
     enableTextureTarget(gl, width, height)
@@ -308,7 +315,7 @@ class JoglMainPlotPanel(project:Viewable)
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       // Send down the current slice
-      val sId = plotShader.get.uniformId("slice" + i)
+      val sId = convolutionShader.get.uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4+0), 
                           sliceArray(i*4+1), 
                           sliceArray(i*4+2),
@@ -318,23 +325,23 @@ class JoglMainPlotPanel(project:Viewable)
 
     // figure out the maximum distance to render a point
     val maxSqDist = -math.log(1e-9)
-    //gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
+    //gl.glUniform1f(convolutionShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
 
     val model = project.gpModels(response)
-    gl.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
+    gl.glUniformMatrix4fv(convolutionShader.get.uniformId("trans"), 
                           1, false, trans.toArray, 0)
-    gl.glUniform1i(plotShader.get.uniformId("d1"), xi)
-    gl.glUniform1i(plotShader.get.uniformId("d2"), yi)
-    gl.glUniform2f(plotShader.get.uniformId("dataMin"), 
+    gl.glUniform1i(convolutionShader.get.uniformId("d1"), xi)
+    gl.glUniform1i(convolutionShader.get.uniformId("d2"), yi)
+    gl.glUniform2f(convolutionShader.get.uniformId("dataMin"), 
                    xr._2._1, yr._2._1)
-    gl.glUniform2f(plotShader.get.uniformId("dataMax"), 
+    gl.glUniform2f(convolutionShader.get.uniformId("dataMax"), 
                    xr._2._2, yr._2._2)
 
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      val tId = plotShader.get.uniformId("theta" + i)
+      val tId = convolutionShader.get.uniformId("theta" + i)
       gl.glUniform4f(tId, thetaArray(i*4 + 0), 
                           thetaArray(i*4+1), 
                           thetaArray(i*4+2),
@@ -342,8 +349,8 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     // send down the mean and sigma^2
-    //gl.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
-    gl.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
+    //gl.glUniform1f(convolutionShader.get.uniformId("mean"), model.mean.toFloat)
+    gl.glUniform1f(convolutionShader.get.uniformId("sig2"), model.sig2.toFloat)
 
 
     // Actually do the draw
@@ -354,7 +361,7 @@ class JoglMainPlotPanel(project:Viewable)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-          val ptId = plotShader.get.attribId("data" + i)
+          val ptId = convolutionShader.get.attribId("data" + i)
           val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
@@ -362,11 +369,11 @@ class JoglMainPlotPanel(project:Viewable)
           gl.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
-        val offsetId = plotShader.get.attribId("geomOffset")
+        val offsetId = convolutionShader.get.attribId("geomOffset")
         gl.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
 
         // Need to call this last to flush
-        val respId = plotShader.get.attribId("corrResp")
+        val respId = convolutionShader.get.attribId("corrResp")
         gl.glVertexAttrib1f(respId, corrResponses(r).toFloat)
       }
     }
@@ -384,35 +391,47 @@ class JoglMainPlotPanel(project:Viewable)
   }
 
   def drawResponseTexturedQuad(gl:GL2, trans:Matrix4) = {
-    // Enable the texture
+    val es2 = gl.getGL2ES2
+
     gl.glEnable(GL.GL_TEXTURE_2D)
+
+    // Activate the texture program
+    gl.glUseProgram(colormapShader.get.programId)
+
+    // Bind the texture uniform
+    gl.glActiveTexture(GL.GL_TEXTURE0)
+    es2.glUniform1i(colormapShader.get.uniformId("values"), 0)
+
+    // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
 
-    gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl.glPushMatrix
-    gl.glLoadMatrixf(trans.toArray, 0)
+    //gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    //gl.glPushMatrix
+    gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
+                          1, false, trans.toArray, 0)
 
     gl.glBegin(GL2.GL_QUADS)
-    gl.glTexCoord2f(0f, 0f)
+    //gl.glTexCoord2f(0f, 0f)
     //gl.glColor3f(1f, 0f, 0f)
     gl.glVertex3f(0f, 0f, 0f)
 
-    gl.glTexCoord2f(1f, 0f)
+    //gl.glTexCoord2f(1f, 0f)
     //gl.glColor3f(0f, 1f, 0f)
     gl.glVertex3f(1f, 0f, 0f)
 
-    gl.glTexCoord2f(1f, 1f)
+    //gl.glTexCoord2f(1f, 1f)
     //gl.glColor3f(0f, 0f, 1f)
     gl.glVertex3f(1f, 1f, 0f)
 
-    gl.glTexCoord2f(0f, 1f)
+    //gl.glTexCoord2f(0f, 1f)
     //gl.glColor3f(1f, 0f, 1f)
     gl.glVertex3f(0f, 1f, 0f)
     gl.glEnd
 
-    gl.glPopMatrix
+    //gl.glPopMatrix
     gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
     gl.glDisable(GL.GL_TEXTURE_2D)
+    gl.glUseProgram(0)
   }
 
 }
