@@ -1,4 +1,4 @@
-package tuner.gui.util
+package tuner.gui.opengl
 
 import javax.media.opengl.{GL,GL2,GL2ES2}
 import javax.media.opengl.GLAutoDrawable

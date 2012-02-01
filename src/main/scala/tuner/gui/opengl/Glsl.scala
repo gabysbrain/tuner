@@ -1,4 +1,4 @@
-package tuner.gui.util
+package tuner.gui.opengl
 
 import com.jogamp.opengl.util.glsl.ShaderUtil
 import javax.media.opengl.{GL,GL2,GL2ES2}

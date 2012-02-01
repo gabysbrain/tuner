@@ -12,8 +12,8 @@ import processing.opengl.PGraphicsOpenGL
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
-import tuner.gui.util.Glsl
-import tuner.gui.util.GPPlotGlsl
+import tuner.gui.opengl.Glsl
+import tuner.gui.opengl.GPPlotGlsl
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
