@@ -380,9 +380,6 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glEnd
     gl.glFlush
 
-    //gl.glDisable(GL.GL_BLEND)
-    //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-    
     // Disable the texture fb
     disableTextureTarget(gl)
 
@@ -405,26 +402,13 @@ class JoglMainPlotPanel(project:Viewable)
     // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
 
-    //gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    //gl.glPushMatrix
     gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
                           1, false, trans.toArray, 0)
 
     gl.glBegin(GL2.GL_QUADS)
-    //gl.glTexCoord2f(0f, 0f)
-    //gl.glColor3f(1f, 0f, 0f)
     gl.glVertex3f(0f, 0f, 0f)
-
-    //gl.glTexCoord2f(1f, 0f)
-    //gl.glColor3f(0f, 1f, 0f)
     gl.glVertex3f(1f, 0f, 0f)
-
-    //gl.glTexCoord2f(1f, 1f)
-    //gl.glColor3f(0f, 0f, 1f)
     gl.glVertex3f(1f, 1f, 0f)
-
-    //gl.glTexCoord2f(0f, 1f)
-    //gl.glColor3f(1f, 0f, 1f)
     gl.glVertex3f(0f, 1f, 0f)
     gl.glEnd
 
