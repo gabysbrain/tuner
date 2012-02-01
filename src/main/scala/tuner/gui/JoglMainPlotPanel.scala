@@ -124,14 +124,13 @@ class JoglMainPlotPanel(project:Viewable)
       gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
       val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*texWidth*texHeight)(0f))
       fakeBuffer.rewind
       gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, 
                       texWidth, texHeight, 0, 
-                      //GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
-                      GL2GL3.GL_BGRA, GL.GL_UNSIGNED_BYTE, fakeBuffer)
+                      GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
       //gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
     }
   }
@@ -296,16 +295,15 @@ class JoglMainPlotPanel(project:Viewable)
     val yi = fields.indexOf(yr._1)
 
     gl.glEnable(GL.GL_BLEND)
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE)
+    gl.glBlendEquation(GL.GL_FUNC_ADD)
     
     // Enable shader program
     gl.glUseProgram(convolutionShader.get.programId)
 
     // Draw to a texture
-    enableTextureTarget(gl, width, height)
-
-    gl.glClearColor(1f, 0f, 0f, 1f)
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
+    val plotRect = sliceBounds.head._2
+    enableTextureTarget(gl, plotRect.width.toInt, plotRect.height.toInt)
 
     // Send down the uniforms for this set
     // Every 4 fields goes into one attribute
@@ -346,12 +344,13 @@ class JoglMainPlotPanel(project:Viewable)
                           thetaArray(i*4+3))
     }
 
-    // send down the mean and sigma^2
-    //gl.glUniform1f(convolutionShader.get.uniformId("mean"), model.mean.toFloat)
+    // send down the sigma^2
     gl.glUniform1f(convolutionShader.get.uniformId("sig2"), model.sig2.toFloat)
 
 
     // Actually do the draw
+    gl.glClearColor(model.mean.toFloat, 0f, 0f, 1f)
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
     val corrResponses = model.corrResponses
     for(r <- 0 until project.designSites.numRows) {
@@ -372,7 +371,8 @@ class JoglMainPlotPanel(project:Viewable)
 
         // Need to call this last to flush
         val respId = convolutionShader.get.attribId("corrResp")
-        gl.glVertexAttrib1f(respId, corrResponses(r).toFloat)
+        val corrResponse = corrResponses(r).toFloat
+        gl.glVertexAttrib1f(respId, corrResponse)
       }
     }
     gl.glEnd
@@ -390,6 +390,7 @@ class JoglMainPlotPanel(project:Viewable)
                                trans:Matrix4) = {
     val es2 = gl.getGL2ES2
 
+    gl.glDisable(GL.GL_BLEND)
     gl.glEnable(GL.GL_TEXTURE_2D)
 
     // Activate the texture program

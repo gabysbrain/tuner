@@ -18,7 +18,7 @@ void main() {
   } else {
     float pct = (val.r - filterLevel) / (maxVal - filterLevel);
     gl_FragColor = vec4(mix(minColor, maxColor, pct), 1.0);
-    //gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
   }
+  //gl_FragColor = val;
 }
 
