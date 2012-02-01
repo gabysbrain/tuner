@@ -45,9 +45,9 @@ class JoglMainPlotPanel(project:Viewable)
   var lastResponse:String = ""
 
   // All the plot transforms
-  var plotTransforms = Map[(String,String),Matrix4]()
+  var plotTransforms = Map[(String,String),(Matrix4,Matrix4)]()
 
-  def ensureGl(gl:GL) = {
+  def setupGl(gl:GL) = {
     // Make sure opengl can do everything we want it to do
     if(!JoglMainPlotPanel.isCapable(gl))
       throw new Exception("OpenGL not advanced enough")
@@ -56,7 +56,6 @@ class JoglMainPlotPanel(project:Viewable)
     //val gl2 = gl.getGL2
     //val gl2 = new DebugGL2(new TraceGL2(gl.getGL2, System.out))
     val gl2 = new DebugGL2(gl.getGL2)
-    plotTransforms = computePlotTransforms(sliceBounds, width, height)
 
     // processing resets the projection matrices
     gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
@@ -66,7 +65,7 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glPushMatrix
     gl2.glLoadIdentity
 
-    // Load in the shader programs
+    // Create the shader programs
     if(!plotShader.isDefined) {
       plotShader = Some(GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
@@ -92,30 +91,47 @@ class JoglMainPlotPanel(project:Viewable)
 
     // No more shaders
     gl.getGL2ES2.glUseProgram(0)
+
+    // No more texture
+    gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
   }
 
+  /**
+   * Create the texture and framebuffer objects
+   */
   def setupTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
     // First setup the overall framebuffer
-    val fbo = Array(0)
-    gl.glGenFramebuffers(1, fbo, 0)
-    textureFbo = Some(fbo(0))
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
+    if(!textureFbo.isDefined) {
+      val fbo = Array(0)
+      gl.glGenFramebuffers(1, fbo, 0)
+      textureFbo = Some(fbo(0))
+    }
 
     // Create a texture in which to render
-    val tex = Array(0)
-    gl.glGenTextures(1, tex, 0)
-    fboTexture = Some(tex(0))
+    if(!fboTexture.isDefined) {
+      val tex = Array(0)
+      gl.glGenTextures(1, tex, 0)
+      fboTexture = Some(tex(0))
 
-    gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT)
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
-    gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
-    val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*width*height)(0f))
-    fakeBuffer.rewind
-    gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, width, height, 0, 
-                    GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
-    gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
+      gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
+      gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
+      val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*width*height)(0f))
+      fakeBuffer.rewind
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, width, height, 0, 
+                      GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
+      gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
+    }
+  }
+
+  /**
+   * Enable the texture renderbuffer
+   */
+  def enableTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
+
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
 
     gl.glViewport(0, 0, texWidth, texHeight)
 
@@ -124,6 +140,7 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glDisable(GL.GL_DEPTH_TEST)
 
     // Now attach the texture to the framebuffer we want
+    gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
     gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
                               GL.GL_TEXTURE_2D, fboTexture.get, 0)
@@ -151,12 +168,18 @@ class JoglMainPlotPanel(project:Viewable)
     }
   }
 
-  def cleanTextureTarget(gl:GL2) = {
-    gl.glDeleteTextures(1, Array(fboTexture.get), 0)
-    gl.glDeleteFramebuffers(1, Array(textureFbo.get), 0)
+  /**
+   * Disable the texture framebuffer target
+   */
+  def disableTextureTarget(gl:GL2) = {
+    gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
 
-    gl.glEnable(GL.GL_CULL_FACE)
-    gl.glEnable(GL.GL_DEPTH_TEST)
+    // Put the tests back
+    //gl.glEnable(GL.GL_CULL_FACE)
+    //gl.glEnable(GL.GL_DEPTH_TEST)
+
+    gl.glViewport(0, 0, width, height)
   }
 
   /**
@@ -183,39 +206,16 @@ class JoglMainPlotPanel(project:Viewable)
     val plotTrans = Matrix4.translate(pctBounds.minX, pctBounds.minY, 0)
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
-    // The final transformation
-    val ttl = projectionMatrix * plotTrans * plotScale * dataTrans * dataScale
-    (xFld,yFld) -> ttl
+    // The final transformations
+    //val ttl = projectionMatrix * plotTrans * plotScale * dataTrans * dataScale
+    val ttlProj = projectionMatrix * dataTrans * dataScale
+    val ttlPlot = projectionMatrix * plotTrans * plotScale
+    (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 
-  def setupRenderingState(gl:GL2) = {
-
-    val fields = project.inputFields
-
-    gl.glEnable(GL.GL_BLEND);
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-    
-    // set up all the contexts
-    gl.glUseProgram(plotShader.get.programId)
-
-    // Every 4 fields goes into one attribute
-    val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
-                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
-      // Send down the current slice
-      val sId = plotShader.get.uniformId("slice" + i)
-      gl.glUniform4f(sId, sliceArray(i*4+0), 
-                          sliceArray(i*4+1), 
-                          sliceArray(i*4+2),
-                          sliceArray(i*4+3))
-
-    }
-
-    // figure out the maximum distance to render a point
-    val maxSqDist = -math.log(1e-9)
-    //gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
-  }
-
+  /**
+   * Does opengl setup and takedown 
+   */
   override protected def drawResponses = {
     // setup the opengl context for drawing
     val pgl = g.asInstanceOf[PGraphicsOpenGL]
@@ -224,8 +224,11 @@ class JoglMainPlotPanel(project:Viewable)
     val gl2 = new DebugGL2(gl.getGL2)
 
     // Make sure all the opengl stuff is set up
-    ensureGl(gl)
-    setupRenderingState(gl2)
+    setupGl(gl)
+    plotTransforms = computePlotTransforms(sliceBounds, width, height)
+    // All plots are the same size
+    val plotRect = sliceBounds.head._2
+    setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
 
     // the old looping code works fine
     super.drawResponses
@@ -249,6 +252,7 @@ class JoglMainPlotPanel(project:Viewable)
     val pgl = g.asInstanceOf[PGraphicsOpenGL]
     val gl = pgl.beginGL
     val gl2 = new DebugGL2(gl.getGL2)
+    val es2 = gl.getGL2ES2
     //val gl2 = new TraceGL2(gl.getGL2, System.out)
     //val es1 = gl.getGL2ES1
 
@@ -260,46 +264,88 @@ class JoglMainPlotPanel(project:Viewable)
     }
     */
 
-    // Draw to a texture
-    setupTextureTarget(gl2, width, height)
+    val (texTrans, plotTrans) = plotTransforms((xRange._1,yRange._1))
 
+    // First draw to the texture
+    drawResponseToTexture(gl2, xRange, yRange, response, texTrans)
+
+    // Now put the texture on a quad
+    drawResponseTexturedQuad(gl2, plotTrans)
+
+    pgl.endGL
+  }
+
+  def drawResponseToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                    yRange:(String,(Float,Float)),
+                                    response:String,
+                                    trans:Matrix4) = {
+    val fields = project.inputFields
     val (xr, yr) = if(xRange._1 < yRange._1) {
       (xRange, yRange)
     } else {
       (yRange, xRange)
     }
-    val fields = project.inputFields
     val xi = fields.indexOf(xr._1)
     val yi = fields.indexOf(yr._1)
 
-    // set the uniforms specific to this plot
-    val trans = plotTransforms((xFld,yFld))
+    gl.glEnable(GL.GL_BLEND)
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+    
+    // Enable shader program
+    gl.glUseProgram(plotShader.get.programId)
+
+    // Draw to a texture
+    enableTextureTarget(gl, width, height)
+
+    gl.glClearColor(0f, 0f, 0f, 0f)
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+    // Send down the uniforms for this set
+    // Every 4 fields goes into one attribute
+    val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
+                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
+    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+      // Send down the current slice
+      val sId = plotShader.get.uniformId("slice" + i)
+      gl.glUniform4f(sId, sliceArray(i*4+0), 
+                          sliceArray(i*4+1), 
+                          sliceArray(i*4+2),
+                          sliceArray(i*4+3))
+
+    }
+
+    // figure out the maximum distance to render a point
+    val maxSqDist = -math.log(1e-9)
+    //gl.glUniform1f(plotShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
+
     val model = project.gpModels(response)
-    gl2.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
-                           1, false, trans.toArray, 0)
-    gl2.glUniform1i(plotShader.get.uniformId("d1"), xi)
-    gl2.glUniform1i(plotShader.get.uniformId("d2"), yi)
-    gl2.glUniform2f(plotShader.get.uniformId("dataMin"), 
-                    xr._2._1, yr._2._1)
-    gl2.glUniform2f(plotShader.get.uniformId("dataMax"), 
-                    xr._2._2, yr._2._2)
+    gl.glUniformMatrix4fv(plotShader.get.uniformId("trans"), 
+                          1, false, trans.toArray, 0)
+    gl.glUniform1i(plotShader.get.uniformId("d1"), xi)
+    gl.glUniform1i(plotShader.get.uniformId("d2"), yi)
+    gl.glUniform2f(plotShader.get.uniformId("dataMin"), 
+                   xr._2._1, yr._2._1)
+    gl.glUniform2f(plotShader.get.uniformId("dataMax"), 
+                   xr._2._2, yr._2._2)
 
     // Send down all the theta values
     val thetaArray = (fields.map(model.theta(_).toFloat) ++
                       List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
     for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
       val tId = plotShader.get.uniformId("theta" + i)
-      gl2.glUniform4f(tId, thetaArray(i*4 + 0), 
-                           thetaArray(i*4+1), 
-                           thetaArray(i*4+2),
-                           thetaArray(i*4+3))
+      gl.glUniform4f(tId, thetaArray(i*4 + 0), 
+                          thetaArray(i*4+1), 
+                          thetaArray(i*4+2),
+                          thetaArray(i*4+3))
     }
 
     // send down the mean and sigma^2
-    //gl2.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
-    gl2.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
+    //gl.glUniform1f(plotShader.get.uniformId("mean"), model.mean.toFloat)
+    gl.glUniform1f(plotShader.get.uniformId("sig2"), model.sig2.toFloat)
 
-    gl2.glBegin(GL2.GL_QUADS)
+
+    // Actually do the draw
+    gl.glBegin(GL2.GL_QUADS)
     val corrResponses = model.corrResponses
     for(r <- 0 until project.designSites.numRows) {
       val tpl = project.designSites.tuple(r)
@@ -311,23 +357,55 @@ class JoglMainPlotPanel(project:Viewable)
             tpl(fields(j))
           } ++ List(0f, 0f, 0f, 0f)
           
-          gl2.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
+          gl.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
                                      fieldVals(2), fieldVals(3))
         }
         val offsetId = plotShader.get.attribId("geomOffset")
-        gl2.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
+        gl.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
 
         // Need to call this last to flush
         val respId = plotShader.get.attribId("corrResp")
-        gl2.glVertexAttrib1f(respId, corrResponses(r).toFloat)
+        gl.glVertexAttrib1f(respId, corrResponses(r).toFloat)
       }
     }
-    gl2.glEnd
+    gl.glEnd
+    gl.glFlush
 
-    // No more texture rendering...
-    cleanTextureTarget(gl2)
+    gl.glDisable(GL.GL_BLEND)
+    //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+    
+    // Disable the texture fb
+    disableTextureTarget(gl)
 
-    pgl.endGL
+    // Disable the shader program
+    gl.glUseProgram(0)
+  }
+
+  def drawResponseTexturedQuad(gl:GL2, trans:Matrix4) = {
+    // Enable the texture
+    gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
+
+    gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+    gl.glPushMatrix
+    gl.glLoadMatrixf(trans.toArray, 0)
+
+    gl.glBegin(GL2.GL_QUADS)
+    gl.glTexCoord2f(0f, 0f)
+    //gl.glColor3f(1f, 0f, 0f)
+    gl.glVertex3f(0f, 0f, 0f)
+    gl.glTexCoord2f(1f, 0f)
+    //gl.glColor3f(1f, 0f, 0f)
+    gl.glVertex3f(1f, 0f, 0f)
+    gl.glTexCoord2f(1f, 1f)
+    //gl.glColor3f(1f, 0f, 0f)
+    gl.glVertex3f(1f, 1f, 0f)
+    gl.glTexCoord2f(0f, 1f)
+    //gl.glColor3f(1f, 0f, 0f)
+    gl.glVertex3f(0f, 1f, 0f)
+    gl.glEnd
+
+    gl.glPopMatrix
+    gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
   }
 
 }
