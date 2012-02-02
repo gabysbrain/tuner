@@ -409,19 +409,27 @@ class JoglMainPlotPanel(project:Viewable)
     es2.glUniform1i(colormapShader.get.uniformId("values"), 0)
 
     // Set the colormap properties
-    val (minColor, maxColor) = (colormap.startColor, colormap.endColor)
     gl.glUniform1f(colormapShader.get.uniformId("filterLevel"), 
                    colormap.filterVal)
-    gl.glUniform1f(colormapShader.get.uniformId("maxVal"),
-                   colormap.colorEnd)
-    gl.glUniform3f(colormapShader.get.uniformId("minColor"),
-                   minColor.r, minColor.g, minColor.b)
-    gl.glUniform3f(colormapShader.get.uniformId("maxColor"),
-                   maxColor.r, maxColor.g, maxColor.b)
-    gl.glUniform3f(colormapShader.get.uniformId("filterColor"),
+    gl.glUniform1i(colormapShader.get.uniformId("invert"), 
+                   if(colormap.isInverted) 1 else 0)
+    gl.glUniform1f(colormapShader.get.uniformId("minVal"), colormap.minVal)
+    gl.glUniform1f(colormapShader.get.uniformId("maxVal"), colormap.maxVal)
+    gl.glUniform4f(colormapShader.get.uniformId("minColor"),
+                   colormap.minColor.r, 
+                   colormap.minColor.g, 
+                   colormap.minColor.b, 
+                   1f)
+    gl.glUniform4f(colormapShader.get.uniformId("maxColor"),
+                   colormap.maxColor.r, 
+                   colormap.maxColor.g, 
+                   colormap.maxColor.b, 
+                   1f)
+    gl.glUniform4f(colormapShader.get.uniformId("filterColor"),
                    colormap.filterColor.r, 
                    colormap.filterColor.g,
-                   colormap.filterColor.b)
+                   colormap.filterColor.b,
+                   1f)
 
     // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)

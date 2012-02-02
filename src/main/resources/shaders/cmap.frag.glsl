@@ -5,20 +5,22 @@ varying vec2 texCoord;
 
 uniform sampler2D values;
 uniform float filterLevel;
+uniform bool invert;
 
+uniform float minVal;
 uniform float maxVal;
-uniform vec3 minColor;
-uniform vec3 maxColor;
-uniform vec3 filterColor;
+uniform vec4 minColor;
+uniform vec4 maxColor;
+uniform vec4 filterColor;
 
 void main() {
-  vec4 val = texture2D(values, texCoord);
-  if(val.r < filterLevel) {
-    gl_FragColor = vec4(filterColor, 1.0);
+  vec4 val = clamp(texture2D(values, texCoord), minVal, maxVal);
+  if(invert) {
+    float pct = (val.r - filterLevel) / (minVal - filterLevel);
+    gl_FragColor = val.r > filterLevel ? filterColor : mix(minColor, maxColor, pct);
   } else {
     float pct = (val.r - filterLevel) / (maxVal - filterLevel);
-    gl_FragColor = vec4(mix(minColor, maxColor, pct), 1.0);
+    gl_FragColor = val.r < filterLevel ? filterColor : mix(minColor, maxColor, pct);
   }
-  //gl_FragColor = val;
 }
 

@@ -35,6 +35,8 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
   }
 
   def filterColor = Config.filterColor
+  def minColor = cm.colors.head
+  def maxColor = cm.colors.last
 
   /**
    * The filter goes from filterStart to filterVal
@@ -45,9 +47,6 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
    * The unfiltered bit goes from filterVal to colorEnd
    */
   def colorEnd = if(invert) minVal else maxVal
-
-  def startColor = color(filterVal)
-  def endColor = color(colorEnd)
 
   def color(v:Float) : Color = {
     val cv = P5Panel.constrain(v, minVal, maxVal)
