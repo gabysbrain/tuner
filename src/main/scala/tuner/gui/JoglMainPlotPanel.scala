@@ -245,6 +245,8 @@ class JoglMainPlotPanel(project:Viewable)
     // All plots are the same size
     val plotRect = sliceBounds.head._2
     setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
+
+    // Return to the real world
     pgl.endGL
 
     // the old looping code works fine
