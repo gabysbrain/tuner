@@ -168,18 +168,16 @@ class ProcessingMainPlotPanel(val project:Viewable)
         if(xFld < yFld) {
           project.viewInfo.response1View.foreach {r1 => 
             val startTime = System.currentTimeMillis
-            drawResponse(xFld, yFld, xRange, yRange, r1, closestSample)
-            if(project.viewInfo.showRegion)
-              drawMask(xFld, yFld)
+            drawResponse(xRange, yRange, r1)
+            drawResponseWidgets(xRange, yRange, closestSample)
             val endTime = System.currentTimeMillis
             //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
             val startTime = System.currentTimeMillis
-            drawResponse(xFld, yFld, xRange, yRange, r2, closestSample)
-            if(project.viewInfo.showRegion)
-              drawMask(xFld, yFld)
+            drawResponse(xRange, yRange, r2)
+            drawResponseWidgets(xRange, yRange, closestSample)
             val endTime = System.currentTimeMillis
             //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
@@ -188,12 +186,11 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  protected def drawResponse(xFld:String, yFld:String, 
-                             xRange:(String,(Float,Float)), 
+  protected def drawResponse(xRange:(String,(Float,Float)), 
                              yRange:(String,(Float,Float)), 
-                             response:String,
-                             closestSample:Table.Tuple) = {
+                             response:String) = {
 
+    val (xFld, yFld) = (xRange._1, yRange._1)
     val model = project.gpModels(response)
     val bounds = sliceBounds((xFld, yFld))
     val (slice, cm, xf, yf, xr, yr) = if(xFld < yFld) {
@@ -211,9 +208,28 @@ class ProcessingMainPlotPanel(val project:Viewable)
     // Draw the main plot
     slice.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
                data, xSlice, ySlice, xr._2, yr._2, cm)
+  }
+
+  protected def drawResponseWidgets(xRange:(String,(Float,Float)),
+                                    yRange:(String,(Float,Float)),
+                                    closestSample:Table.Tuple) = {
+    val (xFld, yFld) = (xRange._1, yRange._1)
+    val bounds = sliceBounds((xFld, yFld))
+    val (xf, yf, xr, yr) = if(xFld < yFld) {
+      (xFld, yFld, xRange, yRange)
+    } else {
+      (yFld, xFld, yRange, xRange)
+    }
+
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+                            project.viewInfo.currentSlice(yf))
+
+    // Crosshair showing current location
     Widgets.crosshair(this, bounds.minX, bounds.minY, 
                             bounds.width, bounds.height,
                             xSlice, ySlice, xr._2, yr._2)
+
+    // Line to the nearest sample
     if(project.viewInfo.showSampleLine) {
       Widgets.sampleLine(this, bounds.minX, bounds.minY,
                                bounds.width, bounds.height,
@@ -221,6 +237,10 @@ class ProcessingMainPlotPanel(val project:Viewable)
                                closestSample(xf), closestSample(yf),
                                xr._2, yr._2)
     }
+
+    // The region mask
+    if(project.viewInfo.showRegion)
+      drawMask(xFld, yFld)
   }
 
   private def drawAxes(range:(String,(Float,Float))) = {

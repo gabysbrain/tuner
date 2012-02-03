@@ -245,9 +245,12 @@ class JoglMainPlotPanel(project:Viewable)
     // All plots are the same size
     val plotRect = sliceBounds.head._2
     setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
+    pgl.endGL
 
     // the old looping code works fine
     super.drawResponses
+
+    pgl.beginGL
     
     // clean up after ourselves
     disableGl(gl)
@@ -258,11 +261,9 @@ class JoglMainPlotPanel(project:Viewable)
   /**
    * Draw a single continuous plot
    */
-  override protected def drawResponse(xFld:String, yFld:String,
-                                      xRange:(String,(Float,Float)),
+  override protected def drawResponse(xRange:(String,(Float,Float)),
                                       yRange:(String,(Float,Float)),
-                                      response:String,
-                                      closestSample:Table.Tuple) = {
+                                      response:String) = {
 
     //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
     val pgl = g.asInstanceOf[PGraphicsOpenGL]
@@ -280,12 +281,13 @@ class JoglMainPlotPanel(project:Viewable)
     }
     */
 
-    val (texTrans, plotTrans) = plotTransforms((xRange._1,yRange._1))
+    val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
     // First draw to the texture
     drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
 
     // Now put the texture on a quad
+    val (xFld, yFld) = (xRange._1, yRange._1)
     val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
     drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
 
