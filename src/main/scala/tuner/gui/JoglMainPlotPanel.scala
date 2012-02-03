@@ -203,8 +203,14 @@ class JoglMainPlotPanel(project:Viewable)
     val (minY,maxY) = project.viewInfo.currentZoom.range(yFld)
 
     // transforms to move from data space to 0,1 space
-    val dataTrans = Matrix4.translate(-minX, -minY, 0)
-    val dataScale = Matrix4.scale(1/(maxX-minX), 1/(maxY-minY), 1)
+    // response 2 plots are flipped 90 degrees
+    val (dataTrans, dataScale) = if(xFld < yFld) {
+      (Matrix4.translate(-minX, -minY, 0),
+       Matrix4.scale(1/(maxX-minX), 1/(maxY-minY), 1))
+    } else {
+      (Matrix4.translate(-minY, -minX, 0),
+       Matrix4.scale(1/(maxY-minY), 1/(maxX-minX), 1))
+    }
 
     // Put the bounds in 0,1 terms
     // bounds are defined upside down since that's how processing likes it
