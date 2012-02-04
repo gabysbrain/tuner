@@ -83,6 +83,19 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   // Also precompute rInverse . (responses - mean)
   val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
 
+  // Also precompute the square of the sum of the rows 
+  // of the cholesky decomposition of rInverse
+  val cholCols:Array[Double] = {
+    val mtx = new Jama.Matrix(rInverse).chol.getL
+    (0 until mtx.getRowDimension).map {r =>
+      val tmp = (0 until mtx.getColumnDimension).foldLeft(0.0){(s,c) => 
+        s + mtx.get(r,c)
+      }
+      math.pow(tmp, 2)
+    }
+    mtx.getArray.map(x => math.pow(x.sum, 2))
+  }
+
   def toJson = {
     GpSpecification(
       respDim, dims, thetas, alphas, mean, sig2,

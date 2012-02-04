@@ -11,6 +11,7 @@ import processing.opengl.PGraphicsOpenGL
 
 import tuner.SpecifiedColorMap
 import tuner.Table
+import tuner.ViewInfo
 import tuner.geom.Rectangle
 import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.GPPlotGlsl
@@ -37,7 +38,7 @@ class JoglMainPlotPanel(project:Viewable)
   var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
-  var convolutionShader:Option[(Glsl,Glsl)] = None // est, err, and exp
+  var convolutionShaders:Option[(Glsl,Glsl)] = None // est, err, and exp
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
@@ -68,14 +69,14 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glLoadIdentity
 
     // Create the shader programs
-    if(!convolutionShader.isDefined) {
-      val estShader = GPPlotGlsl.estFromResource(
+    if(!convolutionShaders.isDefined) {
+      val estShader = GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
-          "/shaders/plot.frag.glsl")
-      val errShader = GPPlotGlsl.estFromResource(
+          "/shaders/est.plot.frag.glsl")
+      val errShader = GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
-          "/shaders/plot.frag.glsl")
-      convolutionShader = Some(estShader, errShader)
+          "/shaders/err.plot.frag.glsl")
+      convolutionShaders = Some(estShader, errShader)
       println(estShader.attribIds)
       println(errShader.attribIds)
     }
@@ -286,7 +287,13 @@ class JoglMainPlotPanel(project:Viewable)
     val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
     // First draw to the texture
-    drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+    project.viewInfo.currentMetric match {
+      case ViewInfo.ValueMetric =>
+        drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+      case ViewInfo.ErrorMetric =>
+        drawErrorToTexture(gl2, xRange, yRange, response, texTrans)
+      case _ =>
+    }
 
     // Now put the texture on a quad
     val (xFld, yFld) = (xRange._1, yRange._1)
@@ -304,15 +311,79 @@ class JoglMainPlotPanel(project:Viewable)
                                       response:String,
                                       trans:Matrix4) = {
 
-    val shader = convolutionShader.get._1
-    val fields = project.inputFields
+    val shader = convolutionShaders.get._1
+    val model = project.gpModels(response)
+    val fields = model.dims
+    val corrResponses = model.corrResponses
+    val (xi,yi) = if(xRange._1 < yRange._1) {
+      (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
+    } else {
+      (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
+    }
+    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
+    drawConvolutionToTexture(gl, xRange, yRange, 
+                                 xi, yi,
+                                 trans, shader, 
+                                 fields.size,
+                                 model.mean, 
+                                 model.sig2,
+                                 model.thetas.toArray,
+                                 slice,
+                                 model.design,
+                                 corrResponses)
+  }
+
+  /**
+   * This puts the error value in a texture
+   */
+  def drawErrorToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                 yRange:(String,(Float,Float)),
+                                 response:String,
+                                 trans:Matrix4) = {
+
+    val shader = convolutionShaders.get._2
+    val model = project.gpModels(response)
+    val fields = model.dims
+    val cholFactors = model.cholCols
+    val (xi,yi) = if(xRange._1 < yRange._1) {
+      (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
+    } else {
+      (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
+    }
+    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
+    val thetas = fields.map(model.theta(_)).toArray
+    drawConvolutionToTexture(gl, xRange, yRange, 
+                                 xi, yi,
+                                 trans, shader, 
+                                 fields.size,
+                                 model.sig2, 
+                                 -model.sig2*model.sig2,
+                                 model.thetas.toArray,
+                                 slice,
+                                 model.design,
+                                 cholFactors)
+  }
+
+  /**
+   * Generic function for using the convolution shader
+   */
+  def drawConvolutionToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                       yRange:(String,(Float,Float)),
+                                       xi:Int, yi:Int,
+                                       trans:Matrix4,
+                                       shader:Glsl,
+                                       numDims:Int,
+                                       baseValue:Double,
+                                       globalFactor:Double,
+                                       distFactors:Array[Double],
+                                       interestPoint:Array[Float],
+                                       points:Array[Array[Double]],
+                                       coefficients:Array[Double]) = {
     val (xr, yr) = if(xRange._1 < yRange._1) {
       (xRange, yRange)
     } else {
       (yRange, xRange)
     }
-    val xi = fields.indexOf(xr._1)
-    val yi = fields.indexOf(yr._1)
 
     gl.glEnable(GL.GL_BLEND)
     gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE)
@@ -327,9 +398,8 @@ class JoglMainPlotPanel(project:Viewable)
 
     // Send down the uniforms for this set
     // Every 4 fields goes into one attribute
-    val sliceArray = (fields.map(project.viewInfo.currentSlice(_)) ++
-                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+    val sliceArray = interestPoint ++ Array(0f, 0f, 0f, 0f)
+    for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
       // Send down the current slice
       val sId = shader.uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4+0), 
@@ -343,7 +413,6 @@ class JoglMainPlotPanel(project:Viewable)
     val maxSqDist = -math.log(1e-9)
     //gl.glUniform1f(convolutionShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
 
-    val model = project.gpModels(response)
     gl.glUniformMatrix4fv(shader.uniformId("trans"), 
                           1, false, trans.toArray, 0)
     gl.glUniform1i(shader.uniformId("d1"), xi)
@@ -352,45 +421,43 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glUniform2f(shader.uniformId("dataMax"), xr._2._2, yr._2._2)
 
     // Send down all the theta values
-    val thetaArray = (fields.map(model.theta(_).toFloat) ++
-                      List.fill(GPPlotGlsl.padCount(fields.size))(0f)).toArray
-    for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+    val thetaArray = distFactors ++ Array(0.0, 0.0, 0.0, 0.0)
+    for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
       val tId = shader.uniformId("theta" + i)
-      gl.glUniform4f(tId, thetaArray(i*4 + 0), 
-                          thetaArray(i*4+1), 
-                          thetaArray(i*4+2),
-                          thetaArray(i*4+3))
+      gl.glUniform4f(tId, thetaArray(i*4+0).toFloat, 
+                          thetaArray(i*4+1).toFloat, 
+                          thetaArray(i*4+2).toFloat,
+                          thetaArray(i*4+3).toFloat)
     }
 
     // send down the sigma^2
-    gl.glUniform1f(shader.uniformId("sig2"), model.sig2.toFloat)
+    gl.glUniform1f(shader.uniformId("sig2"), globalFactor.toFloat)
 
 
     // Actually do the draw
-    gl.glClearColor(model.mean.toFloat, 0f, 0f, 1f)
+    gl.glClearColor(baseValue.toFloat, 0f, 0f, 1f)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
-    val corrResponses = model.corrResponses
-    for(r <- 0 until project.designSites.numRows) {
-      val tpl = project.designSites.tuple(r)
+    for(r <- 0 until points.size) {
+      val pt = points(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-        for(i <- 0 until GPPlotGlsl.numVec4(fields.size)) {
+        for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
           val ptId = shader.attribId("data" + i)
-          val fieldVals = (i*4 until math.min(fields.size, (i+1)*4)).map {j =>
-            tpl(fields(j))
-          } ++ List(0f, 0f, 0f, 0f)
+          val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
           
-          gl.glVertexAttrib4f(ptId, fieldVals(0), fieldVals(1), 
-                                     fieldVals(2), fieldVals(3))
+          gl.glVertexAttrib4f(ptId, fieldVals(0).toFloat, 
+                                    fieldVals(1).toFloat, 
+                                    fieldVals(2).toFloat, 
+                                    fieldVals(3).toFloat)
         }
+        val respId = shader.attribId("coeff")
+        gl.glVertexAttrib1f(respId, coefficients(r).toFloat)
+
+        // Need to call this last to flush
         val offsetId = shader.attribId("geomOffset")
         gl.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
 
-        // Need to call this last to flush
-        val respId = shader.attribId("corrResp")
-        val corrResponse = corrResponses(r).toFloat
-        gl.glVertexAttrib1f(respId, corrResponse)
       }
     }
     gl.glEnd
