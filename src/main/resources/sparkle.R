@@ -65,7 +65,7 @@ fit.model <- function(design, param.cols, resp.col) {
 
   # now build the gp model
   fit <- mlegp(as.matrix(X.samples), as.vector(Y.samples),
-               param.names=param.cols, gp.names=resp.col, constantMean=0)
+               param.names=param.cols, gp.names=resp.col, constantMean=1)
 
   print(names(X.samples))
   print(fit$beta)
