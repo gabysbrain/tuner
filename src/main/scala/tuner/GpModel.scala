@@ -85,13 +85,14 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
 
   // Also precompute the square of the sum of the rows 
   // of the cholesky decomposition of rInverse
-  val cholCols:Array[Double] = {
+  val sqCholCols:Array[Double] = {
     val mtx = new Jama.Matrix(rInverse).times(sig2).chol.getL
     (0 until mtx.getRowDimension).map {r =>
       //println("=====")
       val tmp = (0 until mtx.getColumnDimension).foldLeft(0.0){(s,c) => 
         //println(c)
-        s + mtx.get(c,r)
+        //println(s + mtx.get(r,c))
+        s + mtx.get(r,c)
       }
       //println("=====")
       tmp * tmp

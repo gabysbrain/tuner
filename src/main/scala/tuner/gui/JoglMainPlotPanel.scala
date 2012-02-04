@@ -344,7 +344,7 @@ class JoglMainPlotPanel(project:Viewable)
     val shader = convolutionShaders.get._2
     val model = project.gpModels(response)
     val fields = model.dims
-    val cholFactors = model.cholCols
+    val cholFactors = model.sqCholCols
     val (xi,yi) = if(xRange._1 < yRange._1) {
       (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
     } else {
