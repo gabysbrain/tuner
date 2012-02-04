@@ -357,7 +357,7 @@ class JoglMainPlotPanel(project:Viewable)
                                  trans, shader, 
                                  fields.size,
                                  model.sig2, 
-                                 -model.sig2*model.sig2,
+                                 -model.sig2,
                                  model.thetas.toArray,
                                  slice,
                                  model.design,

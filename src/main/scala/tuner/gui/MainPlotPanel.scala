@@ -58,7 +58,7 @@ trait MainPlotPanel extends Publisher {
                                         model.funcMax,
                                         minimize)
       val errCm = new SpecifiedColorMap(Config.errorColorMap,
-                                        0f, model.sig2.toFloat,
+                                        0f, math.sqrt(model.sig2).toFloat,
                                         false)
       // TODO: fix the max gain calculation!
       val maxGain = model.maxGain(project.inputs) / 4

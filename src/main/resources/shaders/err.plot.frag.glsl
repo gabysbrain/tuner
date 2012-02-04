@@ -12,8 +12,7 @@ void main() {
   vec2 vertexSqDist = vertexDist * vertexDist;
   vec2 weightedDist = theta * vertexSqDist;
   float ttlDist = centerSqDist + weightedDist.x + weightedDist.y;
-  float tmp = exp(-ttlDist);
-  float redness = sig2 * fragCoeff * tmp * tmp;
+  float redness = sig2 * fragCoeff * exp(-2*ttlDist);
   //alpha = 0.4;
   //alpha = 1.0;
   gl_FragColor = vec4(redness, 0.0, 0.0, 1.0);
