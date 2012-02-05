@@ -15,7 +15,7 @@ uniform vec4 filterColor;
 
 void main() {
   float val = clamp(texture2D(values, texCoord), minVal, maxVal).r;
-  val = sqrt(val);
+  //val = sqrt(val);
   if(invert) {
     float pct = (val - filterLevel) / (minVal - filterLevel);
     gl_FragColor = val > filterLevel ? filterColor : mix(minColor, maxColor, pct);
