@@ -72,7 +72,6 @@ class ConvolutionVertexShader(numDims:Int) {
 
     // This won't get rasterized if the distance is too great
     vec2 actOffset = centerSqDist < maxSqDist ? geomOffset : vec2(0.0, 0.0);
-    //vec2 actOffset = geomOffset;
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vertexDist = offset - dataPos;
     fragCoeff = coeff;
