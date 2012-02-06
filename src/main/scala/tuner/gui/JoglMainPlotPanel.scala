@@ -377,7 +377,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // figure out the maximum distance to render a point
     val maxSqDist = -math.log(1e-9)
-    //gl.glUniform1f(convolutionShader.get.uniformId("maxSqDist"), maxSqDist.toFloat)
+    //gl.glUniform1f(shader.uniformId("maxSqDist"), maxSqDist.toFloat)
 
     gl.glUniformMatrix4fv(shader.uniformId("trans"), 
                           1, false, trans.toArray, 0)
