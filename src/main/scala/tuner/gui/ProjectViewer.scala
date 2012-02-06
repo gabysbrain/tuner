@@ -47,7 +47,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
 
   new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
 
-  //val mainPlotPanel = new ProcessingMainPlotPanel(project)
+  // only use the native opengl version if the system can handle it
   val mainPlotPanel = new JoglMainPlotPanel(project)
 
   val controlPanel = new ControlPanel(project)
