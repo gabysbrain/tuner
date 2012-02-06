@@ -9,12 +9,13 @@ import javax.media.opengl.fixedfunc.GLPointerFunc
 
 import processing.opengl.PGraphicsOpenGL
 
+import tuner.Config
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
-import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Convolver
+import tuner.gui.opengl.Glsl
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
@@ -38,7 +39,7 @@ class JoglMainPlotPanel(project:Viewable)
   var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
-  var convolutionShaders:Option[Glsl] = None // just for estimate
+  var convolutionShaders:Option[Convolver] = None // just for estimate
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
