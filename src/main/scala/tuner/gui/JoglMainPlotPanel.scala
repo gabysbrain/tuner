@@ -38,7 +38,7 @@ class JoglMainPlotPanel(project:Viewable)
   var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
-  var convolutionShaders:Option[(Glsl,Glsl)] = None // est, err, and exp
+  var convolutionShaders:Option[Glsl] = None // just for estimate
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
@@ -73,12 +73,8 @@ class JoglMainPlotPanel(project:Viewable)
       val estShader = GPPlotGlsl.fromResource(
           gl, project.inputFields.size, 
           "/shaders/est.plot.frag.glsl")
-      val errShader = GPPlotGlsl.fromResource(
-          gl, project.inputFields.size, 
-          "/shaders/err.plot.frag.glsl")
-      convolutionShaders = Some(estShader, errShader)
+      convolutionShaders = Some(estShader)
       println(estShader.attribIds)
-      println(errShader.attribIds)
     }
     if(!colormapShader.isDefined) {
       colormapShader = Some(Glsl.fromResource(
@@ -241,24 +237,29 @@ class JoglMainPlotPanel(project:Viewable)
     val gl2 = new DebugGL2(gl.getGL2)
 
     // Make sure all the opengl stuff is set up
-    setupGl(gl)
-    plotTransforms = computePlotTransforms(sliceBounds, width, height)
-    // All plots are the same size
-    val plotRect = sliceBounds.head._2
-    setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
+    // only use opengl stuff when looking at value
+    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
+      setupGl(gl)
+      plotTransforms = computePlotTransforms(sliceBounds, width, height)
+      // All plots are the same size
+      val plotRect = sliceBounds.head._2
+      setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
 
-    // Return to the real world
-    pgl.endGL
+      // Return to the real world
+      pgl.endGL
+    }
 
     // the old looping code works fine
     super.drawResponses
 
-    pgl.beginGL
+    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
+      pgl.beginGL
     
-    // clean up after ourselves
-    disableGl(gl)
+      // clean up after ourselves
+      disableGl(gl)
 
-    pgl.endGL
+      pgl.endGL
+    }
   }
 
   /**
@@ -268,39 +269,35 @@ class JoglMainPlotPanel(project:Viewable)
                                       yRange:(String,(Float,Float)),
                                       response:String) = {
 
-    //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
-    val pgl = g.asInstanceOf[PGraphicsOpenGL]
-    val gl = pgl.beginGL
-    val gl2 = new DebugGL2(gl.getGL2)
-    val es2 = gl.getGL2ES2
-    //val gl2 = new TraceGL2(gl.getGL2, System.out)
-    //val es1 = gl.getGL2ES1
+    // only use the opengl renderer if we're looking at the values
+    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
+      //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
+      val pgl = g.asInstanceOf[PGraphicsOpenGL]
+      val gl = pgl.beginGL
+      val gl2 = new DebugGL2(gl.getGL2)
 
-    // Make sure the response value hasn't changed
-    /*
-    if(response != lastResponse) {
-      updateResponseValues(gl2, response)
-      lastResponse = response
+      // Make sure the response value hasn't changed
+      /*
+      if(response != lastResponse) {
+        updateResponseValues(gl2, response)
+        lastResponse = response
+      }
+      */
+
+      val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
+
+      // First draw to the texture
+      drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+
+      // Now put the texture on a quad
+      val (xFld, yFld) = (xRange._1, yRange._1)
+      val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
+      drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
+
+      pgl.endGL
+    } else {
+      super.drawResponse(xRange, yRange, response)
     }
-    */
-
-    val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
-
-    // First draw to the texture
-    project.viewInfo.currentMetric match {
-      case ViewInfo.ValueMetric =>
-        drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
-      case ViewInfo.ErrorMetric =>
-        drawErrorToTexture(gl2, xRange, yRange, response, texTrans)
-      case _ =>
-    }
-
-    // Now put the texture on a quad
-    val (xFld, yFld) = (xRange._1, yRange._1)
-    val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
-    drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
-
-    pgl.endGL
   }
 
   /**
@@ -311,7 +308,7 @@ class JoglMainPlotPanel(project:Viewable)
                                       response:String,
                                       trans:Matrix4) = {
 
-    val shader = convolutionShaders.get._1
+    val shader = convolutionShaders.get
     val model = project.gpModels(response)
     val fields = model.dims
     val corrResponses = model.corrResponses
@@ -331,37 +328,6 @@ class JoglMainPlotPanel(project:Viewable)
                                  slice,
                                  model.design,
                                  corrResponses)
-  }
-
-  /**
-   * This puts the error value in a texture
-   */
-  def drawErrorToTexture(gl:GL2, xRange:(String,(Float,Float)),
-                                 yRange:(String,(Float,Float)),
-                                 response:String,
-                                 trans:Matrix4) = {
-
-    val shader = convolutionShaders.get._2
-    val model = project.gpModels(response)
-    val fields = model.dims
-    val cholFactors = model.sqCholCols
-    val (xi,yi) = if(xRange._1 < yRange._1) {
-      (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
-    } else {
-      (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
-    }
-    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
-    val thetas = fields.map(model.theta(_)).toArray
-    drawConvolutionToTexture(gl, xRange, yRange, 
-                                 xi, yi,
-                                 trans, shader, 
-                                 fields.size,
-                                 model.sig2, 
-                                 -model.sig2,
-                                 model.thetas.toArray,
-                                 slice,
-                                 model.design,
-                                 cholFactors)
   }
 
   /**
