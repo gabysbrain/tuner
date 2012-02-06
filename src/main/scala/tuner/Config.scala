@@ -33,6 +33,7 @@ object Config {
   val rowField = "rowNum"
 
   val maxEstimateSamples = if(smallScreen) 4000 else 15000
+  val maxSampleSqDistance = 1e-9
 
   val sampleImageSize = 120
 
