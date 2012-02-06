@@ -446,10 +446,10 @@ class JoglMainPlotPanel(project:Viewable)
           val ptId = shader.attribId("data" + i)
           val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
           
-          gl.glVertexAttrib4f(ptId, fieldVals(0).toFloat, 
-                                    fieldVals(1).toFloat, 
-                                    fieldVals(2).toFloat, 
-                                    fieldVals(3).toFloat)
+          gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
+                                    fieldVals(i*4+1).toFloat, 
+                                    fieldVals(i*4+2).toFloat, 
+                                    fieldVals(i*4+3).toFloat)
         }
         val respId = shader.attribId("coeff")
         gl.glVertexAttrib1f(respId, coefficients(r).toFloat)
