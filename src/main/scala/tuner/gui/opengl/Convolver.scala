@@ -7,17 +7,22 @@ import javax.media.opengl.GLAutoDrawable
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
  */
-object GPPlotGlsl {
+object Convolver {
   def fromResource(gl:GL, numDims:Int, fragment:String) = {
-    val vertSource = new ConvolutionVertexShader(numDims).toString
     val fragSource = Glsl.readResource(fragment)
 
-    new Glsl(gl, vertSource, None, fragSource, List())
+    new Convolver(gl, numDims, fragSource)
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
   def padCount(numDims:Int) = (4 - (numDims%4)) % 4
 
+}
+
+class Convolver(gl:GL, numDims:Int, fragment:String) 
+    extends Glsl(gl, new ConvolutionVertexShader(numDims).toString,
+                     None, fragment, List()) {
+  
 }
 
 class ConvolutionVertexShader(numDims:Int) {
@@ -86,25 +91,25 @@ class ConvolutionVertexShader(numDims:Int) {
       ttlDistSrc(numDims))
 
   private def attribSrc(numDims:Int) = 
-    (0 until GPPlotGlsl.numVec4(numDims)).map("attribute vec4 data" + _ + ";").
+    (0 until Convolver.numVec4(numDims)).map("attribute vec4 data" + _ + ";").
       reduceLeft(_ + "\n" + _)
   private def sliceSrc(numDims:Int) =
-    (0 until GPPlotGlsl.numVec4(numDims)).map("uniform vec4 slice" + _ + ";").
+    (0 until Convolver.numVec4(numDims)).map("uniform vec4 slice" + _ + ";").
       reduceLeft(_ + "\n" + _)
   private def thetaSrc(numDims:Int) =
-    (0 until GPPlotGlsl.numVec4(numDims)).map("uniform vec4 theta" + _ + ";").
+    (0 until Convolver.numVec4(numDims)).map("uniform vec4 theta" + _ + ";").
       reduceLeft(_ + "\n" + _)
 
   /**
    * code to compute the distance between a data point and the slice point
    */
   private def ttlDistSrc(numDims:Int) =
-    (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
+    (0 until Convolver.numVec4(numDims)).map {dd =>
       "vec4 rawDist%d = data%d - slice%d;".format(dd, dd, dd) + "\n" +
       "vec4 sqDist%d = theta%d * rawDist%d * rawDist%d;".format(dd, dd, dd, dd)
     }.reduceLeft(_ + "\n" + _) + "\n" +
     "centerSqDist = " + 
-    (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
+    (0 until Convolver.numVec4(numDims)).map {dd =>
       "sqDist%d.x + sqDist%d.y + sqDist%d.z + sqDist%d.w".format(dd, dd, dd, dd)
     }.reduceLeft(_ + " + " + _) + ";\n" +
     "centerSqDist = centerSqDist - wtDataDist.x - wtDataDist.y;\n"
@@ -114,7 +119,7 @@ class ConvolutionVertexShader(numDims:Int) {
    */
   private def getDimsFuncSrc(numDims:Int, func:String, varName:String) = 
     "float %s(int d) {\n".format(func) + 
-    (0 until GPPlotGlsl.numVec4(numDims)).map {dd =>
+    (0 until Convolver.numVec4(numDims)).map {dd =>
       "if(d==%d) return %s%d.x;\n".format(dd*4+0, varName, dd) +
       "if(d==%d) return %s%d.y;\n".format(dd*4+1, varName, dd) +
       "if(d==%d) return %s%d.z;\n".format(dd*4+2, varName, dd) +

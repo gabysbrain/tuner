@@ -14,7 +14,7 @@ import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
 import tuner.gui.opengl.Glsl
-import tuner.gui.opengl.GPPlotGlsl
+import tuner.gui.opengl.Convolver
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
@@ -70,7 +70,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // Create the shader programs
     if(!convolutionShaders.isDefined) {
-      val estShader = GPPlotGlsl.fromResource(
+      val estShader = Convolver.fromResource(
           gl, project.inputFields.size, 
           "/shaders/est.plot.frag.glsl")
       convolutionShaders = Some(estShader)
@@ -365,7 +365,7 @@ class JoglMainPlotPanel(project:Viewable)
     // Send down the uniforms for this set
     // Every 4 fields goes into one attribute
     val sliceArray = interestPoint ++ Array(0f, 0f, 0f, 0f)
-    for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
+    for(i <- 0 until Convolver.numVec4(numDims)) {
       // Send down the current slice
       val sId = shader.uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4+0), 
@@ -388,7 +388,7 @@ class JoglMainPlotPanel(project:Viewable)
 
     // Send down all the theta values
     val thetaArray = distFactors ++ Array(0.0, 0.0, 0.0, 0.0)
-    for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
+    for(i <- 0 until Convolver.numVec4(numDims)) {
       val tId = shader.uniformId("theta" + i)
       gl.glUniform4f(tId, thetaArray(i*4+0).toFloat, 
                           thetaArray(i*4+1).toFloat, 
@@ -408,7 +408,7 @@ class JoglMainPlotPanel(project:Viewable)
       val pt = points(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-        for(i <- 0 until GPPlotGlsl.numVec4(numDims)) {
+        for(i <- 0 until Convolver.numVec4(numDims)) {
           val ptId = shader.attribId("data" + i)
           val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
           
