@@ -139,58 +139,6 @@ class JoglMainPlotPanel(project:Viewable)
   }
 
   /**
-   * Enable the texture renderbuffer
-   */
-  def enableTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
-
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
-
-    gl.glViewport(0, 0, texWidth, texHeight)
-
-    // Disable the useless attributes
-    gl.glDisable(GL.GL_CULL_FACE)
-    gl.glDisable(GL.GL_DEPTH_TEST)
-
-    // Now attach the texture to the framebuffer we want
-    gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
-    gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
-                              GL.GL_TEXTURE_2D, fboTexture.get, 0)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, textureFbo.get)
-    gl.glDrawBuffers(1, Array(GL.GL_COLOR_ATTACHMENT0), 0)
-
-    // Make sure the framebuffer is ok
-    gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) match {
-      case GL2GL3.GL_FRAMEBUFFER_UNDEFINED => 
-        throw new Exception("framebuffer undefined")
-      case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT => 
-        throw new Exception("incomplete attachment")
-      case GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT => 
-        throw new Exception("missing attachment")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER => 
-        throw new Exception("incomplete draw buffer")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER => 
-        throw new Exception("incomplete read buffer")
-      case GL.GL_FRAMEBUFFER_UNSUPPORTED => 
-        throw new Exception("unsupported buffer")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
-        throw new Exception("incomplete multisample")
-      case GL.GL_FRAMEBUFFER_COMPLETE =>
-        // all is well
-    }
-  }
-
-  /**
-   * Disable the texture framebuffer target
-   */
-  def disableTextureTarget(gl:GL2) = {
-    gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
-
-    gl.glViewport(0, 0, width, height)
-  }
-
-  /**
    * The plots themselves will be drawn in data space so these 
    * move everything into the proper coordinate system
    */
@@ -312,6 +260,7 @@ class JoglMainPlotPanel(project:Viewable)
     val shader = convolutionShaders.get
     val model = project.gpModels(response)
     val fields = model.dims
+    val plotRect = sliceBounds((xRange._1, yRange._1))
     val corrResponses = model.corrResponses
     val (xi,yi) = if(xRange._1 < yRange._1) {
       (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
@@ -319,122 +268,15 @@ class JoglMainPlotPanel(project:Viewable)
       (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
     }
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
-    drawConvolutionToTexture(gl, xRange, yRange, 
-                                 xi, yi,
-                                 trans, shader, 
-                                 fields.size,
-                                 model.mean, 
-                                 model.sig2,
-                                 model.thetas.toArray,
-                                 slice,
-                                 model.design,
-                                 corrResponses)
-  }
-
-  /**
-   * Generic function for using the convolution shader
-   */
-  def drawConvolutionToTexture(gl:GL2, xRange:(String,(Float,Float)),
-                                       yRange:(String,(Float,Float)),
-                                       xi:Int, yi:Int,
-                                       trans:Matrix4,
-                                       shader:Glsl,
-                                       numDims:Int,
-                                       baseValue:Double,
-                                       globalFactor:Double,
-                                       distFactors:Array[Double],
-                                       interestPoint:Array[Float],
-                                       points:Array[Array[Double]],
-                                       coefficients:Array[Double]) = {
-    val (xr, yr) = if(xRange._1 < yRange._1) {
-      (xRange, yRange)
-    } else {
-      (yRange, xRange)
-    }
-
-    gl.glEnable(GL.GL_BLEND)
-    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE)
-    gl.glBlendEquation(GL.GL_FUNC_ADD)
-    
-    // Enable shader program
-    gl.glUseProgram(shader.programId)
-
-    // Draw to a texture
-    val plotRect = sliceBounds.head._2
-    enableTextureTarget(gl, plotRect.width.toInt, plotRect.height.toInt)
-
-    // Send down the uniforms for this set
-    // Every 4 fields goes into one attribute
-    val sliceArray = interestPoint ++ Array(0f, 0f, 0f, 0f)
-    for(i <- 0 until Convolver.numVec4(numDims)) {
-      // Send down the current slice
-      val sId = shader.uniformId("slice" + i)
-      gl.glUniform4f(sId, sliceArray(i*4+0), 
-                          sliceArray(i*4+1), 
-                          sliceArray(i*4+2),
-                          sliceArray(i*4+3))
-
-    }
-
-    // figure out the maximum distance to render a point
-    val maxSqDist = -math.log(Config.maxSampleSqDistance)
-    gl.glUniform1f(shader.uniformId("maxSqDist"), maxSqDist.toFloat)
-
-    gl.glUniformMatrix4fv(shader.uniformId("trans"), 
-                          1, false, trans.toArray, 0)
-    gl.glUniform1i(shader.uniformId("d1"), xi)
-    gl.glUniform1i(shader.uniformId("d2"), yi)
-    gl.glUniform2f(shader.uniformId("dataMin"), xr._2._1, yr._2._1)
-    gl.glUniform2f(shader.uniformId("dataMax"), xr._2._2, yr._2._2)
-
-    // Send down all the theta values
-    val thetaArray = distFactors ++ Array(0.0, 0.0, 0.0, 0.0)
-    for(i <- 0 until Convolver.numVec4(numDims)) {
-      val tId = shader.uniformId("theta" + i)
-      gl.glUniform4f(tId, thetaArray(i*4+0).toFloat, 
-                          thetaArray(i*4+1).toFloat, 
-                          thetaArray(i*4+2).toFloat,
-                          thetaArray(i*4+3).toFloat)
-    }
-
-    // send down the sigma^2
-    gl.glUniform1f(shader.uniformId("sig2"), globalFactor.toFloat)
-
-
-    // Actually do the draw
-    gl.glClearColor(baseValue.toFloat, 0f, 0f, 1f)
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
-    gl.glBegin(GL2.GL_QUADS)
-    for(r <- 0 until points.size) {
-      val pt = points(r)
-      // Draw all the point data
-      List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-        for(i <- 0 until Convolver.numVec4(numDims)) {
-          val ptId = shader.attribId("data" + i)
-          val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
-          
-          gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
-                                    fieldVals(i*4+1).toFloat, 
-                                    fieldVals(i*4+2).toFloat, 
-                                    fieldVals(i*4+3).toFloat)
-        }
-        val respId = shader.attribId("coeff")
-        gl.glVertexAttrib1f(respId, coefficients(r).toFloat)
-
-        // Need to call this last to flush
-        val offsetId = shader.attribId("geomOffset")
-        gl.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
-
-      }
-    }
-    gl.glEnd
-    gl.glFlush
-
-    // Disable the texture fb
-    disableTextureTarget(gl)
-
-    // Disable the shader program
-    gl.glUseProgram(0)
+    shader.draw(gl, fboTexture.get, 
+                    plotRect.width.toInt, plotRect.height.toInt,
+                    trans,
+                    xRange, yRange, 
+                    xi, yi, 
+                    model.mean, model.sig2,
+                    model.thetas.toArray,
+                    model.design, corrResponses,
+                    slice)
   }
 
   def drawResponseTexturedQuad(gl:GL2, 
