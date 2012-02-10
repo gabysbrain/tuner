@@ -244,8 +244,12 @@ class JoglMainPlotPanel(project:Viewable)
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
       // First draw to the texture
-      //drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
-      drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
+      project.viewInfo.currentVis match {
+        case ViewInfo.Hyperslice =>
+          drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+        case ViewInfo.Splom =>
+          drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
+      }
 
       // Now put the texture on a quad
       val (xFld, yFld) = (xRange._1, yRange._1)

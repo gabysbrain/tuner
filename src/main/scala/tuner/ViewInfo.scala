@@ -35,9 +35,9 @@ object ViewInfo {
     v.response1View = vi.response1
     v.response2View = vi.response2
     v.currentVis = vi.currentVis match {
-      case Some("hyperslice") => HypersliceVis
-      case Some("splom") => SplomVis
-      case None => HypersliceVis
+      case Some("hyperslice") => Hyperslice
+      case Some("splom") => Splom
+      case None => Hyperslice
     }
     v.currentMetric = vi.currentMetric match {
       case "value" => ValueMetric
@@ -50,8 +50,8 @@ object ViewInfo {
   }
 
   sealed trait Vis
-  case object HypersliceVis extends Vis
-  case object SplomVis extends Vis
+  case object Hyperslice extends Vis
+  case object Splom extends Vis
 
   sealed trait MetricView
   case object ValueMetric extends MetricView
@@ -74,7 +74,7 @@ class ViewInfo(project:Viewable) {
   } toMap)
   var response1View:Option[String] = None
   var response2View:Option[String] = None
-  var currentVis:Vis = HypersliceVis
+  var currentVis:Vis = Hyperslice
   var currentMetric:MetricView = ValueMetric
   var showSampleLine = false
   var showRegion = true
@@ -124,8 +124,8 @@ class ViewInfo(project:Viewable) {
       ZoomSpecification(fld, currentZoom.min(fld), currentZoom.max(fld))
     } toList
     val strVis = currentVis match {
-      case HypersliceVis => "hyperslice"
-      case SplomVis => "splom"
+      case Hyperslice => "hyperslice"
+      case Splom => "splom"
     }
     val strMetric = currentMetric match {
       case ValueMetric => "value"

@@ -22,6 +22,7 @@ import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
+import tuner.gui.event.ViewChanged
 import tuner.project.Viewable
 
 class ProjectViewer(project:Viewable) extends Window(project) {
@@ -33,22 +34,10 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   }
   menuBar = myMenu
 
-  val mainResponseButton = new RadioButton("Value")
-  val errResponseButton = new RadioButton("Error")
-  val gainResponseButton = new RadioButton("Gain")
-
-  val gradientGlyphButton = new CheckBox("Gradient")
-  val regionGlyphButton = new CheckBox("Region") {
-    selected = project.viewInfo.showRegion
-  }
-  val sampleLineGlyphButton = new CheckBox("Line to Sample") {
-    selected = project.viewInfo.showSampleLine
-  }
-
-  new ButtonGroup(mainResponseButton, errResponseButton, gainResponseButton)
-
   // only use the native opengl version if the system can handle it
   val mainPlotPanel = new JoglMainPlotPanel(project)
+
+  val visControlPanel = new VisControlPanel(project.viewInfo)
 
   val controlPanel = new ControlPanel(project)
   // Need this reference for later
@@ -64,38 +53,13 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
   
-    val responseControlPanel = new BoxPanel(Orientation.Horizontal) {
-      contents += Swing.HGlue
-      contents += mainResponseButton
-      contents += Swing.HGlue
-      contents += errResponseButton
-      contents += Swing.HGlue
-      contents += gainResponseButton
-      contents += Swing.HGlue
-  
-      border = Swing.TitledBorder(border, "View")
-    }
-
-    val glyphControlPanel = new BoxPanel(Orientation.Horizontal) {
-      //contents += Swing.HGlue
-      //contents += gradientGlyphButton
-      contents += Swing.HGlue
-      contents += regionGlyphButton
-      contents += Swing.HGlue
-      contents += sampleLineGlyphButton
-      contents += Swing.HGlue
-
-      border = Swing.TitledBorder(border, "Glyphs")
-    }
-  
     val histogramPanel = new ResponseStatsPanel(project) {
       border = Swing.TitledBorder(border, "Response Histograms")
     }
   
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
-      contents += responseControlPanel
-      contents += glyphControlPanel
+      contents += visControlPanel
       contents += histogramPanel
     }
 
@@ -113,11 +77,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   }
 
   listenTo(mainPlotPanel)
-  listenTo(mainResponseButton)
-  listenTo(errResponseButton)
-  listenTo(gainResponseButton)
-  listenTo(regionGlyphButton)
-  listenTo(sampleLineGlyphButton)
+  listenTo(visControlPanel)
   listenTo(paretoPanel)
   listenTo(controlPanel.controlsTab)
   listenTo(controlPanel.historyTab)
@@ -139,6 +99,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
           slider.value = v
         }
       }
+    case ViewChanged(`visControlPanel`) =>
+      mainPlotPanel.redraw
     case AddSamples(_) => 
       openSamplerDialog
     case HistoryAdd(_, sliceInfo) =>
@@ -148,30 +110,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       mainPlotPanel.redraw
     case ValueChanged(`localTab`) =>
       mainPlotPanel.redraw
-    case ButtonClicked(`mainResponseButton`) =>
-      project.viewInfo.currentMetric = ViewInfo.ValueMetric
-      mainPlotPanel.redraw
-    case ButtonClicked(`errResponseButton`) =>
-      project.viewInfo.currentMetric = ViewInfo.ErrorMetric
-      mainPlotPanel.redraw
-    case ButtonClicked(`gainResponseButton`) =>
-      project.viewInfo.currentMetric = ViewInfo.GainMetric
-      mainPlotPanel.redraw
-    case ButtonClicked(`sampleLineGlyphButton`) =>
-      project.viewInfo.showSampleLine = sampleLineGlyphButton.selected
-      mainPlotPanel.redraw
-    case ButtonClicked(`regionGlyphButton`) =>
-      project.viewInfo.showRegion = regionGlyphButton.selected
-      mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
       this.close
-  }
-
-  // Update which metric we're looking at
-  project.viewInfo.currentMetric match {
-    case ViewInfo.ValueMetric => mainResponseButton.selected = true
-    case ViewInfo.ErrorMetric => errResponseButton.selected = true
-    case ViewInfo.GainMetric => gainResponseButton.selected = true
   }
 
   private def openSamplerDialog = {
