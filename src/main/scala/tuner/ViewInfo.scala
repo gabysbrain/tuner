@@ -13,6 +13,7 @@ case class VisInfo(
   currentZoom:List[ZoomSpecification],
   response1:Option[String],
   response2:Option[String],
+  currentVis:Option[String], // Not in v1 of config
   currentMetric:String,
   showSampleLine:Boolean,
   showRegion:Boolean
@@ -20,7 +21,7 @@ case class VisInfo(
 
 object ViewInfo {
   val DefaultVisInfo = VisInfo (
-    Nil, Nil, None, None, "value", false, false
+    Nil, Nil, None, None, Some("hyperslice"), "value", false, false
   )
 
   def fromJson(project:Viewable, vi:VisInfo) = {
@@ -33,6 +34,11 @@ object ViewInfo {
     } toMap)
     v.response1View = vi.response1
     v.response2View = vi.response2
+    v.currentVis = vi.currentVis match {
+      case Some("hyperslice") => HypersliceVis
+      case Some("splom") => SplomVis
+      case None => HypersliceVis
+    }
     v.currentMetric = vi.currentMetric match {
       case "value" => ValueMetric
       case "error" => ErrorMetric
@@ -42,6 +48,10 @@ object ViewInfo {
     v.showRegion = vi.showRegion
     v
   }
+
+  sealed trait Vis
+  case object HypersliceVis extends Vis
+  case object SplomVis extends Vis
 
   sealed trait MetricView
   case object ValueMetric extends MetricView
@@ -64,6 +74,7 @@ class ViewInfo(project:Viewable) {
   } toMap)
   var response1View:Option[String] = None
   var response2View:Option[String] = None
+  var currentVis:Vis = HypersliceVis
   var currentMetric:MetricView = ValueMetric
   var showSampleLine = false
   var showRegion = true
@@ -112,6 +123,10 @@ class ViewInfo(project:Viewable) {
     val zoomList = currentZoom.dimNames.map {fld =>
       ZoomSpecification(fld, currentZoom.min(fld), currentZoom.max(fld))
     } toList
+    val strVis = currentVis match {
+      case HypersliceVis => "hyperslice"
+      case SplomVis => "splom"
+    }
     val strMetric = currentMetric match {
       case ValueMetric => "value"
       case ErrorMetric => "error"
@@ -123,6 +138,7 @@ class ViewInfo(project:Viewable) {
       zoomList,
       response1View,
       response2View,
+      Some(strVis),
       strMetric,
       showSampleLine,
       showRegion)
