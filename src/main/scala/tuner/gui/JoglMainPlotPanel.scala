@@ -16,6 +16,7 @@ import tuner.ViewInfo
 import tuner.geom.Rectangle
 import tuner.gui.opengl.Convolver
 import tuner.gui.opengl.Glsl
+import tuner.gui.opengl.Prosection
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
@@ -40,6 +41,7 @@ class JoglMainPlotPanel(project:Viewable)
 
   // These need to wait for the GL context to be set up
   var convolutionShaders:Option[Convolver] = None // just for estimate
+  var prosectionShader:Option[Prosection] = None
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
@@ -76,6 +78,12 @@ class JoglMainPlotPanel(project:Viewable)
           "/shaders/est.plot.frag.glsl")
       convolutionShaders = Some(estShader)
       println(estShader.attribIds)
+    }
+    if(!prosectionShader.isDefined) {
+      val ptShader = Prosection.fromResource(
+          gl, project.inputFields.size)
+      prosectionShader = Some(ptShader)
+      println(ptShader.attribIds)
     }
     if(!colormapShader.isDefined) {
       colormapShader = Some(Glsl.fromResource(
@@ -236,7 +244,8 @@ class JoglMainPlotPanel(project:Viewable)
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
       // First draw to the texture
-      drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+      //drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+      drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
 
       // Now put the texture on a quad
       val (xFld, yFld) = (xRange._1, yRange._1)
@@ -247,6 +256,36 @@ class JoglMainPlotPanel(project:Viewable)
     } else {
       super.drawResponse(xRange, yRange, response)
     }
+  }
+
+  /**
+   * This draws the prosection matrix
+   */
+  def drawProsectionToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                      yRange:(String,(Float,Float)),
+                                      response:String,
+                                      trans:Matrix4) = {
+
+    val shader = prosectionShader.get
+    val model = project.gpModels(response)
+    val fields = model.dims
+    val plotRect = sliceBounds((xRange._1, yRange._1))
+    val responses = model.responses
+    val (xi,yi) = if(xRange._1 < yRange._1) {
+      (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
+    } else {
+      (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
+    }
+    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
+    val minVals = fields.map(project.viewInfo.currentZoom.min(_)).toArray
+    val maxVals = fields.map(project.viewInfo.currentZoom.max(_)).toArray
+    shader.draw(gl, fboTexture.get, 
+                    plotRect.width.toInt, plotRect.height.toInt,
+                    trans,
+                    xRange, yRange, 
+                    xi, yi, 
+                    model.design, responses,
+                    minVals, maxVals)
   }
 
   /**
