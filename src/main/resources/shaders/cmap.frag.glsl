@@ -14,14 +14,19 @@ uniform vec4 maxColor;
 uniform vec4 filterColor;
 
 void main() {
-  float val = clamp(texture2D(values, texCoord), minVal, maxVal).r;
+  vec2 tmp = texture2D(values, texCoord).ra;
+  float val = clamp(tmp.r, minVal, maxVal);
   //val = sqrt(val);
-  if(invert) {
-    float pct = (val - filterLevel) / (minVal - filterLevel);
-    gl_FragColor = val > filterLevel ? filterColor : mix(minColor, maxColor, pct);
+  if(tmp.y > 0.0) {
+    if(invert) {
+      float pct = (val - filterLevel) / (minVal - filterLevel);
+      gl_FragColor = val > filterLevel ? filterColor : mix(minColor, maxColor, pct);
+    } else {
+      float pct = (val - filterLevel) / (maxVal - filterLevel);
+      gl_FragColor = val < filterLevel ? filterColor : mix(minColor, maxColor, pct);
+    }
   } else {
-    float pct = (val - filterLevel) / (maxVal - filterLevel);
-    gl_FragColor = val < filterLevel ? filterColor : mix(minColor, maxColor, pct);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
   }
 }
 
