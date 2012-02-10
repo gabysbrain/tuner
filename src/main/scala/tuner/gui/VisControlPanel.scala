@@ -10,11 +10,17 @@ import scala.swing.TabbedPane
 import scala.swing.event.ButtonClicked
 import scala.swing.event.SelectionChanged
 
+import java.awt.Dimension
+
 import tuner.ViewInfo
 import tuner.gui.event.ViewChanged
 
 class VisControlPanel(viewInfo:ViewInfo) extends TabbedPane {
   
+  val dims = new Dimension(Int.MaxValue, 206)
+  preferredSize = dims
+  maximumSize = dims
+
   // ===== Hyperslice controls =====
   val mainResponseButton = new RadioButton("Value")
   val errResponseButton = new RadioButton("Error")
@@ -41,6 +47,8 @@ class VisControlPanel(viewInfo:ViewInfo) extends TabbedPane {
       contents += Swing.HGlue
 
       border = Swing.TitledBorder(border, "View")
+      preferredSize = dims
+      maximumSize = dims
     }
     contents += new BoxPanel(Orientation.Horizontal) {
       //contents += Swing.HGlue
@@ -52,6 +60,8 @@ class VisControlPanel(viewInfo:ViewInfo) extends TabbedPane {
       contents += Swing.HGlue
 
       border = Swing.TitledBorder(border, "Glyphs")
+      preferredSize = dims
+      maximumSize = dims
     }
   }
 
