@@ -80,7 +80,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
   override def setup = {
     super.setup
-    //frameRate = 30
     loop = false
   }
 
@@ -95,9 +94,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
       clearFonts
     }
     applet.background(Config.backgroundColor)
-
-    // Compute the spacing of everything
-    val startTime = System.currentTimeMillis
 
     // Update all the bounding boxes
     updateBounds(width, height)
@@ -133,8 +129,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
     // Draw the responses
     drawResponses
 
-    val endTime = System.currentTimeMillis
-    //println("draw time: " + (endTime - startTime) + "ms")
+    // Draw the fps counter
+    drawFps
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
@@ -340,6 +336,14 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
 
     popMatrix
+  }
+
+  private def drawFps = {
+    // Draw an fps counter in the lower right
+    textAlign(P5Panel.TextHAlign.Right, P5Panel.TextVAlign.Bottom)
+    textFont(Config.fontPath, 16)
+    fill(255)
+    text("FPS: " + applet.frameRate, width-10, height-10)
   }
 
   private def createPlots : PlotInfoMap = {
