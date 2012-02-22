@@ -229,6 +229,7 @@
     }],
     "response1":"dice6",
     "response2":"Error6",
+    "currentVis":"hyperslice",
     "currentMetric":"value",
     "showSampleLine":false,
     "showRegion":false
