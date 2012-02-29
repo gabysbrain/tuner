@@ -58,8 +58,8 @@ class Prosection(gl:GL, numDims:Int)
                                                 texHeight.toFloat / 2)
 
     // Send down all the min and max values
-    val minValArray = minDimValues ++ Array(1f, 1f, 1f, 1f) // These must fail
-    val maxValArray = maxDimValues ++ Array(-1f, -1f, -1f, -1f)
+    val minValArray = minDimValues ++ Array(0f, 0f, 0f, 0f) // These must pass
+    val maxValArray = maxDimValues ++ Array(1f, 1f, 1f, 1f)
     for(i <- 0 until Prosection.numVec4(numDims)) {
       val minId = uniformId("minVal" + i)
       val maxId = uniformId("maxVal" + i)
@@ -223,10 +223,10 @@ class ProsectionVertexShader(numDims:Int) {
   private def dimFiltersSrc(numDims:Int) = 
     (0 until Prosection.numVec4(numDims)).map {dd =>
       ("vec4 filterFactor%d = vec4(" + 
-          "d1==%d||d2==%d ? 0.0 : 1.0, " +
-          "d1==%d||d2==%d ? 0.0 : 1.0, " +
-          "d1==%d||d2==%d ? 0.0 : 1.0, " +
-          "d1==%d||d2==%d ? 0.0 : 1.0);").format(dd, dd*4+0, dd*4+0, 
+          "d1==%d||d2==%d ? 1.0 : 0.0, " +
+          "d1==%d||d2==%d ? 1.0 : 0.0, " +
+          "d1==%d||d2==%d ? 1.0 : 0.0, " +
+          "d1==%d||d2==%d ? 1.0 : 0.0);").format(dd, dd*4+0, dd*4+0, 
                                                      dd*4+1, dd*4+1, 
                                                      dd*4+2, dd*4+2, 
                                                      dd*4+3, dd*4+3)
@@ -239,15 +239,14 @@ class ProsectionVertexShader(numDims:Int) {
    */
   private def numDimsPassSrc(numDims:Int) = 
     (0 until Prosection.numVec4(numDims)).map {dd =>
-      "vec4 minPass%d = filterFactor%d * step(minVal%d, data%d);".format(dd, dd, dd, dd) + "\n" +
-      "vec4 maxPass%d = filterFactor%d * step(data%d, maxVal%d);".format(dd, dd, dd, dd) + "\n" +
+      "vec4 minPass%d = filterFactor%d + step(minVal%d, data%d);".format(dd, dd, dd, dd) + "\n" +
+      "vec4 maxPass%d = filterFactor%d + step(data%d, maxVal%d);".format(dd, dd, dd, dd) + "\n" +
       "vec4 dimPass%d = minPass%d * maxPass%d;".format(dd, dd, dd)
     }.reduceLeft(_ + "\n" + _) + "\n" +
     "dimsPassFlag = " +
     (0 until Prosection.numVec4(numDims)).map {dd =>
-      //"dimPass%d.x + dimPass%d.y + dimPass%d.z + dimPass%d.w".format(dd, dd, dd, dd)
-      "dimPass%d.x + dimPass%d.y + dimPass%d.z".format(dd, dd, dd)
-    }.reduceLeft(_ + " + " + _) + ";\n"
+      "dimPass%d.x * dimPass%d.y * dimPass%d.z * dimPass%d.w".format(dd, dd, dd, dd)
+    }.reduceLeft(_ + " * " + _) + ";\n"
 
   /**
    * Generates the source code to separate the dimension values
