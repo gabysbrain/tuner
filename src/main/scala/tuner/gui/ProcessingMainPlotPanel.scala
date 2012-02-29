@@ -96,15 +96,20 @@ class ProcessingMainPlotPanel(val project:Viewable)
     applet.background(Config.backgroundColor)
 
     // Update all the bounding boxes
+    val bbStartTime = System.currentTimeMillis
     updateBounds(width, height)
     val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
     sliceSize = ss
     sliceBounds = sb
+    val bbEndTime = System.currentTimeMillis
 
     // See if we should highlight the 2 plots
+    val phStartTime = System.currentTimeMillis
     mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(fld1, fld2)}
+    val phEndTime = System.currentTimeMillis
 
     // Draw the colorbars
+    val cbStartTime = System.currentTimeMillis
     project.viewInfo.response1View.foreach {r =>
       resp1Colorbar.draw(this, leftColorbarBounds.minX, 
                                leftColorbarBounds.minY,
@@ -119,18 +124,29 @@ class ProcessingMainPlotPanel(val project:Viewable)
                                rightColorbarBounds.height,
                                r, colormap(r, resp2Colormaps))
     }
+    val cbEndTime = System.currentTimeMillis
 
     // Draw the axes
+    val axStartTime = System.currentTimeMillis
     project.inputFields.foreach {fld =>
       val rng = (fld, project.viewInfo.currentZoom.range(fld))
       drawAxes(rng)
     }
+    val axEndTime = System.currentTimeMillis
 
     // Draw the responses
+    val rrStartTime = System.currentTimeMillis
     drawResponses
+    val rrEndTime = System.currentTimeMillis
+
+    //println("bb time: " + (bbEndTime-bbStartTime) + "ms")
+    //println("highlight time: " + (phEndTime-phStartTime) + "ms")
+    //println("colorbar time: " + (cbEndTime-cbStartTime) + "ms")
+    //println("axes time: " + (axEndTime-axStartTime) + "ms")
+    //println("res time: " + (rrEndTime-rrStartTime) + "ms")
 
     // Draw the fps counter
-    drawFps
+    drawRenderTime(rrEndTime-rrStartTime)
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
@@ -338,12 +354,12 @@ class ProcessingMainPlotPanel(val project:Viewable)
     popMatrix
   }
 
-  private def drawFps = {
+  private def drawRenderTime(ft:Long) = {
     // Draw an fps counter in the lower right
     textAlign(P5Panel.TextHAlign.Right, P5Panel.TextVAlign.Bottom)
     textFont(Config.fontPath, 16)
     fill(255)
-    text("FPS: " + applet.frameRate, width-10, height-10)
+    text("Draw time: " + ft + "ms", width-10, height-10)
   }
 
   private def createPlots : PlotInfoMap = {
