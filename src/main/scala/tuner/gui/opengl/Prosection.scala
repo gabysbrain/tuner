@@ -11,24 +11,52 @@ import tuner.gui.util.Matrix4
  * the vertex shader gets dynamically created
  */
 object Prosection {
-  def fromResource(gl:GL, numDims:Int) = new Prosection(gl, numDims)
+  def fromResource(
+      gl:GL2, numDims:Int, points:Array[Array[Double]], values:Array[Double]) = 
+    new Prosection(gl, numDims, points, values)
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
   def padCount(numDims:Int) = (4 - (numDims%4)) % 4
 
 }
 
-class Prosection(gl:GL, numDims:Int)
+class Prosection(gl:GL2, numDims:Int, 
+                         points:Array[Array[Double]], 
+                         values:Array[Double])
     extends Glsl(gl, new ProsectionVertexShader(numDims).toString,
                      None, Glsl.readResource("/shaders/prosection.frag.glsl"), 
                      List()) {
+  
+  // Setup the display list
+  val drawListId = gl.glGenLists(1)
+  gl.glNewList(drawListId, GL2.GL_COMPILE)
+    gl.glClearColor(0f, 0f, 0f, 0f)
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
+    gl.glPointSize(10)
+    gl.glBegin(GL.GL_POINTS)
+    for(r <- 0 until points.size) {
+      val pt = points(r)
+      // Draw all the point data
+      for(i <- 0 until Prosection.numVec4(numDims)) {
+        val ptId = attribId("data" + i)
+        val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
+        
+        gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
+                                  fieldVals(i*4+1).toFloat, 
+                                  fieldVals(i*4+2).toFloat, 
+                                  fieldVals(i*4+3).toFloat)
+      }
+      val respId = attribId("value")
+      gl.glVertexAttrib1f(respId, values(r).toFloat)
+
+    }
+    gl.glEnd
+  gl.glEndList
   
   def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
                    trans:Matrix4,
                    xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
                    xDim:Int, yDim:Int,
-                   points:Array[Array[Double]],
-                   values:Array[Double],
                    minDimValues:Array[Float],
                    maxDimValues:Array[Float]) = {
 
@@ -74,27 +102,7 @@ class Prosection(gl:GL, numDims:Int)
     }
 
     // Actually do the draw
-    gl.glClearColor(0f, 0f, 0f, 0f)
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT)
-    gl.glPointSize(10)
-    gl.glBegin(GL.GL_POINTS)
-    for(r <- 0 until points.size) {
-      val pt = points(r)
-      // Draw all the point data
-      for(i <- 0 until Prosection.numVec4(numDims)) {
-        val ptId = attribId("data" + i)
-        val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
-        
-        gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
-                                  fieldVals(i*4+1).toFloat, 
-                                  fieldVals(i*4+2).toFloat, 
-                                  fieldVals(i*4+3).toFloat)
-      }
-      val respId = attribId("value")
-      gl.glVertexAttrib1f(respId, values(r).toFloat)
-
-    }
-    gl.glEnd
+    gl.glCallList(drawListId)
     gl.glFlush
 
     // Disable the texture fb

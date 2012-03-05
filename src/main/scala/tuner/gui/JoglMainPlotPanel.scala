@@ -42,7 +42,7 @@ class JoglMainPlotPanel(project:Viewable)
   // These need to wait for the GL context to be set up
   // We use a separate shader program for each response
   var convolutionShaders:Map[String,Convolver] = Map() // just for estimate
-  var prosectionShader:Option[Prosection] = None
+  var prosectionShaders:Map[String,Prosection] = Map()
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
@@ -86,11 +86,14 @@ class JoglMainPlotPanel(project:Viewable)
         (resFld -> estShader)
       } toMap
     }
-    if(!prosectionShader.isDefined) {
-      val ptShader = Prosection.fromResource(
-          gl, project.inputFields.size)
-      prosectionShader = Some(ptShader)
-      println(ptShader.attribIds)
+    if(prosectionShaders.isEmpty) {
+      prosectionShaders = project.responseFields.map {resFld =>
+        val model = project.gpModels(resFld)
+        val ptShader = Prosection.fromResource(
+            gl.getGL2, project.inputFields.size, model.design, model.responses)
+        println(ptShader.attribIds)
+        (resFld -> ptShader)
+      } toMap
     }
     if(!colormapShader.isDefined) {
       colormapShader = Some(Glsl.fromResource(
@@ -276,11 +279,10 @@ class JoglMainPlotPanel(project:Viewable)
                                       response:String,
                                       trans:Matrix4) = {
 
-    val shader = prosectionShader.get
+    val shader = prosectionShaders(response)
     val model = project.gpModels(response)
     val fields = model.dims
     val plotRect = sliceBounds((xRange._1, yRange._1))
-    val responses = model.responses
     val (xi,yi) = if(xRange._1 < yRange._1) {
       (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
     } else {
@@ -294,7 +296,6 @@ class JoglMainPlotPanel(project:Viewable)
                     trans,
                     xRange, yRange, 
                     xi, yi, 
-                    model.design, responses,
                     minVals, maxVals)
   }
 
