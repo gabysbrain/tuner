@@ -20,6 +20,7 @@ import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
 import tuner.util.ColorLib
 
+import scala.collection.mutable.Queue
 import scala.swing.event.UIElementMoved
 import scala.swing.event.UIElementResized
 
@@ -48,6 +49,16 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
   // Cache a bunch of statistics on where the plots are for hit detection
   var mousedPlot:Option[(String,String)] = None
+
+  // A queue to keep track of the average draw time
+  val drawTimes = new Queue[Long] {
+    val limit = 10
+    override def enqueue(elems:Long*) : Unit = {
+      this ++= elems
+      while(size > limit)
+        dequeue
+    }
+  }
 
   reactions += {
     case UIElementMoved(_) => 
@@ -146,7 +157,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
     //println("res time: " + (rrEndTime-rrStartTime) + "ms")
 
     // Draw the fps counter
-    drawRenderTime(rrEndTime-rrStartTime)
+    drawTimes.enqueue(rrEndTime-rrStartTime)
+    drawRenderTime
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
@@ -354,11 +366,12 @@ class ProcessingMainPlotPanel(val project:Viewable)
     popMatrix
   }
 
-  private def drawRenderTime(ft:Long) = {
+  private def drawRenderTime = {
     // Draw an fps counter in the lower right
     textAlign(P5Panel.TextHAlign.Right, P5Panel.TextVAlign.Bottom)
     textFont(Config.fontPath, 16)
     fill(255)
+    val ft = drawTimes.sum / drawTimes.size.toDouble
     text("Draw time: " + ft + "ms", width-10, height-10)
   }
 
