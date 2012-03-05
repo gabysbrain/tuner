@@ -40,7 +40,8 @@ class JoglMainPlotPanel(project:Viewable)
   var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
-  var convolutionShaders:Option[Convolver] = None // just for estimate
+  // We use a separate shader program for each response
+  var convolutionShaders:Map[String,Convolver] = Map() // just for estimate
   var prosectionShader:Option[Prosection] = None
   var colormapShader:Option[Glsl] = None
 
@@ -72,12 +73,18 @@ class JoglMainPlotPanel(project:Viewable)
     gl2.glLoadIdentity
 
     // Create the shader programs
-    if(!convolutionShaders.isDefined) {
-      val estShader = Convolver.fromResource(
-          gl, project.inputFields.size, 
-          "/shaders/est.plot.frag.glsl")
-      convolutionShaders = Some(estShader)
-      println(estShader.attribIds)
+    if(convolutionShaders.isEmpty) {
+      convolutionShaders = project.responseFields.map {resFld =>
+        val model = project.gpModels(resFld)
+        val estShader = Convolver.fromResource(
+            gl.getGL2, project.inputFields.size, 
+            "/shaders/est.plot.frag.glsl",
+            model.mean, model.sig2,
+            model.thetas.toArray,
+            model.design, model.corrResponses)
+        println(estShader.attribIds)
+        (resFld -> estShader)
+      } toMap
     }
     if(!prosectionShader.isDefined) {
       val ptShader = Prosection.fromResource(
@@ -233,16 +240,11 @@ class JoglMainPlotPanel(project:Viewable)
       val gl = pgl.beginGL
       val gl2 = new DebugGL2(gl.getGL2)
 
-      // Make sure the response value hasn't changed
-      /*
-      if(response != lastResponse) {
-        updateResponseValues(gl2, response)
-        lastResponse = response
-      }
-      */
 
+      //val t1 = System.currentTimeMillis
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
+      //val t2 = System.currentTimeMillis
       // First draw to the texture
       project.viewInfo.currentVis match {
         case ViewInfo.Hyperslice =>
@@ -251,10 +253,14 @@ class JoglMainPlotPanel(project:Viewable)
           drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
       }
 
+      //val t3 = System.currentTimeMillis
       // Now put the texture on a quad
       val (xFld, yFld) = (xRange._1, yRange._1)
       val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
       drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
+      //val t4 = System.currentTimeMillis
+
+      //println("trans: " + (t2-t1) + "ms; conv: " + (t3-t2) + "ms; tex: " + (t4-t3) + "ms")
 
       pgl.endGL
     } else {
@@ -300,7 +306,7 @@ class JoglMainPlotPanel(project:Viewable)
                                       response:String,
                                       trans:Matrix4) = {
 
-    val shader = convolutionShaders.get
+    val shader = convolutionShaders(response)
     val model = project.gpModels(response)
     val fields = model.dims
     val plotRect = sliceBounds((xRange._1, yRange._1))
@@ -311,14 +317,23 @@ class JoglMainPlotPanel(project:Viewable)
       (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
     }
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
+
+    // Make sure the response value hasn't changed
+    /*
+    if(response != lastResponse) {
+      shader.refreshDrawList(gl, model.mean, model.sig2, 
+                                 model.thetas.toArray, 
+                                 model.design, 
+                                 corrResponses)
+      lastResponse = response
+    }
+    */
+
     shader.draw(gl, fboTexture.get, 
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
                     xRange, yRange, 
                     xi, yi, 
-                    model.mean, model.sig2,
-                    model.thetas.toArray,
-                    model.design, corrResponses,
                     slice)
   }
 

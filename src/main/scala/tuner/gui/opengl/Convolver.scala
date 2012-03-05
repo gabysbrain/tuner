@@ -11,10 +11,17 @@ import tuner.gui.util.Matrix4
  * the vertex shader gets dynamically created
  */
 object Convolver {
-  def fromResource(gl:GL, numDims:Int, fragment:String) = {
+  def fromResource(gl:GL2, numDims:Int, fragment:String,
+                           baseValue:Double, globalFactor:Double, 
+                           distanceWeights:Array[Double], 
+                           points:Array[Array[Double]], 
+                           coefficients:Array[Double]) = {
     val fragSource = Glsl.readResource(fragment)
 
-    new Convolver(gl, numDims, fragSource)
+    new Convolver(gl, numDims, fragSource,
+                      baseValue, globalFactor, 
+                      distanceWeights, 
+                      points, coefficients)
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -22,64 +29,21 @@ object Convolver {
 
 }
 
-class Convolver(gl:GL, numDims:Int, fragment:String) 
+class Convolver(gl:GL2, numDims:Int, fragment:String,
+                        baseValue:Double, globalFactor:Double, 
+                        distanceWeights:Array[Double], 
+                        points:Array[Array[Double]], 
+                        coefficients:Array[Double])
     extends Glsl(gl, new ConvolutionVertexShader(numDims).toString,
                      None, fragment, List()) {
   
-  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
-                   trans:Matrix4,
-                   xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
-                   xDim:Int, yDim:Int,
-                   baseValue:Double,
-                   globalFactor:Double,
-                   distanceWeights:Array[Double],
-                   points:Array[Array[Double]],
-                   coefficients:Array[Double],
-                   pointOfInterest:Array[Float]) = {
+  // The maximum distance to render a point
+  val maxSqDist = -math.log(Config.maxSampleSqDistance)
 
-    val (xr, yr) = if(xRange._1 < yRange._1) {
-      (xRange, yRange)
-    } else {
-      (yRange, xRange)
-    }
-
-    gl.glEnable(GL.GL_BLEND)
-    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE)
-    gl.glBlendEquation(GL.GL_FUNC_ADD)
-    
-    // Enable shader program
-    gl.glUseProgram(programId)
-
-    // Save the viewport size before we kill it
-    val vp = Array(0, 0, 0, 0)
-    gl.glGetIntegerv(GL.GL_VIEWPORT, vp, 0)
-
-    // Draw to a texture
-    enableTextureTarget(gl, textureId, texWidth, texHeight)
-
-    // Send down the uniforms for this set
-    // Every 4 fields goes into one attribute
-    val sliceArray = pointOfInterest ++ Array(0f, 0f, 0f, 0f)
-    for(i <- 0 until Convolver.numVec4(numDims)) {
-      // Send down the current slice
-      val sId = uniformId("slice" + i)
-      gl.glUniform4f(sId, sliceArray(i*4+0), 
-                          sliceArray(i*4+1), 
-                          sliceArray(i*4+2),
-                          sliceArray(i*4+3))
-
-    }
-
-    // figure out the maximum distance to render a point
-    val maxSqDist = -math.log(Config.maxSampleSqDistance)
+  // Setup the display list
+  val drawListId = gl.glGenLists(1)
+  gl.glNewList(drawListId, GL2.GL_COMPILE)
     gl.glUniform1f(uniformId("maxSqDist"), maxSqDist.toFloat)
-
-    gl.glUniformMatrix4fv(uniformId("trans"), 
-                          1, false, trans.toArray, 0)
-    gl.glUniform1i(uniformId("d1"), xDim)
-    gl.glUniform1i(uniformId("d2"), yDim)
-    gl.glUniform2f(uniformId("dataMin"), xr._2._1, yr._2._1)
-    gl.glUniform2f(uniformId("dataMax"), xr._2._2, yr._2._2)
 
     // Send down all the theta values
     val thetaArray = distanceWeights ++ Array(0.0, 0.0, 0.0, 0.0)
@@ -117,11 +81,69 @@ class Convolver(gl:GL, numDims:Int, fragment:String)
 
         // Need to call this last to flush
         val offsetId = attribId("geomOffset")
-        gl.glVertexAttrib2f(offsetId, xr._2._2 * gpt._1, yr._2._2 * gpt._2)
+        gl.glVertexAttrib2f(offsetId, gpt._1, gpt._2)
 
       }
     }
     gl.glEnd
+    gl.glFlush
+  gl.glEndList
+
+  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
+                   trans:Matrix4,
+                   xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
+                   xDim:Int, yDim:Int,
+                   pointOfInterest:Array[Float]) = {
+
+    val (xr, yr) = if(xRange._1 < yRange._1) {
+      (xRange, yRange)
+    } else {
+      (yRange, xRange)
+    }
+
+    gl.glEnable(GL.GL_BLEND)
+    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE)
+    gl.glBlendEquation(GL.GL_FUNC_ADD)
+    
+    // Enable shader program
+    gl.glUseProgram(programId)
+
+    // Save the viewport size before we kill it
+    val vp = Array(0, 0, 0, 0)
+    gl.glGetIntegerv(GL.GL_VIEWPORT, vp, 0)
+
+    // Draw to a texture
+    enableTextureTarget(gl, textureId, texWidth, texHeight)
+
+    gl.glUniformMatrix4fv(uniformId("trans"), 
+                          1, false, trans.toArray, 0)
+    gl.glUniform1i(uniformId("d1"), xDim)
+    gl.glUniform1i(uniformId("d2"), yDim)
+    gl.glUniform2f(uniformId("dataMin"), xr._2._1, yr._2._1)
+    gl.glUniform2f(uniformId("dataMax"), xr._2._2, yr._2._2)
+
+    // Send down the uniforms for this set
+    // Every 4 fields goes into one attribute
+    val sliceArray = pointOfInterest ++ Array(0f, 0f, 0f, 0f)
+    for(i <- 0 until Convolver.numVec4(numDims)) {
+      // Send down the current slice
+      val sId = uniformId("slice" + i)
+      gl.glUniform4f(sId, sliceArray(i*4+0), 
+                          sliceArray(i*4+1), 
+                          sliceArray(i*4+2),
+                          sliceArray(i*4+3))
+
+    }
+
+    gl.glUniformMatrix4fv(uniformId("trans"), 
+                          1, false, trans.toArray, 0)
+    gl.glUniform1i(uniformId("d1"), xDim)
+    gl.glUniform1i(uniformId("d2"), yDim)
+    gl.glUniform2f(uniformId("dataMin"), xr._2._1, yr._2._1)
+    gl.glUniform2f(uniformId("dataMax"), xr._2._2, yr._2._2)
+
+    // Draw everything
+    gl.glCallList(drawListId)
     gl.glFlush
 
     // Disable the texture fb
@@ -231,7 +253,7 @@ class ConvolutionVertexShader(numDims:Int) {
     %s
 
     // This won't get rasterized if the distance is too great
-    vec2 actOffset = centerSqDist < maxSqDist ? geomOffset : vec2(0.0, 0.0);
+    vec2 actOffset = centerSqDist < maxSqDist ? geomOffset * dataMax : vec2(0.0, 0.0);
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vertexDist = offset - dataPos;
     fragCoeff = coeff;
