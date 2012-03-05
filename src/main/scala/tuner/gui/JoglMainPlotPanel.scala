@@ -49,8 +49,6 @@ class JoglMainPlotPanel(project:Viewable)
   var textureFbo:Option[Int] = None
   var fboTexture:Option[Int] = None
 
-  var lastResponse:String = ""
-
   // All the plot transforms
   var plotTransforms = Map[(String,String),(Matrix4,Matrix4)]()
 
@@ -238,16 +236,12 @@ class JoglMainPlotPanel(project:Viewable)
 
     // only use the opengl renderer if we're looking at the values
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      //val gl = new g.asInstanceOf[PGraphicsOpenGL].beginGL
       val pgl = g.asInstanceOf[PGraphicsOpenGL]
       val gl = pgl.beginGL
       val gl2 = new DebugGL2(gl.getGL2)
 
-
-      //val t1 = System.currentTimeMillis
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
-      //val t2 = System.currentTimeMillis
       // First draw to the texture
       project.viewInfo.currentVis match {
         case ViewInfo.Hyperslice =>
@@ -256,14 +250,10 @@ class JoglMainPlotPanel(project:Viewable)
           drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
       }
 
-      //val t3 = System.currentTimeMillis
       // Now put the texture on a quad
       val (xFld, yFld) = (xRange._1, yRange._1)
       val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
       drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
-      //val t4 = System.currentTimeMillis
-
-      //println("trans: " + (t2-t1) + "ms; conv: " + (t3-t2) + "ms; tex: " + (t4-t3) + "ms")
 
       pgl.endGL
     } else {
@@ -318,17 +308,6 @@ class JoglMainPlotPanel(project:Viewable)
       (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
     }
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
-
-    // Make sure the response value hasn't changed
-    /*
-    if(response != lastResponse) {
-      shader.refreshDrawList(gl, model.mean, model.sig2, 
-                                 model.thetas.toArray, 
-                                 model.design, 
-                                 corrResponses)
-      lastResponse = response
-    }
-    */
 
     shader.draw(gl, fboTexture.get, 
                     plotRect.width.toInt, plotRect.height.toInt,
