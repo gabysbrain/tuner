@@ -30,7 +30,9 @@ object Table {
         delim =
           if(rawHeader.split(",").toList.length > 1) ","
           else                                       "\t"
-        header = rawHeader.split(delim).toList
+        header = rawHeader.split(delim).toList map {
+          _.replaceAll("(^\"|\"$)", "")
+        }
       }
 
       file.foreach((line) => {
