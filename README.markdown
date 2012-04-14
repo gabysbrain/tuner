@@ -79,14 +79,14 @@ everything draws correctly then Tuner should be at least mostly working.  Here
 is how to open an external project:
 
 1. Click on the 'open other' button in the project browser
-   ![](https://bitbucket.org/gabysbrain/tuner/src/a2b0036e0e60/doc/images/open_other_button.png)
+   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/open_other_button.png)
 
 2. Navigate to test_data and click on the test_proj directory.  Then click
    choose
-   ![](https://bitbucket.org/gabysbrain/tuner/src/a2b0036e0e60/doc/images/open_test_project.png)
+   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/open_test_project.png)
 
 3. A window such as the following should open
-   ![](https://bitbucket.org/gabysbrain/tuner/src/a2b0036e0e60/doc/images/test_project_viewer.png)
+   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/test_project_viewer.png)
 
 ## Build dependencies ##
 
