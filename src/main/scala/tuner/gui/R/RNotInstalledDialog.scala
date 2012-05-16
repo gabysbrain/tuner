@@ -9,17 +9,17 @@ import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.event.ButtonClicked
 
+import tuner.Rapp
 import tuner.Tuner
 
 object RNotInstalledDialog extends Frame {
 
-  val message = """
-    <html>
-    R is not installed.  Please install R before using Tuner.<br/>
-
-    R can be found at <a href="http://cran.r-project.org">CRAN</a>
-    </html>
-  """
+  val message = """<html>
+    R is not installed or R is not in '%s' <br/>
+    <br/>
+    Please install R before using Tuner.
+    R can be found at <a href="http://cran.r-project.org">CRAN</a><br/>
+    </html>""".format(Rapp.path)
   val messagePanel = new Label(message)
   val quitButton = new Button("Quit")
 

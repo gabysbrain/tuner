@@ -42,28 +42,39 @@ object Rapp {
   /**
    * Returns the path to the R installation
    */
-  def path : Option[String] = OS.detect match {
-    case OS.Mac  => macPath
-    case OS.Win  => winPath
-    case OS.Unix => linPath
+  def path : Option[String] = {
+    val env = System.getenv("RHOME")
+    if(env != null) {
+      println(env)
+      Some(env)
+    } else {
+      OS.detect match {
+        case OS.Mac  => macPath
+        case OS.Win  => winPath
+        case OS.Unix => linPath
+      }
+    }
   }
 
-  def macPath : Option[String] = {
-    val home = new java.io.File(MacRHome)
-    if(home.exists && home.isDirectory) Some(MacRHome)
-    else                                None
+  /**
+   * Makes sure the R path is ok
+   */
+  def pathOk : Boolean = path exists {p =>
+    val home = new java.io.File(p)
+    if(home.exists && home.isDirectory) true
+    else                                false
   }
+
+  def macPath : Option[String] = Some(MacRHome)
+
   def winPath : Option[String] = {
     val programs = WindowsRegistry.readRegistry(WinRegKey).split("\n")
     programs.find {k => k.toLowerCase.contains("r for win")} map {rkey =>
       WindowsRegistry.readRegistry(rkey.trim, "InstallLocation")
     }
   }
-  def linPath : Option[String] = {
-    val home = new java.io.File(LinRHome)
-    if(home.exists && home.isDirectory) Some(LinRHome)
-    else                                None
-  }
+
+  def linPath : Option[String] = Some(LinRHome)
 
   def jriOk : Boolean = {
     try {
