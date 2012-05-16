@@ -30,7 +30,7 @@ object Rapp {
     case None => throw new MissingRException(null)
   }
 
-  def cmd : Option[String] = Rapp.path map {path =>
+  def cmd : Option[String] = Rapp.rPath map {path =>
     val appName = OS.detect match {
       case OS.Mac => "bin/R64"
       case OS.Win => "bin\\x64\\R.exe"
@@ -42,10 +42,9 @@ object Rapp {
   /**
    * Returns the path to the R installation
    */
-  def path : Option[String] = {
+  def rPath : Option[String] = {
     val env = System.getenv("RHOME")
     if(env != null) {
-      println(env)
       Some(env)
     } else {
       OS.detect match {
@@ -59,7 +58,8 @@ object Rapp {
   /**
    * Makes sure the R path is ok
    */
-  def pathOk : Boolean = path exists {p =>
+  def pathOk : Boolean = rPath exists {p =>
+    println("path " + p)
     val home = new java.io.File(p)
     if(home.exists && home.isDirectory) true
     else                                false

@@ -51,7 +51,7 @@ object Tuner extends SimpleSwingApplication {
 
   def top = { 
     // Make sure R and rJava are installed otherwise all bets are off
-    if(!Rapp.path.isDefined) {
+    if(!Rapp.pathOk) {
       RNotInstalledDialog
     } else if(!Rapp.jriOk) {
         new InstallPackageDialog(List("rJava")) {
