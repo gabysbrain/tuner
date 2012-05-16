@@ -17,7 +17,7 @@ object RNotInstalledDialog extends Frame {
   val message = """<html>
     R is not installed %s <br/>
     <br/>
-    Please install R before using Tuner.
+    Please install R or set RHOME before using Tuner.
     R can be found at <a href="http://cran.r-project.org">CRAN</a><br/>
     </html>""".format(Rapp.rPath match {
       case Some(path) => "or R is not in '%s'".format(path)
