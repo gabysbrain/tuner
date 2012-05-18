@@ -1,0 +1,3 @@
+[submodule "date-scala"]
+	path = date-scala
+	url = git@bitbucket.org:gabysbrain/date.scala.git
