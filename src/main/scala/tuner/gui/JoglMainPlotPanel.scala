@@ -57,9 +57,6 @@ class JoglMainPlotPanel(project:Viewable)
     if(!JoglMainPlotPanel.isCapable(gl))
       throw new Exception("OpenGL not advanced enough")
 
-    //val gl2 = new TraceGL2(gl.getGL2, System.out)
-    //val gl2 = gl.getGL2
-    //val gl2 = new DebugGL2(new TraceGL2(gl.getGL2, System.out))
     val gl2 = new DebugGL2(gl.getGL2)
 
     // processing resets the projection matrices
@@ -185,7 +182,6 @@ class JoglMainPlotPanel(project:Viewable)
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformations
-    //val ttl = projectionMatrix * plotTrans * plotScale * dataTrans * dataScale
     val ttlProj = projectionMatrix * dataTrans * dataScale
     val ttlPlot = projectionMatrix * plotTrans * plotScale
     (xFld,yFld) -> (ttlProj, ttlPlot)
@@ -198,7 +194,6 @@ class JoglMainPlotPanel(project:Viewable)
     // setup the opengl context for drawing
     val pgl = g.asInstanceOf[PGraphicsOpenGL]
     val gl = pgl.beginGL
-    //val gl2 = new TraceGL2(gl.getGL2, System.out)
     val gl2 = new DebugGL2(gl.getGL2)
 
     // Make sure all the opengl stuff is set up
