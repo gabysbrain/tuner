@@ -1,3 +1,8 @@
 
 *.swp
+project/boot
+project/plugins/project/target
+project/plugins/target
+project/target
+target
 
