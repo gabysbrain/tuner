@@ -191,14 +191,15 @@ class JoglMainPlotPanel(project:Viewable)
    * Does opengl setup and takedown 
    */
   override protected def drawResponses = {
-    // setup the opengl context for drawing
     val pgl = g.asInstanceOf[PGraphicsOpenGL]
-    val gl = pgl.beginGL
-    val gl2 = new DebugGL2(gl.getGL2)
 
     // Make sure all the opengl stuff is set up
     // only use opengl stuff when looking at value
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
+      // setup the opengl context for drawing
+      val gl = pgl.beginGL
+      val gl2 = new DebugGL2(gl.getGL2)
+
       setupGl(gl)
       plotTransforms = computePlotTransforms(sliceBounds, width, height)
       // All plots are the same size
@@ -213,7 +214,7 @@ class JoglMainPlotPanel(project:Viewable)
     super.drawResponses
 
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      pgl.beginGL
+      val gl = pgl.beginGL
     
       // clean up after ourselves
       disableGl(gl)
