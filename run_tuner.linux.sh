@@ -1,8 +1,19 @@
 #!/bin/sh
 
-JRI=${HOME}/R/x86_64-redhat-linux-gnu-library/2.13/rJava/jri
-export R_HOME=/usr/lib64/R
-OPENGL=lib/opengl/linux64
+R_LIBS_USER=`Rscript -e 'cat(Sys.getenv("R_LIBS_USER"))'`
+JRI="${HOME}${R_LIBS_USER#\~}/rJava/jri"
+R_HOME=`R RHOME`
+export R_HOME
+RHOME=`R RHOME`
+export RHOME
 
-java -Djava.library.path=${JRI}:${OPENGL} -jar Tuner-assembly-0.9.jar
+D=`dirname "$0"`
+if [ `arch` = 'i686' ] ; then 
+    OPENGL="${D}/lib/opengl/linux32"
+else
+    OPENGL="${D}/lib/opengl/linux64"
+fi
+java -cp "$D" "-Djava.library.path=${JRI}:${OPENGL}" \
+    -jar "${D}/Tuner-assembly-0.9.jar" "$@"
+
 
