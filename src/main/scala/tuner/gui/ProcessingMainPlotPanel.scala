@@ -158,7 +158,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
     // Draw the fps counter
     drawTimes.enqueue(rrEndTime-rrStartTime)
-    drawRenderTime
+    //drawRenderTime
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
