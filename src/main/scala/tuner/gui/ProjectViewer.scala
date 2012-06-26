@@ -35,7 +35,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   menuBar = myMenu
 
   // only use the native opengl version if the system can handle it
-  val mainPlotPanel = new JoglMainPlotPanel(project)
+  //val mainPlotPanel = new JoglMainPlotPanel(project)
+  val mainPlotPanel = new ProcessingMainPlotPanel(project)
 
   val visControlPanel = new VisControlPanel(project.viewInfo)
 
