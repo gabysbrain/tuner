@@ -12,6 +12,9 @@ import scala.swing.event.ValueChanged
 import tuner.project.NewProject
 import tuner.util.Path
 
+/**
+ * The window for adding the initial set of samples.
+ */
 class InitialSamplerWindow(project:NewProject, saveDir:String) 
         extends Window(project) {
   

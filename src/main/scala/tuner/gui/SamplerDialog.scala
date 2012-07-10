@@ -12,6 +12,9 @@ import scala.swing.event.ValueChanged
 
 import tuner.project.Viewable
 
+/**
+ * The dialog for adding samples
+ */
 class SamplerDialog(project:Viewable, owner:scala.swing.Window) 
         extends Dialog(owner) {
 

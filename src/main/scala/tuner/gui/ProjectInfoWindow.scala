@@ -21,6 +21,10 @@ import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
 import tuner.project.NewProject
 
+/**
+ * The first window for setting up a new project.  Asks for things like
+ * the project name, sampling script, and input parameter information.
+ */
 class ProjectInfoWindow extends Frame {
 
   title = "New Project"

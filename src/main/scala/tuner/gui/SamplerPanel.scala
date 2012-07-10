@@ -16,6 +16,9 @@ import scala.swing.event.ValueChanged
 import tuner.Config
 import tuner.Sampler
 
+/**
+ * The the panel for selecting how many sample points to add
+ */
 class SamplerPanel(project:tuner.project.Sampler) 
     extends BoxPanel(Orientation.Vertical) {
   

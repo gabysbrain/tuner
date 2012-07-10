@@ -22,6 +22,9 @@ import tuner.gui.R.InstallPackageDialog
 import tuner.gui.R.RNotInstalledDialog
 import tuner.project._
 
+/**
+ * The entry application object for Tuner
+ */
 object Tuner extends SimpleSwingApplication {
 
   override def main(args:Array[String]) = {
@@ -40,12 +43,10 @@ object Tuner extends SimpleSwingApplication {
 
   reactions += {
     case WindowClosed(tw:tuner.gui.Window) => 
-      //println(tw + " closing")
       openWindows -= tw
       WindowMenu.updateWindows
-      //println(openWindows)
-      //maybeShowProjectWindow
       deafTo(tw)
+      // If there are no more open windows open the project chooser again
       if(openWindows.isEmpty) ProjectChooser.open
   }
 
