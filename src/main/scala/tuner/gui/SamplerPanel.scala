@@ -23,6 +23,7 @@ class SamplerPanel(project:tuner.project.Sampler)
     extends BoxPanel(Orientation.Vertical) {
   
   // regression parameters for later
+  /*
   val tf = Array(7.001e-09, 6.855e-09, 7.759e-09, 7.690e-09, 7.656e-09, 7.629e-09)
   val m1 = Array(-25.491, -8.099, -4.338, -1.917, -1.988, -2.354)
   val m2 = Array(35.093, 15.390, 9.720, 5.239, 5.332, 6.459)
@@ -32,28 +33,29 @@ class SamplerPanel(project:tuner.project.Sampler)
   val b2 = Array(2.134e-05, 1.924e-05, 1.594e-05, 1.416e-05, 1.304e-05, 1.445e-05)
   val b3 = Array(-3.981e-06, -5.894e-06, -6.588e-06, -7.323e-06, -8.048e-06, -1.053e-05)
   val b4 = Array(2.257e-07, 5.635e-07, 8.706e-07, 1.228e-06, 1.622e-06, 2.511e-06)
+  */
 
   val sampleNumField = new TextField
-  //val sampleTimeField = new TimeField
-  //val ttlRunTimeField = new TimeField
-  val maxFpsField = new TimeField
+  val sampleTimeField = new TimeField
+  val ttlRunTimeField = new TimeField
+  //val maxFpsField = new TimeField
   val shapeSelector = new RegionShapeCombo
   val methodSelector = new ComboBox(List("LHS", "Random"))
 
-  val controlPane = new TablePanel(2, 3) {
+  val controlPane = new TablePanel(2, 4) {
     // Labels in left column
     layout(new Label("Number of Samples")) = (0,0)
-    layout(new Label("Frames per Second")) = (0,1)
-    //layout(new Label("x Time per Sample")) = (0,1)
-    //layout(new Label("= Total Run Time")) = (0,2)
-    layout(new Label("Method")) = (0,2)
+    //layout(new Label("Frames per Second")) = (0,1)
+    layout(new Label("x Time per Sample")) = (0,1)
+    layout(new Label("= Total Run Time")) = (0,2)
+    layout(new Label("Method")) = (0,3)
 
     // Fields in left column
     layout(sampleNumField) = (1,0)
-    layout(maxFpsField) = (1,1)
-    //layout(sampleTimeField) = (1,1)
-    //layout(ttlRunTimeField) = (1,2)
-    layout(methodSelector) = (1,2)
+    //layout(maxFpsField) = (1,1)
+    layout(sampleTimeField) = (1,1)
+    layout(ttlRunTimeField) = (1,2)
+    layout(methodSelector) = (1,3)
 
     border = Swing.TitledBorder(border, "Sampling")
   }
@@ -65,22 +67,66 @@ class SamplerPanel(project:tuner.project.Sampler)
 
   // Set up the events
   listenTo(sampleNumField)
-  //listenTo(sampleTimeField)
-  //listenTo(ttlRunTimeField)
-  listenTo(maxFpsField)
+  listenTo(sampleTimeField)
+  listenTo(ttlRunTimeField)
+  //listenTo(maxFpsField)
   listenTo(methodSelector.selection)
 
   var lastSamples:Int = numSamples
+  var lastSampleTime:Option[Long] = sampleTimeField.millis
+  var lastTotalTime:Option[Long] = ttlRunTimeField.millis
   var lastSelection:String = methodString
 
+  // Keep track of all the text field update times
+  var sampleNumModTime:Long = System.currentTimeMillis
+  var sampleTimeModTime:Long = System.currentTimeMillis
+  var ttlTimeModTime:Long = System.currentTimeMillis
+
+  var internalChange:Boolean = false
+  
   reactions += {
     case SelectionChanged(`methodSelector`) => 
       handleSamplesChanged
     case ValueChanged(`sampleNumField`) =>
       handleSamplesChanged
-      updateMaxFps
-    case ValueChanged(`maxFpsField`) =>
-      updateSampleNum
+      if(!internalChange) {
+        sampleNumModTime = System.currentTimeMillis
+        internalChange = true
+        if(sampleTimeModTime > ttlTimeModTime)
+          updateTotalTime
+        else
+          updateSampleTime
+        internalChange = false
+      }
+    case ValueChanged(`sampleTimeField`) =>
+      if(lastSampleTime != sampleTimeField.millis) {
+        lastSampleTime = sampleTimeField.millis
+        if(!internalChange) {
+          sampleTimeModTime = System.currentTimeMillis
+          internalChange = true
+          if(sampleNumModTime > ttlTimeModTime)
+          updateTotalTime
+            else
+            updateNumSamples
+          internalChange = false
+        }
+      }
+    case ValueChanged(`ttlRunTimeField`) => 
+      if(lastTotalTime != ttlRunTimeField.millis) {
+        lastTotalTime = ttlRunTimeField.millis
+        if(!internalChange) {
+          ttlTimeModTime = System.currentTimeMillis
+          internalChange = true
+          if(sampleNumModTime > sampleTimeModTime)
+            updateSampleTime
+          else
+            updateNumSamples
+          internalChange = false
+        }
+      }
+      //updateMaxFps
+    //case ValueChanged(`maxFpsField`) =>
+      //updateSampleNum
   }
 
   def numSamples : Int = {
@@ -118,6 +164,15 @@ class SamplerPanel(project:tuner.project.Sampler)
     }
   }
 
+  private def updateNumSamples = {
+    (sampleTimeField.millis, ttlRunTimeField.millis) match {
+      case (Some(st), Some(tt)) if(st > 0) => 
+        sampleNumField.text = (tt/st).toInt.toString
+      case _ =>
+    }
+  }
+
+  /*
   private def updateMaxFps = {
     deafTo(maxFpsField)
     val N = List(lastSamples, numSamples).max
@@ -146,7 +201,23 @@ class SamplerPanel(project:tuner.project.Sampler)
     handleSamplesChanged
     listenTo(sampleNumField)
   }
+  */
 
+  private def updateSampleTime = {
+    (ttlRunTimeField.millis, numSamples > 0) match {
+      case (Some(tt), true) => sampleTimeField.millis = tt / numSamples
+      case _ =>
+    }
+  }
+
+  private def updateTotalTime = {
+    (sampleTimeField.millis, numSamples > 0) match {
+      case (Some(st), true) => ttlRunTimeField.millis = numSamples * st
+      case _ =>
+    }
+  }
+
+  /*
   private def onePtTime(r:Float) : Float = {
     val d = project.sampleRanges.length
     val m = math.exp(-(m1(d-3)*math.pow(r,3) + m2(d-3)*math.pow(r,2) + 
@@ -193,6 +264,7 @@ class SamplerPanel(project:tuner.project.Sampler)
   val factorial = org.apache.commons.math.util.MathUtils.factorial _
   def gamma(x:Double) : Double = 
     math.exp(org.apache.commons.math.special.Gamma.logGamma(x))
+  */
 
 }
 
