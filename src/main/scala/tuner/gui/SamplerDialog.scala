@@ -10,6 +10,7 @@ import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 
+import tuner.Sampler
 import tuner.project.Viewable
 
 /**
@@ -21,8 +22,11 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
   title = "Add Samples"
   modal = true
 
+  def newSamples(num:Int, method:Sampler.Method) = {
+    project.newSamples(num, project.region.toRange, method)
+  }
   //val okButton = new Button("
-  val mainPanel = new SamplerPanel(project)
+  val mainPanel = new SamplerPanel(project, newSamples)
   val okButton = new Button("Run")
   val cancelButton = new Button("Cancel")
 
@@ -31,11 +35,6 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
   listenTo(cancelButton)
 
   reactions += {
-    case ValueChanged(`mainPanel`) =>
-      project.newSamples(mainPanel.numSamples, 
-                         project.region.toRange, 
-                         mainPanel.method)
-      mainPanel.splomPanel.redraw
     case ButtonClicked(`okButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Ok))
       close
@@ -53,9 +52,5 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
     layout(mainPanel) = BorderPanel.Position.Center
     layout(buttonPanel) = BorderPanel.Position.South
   }
-
-  def numSamples = mainPanel.numSamples
-  def method = mainPanel.method
-
 }
 

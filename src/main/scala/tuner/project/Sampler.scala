@@ -6,9 +6,14 @@ import tuner.Region
 import tuner.Table
 import tuner.util.Path
 
+/**
+ * A type of project that can have additional sample points added to it
+ */
 trait Sampler { self:Project =>
   
+  // New samples to run through the simulation
   val newSamples:Table
+  // Already run sample points (have outputs from simulation)
   val designSites:Table
 
   val path:String

@@ -9,6 +9,7 @@ import scala.swing.Swing
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
+import tuner.Sampler
 import tuner.project.NewProject
 import tuner.util.Path
 
@@ -26,7 +27,10 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
   val clusterButton = new Button("Save for Cluster")
   val runButton = new Button("Run")
 
-  val samplerPanel = new SamplerPanel(project)
+  def newSamples(num:Int, method:Sampler.Method) = {
+    project.newSamples(num, method)
+  }
+  val samplerPanel = new SamplerPanel(project, newSamples)
 
   contents = new BorderPanel {
     val titlePanel = new BoxPanel(Orientation.Horizontal) {
@@ -49,7 +53,6 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
 
   listenTo(runButton)
   listenTo(clusterButton)
-  listenTo(samplerPanel)
 
   reactions += {
     case ButtonClicked(`runButton`) =>
@@ -58,9 +61,6 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
     case ButtonClicked(`clusterButton`) =>
       samplerPanel.saveSamples
       this.close
-    case ValueChanged(`samplerPanel`) =>
-      project.newSamples(samplerPanel.numSamples, samplerPanel.method)
-      samplerPanel.splomPanel.redraw
   }
 
 }
