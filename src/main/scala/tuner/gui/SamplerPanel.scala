@@ -3,6 +3,7 @@ package tuner.gui
 import scala.swing.BoxPanel
 import scala.swing.Orientation
 import scala.swing.Swing
+import scala.swing.TabbedPane
 import scala.swing.event.ValueChanged
 
 import tuner.Config
@@ -16,20 +17,35 @@ class SamplerPanel(project:tuner.project.Sampler,
                    newSamples:((Int,Sampler.Method) => Unit)) 
     extends BoxPanel(Orientation.Vertical) {
   
-  val sampleGenPanel = new SampleGenerationPanel(newSamples) {
-    border = Swing.TitledBorder(border, "Sampling")
-  }
-
+  // Panel for controling new samples from scratch
+  val sampleGenPanel = new SampleGenerationPanel(newSamples)
+  // Panel for importing already run samples
+  val sampleImportPanel = new SampleImportPanel(newSamples)
+  // SPloM view of samples
   val splomPanel = new SamplerSplomPanel(project)
 
-  contents += sampleGenPanel
+  // Tabbed pane controlling which sampling method
+  val sampleControlsPanel = new TabbedPane {
+    border = Swing.TitledBorder(border, "Sampling")
+
+    pages += new TabbedPane.Page("Generate", sampleGenPanel)
+    pages += new TabbedPane.Page("Import", sampleImportPanel)
+  }
+
+  contents += sampleControlsPanel
   contents += splomPanel
 
   // Set up the events
   listenTo(sampleGenPanel)
+  listenTo(sampleImportPanel)
 
   reactions += {
     case ValueChanged(`sampleGenPanel`) =>
+      splomPanel.redraw
+      publish(new ValueChanged(this))
+    case NewDesignSelected(`sampleImportPanel`) =>
+      println("here")
+    case ValueChanged(`sampleImportPanel`) =>
       splomPanel.redraw
       publish(new ValueChanged(this))
   }

@@ -39,5 +39,7 @@ class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
   }
 
   def path = filenameField.text
+
+  def validPath : Boolean = new java.io.File(path).exists
 }
 
