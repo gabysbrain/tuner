@@ -4,7 +4,10 @@ import scala.swing.BoxPanel
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.TabbedPane
+import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
+
+import tuner.gui.event.NewDesignSelected
 
 import tuner.Config
 import tuner.Sampler
@@ -38,16 +41,19 @@ class SamplerPanel(project:tuner.project.Sampler,
   // Set up the events
   listenTo(sampleGenPanel)
   listenTo(sampleImportPanel)
+  listenTo(sampleControlsPanel)
 
   reactions += {
     case ValueChanged(`sampleGenPanel`) =>
       splomPanel.redraw
-      publish(new ValueChanged(this))
+      publish(new ValueChanged(SamplerPanel.this))
     case NewDesignSelected(`sampleImportPanel`) =>
-      println("here")
+      project.importSamples(sampleImportPanel.designFile)
     case ValueChanged(`sampleImportPanel`) =>
       splomPanel.redraw
-      publish(new ValueChanged(this))
+      publish(new ValueChanged(SamplerPanel.this))
+    case SelectionChanged(`sampleControlsPanel`) =>
+      publish(new SelectionChanged(SamplerPanel.this))
   }
 
   def numSamples : Int = sampleGenPanel.numSamples

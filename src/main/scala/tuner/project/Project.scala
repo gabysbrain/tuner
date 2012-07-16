@@ -219,7 +219,8 @@ class NewProject(name:String,
   
   def next = {
     save(path)
-    Project.fromFile(path).asInstanceOf[RunningSamples]
+    //Project.fromFile(path).asInstanceOf[RunningSamples]
+    Project.fromFile(path)
   }
 }
 
