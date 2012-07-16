@@ -12,7 +12,7 @@ import scala.swing.event.ValueChanged
 import tuner.Sampler
 
 /**
- * A tabbed pane allowing either the user to select different methods
+ * A panel allowing either the user to select different methods
  * of generating samples from within Tuner
  */
 class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))

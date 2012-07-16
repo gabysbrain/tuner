@@ -9,6 +9,11 @@ import java.awt.Dimension
 import tuner.Config
 import tuner.project.Viewable
 
+/**
+ * Panel containing Tuner application controls.
+ * 
+ * Displayed underneath main slice view 
+ */
 class ControlPanel(project:Viewable) extends TabbedPane {
   
   val dims = new Dimension(Int.MaxValue, Config.controlPanelHeight)

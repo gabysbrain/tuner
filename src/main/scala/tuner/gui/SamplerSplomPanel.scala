@@ -8,6 +8,9 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Sampler
 
+/**
+ * A SPLOM showing the locations of sample points taken
+ */
 class SamplerSplomPanel(project:Sampler)
   extends P5Panel(Config.samplerSplomDims._1, 
                   Config.samplerSplomDims._2, 

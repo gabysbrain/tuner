@@ -8,6 +8,11 @@ import scala.swing.TextField
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ValueChanged
 
+/**
+ * Element for selecting either a file or directory path
+ * 
+ * Sends ValueChanged when a new file is selected
+ */
 class PathPanel extends BoxPanel(Orientation.Horizontal) with Publisher {
   
   val filenameField = new TextField
