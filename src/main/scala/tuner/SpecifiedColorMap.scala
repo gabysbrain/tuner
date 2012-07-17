@@ -25,9 +25,9 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
 
   def isInverted = invert
   def isFiltered = if(isInverted) {
-    minVal < filterVal
-  } else {
     filterVal < maxVal
+  } else {
+    filterVal > minVal
   }
   def colors = cm.colors
   def breaks = {
