@@ -30,7 +30,7 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
 
   // Event setup
   listenTo(fileChooser)
-  listenTo(valueSelector)
+  listenTo(valueSelector.selection)
 
   reactions += {
     case ValueChanged(`fileChooser`) => if(fileChooser.validPath) {
@@ -44,8 +44,10 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
   def responses_=(r:Seq[String]) = if(r.isEmpty) {
     valueSelector.enabled = false
   } else {
-    //valueSelector.
+    // No direct way to change the contents of a combobox
+    valueSelector.peer.setModel(ComboBox.newConstantModel(r))
     valueSelector.enabled = true
+    valueSelector.selection.index = 0
   }
   def designPath : String = fileChooser.path
   def designFile : java.io.File = fileChooser.file

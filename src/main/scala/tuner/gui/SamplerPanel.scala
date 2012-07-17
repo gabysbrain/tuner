@@ -29,20 +29,20 @@ class SamplerPanel(project:tuner.project.Sampler,
   val splomPanel = new SamplerSplomPanel(project)
 
   // Tabbed pane controlling which sampling method
-  val sampleControlsPanel = new TabbedPane {
+  val sampleControlsTabs = new TabbedPane {
     border = Swing.TitledBorder(border, "Sampling")
 
     pages += new TabbedPane.Page("Generate", sampleGenPanel)
     pages += new TabbedPane.Page("Import", sampleImportPanel)
   }
 
-  contents += sampleControlsPanel
+  contents += sampleControlsTabs
   contents += splomPanel
 
   // Set up the events
   listenTo(sampleGenPanel)
   listenTo(sampleImportPanel)
-  listenTo(sampleControlsPanel)
+  listenTo(sampleControlsTabs.selection)
 
   reactions += {
     case ValueChanged(`sampleGenPanel`) =>
@@ -59,7 +59,13 @@ class SamplerPanel(project:tuner.project.Sampler,
     case ValueChanged(`sampleImportPanel`) =>
       splomPanel.redraw
       publish(new ValueChanged(SamplerPanel.this))
-    case SelectionChanged(`sampleControlsPanel`) =>
+    case SelectionChanged(`sampleControlsTabs`) =>
+      sampleControlsTabs.selection.page.title match {
+        case "Generate" => splomPanel.drawSamples = project.newSamples
+        case "Import"   => splomPanel.drawSamples = project.designSites
+        case _          => // do nothing
+      }
+      splomPanel.redraw
       publish(new SelectionChanged(SamplerPanel.this))
   }
 

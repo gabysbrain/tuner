@@ -1,6 +1,7 @@
 package tuner.gui
 
 import tuner.Config
+import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
@@ -18,6 +19,9 @@ class SamplerSplomPanel(project:Sampler)
   
   // which output value we're showing
   var _selectedResponse:Option[String] = None
+
+  // what to draw
+  var drawSamples:Table = project.newSamples
   
   var splomBounds = Rectangle((0f,0f), (0f,0f))
   val sploms = inputFields.flatMap({fld1 =>
@@ -67,12 +71,10 @@ class SamplerSplomPanel(project:Sampler)
   def draw = {
     loop = false
 
-    val ranges = project.sampleRanges
-
     applet.background(Config.backgroundColor)
 
     // Make sure we have something to draw
-    if(project.newSamples.numRows > 0) {
+    if(drawSamples.numRows > 0) {
       // Compute all the sizes of things
       val totalSize = math.min(width, height) - 
                       Config.plotSpacing * 2 - 
@@ -82,51 +84,53 @@ class SamplerSplomPanel(project:Sampler)
                               totalSize, totalSize)
       val (_, plotBounds) = 
         FacetLayout.plotBounds(splomBounds, inputFields)
+      // Draw all the sploms
       inputFields.foreach {xFld =>
         inputFields.foreach {yFld =>
           if(xFld < yFld) {
-            val bound = plotBounds((xFld, yFld))
-            val plot = sploms((xFld, yFld))
-            val (minX,maxX) = ranges.range(xFld)
-            val (minY,maxY) = ranges.range(yFld)
-            val xTicks = AxisTicks.ticks(minX, maxX, 
-                                         bound.width, Config.smallFontSize)
-            val yTicks = AxisTicks.ticks(minY, maxY,
-                                         bound.height, Config.smallFontSize)
-
-            // Draw a nice white background
-            fill(255)
-            rectMode(P5Panel.RectMode.Corner)
-            rect(bound.minX, bound.minY, bound.width, bound.height)
-
-            // Draw the actual plot
-            val (dataXMin, dataXMax) = if(xTicks.isEmpty) {
-              (minX, maxX)
-            } else {
-              (xTicks.min, xTicks.max)
-            }
-            val (dataYMin, dataYMax) = if(yTicks.isEmpty) {
-              (minY, maxY)
-            } else {
-              (yTicks.min, yTicks.max)
-            }
-            plot.draw(this, bound.minX, bound.minY, bound.width, bound.height,
-                      project.newSamples,
-                      (xFld, (dataXMin, dataXMax)),
-                      (yFld, (dataYMin, dataYMax)))
-            if(xFld != inputFields.last && !xTicks.isEmpty) {
-              xAxes(xFld).draw(this, bound.minX, splomBounds.maxY, 
-                                     bound.width, Config.axisSize,
-                                     xFld, xTicks)
-            }
-            if(yFld != inputFields.head && !yTicks.isEmpty) {
-              yAxes(yFld).draw(this, Config.plotSpacing, bound.minY, 
-                                     Config.axisSize, bound.height, 
-                                     yFld, yTicks)
-            }
+            drawPlot(plotBounds((xFld, yFld)), xFld, yFld)
           }
         }
       }
+
+  private def drawPlot(bounds:Rectangle, xFld:String, yFld:String) = {
+    val plot = sploms((xFld, yFld))
+    val (minX,maxX) = project.sampleRanges.range(xFld)
+    val (minY,maxY) = project.sampleRanges.range(yFld)
+    val xTicks = AxisTicks.ticks(minX, maxX, 
+                                 bounds.width, Config.smallFontSize)
+    val yTicks = AxisTicks.ticks(minY, maxY,
+                                 bounds.height, Config.smallFontSize)
+
+    // Draw a nice white background
+    fill(255)
+    rectMode(P5Panel.RectMode.Corner)
+    rect(bounds.minX, bounds.minY, bounds.width, bounds.height)
+
+    // Draw the actual plot
+    val (dataXMin, dataXMax) = if(xTicks.isEmpty) {
+      (minX, maxX)
+    } else {
+      (xTicks.min, xTicks.max)
+    }
+    val (dataYMin, dataYMax) = if(yTicks.isEmpty) {
+      (minY, maxY)
+    } else {
+      (yTicks.min, yTicks.max)
+    }
+    plot.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
+              drawSamples,
+              (xFld, (dataXMin, dataXMax)),
+              (yFld, (dataYMin, dataYMax)))
+    if(xFld != inputFields.last && !xTicks.isEmpty) {
+      xAxes(xFld).draw(this, bounds.minX, splomBounds.maxY, 
+                             bounds.width, Config.axisSize,
+                             xFld, xTicks)
+    }
+    if(yFld != inputFields.head && !yTicks.isEmpty) {
+      yAxes(yFld).draw(this, Config.plotSpacing, bounds.minY, 
+                             Config.axisSize, bounds.height, 
+                             yFld, yTicks)
     }
   }
 }
