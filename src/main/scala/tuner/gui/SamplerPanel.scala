@@ -61,8 +61,11 @@ class SamplerPanel(project:tuner.project.Sampler,
       publish(new ValueChanged(SamplerPanel.this))
     case SelectionChanged(`sampleControlsTabs`) =>
       sampleControlsTabs.selection.page.title match {
-        case "Generate" => splomPanel.drawSamples = project.newSamples
-        case "Import"   => splomPanel.drawSamples = project.designSites
+        case "Generate" => 
+          splomPanel.drawSamples = project.newSamples
+          splomPanel.selectedResponse = None
+        case "Import"   => 
+          splomPanel.drawSamples = project.designSites
         case _          => // do nothing
       }
       splomPanel.redraw
