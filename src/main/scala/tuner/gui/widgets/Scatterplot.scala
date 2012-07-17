@@ -5,12 +5,13 @@ import tuner.Table
 import tuner.gui.P5Panel
 import tuner.util.ColorLib
 
-class Scatterplot(dotColor:Int, resizeOnMouse:Boolean=false) {
+class Scatterplot(resizeOnMouse:Boolean=false) {
 
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
            data:Table, 
            xRange:(String,(Float,Float)), 
-           yRange:(String,(Float,Float))) = {
+           yRange:(String,(Float,Float)),
+           color:(Table.Tuple => Int)) = {
 
     val (xFld, (minX, maxX)) = xRange
     val (yFld, (minY, maxY)) = yRange
@@ -21,8 +22,6 @@ class Scatterplot(dotColor:Int, resizeOnMouse:Boolean=false) {
     //applet.rect(x, y, w, h)
 
     applet.ellipseMode(P5Panel.EllipseMode.Center)
-    applet.fill(dotColor)
-    applet.stroke(ColorLib.darker(dotColor))
 
     for(row <- 0 until data.numRows) {
       val tpl = data.tuple(row)
@@ -30,6 +29,10 @@ class Scatterplot(dotColor:Int, resizeOnMouse:Boolean=false) {
       val yVal = tpl(yFld)
       val xx = P5Panel.map(xVal, minX, maxX, x, x+w)
       val yy = P5Panel.map(yVal, maxY, minY, y, y+h)
+
+      val dotColor = color(tpl)
+      applet.fill(dotColor)
+      applet.stroke(ColorLib.darker(dotColor))
       if(xx >= x && xx <= x+w && yy >= y && yy <= y+h) {
         val dotSize = {
           val (mousex, mousey) = applet.mousePos

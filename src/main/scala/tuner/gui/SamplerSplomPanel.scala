@@ -1,11 +1,13 @@
 package tuner.gui
 
 import tuner.Config
+import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
+import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Sampler
 
@@ -18,7 +20,7 @@ class SamplerSplomPanel(project:Sampler)
                   P5Panel.Java2D) {
   
   // which output value we're showing
-  var _selectedResponse:Option[String] = None
+  private var _selectedResponse:Option[String] = None
 
   // what to draw
   var drawSamples:Table = project.newSamples
@@ -27,12 +29,15 @@ class SamplerSplomPanel(project:Sampler)
   val sploms = inputFields.flatMap({fld1 =>
     inputFields.flatMap({fld2 =>
       if(fld1 < fld2) {
-        Some(((fld1, fld2), new Scatterplot(Config.sampleDotColor)))
+        Some(((fld1, fld2), new Scatterplot))
       } else {
         None
       }
     })
   }).toMap
+  val legend = new Colorbar(Colorbar.Right)
+  // This will get overridden when the user changes the response variable
+  var colormap:Option[SpecifiedColorMap] = None
   val xAxes:Map[String,Axis] = 
     inputFields.foldLeft(Map[String,Axis]()) {case (xa, fld) =>
       xa + (fld -> new Axis(Axis.HorizontalBottom))
@@ -50,6 +55,12 @@ class SamplerSplomPanel(project:Sampler)
   def selectedResponse = _selectedResponse
   def selectedResponse_=(r:Option[String]) = {
     _selectedResponse = r
+    colormap = r.map {resp =>
+      new SpecifiedColorMap(Config.sampleColorMap, 
+                            drawSamples.min(resp),
+                            drawSamples.max(resp),
+                            false)
+    }
     redraw
   }
 
@@ -93,6 +104,14 @@ class SamplerSplomPanel(project:Sampler)
         }
       }
 
+      // Draw the color bar if we're coloring the points
+      selectedResponse.foreach {respFld => drawLegend(splomBounds, respFld)}
+    }
+  }
+
+  /**
+   * Draw a single scatterplot panel
+   */
   private def drawPlot(bounds:Rectangle, xFld:String, yFld:String) = {
     val plot = sploms((xFld, yFld))
     val (minX,maxX) = project.sampleRanges.range(xFld)
@@ -118,10 +137,16 @@ class SamplerSplomPanel(project:Sampler)
     } else {
       (yTicks.min, yTicks.max)
     }
+    // May need to draw
+    val colorFun:(Table.Tuple=>Int) = colormap match {
+      case Some(cm) => tpl => cm.color(tpl(selectedResponse.get))
+      case None     => _ => Config.sampleDotColor
+    }
     plot.draw(this, bounds.minX, bounds.minY, bounds.width, bounds.height,
               drawSamples,
               (xFld, (dataXMin, dataXMax)),
-              (yFld, (dataYMin, dataYMax)))
+              (yFld, (dataYMin, dataYMax)),
+              colorFun)
     if(xFld != inputFields.last && !xTicks.isEmpty) {
       xAxes(xFld).draw(this, bounds.minX, splomBounds.maxY, 
                              bounds.width, Config.axisSize,
@@ -132,6 +157,18 @@ class SamplerSplomPanel(project:Sampler)
                              Config.axisSize, bounds.height, 
                              yFld, yTicks)
     }
+  }
+
+  /**
+   * Draw the colormap legend
+   */
+  def drawLegend(bounds:Rectangle, response:String) = colormap.foreach {cm =>
+    val legendBounds = Rectangle(
+      (bounds.maxX-Config.colorbarWidth, bounds.minY),
+      Config.colorbarWidth, bounds.height)
+    legend.draw(this, legendBounds.minX, legendBounds.minY, 
+                      legendBounds.width, legendBounds.height, 
+                      response, cm)
   }
 }
 

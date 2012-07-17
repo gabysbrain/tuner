@@ -24,9 +24,9 @@ class ParetoPanel(project:Viewable)
 
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
-  val activeSampleScatterplot = new Scatterplot(Config.paretoSampleColor, true)
+  val activeSampleScatterplot = new Scatterplot(true)
   val inactiveSampleScatterplot = 
-    new Scatterplot(Config.paretoInactiveSampleColor, false)
+    new Scatterplot(false)
   val histogram = new Bars(Config.respHistogramBarStroke,
                            Config.respHistogramBarFill)
   //val csp = new ContinuousPlot
@@ -148,12 +148,14 @@ class ParetoPanel(project:Viewable)
                                          plotBox.width, plotBox.height, 
                                          inactiveDesign, 
                                          (resp1, xAxisRange), 
-                                         (resp2, yAxisRange))
+                                         (resp2, yAxisRange),
+                            (_:Table.Tuple) => Config.paretoInactiveSampleColor)
     activeSampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
                                        plotBox.width, plotBox.height, 
                                        activeDesign, 
                                        (resp1, xAxisRange), 
-                                       (resp2, yAxisRange))
+                                       (resp2, yAxisRange),
+                                    (_:Table.Tuple) => Config.paretoSampleColor)
   }
 
   override def mouseClicked(mouseX:Int, mouseY:Int, 

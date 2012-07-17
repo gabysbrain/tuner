@@ -52,13 +52,12 @@ object Config {
 
   val samplingRowsPerReq = 4
 
-  //val backgroundColor = 0
   val backgroundColor = 51
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
-  //val errorColorMap = GrayscaleColorMap
   val errorColorMap = BlueColorMap
   val gainColorMap = GreenColorMap
+  val sampleColorMap = RedColorMap
   val lineColor = 255
   val filterColor = Color(151)
   val regionAlpha = 0.8f * 255
