@@ -8,6 +8,7 @@ import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.gui.event.NewDesignSelected
+import tuner.gui.event.NewResponseSelected
 
 import tuner.Config
 import tuner.Sampler
@@ -49,6 +50,12 @@ class SamplerPanel(project:tuner.project.Sampler,
       publish(new ValueChanged(SamplerPanel.this))
     case NewDesignSelected(`sampleImportPanel`) =>
       project.importSamples(sampleImportPanel.designFile)
+      sampleImportPanel.responses = 
+        project.designSites.fieldNames.diff(project.sampleRanges.dimNames)
+      //splomPanel.redraw
+      splomPanel.selectedResponse = None
+    case NewResponseSelected(`sampleImportPanel`, response) =>
+      splomPanel.selectedResponse = Some(response)
     case ValueChanged(`sampleImportPanel`) =>
       splomPanel.redraw
       publish(new ValueChanged(SamplerPanel.this))

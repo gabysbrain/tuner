@@ -16,6 +16,9 @@ class SamplerSplomPanel(project:Sampler)
                   Config.samplerSplomDims._2, 
                   P5Panel.Java2D) {
   
+  // which output value we're showing
+  var _selectedResponse:Option[String] = None
+  
   var splomBounds = Rectangle((0f,0f), (0f,0f))
   val sploms = inputFields.flatMap({fld1 =>
     inputFields.flatMap({fld2 =>
@@ -37,14 +40,30 @@ class SamplerSplomPanel(project:Sampler)
 
   def inputFields = project.sampleRanges.dimNames.sorted
 
+  /**
+   * The name of the currently selected response
+   */
+  def selectedResponse = _selectedResponse
+  def selectedResponse_=(r:Option[String]) = {
+    _selectedResponse = r
+    redraw
+  }
+
   override def setup = {
     loop = false
   }
   
+  /**
+   * Force a redraw
+   */
   def redraw = {
     loop = true
   }
 
+  /**
+   * Do all the drawing required.  Doesn't loop by default as 
+   * this isn't interactive
+   */
   def draw = {
     loop = false
 

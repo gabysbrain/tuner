@@ -29,6 +29,9 @@ trait Sampler { self:Project =>
     designSites.toCsv(designName)
   }
 
+  /**
+   * Information about the input dimension ranges for sampling
+   */ 
   def sampleRanges : DimRanges
 
   def addSamples(n:Int, range:DimRanges, method:tuner.Sampler.Method) : Unit = {

@@ -40,6 +40,13 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
       publish(new NewResponseSelected(this, valueSelector.selection.item))
   }
 
+  def responses : Seq[String] = List()
+  def responses_=(r:Seq[String]) = if(r.isEmpty) {
+    valueSelector.enabled = false
+  } else {
+    //valueSelector.
+    valueSelector.enabled = true
+  }
   def designPath : String = fileChooser.path
   def designFile : java.io.File = fileChooser.file
   def selectedResponse : Option[String] = if(valueSelector.enabled) {
