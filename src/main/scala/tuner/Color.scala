@@ -34,5 +34,8 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
     aa | rr | gg | bb
   }
 
+  override def toString : String = 
+    "R: " + r + " G: " + g + " B: " + b + " A: " + a
+
 }
 
