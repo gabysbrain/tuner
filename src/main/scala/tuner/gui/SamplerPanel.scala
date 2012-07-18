@@ -52,10 +52,11 @@ class SamplerPanel(project:tuner.project.Sampler,
       project.importSamples(sampleImportPanel.designFile)
       sampleImportPanel.responses = 
         project.designSites.fieldNames.diff(project.sampleRanges.dimNames)
-      //splomPanel.redraw
-      splomPanel.selectedResponse = None
+      splomPanel.selectedResponse = sampleImportPanel.selectedResponse
+      splomPanel.redraw
     case NewResponseSelected(`sampleImportPanel`, response) =>
       splomPanel.selectedResponse = Some(response)
+      splomPanel.redraw
     case ValueChanged(`sampleImportPanel`) =>
       splomPanel.redraw
       publish(new ValueChanged(SamplerPanel.this))
@@ -66,6 +67,7 @@ class SamplerPanel(project:tuner.project.Sampler,
           splomPanel.selectedResponse = None
         case "Import"   => 
           splomPanel.drawSamples = project.designSites
+          splomPanel.selectedResponse = sampleImportPanel.selectedResponse
         case _          => // do nothing
       }
       splomPanel.redraw

@@ -12,7 +12,7 @@ object Colorbar {
   case object Right extends Placement
 }
 
-class Colorbar(placement:Colorbar.Placement) {
+class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
 
   import Colorbar._
 
@@ -50,13 +50,18 @@ class Colorbar(placement:Colorbar.Placement) {
         drawTicks(applet, x, barStartY, labelWidth, barHeight, ticks)
         drawColorbar(applet, x+labelWidth, barStartY, barWidth, barHeight, 
                      colormap)
-        drawHandle(applet, x+labelWidth+barWidth, barStartY, barHeight, colormap)
+        if(editable) {
+          drawHandle(applet, x+labelWidth+barWidth, barStartY, 
+                             barHeight, colormap)
+        }
       case Left =>
         drawTicks(applet, x+Config.colorbarHandleSize._1+barWidth, barStartY, 
                           labelWidth, barHeight, ticks)
         drawColorbar(applet, x+Config.colorbarHandleSize._1, barStartY, 
                              barWidth, barHeight, colormap)
-        drawHandle(applet, x, barStartY, barHeight, colormap)
+        if(editable) {
+          drawHandle(applet, x, barStartY, barHeight, colormap)
+        }
     }
   }
 

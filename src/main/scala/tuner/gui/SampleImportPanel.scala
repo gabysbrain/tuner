@@ -52,9 +52,9 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
   def designPath : String = fileChooser.path
   def designFile : java.io.File = fileChooser.file
   def selectedResponse : Option[String] = if(valueSelector.enabled) {
-    None
-  } else {
     Some(valueSelector.selection.item)
+  } else {
+    None
   }
 }
 

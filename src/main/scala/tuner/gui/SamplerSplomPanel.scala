@@ -35,7 +35,7 @@ class SamplerSplomPanel(project:Sampler)
       }
     })
   }).toMap
-  val legend = new Colorbar(Colorbar.Right)
+  val legend = new Colorbar(Colorbar.Right, false)
   // This will get overridden when the user changes the response variable
   var colormap:Option[SpecifiedColorMap] = None
   val xAxes:Map[String,Axis] = 
@@ -61,19 +61,17 @@ class SamplerSplomPanel(project:Sampler)
                             drawSamples.max(resp),
                             false)
     }
-    redraw
   }
 
   override def setup = {
+    super.setup
     loop = false
   }
   
   /**
    * Force a redraw
    */
-  def redraw = {
-    loop = true
-  }
+  def redraw = applet.loop
 
   /**
    * Do all the drawing required.  Doesn't loop by default as 
@@ -137,7 +135,7 @@ class SamplerSplomPanel(project:Sampler)
     } else {
       (yTicks.min, yTicks.max)
     }
-    // May need to draw
+    // May need to draw colored dots
     val colorFun:(Table.Tuple=>Int) = colormap match {
       case Some(cm) => tpl => cm.color(tpl(selectedResponse.get))
       case None     => _ => Config.sampleDotColor
@@ -166,6 +164,10 @@ class SamplerSplomPanel(project:Sampler)
     val legendBounds = Rectangle(
       (bounds.maxX-Config.colorbarWidth, bounds.minY),
       Config.colorbarWidth, bounds.height)
+    println("mn: " + cm.minVal)
+    println("mx: " + cm.maxVal)
+    println("f: " + cm.filterVal)
+    println("ft: " + cm.isFiltered)
     legend.draw(this, legendBounds.minX, legendBounds.minY, 
                       legendBounds.width, legendBounds.height, 
                       response, cm)
