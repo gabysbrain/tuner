@@ -126,7 +126,7 @@ object P5Panel {
 
 abstract class P5Panel (
     _width:Int, _height:Int, 
-    renderer:P5Panel.Renderer=P5Panel.Java2D) 
+    _renderer:P5Panel.Renderer=P5Panel.Java2D) 
     extends FlowPanel {
     //extends BoxPanel(Orientation.Vertical) {
     //extends BorderPanel {
@@ -225,6 +225,8 @@ abstract class P5Panel (
   def draw
 
   def g = applet.g
+
+  def renderer = _renderer
 
   // TODO: make this look up the actual value
   def loop = true

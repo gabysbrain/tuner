@@ -6,6 +6,8 @@ import tuner.geom.Rectangle
 import tuner.geom.Triangle
 import tuner.gui.P5Panel
 
+import processing.core.PGraphicsJava2D
+
 object Colorbar {
   sealed trait Placement
   case object Left extends Placement
@@ -103,31 +105,10 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
   def drawColorbar(applet:P5Panel, x:Float, y:Float, w:Float, h:Float,
                    colormap:SpecifiedColorMap) = {
     barBounds = Rectangle((x,y), (x+w,y+h))
-    applet.noStroke
-
-    applet.beginShape(P5Panel.Shape.QuadStrip)
-    // Maybe draw the filterd out colors
-    if(colormap.isFiltered) {
-      applet.fill(colormap.filterColor)
-      val yy1 = P5Panel.map(colormap.filterStart, 
-                            colormap.minVal, colormap.maxVal, 
-                            y+h, y)
-      val yy2 = P5Panel.map(colormap.filterVal, 
-                            colormap.minVal, colormap.maxVal, 
-                            y+h, y)
-      applet.vertex(x, yy1)
-      applet.vertex(x+w, yy1)
-      applet.vertex(x, yy2)
-      applet.vertex(x+w, yy2)
+    applet.renderer match {
+      case P5Panel.OpenGL => drawColorbarOGL(applet, x, y, w, h, colormap)
+      case P5Panel.Java2D => drawColorbarJ2D(applet, x, y, w, h, colormap)
     }
-    List(colormap.filterVal, colormap.colorEnd).foreach {break =>
-    //colormap.breaks.foreach {break =>
-      applet.fill(colormap.color(break))
-      val yy = P5Panel.map(break, colormap.minVal, colormap.maxVal, y+h, y)
-      applet.vertex(x, yy)
-      applet.vertex(x+w, yy)
-    }
-    applet.endShape
   }
 
   def drawHandle(applet:P5Panel, x:Float, y:Float, h:Float, 
@@ -156,5 +137,75 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
   }
 
   def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)
+
+  /**
+   * draw the colorbar when using an OpenGL renderer
+   */
+  private def drawColorbarOGL(applet:P5Panel, x:Float, y:Float, 
+                                              w:Float, h:Float,
+                                              colormap:SpecifiedColorMap) = {
+    applet.noStroke
+
+    applet.beginShape(P5Panel.Shape.QuadStrip)
+    // Maybe draw the filterd out colors
+    if(colormap.isFiltered) {
+      applet.fill(colormap.filterColor)
+      val yy1 = P5Panel.map(colormap.filterStart, 
+                            colormap.minVal, colormap.maxVal, 
+                            y+h, y)
+      val yy2 = P5Panel.map(colormap.filterVal, 
+                            colormap.minVal, colormap.maxVal, 
+                            y+h, y)
+      applet.vertex(x, yy1)
+      applet.vertex(x+w, yy1)
+      applet.vertex(x, yy2)
+      applet.vertex(x+w, yy2)
+    }
+    List(colormap.filterVal, colormap.colorEnd).foreach {break =>
+    //colormap.breaks.foreach {break =>
+      applet.fill(colormap.color(break))
+      val yy = P5Panel.map(break, colormap.minVal, colormap.maxVal, y+h, y)
+      applet.vertex(x, yy)
+      applet.vertex(x+w, yy)
+    }
+    applet.endShape
+  }
+
+  /**
+   * draw the colorbar using the Java2D renderer.  Java2D doesn't support
+   * automatic color interpolation like opengl :(
+   */
+  private def drawColorbarJ2D(applet:P5Panel, x:Float, y:Float, 
+                                              w:Float, h:Float,
+                                              colormap:SpecifiedColorMap) = {
+    // get the java2d graphics context
+    val pgl = applet.g.asInstanceOf[PGraphicsJava2D]
+    val g2 = pgl.g2
+
+    // Filtered out values get one color
+    if(colormap.isFiltered) {
+      val fyy1 = P5Panel.map(colormap.filterStart, 
+                             colormap.minVal, colormap.maxVal, 
+                             y+h, y)
+      val fyy2 = P5Panel.map(colormap.filterVal, 
+                             colormap.minVal, colormap.maxVal, 
+                             y+h, y)
+      g2.setPaint(colormap.filterColor.toAwt)
+      g2.fill(new java.awt.geom.Rectangle2D.Float(x, fyy2, w, fyy1-fyy2))
+    }
+
+    // Remaining color needs a gradient
+    val cyy1 = P5Panel.map(colormap.filterVal, 
+                           colormap.minVal, colormap.maxVal, 
+                           y+h, y)
+    val cyy2 = P5Panel.map(colormap.colorEnd, 
+                           colormap.minVal, colormap.maxVal, 
+                           y+h, y)
+    val gradient = new java.awt.GradientPaint(
+      0,   cyy1, colormap.color(colormap.filterVal).toAwt,
+      100, cyy2, colormap.color(colormap.colorEnd).toAwt)
+    g2.setPaint(gradient)
+    g2.fill(new java.awt.geom.Rectangle2D.Float(x, cyy2, w, cyy1-cyy2))
+  }
 }
 

@@ -164,10 +164,6 @@ class SamplerSplomPanel(project:Sampler)
     val legendBounds = Rectangle(
       (bounds.maxX-Config.colorbarWidth, bounds.minY),
       Config.colorbarWidth, bounds.height)
-    println("mn: " + cm.minVal)
-    println("mx: " + cm.maxVal)
-    println("f: " + cm.filterVal)
-    println("ft: " + cm.isFiltered)
     legend.draw(this, legendBounds.minX, legendBounds.minY, 
                       legendBounds.width, legendBounds.height, 
                       response, cm)
