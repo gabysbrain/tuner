@@ -36,6 +36,10 @@ class SamplerPanel(project:tuner.project.Sampler,
     pages += new TabbedPane.Page("Import", sampleImportPanel)
   }
 
+  // Initialize the response selector combo box
+  sampleImportPanel.responses = projectResponseFields
+
+  // Add everything we need
   contents += sampleControlsTabs
   contents += splomPanel
 
@@ -50,8 +54,7 @@ class SamplerPanel(project:tuner.project.Sampler,
       publish(new ValueChanged(SamplerPanel.this))
     case NewDesignSelected(`sampleImportPanel`) =>
       project.importSamples(sampleImportPanel.designFile)
-      sampleImportPanel.responses = 
-        project.designSites.fieldNames.diff(project.sampleRanges.dimNames)
+      sampleImportPanel.responses = projectResponseFields
       splomPanel.selectedResponse = sampleImportPanel.selectedResponse
       splomPanel.redraw
     case NewResponseSelected(`sampleImportPanel`, response) =>
@@ -82,5 +85,11 @@ class SamplerPanel(project:tuner.project.Sampler,
     }
   }
 
+  /**
+   * Fields that are not input fields in the project
+   */
+  def projectResponseFields = 
+    project.designSites.fieldNames.diff(project.sampleRanges.dimNames)
+      .filterNot(_ == "rowNum")
 }
 
