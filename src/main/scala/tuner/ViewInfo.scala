@@ -116,6 +116,9 @@ class ViewInfo(project:Viewable) {
    */
   def updateZoom(fld:String, low:Float, high:Float) = {
     _currentZoom.update(fld, low, high)
+
+    // Ensure that the slice position is within the new bounds
+    updateSlice(fld, math.max(math.min(currentSlice(fld), high), low))
   }
 
   def inView(pt:List[(String,Float)]) : Boolean = pt.forall {case (fld,v) =>
