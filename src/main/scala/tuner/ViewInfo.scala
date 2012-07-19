@@ -19,6 +19,11 @@ case class VisInfo(
   showRegion:Boolean
 )
 
+/**
+ * An object to save the state of the current view in one place.
+ *
+ * Includes things like focus point, zoom level, etc.
+ */
 object ViewInfo {
   val DefaultVisInfo = VisInfo (
     Nil, Nil, None, None, Some("hyperslice"), "value", false, false
@@ -105,6 +110,10 @@ class ViewInfo(project:Viewable) {
     _currentSlice += (fld -> v)
   }
 
+  /**
+   * Method called to update the zoom level.  Will adjust the slice position
+   * to stay within the zoom level if necessary
+   */
   def updateZoom(fld:String, low:Float, high:Float) = {
     _currentZoom.update(fld, low, high)
   }

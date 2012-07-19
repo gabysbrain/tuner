@@ -11,6 +11,9 @@ import tuner.project.Viewable
 
 import scala.swing.Publisher
 
+/**
+ * Generic methods required for the main slice matrix
+ */
 trait MainPlotPanel extends Publisher {
 
   type ColormapMap = Map[String,(SpecifiedColorMap,SpecifiedColorMap,SpecifiedColorMap)]

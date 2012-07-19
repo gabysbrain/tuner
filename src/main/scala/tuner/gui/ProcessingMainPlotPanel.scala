@@ -26,6 +26,9 @@ import scala.swing.event.UIElementResized
 
 import processing.core.PConstants
 
+/**
+ * A Hyperslice matrix implemented using the Processing API
+ */
 class ProcessingMainPlotPanel(val project:Viewable) 
     extends P5Panel(Config.mainPlotDims._1, 
                     Config.mainPlotDims._2, 
@@ -438,9 +441,13 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
+  /**
+   * What to do when the mouse is clicked inside the bounds 
+   * of the hyperslice matrix
+   */
   def handlePlotMouse(mouseX:Int, mouseY:Int) = {
 
-    // Do a rough check to see if we're near any of the slicess
+    // Do a rough check to see if we're near any of the slices
     if(plotBounds.isInside(mouseX, mouseY)) {
       sliceBounds.foreach {case ((xfld,yfld), sb) =>
         if(sb.isInside(mouseX, mouseY)) {

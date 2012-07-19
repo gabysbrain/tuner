@@ -25,6 +25,9 @@ import tuner.gui.event.SliceChanged
 import tuner.gui.event.ViewChanged
 import tuner.project.Viewable
 
+/**
+ * The main interaction window in Tuner
+ */
 class ProjectViewer(project:Viewable) extends Window(project) {
   
   title = project.name

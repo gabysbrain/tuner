@@ -14,6 +14,10 @@ import scala.swing.event.ValueChanged
 import tuner.Config
 import tuner.project.Viewable
 
+/**
+ * Contains the controls that let the user select the focus point,
+ * zoom level, and which response values to show.
+ */
 class PlotControlsPanel(project:Viewable) 
     extends BoxPanel(Orientation.Vertical) {
   
