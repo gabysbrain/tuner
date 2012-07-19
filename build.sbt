@@ -5,6 +5,8 @@ version := "0.9"
 
 scalaVersion := "2.8.1"
 
+libraryDependencies += "org.bitbucket.gabysbrain" % "datescala_2.8.1" % "0.9"
+
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.8.1"
 
 libraryDependencies += "net.liftweb" % "lift-json_2.8.0" % "2.1"
