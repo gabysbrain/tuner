@@ -24,7 +24,7 @@ repositories.remote << "http://repo1.maven.org/maven2"
 # All the dependencies
 DATESCALA = "org.bitbucket.gabysbrain:datescala_2.8.1:jar:0.9"
 SCALASWING = "org.scala-lang:scala-swing:jar:#{Scala.version}"
-LIFT = "net.liftweb:lift-json_2.8.0:jar:2.1"
+LIFT = transitive("net.liftweb:lift-json_2.8.0:jar:2.1")
 TABLE_LAYOUT = "tablelayout:TableLayout:jar:20050920"
 COMMONS_MATH = "org.apache.commons:commons-math:jar:2.2"
 PREFUSE = "org.prefuse:prefuse:jar:beta-20060220"
