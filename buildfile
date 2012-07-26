@@ -33,6 +33,11 @@ JAPURA = 'org.japura:japura:jar:1.15.1'
 # special artifact downloads
 download artifact(JAPURA) => 'http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fjapura%2Ffiles%2F&ts=1343327730&use_mirror=iweb'
 
+# all the artifacts we need
+jar_deps = [
+  DATESCALA, SCALASWING, LIFT, TABLE_LAYOUT, COMMONS_MATH, PREFUSE, JAPURA
+]
+
 desc "The Tuner project"
 define "tuner" do
 
@@ -42,14 +47,7 @@ define "tuner" do
 
   # compilation info
   compile.using :deprecation => true
-  compile.with DATESCALA, 
-               SCALASWING, 
-               LIFT, 
-               TABLE_LAYOUT, 
-               COMMONS_MATH, 
-               PREFUSE,
-               JAPURA,
-               Dir[_("lib/*.jar")]
+  compile.with jar_deps, Dir[_("lib/*.jar")]
 
   resources
   test.resources
