@@ -1,6 +1,4 @@
 
-Buildr.settings.build['scala.version'] = "2.8.1"
-
 require 'buildr/scala'
 
 # Version number for this release
