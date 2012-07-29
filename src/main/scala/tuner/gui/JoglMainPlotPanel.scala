@@ -29,6 +29,9 @@ object JoglMainPlotPanel {
 
 }
 
+/**
+ * The Hyperslice view of the GP model rendered using native OpenGL
+ */
 class JoglMainPlotPanel(project:Viewable) 
     extends ProcessingMainPlotPanel(project) {
 
@@ -313,6 +316,10 @@ class JoglMainPlotPanel(project:Viewable)
                     slice)
   }
 
+  /**
+   * Processes the texture through the filtered colormap 
+   * and draws everything on screen
+   */
   def drawResponseTexturedQuad(gl:GL2, 
                                colormap:SpecifiedColorMap, 
                                trans:Matrix4) = {
