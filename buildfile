@@ -25,9 +25,9 @@ JRI_PATH = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/r
 repositories.remote << "http://repo1.maven.org/maven2"
 
 # All the dependencies
-DATESCALA = "org.bitbucket.gabysbrain:datescala_2.8.1:jar:0.9"
+DATESCALA = "org.bitbucket.gabysbrain:datescala_#{Scala.version}:jar:0.9"
 SCALASWING = "org.scala-lang:scala-swing:jar:#{Scala.version}"
-LIFT = transitive("net.liftweb:lift-json_2.8.0:jar:2.1")
+LIFT = transitive("net.liftweb:lift-json_#{Scala.version}:jar:2.4")
 TABLE_LAYOUT = "tablelayout:TableLayout:jar:20050920"
 COMMONS_MATH = "org.apache.commons:commons-math:jar:2.2"
 PREFUSE = "org.prefuse:prefuse:jar:beta-20060220"
