@@ -214,7 +214,7 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     // the old looping code works fine
-    super.drawResponses
+    val drawTimes = super.drawResponses
 
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
       val gl = pgl.beginGL
@@ -224,6 +224,8 @@ class JoglMainPlotPanel(project:Viewable)
 
       pgl.endGL
     }
+
+    drawTimes
   }
 
   /**
