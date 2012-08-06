@@ -29,27 +29,26 @@ object DimRanges {
   }
 }
 
-class DimRanges(r:Map[String,DimRanges.Range]) {
+class DimRanges(r:Map[String,DimRanges.Range]) 
+    extends collection.mutable.HashMap[String,DimRanges.Range] {
 
-  var ranges = r
-
-  def contains(dim:String) : Boolean = ranges.contains(dim)
+  this ++= r
 
   def range(dim:String) : (Float,Float) = {
-    ranges(dim)
+    this(dim)
   }
 
   def min(dim:String) : Float = {
-    ranges(dim)._1
+    this(dim)._1
   }
 
   def max(dim:String) : Float = {
     // Unkown dims get a 0 to 1 range
-    ranges(dim)._2
+    this(dim)._2
   }
 
   def update(dim:String, min:Float, max:Float) = {
-    ranges += (dim -> (min, max))
+    this += (dim -> (min, max))
   }
 
   def merge(dr:DimRanges) : DimRanges = {
@@ -60,8 +59,8 @@ class DimRanges(r:Map[String,DimRanges.Range]) {
     new DimRanges(newRange)
   }
 
-  def dimNames : List[String] = ranges.keys.toList
+  def dimNames : List[String] = keys.toList
 
-  def length : Int = ranges.size
+  def length : Int = size
 }
 

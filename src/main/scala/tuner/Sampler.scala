@@ -28,7 +28,7 @@ object Sampler {
    */
   def regularGrid(dims:DimRanges, n:Int, 
                   f:List[(String,Float)] => Unit) = {
-    val seqs = dims.ranges map { d =>
+    val seqs = dims map { d =>
       val (dimname, (minval, maxval)) = d
       val mn = math.min(minval, maxval)
       val mx = math.max(minval, maxval)
@@ -50,7 +50,7 @@ object Sampler {
     val rand = new scala.util.Random
 
     // Split the ranges into slices and sample dims
-    val (sampleDims, sliceDims) = dims.ranges.span {case (_,rng) =>
+    val (sampleDims, sliceDims) = dims.span {case (_,rng) =>
       rng._1 != rng._2
     }
     val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}
@@ -65,7 +65,7 @@ object Sampler {
 
   def lhc(dims:DimRanges, n:Int, f:List[(String,Float)] => Unit) = {
     // Split the ranges into slices and sample dims
-    val (sampleDims, sliceDims) = dims.ranges.span {case (_,rng) =>
+    val (sampleDims, sliceDims) = dims.span {case (_,rng) =>
       rng._1 != rng._2
     }
     val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}

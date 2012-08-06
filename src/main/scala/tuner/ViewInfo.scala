@@ -100,7 +100,7 @@ class ViewInfo(project:Viewable) {
   }
 
   def currentZoom : DimRanges = {
-    project.inputs.dimNames.toSet.diff(_currentZoom.ranges.keySet).foreach {k =>
+    project.inputs.dimNames.toSet.diff(_currentZoom.keySet).foreach {k =>
       _currentZoom.update(k, project.inputs.min(k), project.inputs.max(k))
     }
     _currentZoom
