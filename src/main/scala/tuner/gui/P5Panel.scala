@@ -142,9 +142,7 @@ abstract class P5Panel (
         P5Panel.this.setup
       }
 
-      override def draw = {
-        P5Panel.this.draw
-      }
+      override def draw = P5Panel.this.draw
 
       override def mouseClicked = {
         P5Panel.this.mouseClicked(mouseX, mouseY, MouseButton(mouseButton))
@@ -198,23 +196,6 @@ abstract class P5Panel (
 
   }
 
-  /*
-  layout(sketchFrame) = BorderPanel.Position.Center
-  layout(Swing.VGlue) = BorderPanel.Position.North
-  layout(Swing.VGlue) = BorderPanel.Position.South
-  layout(Swing.HGlue) = BorderPanel.Position.East
-  layout(Swing.HGlue) = BorderPanel.Position.West
-  */
-
-  /*
-  contents += Swing.VGlue
-  contents += new BoxPanel(Orientation.Horizontal) {
-    contents += Swing.HGlue
-    contents += sketchFrame
-    contents += Swing.HGlue
-  }
-  contents += Swing.VGlue
-  */
   contents += sketchFrame
 
   applet.init

@@ -67,13 +67,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
                slice:Map[String,Float]) : Matrix2D = {
     // Progressive rendering
     val idealSize = project.viewInfo.estimateSampleDensity
-    /*
-    val sampleSize = if(mouseDown) {
-      math.max(idealSize / 10, 4)
-    } else {
-      idealSize
-    }
-    */
     val sample = model.sampleSlice(xDim, yDim, slice.toList, idealSize)
     val data = project.viewInfo.currentMetric match {
       case ViewInfo.ValueMetric => sample._1
@@ -158,15 +151,11 @@ class ProcessingMainPlotPanel(val project:Viewable)
                      " r1: " + resp1Time + 
                      " r2: " + resp2Time)
 
-    //println("bb time: " + (bbEndTime-bbStartTime) + "ms")
-    //println("highlight time: " + (phEndTime-phStartTime) + "ms")
-    //println("colorbar time: " + (cbEndTime-cbStartTime) + "ms")
-    //println("axes time: " + (axEndTime-axStartTime) + "ms")
-    //println("res time: " + (rrEndTime-rrStartTime) + "ms")
+    // Add a timing result
+    //drawTimer.addElipticalTiming(
 
     // Draw the fps counter
-    drawTimes.enqueue(rrEndTime-rrStartTime)
-    //drawRenderTime
+    //drawRenderTime(endTime-startTime)
   }
 
   private def drawPlotHighlight(field1:String, field2:String) = {
@@ -391,7 +380,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
     textAlign(P5Panel.TextHAlign.Right, P5Panel.TextVAlign.Bottom)
     textFont(Config.fontPath, 16)
     fill(255)
-    val ft = drawTimes.sum / drawTimes.size.toDouble
+    //val ft = drawTimes.sum / drawTimes.size.toDouble
+    val ft = 0.0
     text("Draw time: " + ft + "ms", width-10, height-10)
   }
 
