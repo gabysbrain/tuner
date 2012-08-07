@@ -57,7 +57,7 @@ object DrawTimer {
   type TimingRadii = (Float,Float,Float)
 
   // The time to draw an individual hyperslice plot matrix
-  val drawTimes = new MutableList[(Int,Seq[TimingRadii],Timing)]
+  val drawTimes = new MutableList[(Int,Iterable[TimingRadii],Timing)]
 
   // The time to draw all the static information that doesn't depend
   // on what hyperslice view we're drawing
@@ -79,6 +79,11 @@ object DrawTimer {
   def timed(block: => Unit) : Timing = timed(false)(block)
 
   /**
+   * add a timing for drawing code that doesn't depend on the response surface
+   */
+  def addStaticTiming(time:Timing) = staticTimes += time
+
+  /**
    * add a drawing timing for spherical kernels in (0,1) dimension spaces
    */
   def addSphericalTiming(totalPoints:Int, radius:Float, dims:Int, time:Timing) =
@@ -88,7 +93,7 @@ object DrawTimer {
    * add a drawing timing for eliptical kernels
    */
   def addElipticalTiming(totalPoints:Int, 
-                         radii:Seq[(Float,Float,Float)], 
+                         radii:Iterable[TimingRadii], 
                          time:Timing) =
     drawTimes +=((totalPoints, radii, time))
 
