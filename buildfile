@@ -39,6 +39,33 @@ jar_deps = [
   DATESCALA, SCALASWING, LIFT, TABLE_LAYOUT, COMMONS_MATH, PREFUSE, JAPURA
 ]
 
+task :macapp => :package do |t|
+  @dependencies = FileList[]
+  def with(*specs)
+    @dependencies |= Buildr.artifacts(specs.flatten).uniq
+    self
+  end
+
+  APPSHELL = "Tuner.app"
+  ICON = "icon/tuner_icon.icns"
+
+  puts "setting up mac app"
+  with jar_deps, FileList.new("lib/*.jar")
+
+  FileUtils.rm_rf "target/#{APPSHELL}"
+  FileUtils.cp_r "macosx/#{APPSHELL}", "target/#{APPSHELL}"
+  FileUtils.copy "target/tuner-0.9.jar", "target/#{APPSHELL}/Contents/Resources/Java/"
+  FileUtils.copy ICON, "target/#{APPSHELL}/Contents/Resources/"
+  # Need to copy in all the jogl stuff
+  FileList.new('lib/opengl/macosx/*.jnilib').each do |f|
+    FileUtils.copy f, "target/#{APPSHELL}/Contents/Resources/Java/"
+  end
+  # copy in the jar deps
+  @dependencies.each do |dep|
+    FileUtils.copy dep.to_s, "target/#{APPSHELL}/Contents/Resources/Java/"
+  end
+end
+
 desc "The Tuner project"
 define "tuner" do
 
@@ -54,7 +81,7 @@ define "tuner" do
   test.resources
 
   # packaging instructions
-  package(:jar).with :manifest => manifest.merge('Main-Class'=>MAIN_CLASS)
+  package(:jar).with :manifest => manifest.merge('Main-Class' => MAIN_CLASS)
 
   # Running instructions
   run.using :main => MAIN_CLASS,

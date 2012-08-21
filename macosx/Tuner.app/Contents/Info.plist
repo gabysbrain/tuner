@@ -36,7 +36,7 @@
 		<key>JVMVersion</key>
 		<string>1.5+</string>
 		<key>ClassPath</key>
-		<string>$JAVAROOT/Tuner-assembly-0.9.jar</string>
+		<string>$JAVAROOT/JRI.jar:$JAVAROOT/JRIEngine.jar:$JAVAROOT/Jama-1.0.2.jar:$JAVAROOT/REngine.jar:$JAVAROOT/TableLayout-20050920.jar:$JAVAROOT/commons-math-2.2.jar:$JAVAROOT/core.jar:$JAVAROOT/datescala_2.9.1-0.9.jar:$JAVAROOT/gluegen-rt.jar:$JAVAROOT/japura-1.15.1.jar:$JAVAROOT/jogl.all.jar:$JAVAROOT/lift-json_2.9.1-2.4.jar:$JAVAROOT/nativewindow.all.jar:$JAVAROOT/opengl.jar:$JAVAROOT/paranamer-2.3.jar:$JAVAROOT/prefuse-beta-20060220.jar:$JAVAROOT/scala-compiler-2.9.1.jar:$JAVAROOT/scala-library-2.9.1.jar:$JAVAROOT/scala-swing-2.9.1.jar:$JAVAROOT/scalap-2.9.1.jar:$JAVAROOT/tuner-0.9.jar</string>
 		<key>Properties</key>
 		<dict>
 			<key>apple.laf.useScreenMenuBar</key>
