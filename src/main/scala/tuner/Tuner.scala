@@ -20,6 +20,7 @@ import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
 import tuner.gui.R.InstallPackageDialog
 import tuner.gui.R.RNotInstalledDialog
+import tuner.gui.R.RJavaNotInstalledDialog
 import tuner.project._
 
 /**
@@ -55,9 +56,7 @@ object Tuner extends SimpleSwingApplication {
     if(!Rapp.pathOk) {
       RNotInstalledDialog
     } else if(!Rapp.jriOk) {
-        new InstallPackageDialog(List("rJava")) {
-          val installPackage = Rapp.installPackage(_)
-        }
+        RJavaNotInstalledDialog
     } else {
       val missingPackages = R.missingPackages
       if(missingPackages.isEmpty) {
