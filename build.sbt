@@ -1,4 +1,9 @@
 
+// assembly task
+import AssemblyKeys._
+
+assemblySettings
+
 name := "Tuner"
 
 version := "0.2"
