@@ -1,15 +1,15 @@
 
 name := "Tuner"
 
-version := "0.9"
+version := "0.2"
 
-scalaVersion := "2.8.1"
+scalaVersion := "2.9.1"
 
-libraryDependencies += "org.bitbucket.gabysbrain" % "datescala_2.8.1" % "0.9"
+libraryDependencies += "org.bitbucket.gabysbrain" % "datescala_2.9.1" % "0.9"
 
-libraryDependencies += "org.scala-lang" % "scala-swing" % "2.8.1"
+libraryDependencies += "org.scala-lang" % "scala-swing" % "2.9.1"
 
-libraryDependencies += "net.liftweb" % "lift-json_2.8.0" % "2.1"
+libraryDependencies += "net.liftweb" % "lift-json_2.9.1" % "2.4"
 
 libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
 
@@ -17,11 +17,7 @@ libraryDependencies += "org.apache.commons" % "commons-math" % "2.2"
 
 libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
-//libraryDependencies += "com.nativelibs4java" % "javacl" % "1.0.0-RC1"
-
-libraryDependencies += "org.scalatest" % "scalatest_2.8.1" % "1.5" % "test"
-
-libraryDependencies += "org.scala-tools.testing" % "scalacheck_2.8.1" % "1.8" % "test"
+libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 
