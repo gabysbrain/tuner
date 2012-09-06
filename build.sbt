@@ -10,11 +10,13 @@ version := "0.2"
 
 scalaVersion := "2.9.1"
 
-libraryDependencies += "org.bitbucket.gabysbrain" % "datescala_2.9.1" % "0.9"
+libraryDependencies += "org.bitbucket.gabysbrain" %% "datescala" % "0.9"
 
-libraryDependencies += "org.scala-lang" % "scala-swing" % "2.9.1"
+libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
+  deps :+ ("org.scala-lang" % "scala-swing" % sv)
+}
 
-libraryDependencies += "net.liftweb" % "lift-json_2.9.1" % "2.4"
+libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
 
 libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
 
