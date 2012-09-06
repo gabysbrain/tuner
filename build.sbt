@@ -32,6 +32,8 @@ javacOptions := Seq("-Xlint:deprecation")
 
 fork := true
 
+test in assembly := {}
+
 javaOptions := {
   val openglPath = "lib/opengl/macosx"
   val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
