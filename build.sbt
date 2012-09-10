@@ -4,6 +4,8 @@ import AssemblyKeys._
 
 assemblySettings
 
+webstartSettings
+
 name := "Tuner"
 
 version := "0.2"
@@ -43,4 +45,30 @@ parallelExecution := false
 
 mainClass := Some("tuner.Tuner")
 
+webstartGenConf := GenConf(
+  dname       = "CN=Thomas Torsney-Weir, OU=Developmetn, O=Simon Fraser University, L=Burnaby, ST=British Columbia, C=CA",
+  validity    = 365
+)
+
+webstartKeyConf := KeyConf(
+  keyStore    = file("keystore.jks"),
+  storePass   = "password",
+  alias       = "alias",
+  keyPass     = "password"
+)
+
+webstartJnlpConf    := Seq(JnlpConf(
+  mainClass		  = "tuner.Tuner",
+  fileName        = "tuner.jnlp",
+  codeBase        = "http://www.tomtorsneyweir.com/tuner",
+  title           = "Tuner",
+  vendor          = "",
+  description     = "The Tuner Application",
+  iconName        = None,
+  splashName      = None,
+  offlineAllowed  = true,
+  allPermissions  = true,
+  j2seVersion     = "1.6+",
+  maxHeapSize     = 1024
+))
 
