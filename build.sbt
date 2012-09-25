@@ -69,6 +69,7 @@ webstartJnlpConf    := Seq(JnlpConf(
   offlineAllowed  = true,
   allPermissions  = true,
   j2seVersion     = "1.6+",
-  maxHeapSize     = 1024
+  maxHeapSize     = 1024,
+  extensions      = List(ExtensionConf("jogl-all-awt", "http://jogamp.org/deployment/archive/rc/v2.0-rc10/jogl-all-awt.jnlp"))
 ))
 
