@@ -30,6 +30,9 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
 
+// Set the classpath assets to the assembly jar
+classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
+
 fork := true
 
 javaOptions := {
@@ -44,6 +47,9 @@ javaOptions := {
 parallelExecution := false
 
 mainClass := Some("tuner.Tuner")
+
+// testing stalls the build
+test in assembly := {}
 
 webstartGenConf := GenConf(
   dname       = "CN=Thomas Torsney-Weir, OU=Developmetn, O=Simon Fraser University, L=Burnaby, ST=British Columbia, C=CA",
