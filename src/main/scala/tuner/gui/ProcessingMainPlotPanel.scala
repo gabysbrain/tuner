@@ -4,7 +4,6 @@ import tuner.BoxRegion
 import tuner.ColorMap
 import tuner.Config
 import tuner.DimRanges
-import tuner.DrawTimer._
 import tuner.EllipseRegion
 import tuner.GpModel
 import tuner.Matrix2D
@@ -86,87 +85,56 @@ class ProcessingMainPlotPanel(val project:Viewable)
   def draw = {
     loop = false
 
-    // response 1 and response 2 times are intersperced through the code
-    var resp1Time:Timing = 0
-    var resp2Time:Timing = 0
-
     // Need to clear the font cache when resizing.  
     // Otherwise wakiness will ensue
     if((width, height) != Config.mainPlotDims) {
       clearFonts
     }
+    applet.background(Config.backgroundColor)
 
-    // static time is basically everything not related to the responses
-    // which includes checking if we need to draw one of the responses
-    val totalTime = timed {
-      applet.background(Config.backgroundColor)
+    // Update all the bounding boxes
+    val bbStartTime = System.currentTimeMillis
+    updateBounds(width, height)
+    val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
+    sliceSize = ss
+    sliceBounds = sb
+    val bbEndTime = System.currentTimeMillis
 
-      // Update all the bounding boxes
-      updateBounds(width, height)
-      val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
-      sliceSize = ss
-      sliceBounds = sb
+    // See if we should highlight the 2 plots
+    val phStartTime = System.currentTimeMillis
+    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(fld1, fld2)}
+    val phEndTime = System.currentTimeMillis
 
-      // See if we should highlight the 2 plots
-      mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(fld1, fld2)}
-
-      // Draw the colorbars
-      project.viewInfo.response1View.foreach {r =>
-        resp1Time += timed {
-          resp1Colorbar.draw(this, leftColorbarBounds.minX, 
-                                   leftColorbarBounds.minY,
-                                   leftColorbarBounds.width, 
-                                   leftColorbarBounds.height,
-                                   r, colormap(r, resp1Colormaps))
-        }
-      }
-      project.viewInfo.response2View.foreach {r =>
-        resp2Time += timed {
-          resp2Colorbar.draw(this, rightColorbarBounds.minX, 
-                                   rightColorbarBounds.minY,
-                                   rightColorbarBounds.width, 
-                                   rightColorbarBounds.height,
-                                   r, colormap(r, resp2Colormaps))
-        }
-      }
-
-      // Draw the axes
-      project.inputFields.foreach {fld =>
-        val rng = (fld, project.viewInfo.currentZoom.range(fld))
-        val (t1,t2) = drawAxes(rng)
-        resp1Time += t1
-        resp2Time += t2
-      }
-
-      // Draw the responses
-      val (t1, t2) = drawResponses
-      resp1Time += t1
-      resp2Time += t2
+    // Draw the colorbars
+    val cbStartTime = System.currentTimeMillis
+    project.viewInfo.response1View.foreach {r =>
+      resp1Colorbar.draw(this, leftColorbarBounds.minX, 
+                               leftColorbarBounds.minY,
+                               leftColorbarBounds.width, 
+                               leftColorbarBounds.height,
+                               r, colormap(r, resp1Colormaps))
     }
-
-    val staticTime = totalTime - resp1Time - resp2Time
-
-    println("times: total: " + totalTime + 
-                 " static: " + staticTime + 
-                     " r1: " + resp1Time + 
-                     " r2: " + resp2Time)
-
-    // Add a timing result
-    addStaticTiming(staticTime)
-    project.viewInfo.response1View.foreach {r1 =>
-      val model = project.gpModels(r1)
-      val radii = project.viewInfo.currentZoom.map {case (f,(lb,ub)) =>
-        (lb, ub, model.theta(f).toFloat)
-      }
-      addElipticalTiming(project.viewInfo.numUnclippedPoints, radii, resp1Time)
+    project.viewInfo.response2View.foreach {r =>
+      resp2Colorbar.draw(this, rightColorbarBounds.minX, 
+                               rightColorbarBounds.minY,
+                               rightColorbarBounds.width, 
+                               rightColorbarBounds.height,
+                               r, colormap(r, resp2Colormaps))
     }
-    project.viewInfo.response2View.foreach {r2 =>
-      val model = project.gpModels(r2)
-      val radii = project.viewInfo.currentZoom.map {case (f,(lb,ub)) =>
-        (lb, ub, model.theta(f).toFloat)
-      }
-      addElipticalTiming(project.viewInfo.numUnclippedPoints, radii, resp2Time)
+    val cbEndTime = System.currentTimeMillis
+
+    // Draw the axes
+    val axStartTime = System.currentTimeMillis
+    project.inputFields.foreach {fld =>
+      val rng = (fld, project.viewInfo.currentZoom.range(fld))
+      drawAxes(rng)
     }
+    val axEndTime = System.currentTimeMillis
+
+    // Draw the responses
+    val rrStartTime = System.currentTimeMillis
+    drawResponses
+    val rrEndTime = System.currentTimeMillis
 
     // Draw the fps counter
     //drawRenderTime(endTime-startTime)
@@ -189,10 +157,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  protected def drawResponses : (Timing,Timing) = {
-    var r1Time:Timing = 0
-    var r2Time:Timing = 0
-
+  protected def drawResponses = {
     // Find the closest sample
     val closestSample = project.closestSample(
       project.viewInfo.currentSlice.toList).toMap
@@ -205,23 +170,23 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
         if(xFld < yFld) {
           project.viewInfo.response1View.foreach {r1 => 
-            r1Time += timed {
-              drawResponse(xRange, yRange, r1)
-              drawResponseWidgets(xRange, yRange, closestSample)
-            }
+            val startTime = System.currentTimeMillis
+            drawResponse(xRange, yRange, r1)
+            drawResponseWidgets(xRange, yRange, closestSample)
+            val endTime = System.currentTimeMillis
+            //println("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
-            r2Time += timed {
-              drawResponse(xRange, yRange, r2)
-              drawResponseWidgets(xRange, yRange, closestSample)
-            }
+            val startTime = System.currentTimeMillis
+            drawResponse(xRange, yRange, r2)
+            drawResponseWidgets(xRange, yRange, closestSample)
+            val endTime = System.currentTimeMillis
+            //println("r2 draw time: " + (endTime-startTime) + "ms")
           }
         }
       }
     }
-    
-    (r1Time, r2Time)
   }
 
   protected def drawResponse(xRange:(String,(Float,Float)), 
@@ -281,68 +246,59 @@ class ProcessingMainPlotPanel(val project:Viewable)
       drawMask(xFld, yFld)
   }
 
-  private def drawAxes(range:(String,(Float,Float))) : (Timing,Timing) = {
-    // Timing code
+  private def drawAxes(range:(String,(Float,Float))) = {
     val (fld, (low, high)) = range
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
 
-    var r1Time = project.viewInfo.response1View match {
-      case None => Nanos(0)
-      case Some(r1) => timed {
-        // See if we draw the x axis
-        if(fld != lastField) {
-          val sliceDim = sliceBounds((fld, lastField))
-          val axis = resp1XAxes(fld)
-          val ticks = AxisTicks.ticks(low, high, 
-                                      sliceDim.width, 
-                                      Config.smallFontSize)
-          axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
-                          sliceDim.width, bottomAxisBounds.height, 
-                          fld, ticks)
-        }
-        // See if we draw the y axis
-        if(fld != firstField) {
-          val sliceDim = sliceBounds((firstField, fld))
-          val axis = resp1YAxes(fld)
-          val ticks = AxisTicks.ticks(low, high, 
-                                      sliceDim.height, 
-                                      Config.smallFontSize)
-          axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
-                          leftAxisBounds.width, sliceDim.height, 
-                          fld, ticks)
-        }
+    project.viewInfo.response1View.foreach {r1 =>
+      // See if we draw the x axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((fld, lastField))
+        val axis = resp1XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.width, 
+                                    Config.smallFontSize)
+        axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
+                        sliceDim.width, bottomAxisBounds.height, 
+                        fld, ticks)
+      }
+      // See if we draw the y axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((firstField, fld))
+        val axis = resp1YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
+                        leftAxisBounds.width, sliceDim.height, 
+                        fld, ticks)
       }
     }
-    var r2Time = project.viewInfo.response2View match {
-      case None => Nanos(0L)
-      case Some(r2) => timed {
-        // See if we draw the x axis
-        if(fld != lastField) {
-          val sliceDim = sliceBounds((lastField, fld))
-          val axis = resp2XAxes(fld)
-          val ticks = AxisTicks.ticks(low, high, 
-                                      sliceDim.width, 
-                                      Config.smallFontSize)
-          axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
-                          sliceDim.width, topAxisBounds.height, 
-                          fld, ticks)
-        }
-        // See if we draw the y axis
-        if(fld != firstField) {
-          val sliceDim = sliceBounds((fld, firstField))
-          val axis = resp2YAxes(fld)
-          val ticks = AxisTicks.ticks(low, high, 
-                                      sliceDim.height, 
-                                      Config.smallFontSize)
-          axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
-                          rightAxisBounds.width, sliceDim.height, 
-                          fld, ticks)
-        }
+    project.viewInfo.response2View.foreach {r2 =>
+      // See if we draw the x axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((lastField, fld))
+        val axis = resp2XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.width, 
+                                    Config.smallFontSize)
+        axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
+                        sliceDim.width, topAxisBounds.height, 
+                        fld, ticks)
+      }
+      // See if we draw the y axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((fld, firstField))
+        val axis = resp2YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
+                        rightAxisBounds.width, sliceDim.height, 
+                        fld, ticks)
       }
     }
-
-    (r1Time, r2Time)
   }
 
   private def drawMask(xFld:String, yFld:String) = {
