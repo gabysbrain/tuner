@@ -88,16 +88,11 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   val sqCholCols:Array[Double] = {
     val mtx = new Jama.Matrix(rInverse).times(sig2).chol.getL
     (0 until mtx.getRowDimension).map {r =>
-      //println("=====")
       val tmp = (0 until mtx.getColumnDimension).foldLeft(0.0){(s,c) => 
-        //println(c)
-        //println(s + mtx.get(r,c))
         s + mtx.get(r,c)
       }
-      //println("=====")
       tmp * tmp
     }.toArray
-    //mtx.getArray.map(x => math.pow(x.sum, 2))
   }
 
   def toJson = {
@@ -163,7 +158,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
 
     val endTime = System.currentTimeMillis
-    //println("pred time (n=" + numSamples + "): " + (endTime - startTime) + "ms")
     ((respDim, response), 
      (Config.errorField, errors), 
      (Config.gainField, gains))
@@ -178,28 +172,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
     outTbl
   }
-
-  /*
-  def sampleAnova(dimRanges:DimRanges,
-                  rowDim:(String,(Float,Float)), 
-                  colDim:(String,(Float,Float)),
-                  numSamples:Int = Config.estimateSampleDensity)
-        : Matrix2D = {
-    val response = Sampler.regularSlice(rowDim, colDim, numSamples)
-    val anovaFun = anova(dimRanges, List(rowDim._1, colDim._1))
-
-    response.rowIds.zipWithIndex.foreach {tmpx =>
-      val (xval,x) = tmpx
-      response.colIds.zipWithIndex.foreach {tmpy =>
-        val (yval, y) = tmpy
-        val pt = List((rowDim._1, xval.toDouble), (colDim._1, yval.toDouble))
-        val est = anovaFun(pt)
-        response.set(x, y, est.toFloat)
-      }
-    }
-    response
-  }
-  */
 
   def runSample(pt:List[(String, Float)]) : (Double, Double) = {
     val mapx = pt.toMap
@@ -220,11 +192,9 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   }
 
   private def corrFunction(p1:Array[Double], p2:Array[Double]) : Double = {
-    //println("corr: d1: " + p1.size + " d2: " + p2.size)
     var sum:Double = 0
     for(d <- 0 until p1.size) {
       sum += corrFunction(p1(d), p2(d), thetas(d), alphas(d))
-      //println("t: " + thetas(d) + " a: " + alphas(d))
     }
     math.exp(-sum)
   }
@@ -249,28 +219,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
     pt.zip(outVals).map {case ((fld,_),v2) => (fld, v2)}
   }
-
-  /*
-  def calcExpectedGain(ests:Matrix2D, errs:Matrix2D) : Matrix2D = {
-    val funcMax = ests.max
-    val gainMatrix = new Matrix2D(ests.rowIds, ests.colIds)
-    for(row <- 0 until ests.rows) {
-      for(col <- 0 until ests.columns) {
-        val est = ests.get(row, col)
-        val stddev = errs.get(row, col)
-
-        //println("t1 " + t1 + " t2 " + t2 + " t3 " + t3)
-        val expgain = calcExpectedGain(est, stddev)
-        if(!expgain.isNaN) {
-          gainMatrix.set(row, col, expgain.toFloat)
-        } else {
-          gainMatrix.set(row, col, 0f)
-        }
-      }
-    }
-    gainMatrix
-  }
-  */
 
   // Compute the density for a set of dimensions
   // This is assuming the GP model
@@ -298,7 +246,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
       val intDims = intIdx.map {i => (designPt(i), thetas(i), alphas(i))}
       intDims.zip(intRanges).map({tmp =>
         val ((xd, t, a), (mn, mx)) = tmp
-        //println(xd + " " + t + " " + a + " " + mn + " " + mx)
         LinAlg.simpsonsRule(
           {x => math.exp(-corrFunction(x, xd, t, a))}, mn, mx)
       }).product
@@ -336,45 +283,8 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     val t2 = cdf((est - curFuncMax) / stddev)
     val t3 = stddev * pdf((est - curFuncMax) / stddev)
 
-    //println("t1 " + t1 + " t2 " + t2 + " t3 " + t3)
     math.abs(t1 * t2 + t3)
   }
-
-  /*
-  def computeMaxGain : (List[(String,Double)], Double) = {
-    print("computing gain for " + respDim + "...")
-    val energyFunc = new DifferentiableMultivariateRealFunction {
-      def value(point:Array[Double]) : Double = {
-        val (est, err) = estimatePoint(point)
-        calcExpectedGain(est.toFloat, err.toFloat).toDouble
-      }
-
-      val gradient = new MultivariateVectorialFunction {
-        def value(point:Array[Double]) : Array[Double] = {
-          val pt = dims.zip(point).map {case (fld,v) => (fld,v.toFloat)}
-          val (_, grad) = GpModel.this.gradient(pt).unzip
-          grad.map(_.toDouble).toArray
-        }
-      }
-
-      def partialDerivative(k:Int) = new MultivariateRealFunction {
-        def value(point:Array[Double]) : Double = {
-          val grad = gradient.value(point)
-          grad(k)
-        }
-      }
-    }
-    val optim = new org.apache.commons.math.optimization.direct.PowellOptimizer
-    val maxPointId = Util.maxIndex(responses)
-    val optimPoint = optim.optimize(energyFunc, 
-                                    GoalType.MAXIMIZE, 
-                                    Array.fill(design(0).length)(0.5))
-                                    //design(maxPointId))
-    println("done")
-    println("optim: " + optimPoint.getValue)
-    (dims.zip(optimPoint.getPointRef), optimPoint.getValue)
-  }
-  */
 
   // NOTE: This assumes the gaussian correlation model!
   def levelSets(c:Float) : List[DimRanges] = {
@@ -389,8 +299,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
         val theta = thetas(i)
         val centerpt = designPt(i)
         val r2 = math.log((c - mean) * g) / (-theta)
-        //println("r2: " + r2)
-        //println("r: " + r)
         if(r2 >= 0) {
           val r = math.sqrt(r2)
           Some((field, ((centerpt - r).toFloat, (centerpt + r).toFloat)))

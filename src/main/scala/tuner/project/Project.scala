@@ -1,9 +1,7 @@
 package tuner.project
 
+import net.liftweb.json._
 import net.liftweb.json.Extraction._
-import net.liftweb.json.JsonParser._
-import net.liftweb.json.JsonAST._
-import net.liftweb.json.JsonDSL._
 
 import java.io.File
 import java.io.FileWriter

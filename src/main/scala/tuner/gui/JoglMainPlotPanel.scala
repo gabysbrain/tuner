@@ -29,6 +29,9 @@ object JoglMainPlotPanel {
 
 }
 
+/**
+ * The Hyperslice view of the GP model rendered using native OpenGL
+ */
 class JoglMainPlotPanel(project:Viewable) 
     extends ProcessingMainPlotPanel(project) {
 
@@ -211,7 +214,7 @@ class JoglMainPlotPanel(project:Viewable)
     }
 
     // the old looping code works fine
-    super.drawResponses
+    val drawTimes = super.drawResponses
 
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
       val gl = pgl.beginGL
@@ -221,6 +224,8 @@ class JoglMainPlotPanel(project:Viewable)
 
       pgl.endGL
     }
+
+    drawTimes
   }
 
   /**
@@ -313,6 +318,10 @@ class JoglMainPlotPanel(project:Viewable)
                     slice)
   }
 
+  /**
+   * Processes the texture through the filtered colormap 
+   * and draws everything on screen
+   */
   def drawResponseTexturedQuad(gl:GL2, 
                                colormap:SpecifiedColorMap, 
                                trans:Matrix4) = {

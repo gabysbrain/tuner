@@ -100,7 +100,7 @@ class ViewInfo(project:Viewable) {
   }
 
   def currentZoom : DimRanges = {
-    project.inputs.dimNames.toSet.diff(_currentZoom.ranges.keySet).foreach {k =>
+    project.inputs.dimNames.toSet.diff(_currentZoom.keySet).foreach {k =>
       _currentZoom.update(k, project.inputs.min(k), project.inputs.max(k))
     }
     _currentZoom
@@ -126,6 +126,15 @@ class ViewInfo(project:Viewable) {
       val (mn, mx) = currentZoom.range(fld)
       v >= mn && v <= mx
     }
+  }
+
+  /**
+   * The number of sample points that are unclipped 
+   * by the current zoom level
+   */
+  def numUnclippedPoints : Int = {
+    val (active,_) = project.viewFilterDesignSites
+    active.numRows
   }
 
   def toJson = {
