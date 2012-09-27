@@ -6,6 +6,8 @@ assemblySettings
 
 webstartSettings
 
+seq(Revolver.settings: _*)
+
 name := "Tuner"
 
 version := "0.2"
