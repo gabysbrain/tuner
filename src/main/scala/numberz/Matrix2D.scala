@@ -1,4 +1,4 @@
-package tuner
+package numberz
 
 class Matrix2D(rids:List[Float], 
                cids:List[Float]) {
