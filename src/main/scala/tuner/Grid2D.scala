@@ -1,7 +1,7 @@
 package tuner
 
-class Matrix2D(rids:List[Float], 
-               cids:List[Float]) {
+class Grid2D(rids:List[Float], 
+             cids:List[Float]) {
   
   val rowIds = rids
   val colIds = cids
@@ -41,7 +41,7 @@ class Matrix2D(rids:List[Float],
 
   def map(f:Float=>Float) = {
     val newData = data.map(f)
-    new Matrix2D(rowIds, colIds) {
+    new Grid2D(rowIds, colIds) {
       override val data = newData
       _min = newData.min
       _max = newData.max

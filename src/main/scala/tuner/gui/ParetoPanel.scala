@@ -1,7 +1,6 @@
 package tuner.gui
 
 import tuner.Config
-import tuner.Matrix2D
 import tuner.Sampler
 import tuner.SpecifiedColorMap
 import tuner.Table

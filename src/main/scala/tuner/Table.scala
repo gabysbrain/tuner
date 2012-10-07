@@ -113,11 +113,11 @@ class Table {
     new TreeSet[Float] ++ data.map({_.get(col)}).flatten
   }
 
-  def to2dMatrix(rowField:String, colField:String, valField:String) : Matrix2D = {
+  def to2dMatrix(rowField:String, colField:String, valField:String) : Grid2D = {
     // First collect all the columns from the datastore
     val rowVals = values(rowField)
     val colVals = values(colField)
-    val m = new Matrix2D(rowVals toList, colVals toList)
+    val m = new Grid2D(rowVals toList, colVals toList)
 
     // Now populate the matrix
     data.foreach(v => {

@@ -10,7 +10,7 @@ object Sampler {
 
   def regularSlice(rowDim:(String,(Float,Float)), 
                    colDim:(String,(Float,Float)),
-                   n:Int) : Matrix2D = {
+                   n:Int) : Grid2D = {
 
     def calcRng(minv:Float, maxv:Float) : List[Float] = {
       val mn = math.min(minv, maxv)
@@ -18,8 +18,8 @@ object Sampler {
       val step = (mx - mn) / (n-1)
       genLinSeq(mn, mx, step)
     }
-    new Matrix2D(calcRng(rowDim._2._1, rowDim._2._2), 
-                 calcRng(colDim._2._1, colDim._2._2))
+    new Grid2D(calcRng(rowDim._2._1, rowDim._2._2), 
+               calcRng(colDim._2._1, colDim._2._2))
   }
 
   /**

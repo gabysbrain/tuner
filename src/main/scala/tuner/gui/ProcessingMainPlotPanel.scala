@@ -6,7 +6,7 @@ import tuner.Config
 import tuner.DimRanges
 import tuner.EllipseRegion
 import tuner.GpModel
-import tuner.Matrix2D
+import tuner.Grid2D
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
@@ -63,7 +63,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
   def plotData(model:GpModel,
                xDim:(String,(Float,Float)), 
                yDim:(String,(Float,Float)), 
-               slice:Map[String,Float]) : Matrix2D = {
+               slice:Map[String,Float]) : Grid2D = {
     // Progressive rendering
     val idealSize = project.viewInfo.estimateSampleDensity
     val sample = model.sampleSlice(xDim, yDim, slice.toList, idealSize)

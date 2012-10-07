@@ -123,7 +123,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
                   colDim:(String,(Float,Float)),
                   slices:List[(String,Float)], 
                   numSamples:Int)
-      : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
+      : ((String, Grid2D), (String, Grid2D), (String, Grid2D)) = {
     
     val arrSlice = Array.fill(dims.length)(0.0)
     val sliceMap = slices.toMap
@@ -136,8 +136,8 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     // generate one matrix from scratch and then copy the rest
     val startTime = System.currentTimeMillis
     val response = Sampler.regularSlice(rowDim, colDim, numSamples)
-    val errors = new Matrix2D(response.rowIds, response.colIds)
-    val gains = new Matrix2D(response.rowIds, response.colIds)
+    val errors = new Grid2D(response.rowIds, response.colIds)
+    val gains = new Grid2D(response.rowIds, response.colIds)
 
     response.rowIds.zipWithIndex.foreach {tmpx =>
       val (xval,x) = tmpx
