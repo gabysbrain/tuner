@@ -4,15 +4,6 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
-import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction
-import org.apache.commons.math.analysis.MultivariateRealFunction
-import org.apache.commons.math.analysis.MultivariateVectorialFunction
-import org.apache.commons.math.optimization.GoalType
-import org.apache.commons.math.optimization.direct.MultiDirectional
-import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer
-import org.apache.commons.math.optimization.general.NonLinearConjugateGradientOptimizer
-import org.apache.commons.math.optimization.general.ConjugateGradientFormula
-
 import numberz.Matrix
 import numberz.Vector
 

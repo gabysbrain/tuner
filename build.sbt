@@ -24,8 +24,6 @@ libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
 
 libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
 
-libraryDependencies += "org.apache.commons" % "commons-math" % "2.2"
-
 libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
