@@ -6,6 +6,7 @@ import scala.collection.IndexedSeqOptimized
 import cern.colt.function.tdouble.DoubleFunction
 import cern.colt.matrix.tdouble.DoubleMatrix1D
 import cern.colt.matrix.tdouble.DoubleMatrix2D
+import cern.colt.matrix.tdouble.DoubleFactory2D
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D
 import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix2D
 import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra
@@ -14,6 +15,8 @@ object Matrix {
   
   def apply(values:Array[Array[Double]]) = new Matrix(values)
   def apply(values:Traversable[Traversable[Double]]) = new Matrix(values)
+
+  def identity(size:Int) = new Matrix(DoubleFactory2D.dense.identity(size))
 }
 
 class Matrix(val proxy:DoubleMatrix2D) {
@@ -21,7 +24,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
   def this(values:Array[Array[Double]]) = this(new DenseDoubleMatrix2D(values))
   def this(values:Traversable[Traversable[Double]]) = this(values.map(_.toArray).toArray)
 
-  //def apply(col:Int) : Vector = column(col)
+  def apply(row:Int, col:Int) : Double = proxy.getQuick(row, col)
 
   def column(col:Int) : Vector = new Vector(proxy.viewColumn(col))
   def row(r:Int) : Vector = new Vector(proxy.viewRow(r))
@@ -87,6 +90,19 @@ class Matrix(val proxy:DoubleMatrix2D) {
   }
 
   def toList : List[List[Double]] = proxy.toArray.map {_.toList} toList
+
+  def toColumnArray : Array[Double] = proxy.vectorize().toArray
+  def toRowArray : Array[Double] = proxy.toArray.flatten
+
+  override def toString : String = {
+    (0 until rows).map({r =>
+      "|" + 
+      (0 until columns).map {c => 
+        apply(r, c).toString
+      }.reduceLeft(_ + " " + _) + 
+      "|"
+    }).reduceLeft(_ + "\n" + _)
+  }
 
   protected def algebra = proxy match {
     case _:DenseDoubleMatrix2D => DenseDoubleAlgebra.DEFAULT

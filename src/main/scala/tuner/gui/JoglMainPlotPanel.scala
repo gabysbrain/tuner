@@ -37,7 +37,7 @@ class JoglMainPlotPanel(project:Viewable)
 
   val debugGl = true
 
-  val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
+  val projectionMatrix = Matrix4.translate(-1, -1, 0) dot Matrix4.scale(2, 2, 1)
 
   // Convenient to keep track of the current size
   var panelSize = (0f, 0f)
@@ -185,8 +185,8 @@ class JoglMainPlotPanel(project:Viewable)
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformations
-    val ttlProj = projectionMatrix * dataTrans * dataScale
-    val ttlPlot = projectionMatrix * plotTrans * plotScale
+    val ttlProj = projectionMatrix dot dataTrans dot dataScale
+    val ttlPlot = projectionMatrix dot plotTrans dot plotScale
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 

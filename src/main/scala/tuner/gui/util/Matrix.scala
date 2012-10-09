@@ -1,6 +1,6 @@
 package tuner.gui.util
 
-import Jama.Matrix
+import numberz.Matrix
 
 object Matrix4 {
   def apply( v1:Float,  v5:Float,  v9:Float, v13:Float, 
@@ -13,7 +13,12 @@ object Matrix4 {
                 v4, v8, v12, v16)
   }
 
-  def identity = new Matrix4(Matrix.identity(4, 4).getColumnPackedCopy)
+  def identity = new Matrix4(
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  )
 
   def scale(x:Float, y:Float, z:Float) = new Matrix4(
     x, 0, 0, 0,
@@ -28,38 +33,21 @@ object Matrix4 {
     0, 0, 1, z,
     0, 0, 0, 1
   )
-
-  implicit def mtx2Matrix4(mm:Matrix) = new Matrix4(mm.getColumnPackedCopy)
 }
 
-class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float, 
-               v2:Float,  v6:Float, v10:Float, v14:Float, 
-               v3:Float,  v7:Float, v11:Float, v15:Float, 
-               v4:Float,  v8:Float, v12:Float, v16:Float)
-  extends Matrix(Array( v1,  v2,  v3,  v4, 
-                        v5,  v6,  v7,  v8, 
-                        v9, v10, v11, v12, 
-                       v13, v14, v15, v16).map(_.toDouble), 4) {
+class Matrix4(val proxy:Matrix) {
 
-  def this(vv:Array[Double]) = 
-    this( vv(0).toFloat,  vv(4).toFloat,  vv(8).toFloat, vv(12).toFloat, 
-          vv(1).toFloat,  vv(5).toFloat,  vv(9).toFloat, vv(13).toFloat, 
-          vv(2).toFloat,  vv(6).toFloat, vv(10).toFloat, vv(14).toFloat, 
-          vv(3).toFloat,  vv(7).toFloat, vv(11).toFloat, vv(15).toFloat)
+  def this( v1:Float,  v5:Float,  v9:Float, v13:Float, 
+            v2:Float,  v6:Float, v10:Float, v14:Float, 
+            v3:Float,  v7:Float, v11:Float, v15:Float, 
+            v4:Float,  v8:Float, v12:Float, v16:Float) = 
+        this(new Matrix(Array(
+          Array( v1.toDouble, v5.toDouble,  v9.toDouble, v13.toDouble),
+          Array( v2.toDouble, v6.toDouble, v10.toDouble, v14.toDouble),
+          Array( v3.toDouble, v7.toDouble, v11.toDouble, v15.toDouble),
+          Array( v4.toDouble, v8.toDouble, v12.toDouble, v16.toDouble))))
 
-  def *(m:Matrix4) : Matrix4 = times(m)
-
-  def toArray = getColumnPackedCopy.map(_.toFloat)
-
-  override def toString = {
-    (0 until getRowDimension).map({r =>
-      "|" + 
-      (0 until getColumnDimension).map {c => 
-        get(r, c).toString
-      }.reduceLeft(_ + " " + _) + 
-      "|"
-    }).reduceLeft(_ + "\n" + _)
-  }
-
+  def dot(m2:Matrix4) : Matrix4 = new Matrix4(proxy dot m2.proxy)
+  def toArray = proxy.toColumnArray map {_.toFloat}
 }
 
