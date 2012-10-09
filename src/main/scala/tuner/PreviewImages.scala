@@ -1,5 +1,7 @@
 package tuner
 
+import tuner.gp.GpModel
+
 import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PImage

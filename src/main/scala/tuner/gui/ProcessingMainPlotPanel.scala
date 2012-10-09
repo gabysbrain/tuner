@@ -5,12 +5,12 @@ import tuner.ColorMap
 import tuner.Config
 import tuner.DimRanges
 import tuner.EllipseRegion
-import tuner.GpModel
 import tuner.Grid2D
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
+import tuner.gp.GpModel
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis

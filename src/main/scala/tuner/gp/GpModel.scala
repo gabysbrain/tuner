@@ -1,4 +1,4 @@
-package tuner
+package tuner.gp
 
 import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
@@ -9,6 +9,11 @@ import numberz.Vector
 
 import org.rosuda.JRI.RList
 
+import tuner.Config
+import tuner.DimRanges
+import tuner.Grid2D
+import tuner.Sampler
+import tuner.Table
 import tuner.util.Util
 
 case class GpSpecification(

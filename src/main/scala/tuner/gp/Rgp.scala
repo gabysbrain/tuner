@@ -1,7 +1,10 @@
-package tuner
+package tuner.gp
 
 import org.rosuda.JRI.RList
 import org.rosuda.JRI.REXP
+
+import tuner.Config
+import tuner.R
 
 import numberz.Vector
 import numberz.Matrix

@@ -1,10 +1,10 @@
 package tuner.gui
 
 import tuner.Config
-import tuner.GpModel
 import tuner.Sampler
 import tuner.Table
 import tuner.geom.Rectangle
+import tuner.gp.GpModel
 import tuner.gui.event.ReadyToDraw
 import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram

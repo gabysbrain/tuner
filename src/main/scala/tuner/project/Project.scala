@@ -17,8 +17,6 @@ import tuner.CandidateGenerator
 import tuner.Config
 import tuner.ConsoleLine
 import tuner.DimRanges
-import tuner.GpModel
-import tuner.GpSpecification
 import tuner.HistoryManager
 import tuner.HistorySpecification
 import tuner.PreviewImages
@@ -26,7 +24,6 @@ import tuner.Progress
 import tuner.ProgressComplete
 import tuner.Region
 import tuner.RegionSpecification
-import tuner.Rgp
 import tuner.SampleRunner
 import tuner.SamplesCompleted
 import tuner.SamplingComplete
@@ -35,6 +32,9 @@ import tuner.Table
 import tuner.ViewInfo
 import tuner.VisInfo
 import tuner.error.ProjectLoadException
+import tuner.gp.GpModel
+import tuner.gp.GpSpecification
+import tuner.gp.Rgp
 import tuner.util.Density2D
 import tuner.util.Path
 
