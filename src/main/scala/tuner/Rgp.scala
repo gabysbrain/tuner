@@ -3,6 +3,9 @@ package tuner
 import org.rosuda.JRI.RList
 import org.rosuda.JRI.REXP
 
+import numberz.Vector
+import numberz.Matrix
+
 import scala.io.Source
 
 object Rgp {
@@ -33,7 +36,15 @@ class Rgp(designFile:String) {
       format(Rgp.MODELRVAR, Rgp.DESIGNRVAR, rvect, responseField))
     println("done")
 
-    new GpModel(fit.asList, paramFields, responseField, errorField)
+    val fm = fit.asList
+    new GpModel(new Vector(fm.at("beta").asDoubleArray),
+                new Vector(fm.at("a").asDoubleArray),
+                fm.at("mu").asDouble,
+                fm.at("sig2").asDouble,
+                new Matrix(fm.at("X").asDoubleMatrix),
+                new Vector(fm.at("Z").asDoubleArray),
+                new Matrix(fm.at("invVarMatrix").asDoubleMatrix),
+                paramFields, responseField, errorField)
   }
 
   // Splits a file into its directory and filename components

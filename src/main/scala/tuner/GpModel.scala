@@ -60,16 +60,6 @@ class GpModel(val thetas:numberz.Vector, val alphas:numberz.Vector,
            (Vector.ones(responses.size) dot (rInverse dot Vector.ones(responses.size))),
          design, responses, rInverse, dims, respDim, errDim)
 
-  def this(fm:RList, dims:List[String], respDim:String, errDim:String) =
-    this(new Vector(fm.at("beta").asDoubleArray),
-         new Vector(fm.at("a").asDoubleArray),
-         fm.at("mu").asDouble,
-         fm.at("sig2").asDouble,
-         new Matrix(fm.at("X").asDoubleMatrix),
-         new Vector(fm.at("Z").asDoubleArray),
-         new Matrix(fm.at("invVarMatrix").asDoubleMatrix),
-         dims, respDim, errDim)
-
   // Also precompute rInverse . (responses - mean)
   val corrResponses = rInverse dot (responses map {_ - mean})
 
