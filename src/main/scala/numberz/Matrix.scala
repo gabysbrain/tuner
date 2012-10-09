@@ -21,7 +21,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
   def this(values:Array[Array[Double]]) = this(new DenseDoubleMatrix2D(values))
   def this(values:Traversable[Traversable[Double]]) = this(values.map(_.toArray).toArray)
 
-  def apply(col:Int) : Vector = column(col)
+  //def apply(col:Int) : Vector = column(col)
 
   def column(col:Int) : Vector = new Vector(proxy.viewColumn(col))
   def row(r:Int) : Vector = new Vector(proxy.viewRow(r))
@@ -41,8 +41,8 @@ class Matrix(val proxy:DoubleMatrix2D) {
     (new Matrix(tmp.getL), new Matrix(tmp.getLtranspose))
   }
 
-  def size = length
-  def length : Int = proxy.size toInt
+  def rows = proxy.rows
+  def columns = proxy.columns
 
   def mapAll(f:Double=>Double) : Matrix = {
     val funcObj = new DoubleFunction {
@@ -55,7 +55,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
 
   def mapCols(f:Vector=>Vector) : Matrix = {
     val outMtx = proxy.copy
-    (0 to outMtx.columns).foreach {i =>
+    (0 until outMtx.columns).foreach {i =>
       val col = outMtx.viewColumn(i)
       col.assign(f(new Vector(col)).proxy)
     }
@@ -63,7 +63,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
   }
   def mapCols(f:Vector=>Double) : Vector = {
     val outVect = new DenseDoubleMatrix1D(proxy.columns)
-    (0 to proxy.columns).foreach {i =>
+    (0 until proxy.columns).foreach {i =>
       val col = proxy.viewColumn(i)
       outVect.setQuick(i, f(new Vector(col)))
     }
@@ -71,7 +71,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
   }
   def mapRows(f:Vector=>Vector) : Matrix = {
     val outMtx = proxy.copy
-    (0 to outMtx.rows).foreach {i =>
+    (0 until outMtx.rows).foreach {i =>
       val row = outMtx.viewRow(i)
       row.assign(f(new Vector(row)).proxy)
     }
@@ -79,7 +79,7 @@ class Matrix(val proxy:DoubleMatrix2D) {
   }
   def mapRows(f:Vector=>Double) : Vector = {
     val outVect = new DenseDoubleMatrix1D(proxy.rows)
-    (0 to proxy.rows).foreach {i =>
+    (0 until proxy.rows).foreach {i =>
       val row = proxy.viewRow(i)
       outVect.setQuick(i, f(new Vector(row)))
     }
