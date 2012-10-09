@@ -35,8 +35,8 @@ class Prosection(gl:GL2, numDims:Int, points:Matrix, values:Vector)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glPointSize(10)
     gl.glBegin(GL.GL_POINTS)
-    for(r <- 0 until points.size) {
-      val pt = points(r).toArray
+    for(r <- 0 until points.rows) {
+      val pt = points.row(r).toArray
       // Draw all the point data
       for(i <- 0 until Prosection.numVec4(numDims)) {
         val ptId = attribId("data" + i)

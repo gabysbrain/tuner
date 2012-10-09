@@ -66,8 +66,8 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     gl.glClearColor(baseValue.toFloat, 0f, 0f, 1f)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
-    for(r <- 0 until points.size) {
-      val pt = points(r).toArray
+    for(r <- 0 until points.rows) {
+      val pt = points.row(r).toArray
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until Convolver.numVec4(numDims)) {
