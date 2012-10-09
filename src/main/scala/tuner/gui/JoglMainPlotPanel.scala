@@ -78,7 +78,7 @@ class JoglMainPlotPanel(project:Viewable)
             gl.getGL2, project.inputFields.size, 
             "/shaders/est.plot.frag.glsl",
             model.mean, model.sig2,
-            model.thetas.toArray,
+            model.thetas,
             model.design, model.corrResponses)
         println(estShader.attribIds)
         (resFld -> estShader)

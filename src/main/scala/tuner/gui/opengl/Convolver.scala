@@ -6,6 +6,9 @@ import javax.media.opengl.GLAutoDrawable
 import tuner.Config
 import tuner.gui.util.Matrix4
 
+import numberz.Vector
+import numberz.Matrix
+
 /**
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
@@ -13,9 +16,9 @@ import tuner.gui.util.Matrix4
 object Convolver {
   def fromResource(gl:GL2, numDims:Int, fragment:String,
                            baseValue:Double, globalFactor:Double, 
-                           distanceWeights:Array[Double], 
-                           points:Array[Array[Double]], 
-                           coefficients:Array[Double]) = {
+                           distanceWeights:Vector, 
+                           points:Matrix, 
+                           coefficients:Vector) = {
     val fragSource = Glsl.readResource(fragment)
 
     new Convolver(gl, numDims, fragSource,
@@ -31,9 +34,9 @@ object Convolver {
 
 class Convolver(gl:GL2, numDims:Int, fragment:String,
                         baseValue:Double, globalFactor:Double, 
-                        distanceWeights:Array[Double], 
-                        points:Array[Array[Double]], 
-                        coefficients:Array[Double])
+                        distanceWeights:Vector, 
+                        points:Matrix,
+                        coefficients:Vector)
     extends Glsl(gl, new ConvolutionVertexShader(numDims).toString,
                      None, fragment, List()) {
   
@@ -46,7 +49,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     gl.glUniform1f(uniformId("maxSqDist"), maxSqDist.toFloat)
 
     // Send down all the theta values
-    val thetaArray = distanceWeights ++ Array(0.0, 0.0, 0.0, 0.0)
+    val thetaArray = distanceWeights.toArray ++ Array(0.0, 0.0, 0.0, 0.0)
     for(i <- 0 until Convolver.numVec4(numDims)) {
       val tId = uniformId("theta" + i)
       gl.glUniform4f(tId, thetaArray(i*4+0).toFloat, 
@@ -64,7 +67,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
     for(r <- 0 until points.size) {
-      val pt = points(r)
+      val pt = points(r).toArray
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until Convolver.numVec4(numDims)) {

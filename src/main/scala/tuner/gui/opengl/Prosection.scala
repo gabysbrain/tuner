@@ -6,13 +6,16 @@ import javax.media.opengl.GLAutoDrawable
 import tuner.Config
 import tuner.gui.util.Matrix4
 
+import numberz.Matrix
+import numberz.Vector
+
 /**
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
  */
 object Prosection {
   def fromResource(
-      gl:GL2, numDims:Int, points:Array[Array[Double]], values:Array[Double]) = 
+      gl:GL2, numDims:Int, points:Matrix, values:Vector) = 
     new Prosection(gl, numDims, points, values)
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -20,9 +23,7 @@ object Prosection {
 
 }
 
-class Prosection(gl:GL2, numDims:Int, 
-                         points:Array[Array[Double]], 
-                         values:Array[Double])
+class Prosection(gl:GL2, numDims:Int, points:Matrix, values:Vector)
     extends Glsl(gl, new ProsectionVertexShader(numDims).toString,
                      None, Glsl.readResource("/shaders/prosection.frag.glsl"), 
                      List()) {
@@ -35,7 +36,7 @@ class Prosection(gl:GL2, numDims:Int,
     gl.glPointSize(10)
     gl.glBegin(GL.GL_POINTS)
     for(r <- 0 until points.size) {
-      val pt = points(r)
+      val pt = points(r).toArray
       // Draw all the point data
       for(i <- 0 until Prosection.numVec4(numDims)) {
         val ptId = attribId("data" + i)
