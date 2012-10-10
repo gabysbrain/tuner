@@ -1,65 +1,44 @@
 package numberz
 
-import scala.collection.IndexedSeq
-import scala.collection.IndexedSeqOptimized
+import org.apache.commons.math3.linear.ArrayRealVector
+import org.apache.commons.math3.linear.RealVector
 
-import cern.colt.function.tdouble.DoubleFunction
-import cern.colt.function.tdouble.DoubleDoubleFunction
-import cern.colt.matrix.tdouble.DoubleMatrix1D
-import cern.colt.matrix.tdouble.impl.DenseDoubleMatrix1D
-import cern.colt.matrix.tdouble.algo.DenseDoubleAlgebra
-
-object Vector { //extends TraversableFactory[Vector] {
+object Vector { 
   
   def apply(values:Array[Double]) = new Vector(values)
   def apply(values:Traversable[Double]) = new Vector(values)
 
-  def ones(size:Int) = new numberz.Vector(List.fill(size)(1.0))
+  def zeros(size:Int) = new Vector(Array.fill(size)(0.0))
+  def ones(size:Int) = new Vector(Array.fill(size)(1.0))
 }
 
-class Vector(val proxy:DoubleMatrix1D) {
+class Vector(val proxy:RealVector) {
 
-  def this(values:Array[Double]) = this(new DenseDoubleMatrix1D(values))
+  def this(values:Array[Double]) = this(new ArrayRealVector(values))
   def this(values:Traversable[Double]) = this(values.toArray)
 
-  def apply(i:Int) : Double = proxy.getQuick(i)
+  def apply(idx:Int) = proxy.getEntry(idx)
 
-  def dot(v:Vector) : Double = algebra.mult(proxy, v.proxy)
+  def +(v:Double) = new Vector(proxy.mapAdd(v))
+  def -(v:Double) = new Vector(proxy.mapSubtract(v))
+  def *(v:Double) = new Vector(proxy.mapMultiply(v))
+  def *(v:Vector) = new Vector(toArray.zip(v.toArray).map {x=>x._1*x._2})
+  def /(v:Double) = new Vector(proxy.mapDivide(v))
 
-  def *(v:Double) = this map (_ * v)
-  def *(v:Vector) = {
-    val mult = new DoubleDoubleFunction {
-      def apply(x:Double, y:Double) : Double = x * y
-    }
-    val outVect = proxy.copy
-    outVect.assign(v.proxy, mult)
-    new Vector(outVect)
-  }
+  def dot(v2:Vector) : Double = proxy.dotProduct(v2.proxy)
 
-  def /(v:Double) = this map (_ / v)
-
-  def sum : Double = proxy.zSum
-
-  def min : Double = proxy.getMinLocation()(0)
-  def max : Double = proxy.getMaxLocation()(0)
-
-  def size = length
-  def length : Int = proxy.size toInt
+  def min = toArray.min
+  def max = toArray.max
+  def sum = toArray.sum
 
   def map(f:Double=>Double) : Vector = {
-    val funcObj = new DoubleFunction {
-      def apply(v:Double) : Double = f(v)
-    }
-    val outVect = proxy.copy
-    outVect.assign(funcObj)
-    new Vector(outVect)
+    new Vector(toArray.map(f))
   }
 
-  def toArray : Array[Double] = proxy.toArray()
-  def toList : List[Double] = proxy.toArray().toList
+  def length = proxy.getDimension
+  def size = length
 
-  protected def algebra = proxy match {
-    case _:DenseDoubleMatrix1D => DenseDoubleAlgebra.DEFAULT
-  }
+  def toList : List[Double] = toArray.toList
+  def toArray : Array[Double] = proxy.toArray
 }
 

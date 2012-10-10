@@ -20,6 +20,8 @@ libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
 
+libraryDependencies += "org.apache.commons" % "commons-math3" % "3.0"
+
 libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
 
 libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
