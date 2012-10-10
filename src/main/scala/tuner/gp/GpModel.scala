@@ -30,11 +30,10 @@ case class GpSpecification(
 
 object GpModel {
   def fromJson(json:GpSpecification) = {
-    new GpModel(numberz.Vector(json.thetas), numberz.Vector(json.alphas), 
+    new GpModel(Vector(json.thetas), Vector(json.alphas), 
                 json.mean, json.sigma2,
-                numberz.Matrix(json.designMatrix),
-                numberz.Vector(json.responses),
-                numberz.Matrix(json.invCorMtx),
+                Matrix(json.designMatrix), Vector(json.responses),
+                Matrix(json.invCorMtx),
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
@@ -42,23 +41,23 @@ object GpModel {
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
 //type Model = Int => String
-class GpModel(val thetas:numberz.Vector, val alphas:numberz.Vector, 
+class GpModel(val thetas:Vector, val alphas:Vector, 
               val mean:Double, val sig2:Double, 
-              val design:numberz.Matrix, val responses:numberz.Vector, 
-              val rInverse:numberz.Matrix, 
+              val design:Matrix, val responses:Vector, 
+              val rInverse:Matrix, 
               val dims:List[String], val respDim:String, val errDim:String) {
 
-  def this(thetas:numberz.Vector, alphas:numberz.Vector, mean:Double, 
-           design:numberz.Matrix, responses:numberz.Vector, 
-           rInverse:numberz.Matrix, 
+  def this(thetas:Vector, alphas:Vector, mean:Double, 
+           design:Matrix, responses:Vector, 
+           rInverse:Matrix, 
            dims:List[String], respDim:String, errDim:String) =
     this(thetas, alphas, mean, 
          (responses.map {_ - mean} dot (rInverse dot responses.map {_ - mean})) / responses.size,
          design, responses, rInverse, dims, respDim, errDim)
 
-  def this(thetas:numberz.Vector, alphas:numberz.Vector, 
-           design:numberz.Matrix, responses:numberz.Vector, 
-           rInverse:numberz.Matrix, 
+  def this(thetas:Vector, alphas:Vector, 
+           design:Matrix, responses:Vector, 
+           rInverse:Matrix, 
            dims:List[String], respDim:String, errDim:String) =
     this(thetas, alphas, 
          (Vector.ones(responses.size) dot (rInverse dot responses)) /
@@ -172,7 +171,7 @@ class GpModel(val thetas:numberz.Vector, val alphas:numberz.Vector,
 
   private def corrFunction(p1:Vector, p2:Vector) : Double = {
     var sum:Double = 0
-    for(d <- 0 until p1.size) {
+    for(d <- 0 until p1.length) {
       sum += corrFunction(p1(d), p2(d), thetas(d), alphas(d))
     }
     math.exp(-sum)

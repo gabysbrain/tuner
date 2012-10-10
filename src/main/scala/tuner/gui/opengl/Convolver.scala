@@ -6,8 +6,8 @@ import javax.media.opengl.GLAutoDrawable
 import tuner.Config
 import tuner.gui.util.Matrix4
 
-import numberz.Vector
 import numberz.Matrix
+import numberz.Vector
 
 /**
  * Special loader for the continuous plot stuff since 

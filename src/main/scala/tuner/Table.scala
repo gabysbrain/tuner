@@ -148,6 +148,8 @@ class Table {
     data(row) + (Config.rowField -> row)
   }
 
+  def map[A](f:Table.Tuple=>A) = data.map(f)
+
   // Adds all rows of t to this table
   def merge(t:Table) = {
     for(r <- 0 until t.numRows)

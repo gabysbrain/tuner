@@ -6,8 +6,8 @@ import org.rosuda.JRI.REXP
 import tuner.Config
 import tuner.R
 
-import numberz.Vector
 import numberz.Matrix
+import numberz.Vector
 
 import scala.io.Source
 
@@ -17,10 +17,8 @@ object Rgp {
   val MODELRVAR = "gp.fit"
 }
 
-class Rgp(designFile:String) {
+class Rgp(designFile:String) extends GpBuilder(designFile) {
   
-  val (imageDir, sampleFile) = splitFile(designFile)
-
   // Setup the sparkle gp stuff
   R.runCommand("source('%s')".format(Config.gpRScript))
 
@@ -28,8 +26,8 @@ class Rgp(designFile:String) {
                  responseField:String, 
                  errorField:String) : GpModel = {
     print("building model...")
-    // Read the design file
 
+    // Read the design file
     val rDesignFile = designFile.replace("\\", "/")
     R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, rDesignFile))
     // Create an r vector of all the strings
@@ -48,13 +46,6 @@ class Rgp(designFile:String) {
                 new Vector(fm.at("Z").asDoubleArray),
                 new Matrix(fm.at("invVarMatrix").asDoubleMatrix),
                 paramFields, responseField, errorField)
-  }
-
-  // Splits a file into its directory and filename components
-  private def splitFile(fname:String) : (String,String) = {
-    import java.io.File
-    val f = new File(fname)
-    (f.getParent, f.getName)
   }
 }
 
