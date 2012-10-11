@@ -26,6 +26,7 @@ class Vector(val proxy:RealVector) {
   def /(v:Double) = new Vector(proxy.mapDivide(v))
 
   def dot(v2:Vector) : Double = proxy.dotProduct(v2.proxy)
+  def outer(v2:Vector) : Matrix = new Matrix(proxy.outerProduct(v2.proxy))
 
   def min = toArray.min
   def max = toArray.max
