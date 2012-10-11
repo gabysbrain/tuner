@@ -7,7 +7,7 @@ import org.scalatest.prop.Checkers
 object Util {
   
   def fieldNameType : Gen[String] = for {
-    n <- Gen.choose(1,10)
+    n <- Gen.choose(1,15)
     str <- Gen.listOfN(n, Gen.oneOf(Gen.choose('a','z'),
                                     Gen.choose('A', 'Z')))
   } yield str.mkString

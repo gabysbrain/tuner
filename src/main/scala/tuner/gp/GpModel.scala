@@ -32,8 +32,9 @@ object GpModel {
   def fromJson(json:GpSpecification) = {
     new GpModel(Vector(json.thetas), Vector(json.alphas), 
                 json.mean, json.sigma2,
-                Matrix(json.designMatrix), Vector(json.responses),
-                Matrix(json.invCorMtx),
+                Matrix.fromColumnMajor(json.designMatrix), 
+                Vector(json.responses),
+                Matrix.fromColumnMajor(json.invCorMtx),
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
@@ -67,18 +68,10 @@ class GpModel(val thetas:Vector, val alphas:Vector,
   // Also precompute rInverse . (responses - mean)
   val corrResponses = rInverse dot (responses map {_ - mean})
 
-  // Also precompute the square of the sum of the rows 
-  // of the cholesky decomposition of rInverse
-  val sqCholCols:Vector = {
-    val (tmp, _) = (rInverse * sig2).chol
-    val ttls = tmp.mapRows {row:Vector => row.sum}
-    ttls * ttls
-  }
-
   def toJson = {
     GpSpecification(
       respDim, dims, thetas.toList, alphas.toList, mean, sig2,
-      design.toList, responses.toList, rInverse.toList)
+      design.toColumnMajorList, responses.toList, rInverse.toColumnMajorList)
   }
 
   def maxGain(range:DimRanges):Float = {

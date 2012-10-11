@@ -17,7 +17,9 @@ class NumberzGp(designFile:String) extends GpBuilder(designFile) {
                  responseField:String,
                  errorField:String) : GpModel = {
 
-    val locs = Matrix(data map {tpl => paramFields.map {f => tpl(f).toDouble}})
+    val locs = Matrix.fromRowMajor(
+      data map {tpl => paramFields.map {f => tpl(f).toDouble}}
+    )
     val resps = Vector(data map {tpl => tpl(responseField).toDouble})
 
     val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)

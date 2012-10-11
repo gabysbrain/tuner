@@ -11,22 +11,30 @@ import org.apache.commons.math3.linear.RealMatrix
 
 object Matrix {
   
-  def apply(values:Array[Array[Double]]) = new Matrix(values)
-  def apply(values:Traversable[Traversable[Double]]) = new Matrix(values)
+  def fromRowMajor(values:Array[Array[Double]]) : Matrix = 
+    new Matrix(new Array2DRowRealMatrix(values))
+  def fromRowMajor(values:Traversable[Traversable[Double]]) : Matrix = 
+    fromRowMajor(values.map {_.toArray} toArray)
+  def fromColumnMajor(values:Array[Array[Double]]) : Matrix = {
+    val tmp = new Array2DRowRealMatrix(values)
+    new Matrix(tmp.transpose)
+  }
+  def fromColumnMajor(values:Traversable[Traversable[Double]]) : Matrix =
+    fromColumnMajor(values.map {_.toArray} toArray)
 
   def identity(size:Int) = {
     val vals = Array.fill(size, size)(0.0)
     for(i <- 0 until size) {
       vals(i)(i) = 1.0
     }
-    new Matrix(vals)
+    Matrix.fromRowMajor(vals)
   }
 }
 
 class Matrix(val proxy:RealMatrix) {
 
-  def this(values:Array[Array[Double]]) = this(new Array2DRowRealMatrix(values))
-  def this(values:Traversable[Traversable[Double]]) = this(values.map(_.toArray).toArray)
+  //def this(values:Array[Array[Double]]) = this(new Array2DRowRealMatrix(values))
+  //def this(values:Traversable[Traversable[Double]]) = this(values.map(_.toArray).toArray)
 
   def apply(row:Int, col:Int) : Double = proxy.getEntry(row, col)
 
@@ -81,7 +89,8 @@ class Matrix(val proxy:RealMatrix) {
   }
 
   def chol : (Matrix,Matrix) = {
-    val tmp = new CholeskyDecomposition(proxy)
+    val tmp = new CholeskyDecomposition(proxy, 
+      CholeskyDecomposition.DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD, 1e-9)
     (new Matrix(tmp.getL), new Matrix(tmp.getLT))
   }
 
@@ -94,7 +103,7 @@ class Matrix(val proxy:RealMatrix) {
   def columns = proxy.getColumnDimension
 
   def mapAll(f:Double=>Double) : Matrix = {
-    new Matrix(proxy.getData.map {_.map(f)})
+    Matrix.fromRowMajor(proxy.getData.map {_.map(f)})
   }
 
   def mapCols(f:Vector=>Vector) : Matrix = {
@@ -130,11 +139,15 @@ class Matrix(val proxy:RealMatrix) {
     new Vector(outVect)
   }
 
-  def toList : List[List[Double]] = toArray.map {_.toList} toList
-  def toArray : Array[Array[Double]] = proxy.getData
+  def toColumnMajorList : List[List[Double]] = 
+    toColumnMajorArray.map {_.toList} toList
+  def toRowMajorList : List[List[Double]] = 
+    toRowMajorArray.map {_.toList} toList
 
-  def toColumnArray : Array[Double] = proxy.transpose.getData.flatten
-  def toRowArray : Array[Double] = proxy.getData.flatten
+  def toColumnMajorArray : Array[Array[Double]] = 
+    proxy.transpose.getData
+  def toRowMajorArray : Array[Array[Double]] = 
+    proxy.getData
 
   override def toString : String = {
     (0 until rows).map({r =>

@@ -42,9 +42,9 @@ class Rgp(designFile:String) extends GpBuilder(designFile) {
                 new Vector(fm.at("a").asDoubleArray),
                 fm.at("mu").asDouble,
                 fm.at("sig2").asDouble,
-                new Matrix(fm.at("X").asDoubleMatrix),
+                Matrix.fromColumnMajor(fm.at("X").asDoubleMatrix),
                 new Vector(fm.at("Z").asDoubleArray),
-                new Matrix(fm.at("invVarMatrix").asDoubleMatrix),
+                Matrix.fromColumnMajor(fm.at("invVarMatrix").asDoubleMatrix),
                 paramFields, responseField, errorField)
   }
 }
