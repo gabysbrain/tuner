@@ -178,6 +178,14 @@ class Table {
     new DimRanges(ranges)
   }
 
+  override def toString : String = {
+    val header = fieldNames.reduceLeft(_ + " " + _)
+    val rows = data.map {row => 
+      fieldNames.map {fn => row(fn).toString} reduceLeft(_ + " " + _)
+    }
+    header + "\n" + rows.reduceLeft(_ + "\n" + _)
+  }
+
   def toCsv(filename:String) = {
     //print("writing " + filename + "...")
     val file = new java.io.FileWriter(filename)

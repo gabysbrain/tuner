@@ -14,6 +14,11 @@ version := "0.2"
 
 scalaVersion := "2.9.1"
 
+resolvers ++= Seq(
+  "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
+)
+
 libraryDependencies += "org.bitbucket.gabysbrain" %% "datescala" % "0.9"
 
 libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
@@ -29,6 +34,10 @@ libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
 libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
+
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0" % "test"
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.0.M4" % "test"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 

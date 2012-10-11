@@ -5,16 +5,16 @@ import org.scalacheck._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
-import tuner.Rgp
 import tuner.Table
+import tuner.gp.Rgp
 
 import tuner.test.generator._
-import tuner.test.util._
+import tuner.test.util.Path
 
 class GpModelSpec extends FunSuite with Checkers {
 
   test("test creation of a gp model from data") {
-    check(Prop.forAll(TableGen.tableType suchThat (_.numRows>2)) {data:Table =>
+    check(Prop.forAll(TableGen.tableType suchThat (_.numRows>3)) {data:Table =>
         val savePath = Path.random + ".csv"
         data.toCsv(savePath)
         val d = data.fieldNames.length

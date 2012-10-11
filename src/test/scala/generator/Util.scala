@@ -7,7 +7,7 @@ import org.scalatest.prop.Checkers
 object Util {
   
   def fieldNameType : Gen[String] = for {
-    n <- Gen.choose(1,50)
+    n <- Gen.choose(1,10)
     str <- Gen.listOfN(n, Gen.oneOf(Gen.choose('a','z'),
                                     Gen.choose('A', 'Z')))
   } yield str.mkString
@@ -38,12 +38,6 @@ class UtilSpec extends FunSuite with Checkers {
   test("fields should not contain commas") {
     check(Prop.forAll(Util.fieldNameType) {field =>
       (!field.contains(","))
-    })
-  }
-
-  test("field lists should have no commas") {
-    check(Prop.forAll(fieldGen suchThat (_.length>0)) {fields =>
-      (!fields.forall(_.contains(",")))
     })
   }
 
