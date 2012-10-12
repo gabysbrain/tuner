@@ -3,7 +3,7 @@ package tuner.gp
 import tuner.Table
 
 import numberz.Matrix
-import numberz.Optim
+import numberz.Minimizer
 import numberz.Vector
 
 /**
