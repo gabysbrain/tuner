@@ -111,7 +111,7 @@ class Matrix(val proxy:RealMatrix) {
     Matrix.fromRowMajor(proxy.getData.map {_.map(f)})
   }
 
-  def mapCols(f:Vector=>Vector) : Matrix = {
+  def mapColumns(f:Vector=>Vector) : Matrix = {
     val outMtx = proxy.copy
     (0 until columns).foreach {i =>
       val col = outMtx.getColumn(i)
@@ -119,7 +119,7 @@ class Matrix(val proxy:RealMatrix) {
     }
     new Matrix(outMtx)
   }
-  def mapCols(f:Vector=>Double) : Vector = {
+  def mapColumns(f:Vector=>Double) : Vector = {
     val outVect = Array.fill(columns)(0.0)
     (0 until columns).foreach {i =>
       val col = proxy.getColumn(i)
