@@ -29,6 +29,11 @@ object Matrix {
     }
     Matrix.fromRowMajor(vals)
   }
+
+  def random(rows:Int, cols:Int) = {
+    val vals = Array.tabulate(rows, cols) {(_,_) => math.random}
+    Matrix.fromRowMajor(vals)
+  }
 }
 
 class Matrix(val proxy:RealMatrix) {
