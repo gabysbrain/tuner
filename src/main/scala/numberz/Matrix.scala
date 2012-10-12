@@ -93,6 +93,8 @@ class Matrix(val proxy:RealMatrix) {
     s
   }
 
+  def trace : Double = proxy.getTrace
+
   def chol : (Matrix,Matrix) = {
     val tmp = new CholeskyDecomposition(proxy, 
       CholeskyDecomposition.DEFAULT_ABSOLUTE_POSITIVITY_THRESHOLD, 1e-9)
