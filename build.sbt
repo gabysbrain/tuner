@@ -48,8 +48,6 @@ classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
 
 fork := true
 
-test in assembly := {}
-
 javaOptions := {
   val openglPath = "lib/opengl/macosx"
   val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
@@ -63,8 +61,10 @@ parallelExecution := false
 
 mainClass := Some("tuner.Tuner")
 
-// testing stalls the build
+// testing stalls the assembly build
 test in assembly := {}
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "stdout(config=\"fullstacks\")")
 
 // Don't include the jogl stuff since that will come from jnlp
 excludedJars in assembly <<= (fullClasspath in assembly) map {cp =>
