@@ -5,7 +5,7 @@ import org.apache.commons.math3.optimization.GoalType
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex
 import org.apache.commons.math3.optimization.direct.SimplexOptimizer
 
-object Optim {
+object Minimizer {
 
   def nelderMead(dims:Int, f:Array[Double]=>Double) : Array[Double] = {
     val func = new MultivariateFunction {
