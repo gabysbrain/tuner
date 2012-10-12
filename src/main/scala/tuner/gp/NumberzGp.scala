@@ -9,11 +9,19 @@ import numberz.Vector
 /**
  * Build the Gaussian Process model using the numberz package
  */
-class NumberzGp(designFile:String) extends GpBuilder(designFile) {
+class NumberzGp extends GpBuilder {
 
-  val data = Table.fromCsv(designFile)
 
-  def buildModel(paramFields:List[String],
+  def buildModel(dataFile:String,
+                 paramFields:List[String],
+                 responseField:String,
+                 errorField:String) : GpModel = {
+    buildModel(Table.fromCsv(dataFile), 
+               paramFields, responseField, errorField)
+  }
+
+  def buildModel(data:Table,
+                 paramFields:List[String],
                  responseField:String,
                  errorField:String) : GpModel = {
 

@@ -5,6 +5,7 @@ import org.rosuda.JRI.REXP
 
 import tuner.Config
 import tuner.R
+import tuner.Table
 
 import numberz.Matrix
 import numberz.Vector
@@ -17,12 +18,20 @@ object Rgp {
   val MODELRVAR = "gp.fit"
 }
 
-class Rgp(designFile:String) extends GpBuilder(designFile) {
+class Rgp extends GpBuilder {
   
   // Setup the sparkle gp stuff
   R.runCommand("source('%s')".format(Config.gpRScript))
 
-  def buildModel(paramFields:List[String], 
+  def buildModel(design:Table,
+                 paramFields:List[String], 
+                 responseField:String, 
+                 errorField:String) : GpModel = {
+    throw new UnsupportedOperationException("not implemented")
+  }
+
+  def buildModel(designFile:String,
+                 paramFields:List[String], 
                  responseField:String, 
                  errorField:String) : GpModel = {
     print("building model...")

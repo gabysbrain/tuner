@@ -308,13 +308,13 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     publish(Progress(-1, -1, statusString, true))
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)
-    val gp = new Rgp(designSiteFile)
+    val gp = new Rgp
 
     val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
 
     val newModels = buildFields.map({fld => 
       println("building model for " + fld)
-      (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      (fld, gp.buildModel(designSiteFile, inputFields, fld, Config.errorField))
     }).toMap
     config.gpModels = newModels.values.map(_.toJson).toList
     save()
