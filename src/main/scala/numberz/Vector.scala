@@ -10,6 +10,7 @@ object Vector {
 
   def zeros(size:Int) = new Vector(Array.fill(size)(0.0))
   def ones(size:Int) = new Vector(Array.fill(size)(1.0))
+  def fill(size:Int)(x:Double) = new Vector(Array.fill(size)(x))
 }
 
 class Vector(val proxy:RealVector) {
@@ -35,11 +36,21 @@ class Vector(val proxy:RealVector) {
   def map(f:Double=>Double) : Vector = {
     new Vector(toArray.map(f))
   }
+  def foldLeft[B](z:B)(f:(B,Double)=>B) = toArray.foldLeft(z)(f)
+  def forall(f:Double=>Boolean) = foldLeft(true) {(cur:Boolean,x:Double) =>
+    cur && f(x)
+  }
+  def exists(f:Double=>Boolean) = foldLeft(false) {(cur:Boolean,x:Double) =>
+    cur || f(x)
+  }
 
   def length = proxy.getDimension
   def size = length
 
   def toList : List[Double] = toArray.toList
   def toArray : Array[Double] = proxy.toArray
+
+  override def toString : String = 
+    "(" + toList.map(_.toString).reduceLeft(_ + ", " + _) + ")"
 }
 
