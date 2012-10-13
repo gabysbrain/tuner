@@ -39,12 +39,14 @@ class NumberzGp extends GpBuilder {
       : (Double, Double, Double, Matrix, Vector, Vector) = {
     
     // default to e^(-x^2) for now for correlation
-    val alphas = Vector(List.fill(samples.columns)(2.0))
+    val alphas = Vector.fill(samples.columns)(2.0)
 
     // need to do error checking on the minimization
+    // find the negative log lilihood
     def optimFunc(x:Array[Double]) = 
       logLikelihood(samples, responses, Vector(x), alphas)._1
-    val minPt = Optim.nelderMead(samples.columns, optimFunc)
+    val bounds = Array.fill(samples.columns)((1e-15, Double.MaxValue))
+    val minPt = Minimizer.bobyqa(samples.columns, optimFunc, bounds)
 
     // One more time to get the final versions of the values
     val thetas = Vector(minPt)
@@ -63,32 +65,43 @@ class NumberzGp extends GpBuilder {
                     thetas:Vector, alphas:Vector) 
         : (Double, Double, Double, Matrix) = {
     
+    // check arguments
+    if(thetas.exists(_ <= 0.0))
+      throw new tuner.error.NonPositiveThetaException(thetas)
+
     val n = samples.rows.toDouble
     val ones = Vector.ones(samples.rows)
 
     val r = corrMatrix(samples, thetas, alphas)
-    val rInv = r.inverse
-    // Using a constant mean
-    val mean = (ones dot (rInv dot responses)) / (ones dot (rInv dot ones))
-    val devs = responses - mean
-    val sigTop = (devs dot (rInv dot devs))  // so we only compute this once
-    val sig2 = sigTop / n
+    val rDet = r.det
+    if(rDet > 0.0) {
+      val rInv = r.inverse
+      // Using a constant mean
+      val mean = (ones dot (rInv dot responses)) / (ones dot (rInv dot ones))
+      val devs = responses - mean
+      val sigTop = (devs dot (rInv dot devs))  // so we only compute this once
+      val sig2 = sigTop / n
 
-    val logL = (-n * (math.log(2*math.Pi) + math.log(sig2)) 
-                  + math.log(r.det)) / 2.0
-             - (sigTop / (2*sig2))
+      val logL = -0.5 * (n * (math.log(2*math.Pi) + math.log(sig2)) 
+                         + math.log(rDet) 
+                         + (sigTop/sig2))
 
-    (logL, mean, sig2, rInv)
+      //println("logL: " + logL)
+      (logL, mean, sig2, rInv)
+    } else {
+      (Double.MinValue, 0.0, 0.0, Matrix.identity(samples.rows))
+    }
+
   }
 
   def corrMatrix(samples:Matrix, thetas:Vector, alphas:Vector) = {
     val mtx = Matrix.identity(samples.rows)
-    for(r <- 0 until samples.rows) {
-      for(c <- 0 until samples.columns) {
-        if(r != c) { // don't need to compute corr for the same point
-          val corr = corrFunction(samples.row(r), samples.row(c), 
+    for(r1 <- 0 until samples.rows) {
+      for(r2 <- 0 until samples.rows) {
+        if(r1 != r2) { // don't need to compute corr for the same point
+          val corr = corrFunction(samples.row(r1), samples.row(r2), 
                                   thetas, alphas)
-          mtx.set(r, c, corr)
+          mtx.set(r1, r2, corr)
         }
       }
     }
