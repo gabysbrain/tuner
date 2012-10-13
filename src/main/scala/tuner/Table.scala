@@ -178,7 +178,9 @@ class Table {
     new DimRanges(ranges)
   }
 
-  override def toString : String = {
+  override def toString : String = if(numRows == 0) {
+    "(empty table)"
+  } else {
     val header = fieldNames.reduceLeft(_ + " " + _)
     val rows = data.map {row => 
       fieldNames.map {fn => row(fn).toString} reduceLeft(_ + " " + _)
