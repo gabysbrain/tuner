@@ -14,6 +14,13 @@ object VectorGen {
     Vector(vals)
   }
 
+  def positiveVectorType(size:Int) : Gen[Vector] = for {
+    vals <- Gen.listOfN(size, Gen.choose(0.0, Double.MaxValue) suchThat {_>0.0})
+  } yield {
+    Vector(vals)
+  }
+
+
   val genVector = Gen.sized {n => vectorType(n)}
 }
 
