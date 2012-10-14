@@ -20,29 +20,15 @@ class GpModelSpec extends FunSuite with Checkers {
         data.toCsv(savePath)
         val d = data.fieldNames.length
         val (inputFields, outputField) = data.fieldNames splitAt (d-1)
-        val rgp = new Rgp(savePath)
-        val gp = rgp.buildModel(inputFields, 
-                                outputField.head, 
-                                tuner.Config.errorField)
-        inputFields.toSet == gp.dims.toSet
-    })
-  }
-  */
-
-  test("test creation of a gp model from data using numberz code") {
-    check(Prop.forAll(TableGen.tableGen suchThat (_.numRows>2)) {data:Table =>
-        //val savePath = Path.random + ".csv"
-        //data.toCsv(savePath)
-        val d = data.fieldNames.length
-        val (inputFields, outputField) = data.fieldNames splitAt (d-1)
-        val ngp = new NumberzGp
-        val gp = ngp.buildModel(data,
+        val rgp = new Rgp
+        val gp = rgp.buildModel(savePath,
                                 inputFields, 
                                 outputField.head, 
                                 tuner.Config.errorField)
         inputFields.toSet == gp.dims.toSet
     })
   }
+  */
 
   /*
   test("make sure both numberz and R code match") {

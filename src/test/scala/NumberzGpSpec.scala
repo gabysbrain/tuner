@@ -156,5 +156,18 @@ class NumberzGpSpec extends FunSuite with Checkers {
       }
     })
   }
+
+  test("test creation of a gp model from data using numberz code") {
+    check(Prop.forAll(tableGen suchThat (_.numRows>2)) {data:Table =>
+      val d = data.fieldNames.length
+      val (inputFields, outputField) = data.fieldNames splitAt (d-1)
+      val ngp = new NumberzGp
+      val gp = ngp.buildModel(data,
+                              inputFields, 
+                              outputField.head, 
+                              tuner.Config.errorField)
+      inputFields.toSet == gp.dims.toSet
+    })
+  }
 }
 
