@@ -131,7 +131,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
     })
   }
 
-  test("thetas passed to logLiklihood must be strictly positive") {
+  test("thetas passed to logLikelihood must be strictly positive") {
     val dataBadThetaGen :Gen[(Table,Vector)] = Gen.sized {size => for {
       t <- TableGen.tableType(size)
       v <- VectorGen.vectorType(t.numFields)
