@@ -14,6 +14,8 @@ import tuner.test.generator._
 
 class NumberzGpSpec extends FunSuite with Checkers {
 
+  import TableGen._
+
   val dataThetaGen :Gen[(Table,Vector)] = Gen.sized {size => for {
     t <- TableGen.tableType(size)
     v <- VectorGen.positiveVectorType(t.numFields)
@@ -169,5 +171,28 @@ class NumberzGpSpec extends FunSuite with Checkers {
       inputFields.toSet == gp.dims.toSet
     })
   }
+
+  test("predictions at the training points should be exact") {
+    check(Prop.forAll(tableGen suchThat {_.numRows > 2}) {data:Table =>
+      val d = data.fieldNames.length
+      val (inputFields, outputField) = data.fieldNames splitAt (d-1)
+      val ngp = new NumberzGp
+      val gp = ngp.buildModel(data,
+                              inputFields, 
+                              outputField.head, 
+                              tuner.Config.errorField)
+      val preds = gp.sampleTable(data)
+      data.numRows == preds.numRows
+
+      // make sure all the values match
+      var allOk = true
+      for(r <- 0 until data.numRows) {
+        val (r1, r2) = (data.tuple(r), preds.tuple(r))
+        allOk = allOk && r1(outputField.head) == r2(outputField.head)
+      }
+      allOk
+    })
+  }
+
 }
 
