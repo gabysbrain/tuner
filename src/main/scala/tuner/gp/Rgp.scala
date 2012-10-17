@@ -51,7 +51,7 @@ class Rgp extends GpBuilder {
                 new Vector(fm.at("a").asDoubleArray),
                 fm.at("mu").asDouble,
                 fm.at("sig2").asDouble,
-                Matrix.fromColumnMajor(fm.at("X").asDoubleMatrix),
+                Matrix.fromRowMajor(fm.at("X").asDoubleMatrix),
                 new Vector(fm.at("Z").asDoubleArray),
                 Matrix.fromColumnMajor(fm.at("invVarMatrix").asDoubleMatrix),
                 paramFields, responseField, errorField)
