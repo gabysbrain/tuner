@@ -44,25 +44,57 @@ class NumberzGp extends GpBuilder {
     // need to do error checking on the minimization
     // find the negative log lilihood
     def optimFunc(x:Array[Double]) = 
-      logLikelihood(samples, responses, Vector(x), alphas)._1
-    val bounds = Array.fill(samples.columns)((1e-15, Double.MaxValue))
-    val minPt = Minimizer.bobyqa(samples.columns, optimFunc, bounds)
+      negLogLikelihood(samples, responses, Vector(x), alphas)._1
+    def optimFunc2(x:Array[Double]) = {
+      // Map x so it's positive
+      val x2 = x.map {xx => 
+        val halfPct = math.abs(xx) / Double.MaxValue
+        xx
+      }
+      negLogLikelihood(samples, responses, Vector(x2), alphas)._1
+    }
+    val bounds = Array.fill(samples.columns)((1e-16, Double.MaxValue))
 
+    // so in the spirit of the mlegp package do 
+    // 5 optimizations with random restart 
+    var minLL = Double.MaxValue
+    var minPt:Array[Double] = null
+    for(i <- 0 until 5) {
+      val (pt,_) = Minimizer.bobyqa(samples.columns, optimFunc, 
+                                    bounds, 
+                                    Array.fill(samples.columns)(math.random))
+      val ll = optimFunc(pt)
+      /*
+      println("optimization #" + i 
+           + " with log likelihood " + ll 
+           + " at point " + Vector(pt))
+      */
+      if(ll < minLL) {
+        minLL = ll
+        minPt = pt
+      }
+    }
+
+    /*
+    println("minimum found" 
+         + " with log likelihood " + -minLL
+         + " at point " + Vector(minPt))
+    */
     // One more time to get the final versions of the values
     val thetas = Vector(minPt)
-    val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
-                                             thetas, alphas)
+    val (ll, mu, sig2, rInv) = negLogLikelihood(samples, responses, 
+                                                thetas, alphas)
     (ll, mu, sig2, rInv, thetas, alphas)
   }
 
   /**
-   * Computes the log-likelihood of the theta and alpha parameters
+   * Computes the negative log-likelihood of the theta and alpha parameters
    * 
    * Returns the log-likelihood, the calibrated mean, std-deviation, 
    * and inverse correlation matrix
    */
-  def logLikelihood(samples:Matrix, responses:Vector, 
-                    thetas:Vector, alphas:Vector) 
+  def negLogLikelihood(samples:Matrix, responses:Vector, 
+                       thetas:Vector, alphas:Vector) 
         : (Double, Double, Double, Matrix) = {
     
     // check arguments
@@ -87,9 +119,9 @@ class NumberzGp extends GpBuilder {
                          + (sigTop/sig2))
 
       //println("logL: " + logL)
-      (logL, mean, sig2, rInv)
+      (-logL, mean, sig2, rInv)
     } else {
-      (Double.MinValue, 0.0, 0.0, Matrix.identity(samples.rows))
+      (Double.MaxValue, 0.0, 0.0, Matrix.identity(samples.rows))
     }
 
   }
