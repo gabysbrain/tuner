@@ -24,11 +24,10 @@ class GpModelSpec extends FunSuite
       val d = train.numFields
       val (inputFields, tmpOutputField) = train.fieldNames splitAt (d-1)
       val outputField = tmpOutputField.head
-      val ngp = new NumberzGp
-      val gp = ngp.buildModel(train,
-                              inputFields, 
-                              outputField, 
-                              tuner.Config.errorField)
+      val gp = NumberzGp.buildModel(train,
+                                    inputFields, 
+                                    outputField, 
+                                    tuner.Config.errorField)
       try {
         gp.sampleTable(test)
         test.fieldNames.toSet == 
@@ -49,11 +48,10 @@ class GpModelSpec extends FunSuite
      val d = train.fieldNames.length
      val (inputFields, tmpOutputField) = train.fieldNames splitAt (d-1)
      val outputField = tmpOutputField.head
-     val ngp = new NumberzGp
-     val gp1 = ngp.buildModel(savePath,
-                              inputFields, 
-                              outputField, 
-                              tuner.Config.errorField)
+     val gp1 = NumberzGp.buildModel(savePath,
+                                    inputFields, 
+                                    outputField, 
+                                    tuner.Config.errorField)
      val rgp = new Rgp
      val gp2 = rgp.buildModel(savePath,
                               inputFields, 
@@ -73,11 +71,10 @@ class GpModelSpec extends FunSuite
      val d = train.fieldNames.length
      val (inputFields, tmpOutputField) = train.fieldNames splitAt (d-1)
      val outputField = tmpOutputField.head
-     val ngp = new NumberzGp
-     val gp1 = ngp.buildModel(savePath,
-                              inputFields, 
-                              outputField, 
-                              tuner.Config.errorField)
+     val gp1 = NumberzGp.buildModel(savePath,
+                                    inputFields, 
+                                    outputField, 
+                                    tuner.Config.errorField)
      val rgp = new Rgp
      val gp2 = rgp.buildModel(savePath,
                               inputFields, 

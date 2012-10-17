@@ -9,7 +9,7 @@ import numberz.Vector
 /**
  * Build the Gaussian Process model using the numberz package
  */
-class NumberzGp extends GpBuilder {
+object NumberzGp extends GpBuilder {
 
 
   def buildModel(dataFile:String,

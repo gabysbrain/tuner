@@ -34,7 +34,6 @@ class NumberzGpSpec extends FunSuite with Checkers {
     })
   }
 
-  /*
   test("test for a bug where we would access a non-existant sample when creating the correlation matrix") {
     check(Prop.forAll(TableGen.wideTableGen suchThat {_.numRows > 2}) {data:Table =>
       val flds = data.fieldNames
@@ -43,19 +42,19 @@ class NumberzGpSpec extends FunSuite with Checkers {
       )
 
       // Doesn't matter what the thetas and alphas are
-      val gp = new NumberzGp
-      // make sure this doesn't throw an exception
       try {
-        gp.corrMatrix(mtx, Vector.ones(flds.length), Vector.ones(flds.length))
+        NumberzGp.corrMatrix(mtx, 
+                             Vector.ones(flds.length), 
+                             Vector.ones(flds.length))
         true
       } catch {
+        // make sure this doesn't throw an exception
         case ore:org.apache.commons.math3.exception.OutOfRangeException => 
           ore.printStackTrace
           false
       }
     })
   }
-  */
 
   test("the correlation matrix should be square") {
     check(Prop.forAll(dataThetaGen suchThat {_._1.numRows > 2}) 
@@ -66,8 +65,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
         data map {tpl => flds.map {f=>tpl(f).toDouble}}
       )
 
-      val gp = new NumberzGp
-      val corrs = gp.corrMatrix(mtx, thetas, alphas)
+      val corrs = NumberzGp.corrMatrix(mtx, thetas, alphas)
       (corrs.rows == data.numRows)    &&
       (corrs.columns == data.numRows)
     })
@@ -82,8 +80,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
         data map {tpl => flds.map {f=>tpl(f).toDouble}}
       )
 
-      val gp = new NumberzGp
-      val corrs = gp.corrMatrix(mtx, thetas, alphas)
+      val corrs = NumberzGp.corrMatrix(mtx, thetas, alphas)
       (corrs.trace == data.numRows)
     })
   }
@@ -97,8 +94,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
         data map {tpl => flds.map {f=>tpl(f).toDouble}}
       )
 
-      val gp = new NumberzGp
-      val corrs = gp.corrMatrix(mtx, thetas, alphas)
+      val corrs = NumberzGp.corrMatrix(mtx, thetas, alphas)
       // make sure this doesn't throw an exception
       try {
         corrs.chol
@@ -119,8 +115,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
         data map {tpl => flds.map {f=>tpl(f).toDouble}}
       )
 
-      val gp = new NumberzGp
-      val corrs = gp.corrMatrix(mtx, thetas, alphas)
+      val corrs = NumberzGp.corrMatrix(mtx, thetas, alphas)
       // make sure this doesn't throw an exception
       try {
         corrs.inverse
@@ -150,8 +145,7 @@ class NumberzGpSpec extends FunSuite with Checkers {
       )
       val resps = Vector.fill(mtx.rows)(1.0)
       try {
-        val gp = new NumberzGp
-        gp.negLogLikelihood(mtx, resps, thetas, alphas)
+        NumberzGp.negLogLikelihood(mtx, resps, thetas, alphas)
         thetas.forall(_ >= 0.0)
       } catch {
         case iae:tuner.error.NonPositiveThetaException => thetas.exists(_ < 0.0)
@@ -163,11 +157,10 @@ class NumberzGpSpec extends FunSuite with Checkers {
     check(Prop.forAll(tableGen suchThat (_.numRows>2)) {data:Table =>
       val d = data.fieldNames.length
       val (inputFields, outputField) = data.fieldNames splitAt (d-1)
-      val ngp = new NumberzGp
-      val gp = ngp.buildModel(data,
-                              inputFields, 
-                              outputField.head, 
-                              tuner.Config.errorField)
+      val gp = NumberzGp.buildModel(data,
+                                    inputFields, 
+                                    outputField.head, 
+                                    tuner.Config.errorField)
       inputFields.toSet == gp.dims.toSet
     })
   }
@@ -176,11 +169,10 @@ class NumberzGpSpec extends FunSuite with Checkers {
     check(Prop.forAll(tableGen suchThat {_.numRows > 2}) {data:Table =>
       val d = data.fieldNames.length
       val (inputFields, outputField) = data.fieldNames splitAt (d-1)
-      val ngp = new NumberzGp
-      val gp = ngp.buildModel(data,
-                              inputFields, 
-                              outputField.head, 
-                              tuner.Config.errorField)
+      val gp = NumberzGp.buildModel(data,
+                                    inputFields, 
+                                    outputField.head, 
+                                    tuner.Config.errorField)
       val preds = gp.sampleTable(data)
       data.numRows == preds.numRows
 
