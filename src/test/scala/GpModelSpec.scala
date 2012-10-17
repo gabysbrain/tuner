@@ -41,11 +41,33 @@ class GpModelSpec extends FunSuite
     }
   }
 
+  test("make sure both numberz and R code have similar correlation params") {
+    forAll(trainTestTableGen suchThat {_._1.numRows > 2}) {case (train,test) =>
+
+     val savePath = Path.random + ".csv"
+     train.toCsv(savePath)
+     val d = train.fieldNames.length
+     val (inputFields, tmpOutputField) = train.fieldNames splitAt (d-1)
+     val outputField = tmpOutputField.head
+     val ngp = new NumberzGp
+     val gp1 = ngp.buildModel(savePath,
+                              inputFields, 
+                              outputField, 
+                              tuner.Config.errorField)
+     val rgp = new Rgp
+     val gp2 = rgp.buildModel(savePath,
+                              inputFields, 
+                              outputField, 
+                              tuner.Config.errorField)
+      
+      // see what predictions we make
+      gp1.thetas == gp2.thetas
+    }
+  }
+
   test("make sure both numberz and R code make similar predictions") {
-    (pending)
-    /*
-    check(forAll(trainTestTableGen suchThat {_._1.numRows > 2}) {case (train,test) =>
-     //val (train, test) = data
+    forAll(trainTestTableGen suchThat {_._1.numRows > 2}) {case (train,test) =>
+
      val savePath = Path.random + ".csv"
      train.toCsv(savePath)
      val d = train.fieldNames.length
@@ -65,15 +87,8 @@ class GpModelSpec extends FunSuite
       // see what predictions we make
       val gp1Preds = gp1.sampleTable(test)
       val gp2Preds = gp2.sampleTable(test)
-      var matches = true
-      for(i <- 0 until gp1Preds.numRows) {
-        val (r1, r2) = (gp1Preds.tuple(i), gp2Preds.tuple(i))
-        matches = matches && r1(outputField) == r2(outputField)
-      }
-      matches
-    })
-    */
+      gp1Preds == gp2Preds
+    }
   }
-
 }
 
