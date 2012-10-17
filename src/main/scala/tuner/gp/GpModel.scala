@@ -145,15 +145,17 @@ class GpModel(val thetas:Vector, val alphas:Vector,
     val outTbl = new Table
     for(r <- 0 until samples.numRows) {
       val tpl = samples.tuple(r)
-      val (est, err) = runSample(tpl.toList)
+      val (est, err) = runSample(tpl)
       outTbl.addRow((respDim, est.toFloat)::(errDim, err.toFloat)::tpl.toList)
     }
     outTbl
   }
 
-  def runSample(pt:List[(String, Float)]) : (Double, Double) = {
-    val mapx = pt.toMap
-    val xx = dims.map({mapx.get(_)}).flatten.map({_.toDouble})
+  def runSample(pt:List[(String, Float)]) : (Double, Double) = 
+    runSample(pt.toMap)
+
+  def runSample(pt:Table.Tuple) : (Double, Double) = {
+    val xx = dims.map(pt.get(_)).flatten.map(_.toDouble)
     val (est, err) = estimatePoint(Vector(xx))
     //curFuncMax = math.max(est.toFloat, curFuncMax)
     (est, err)
