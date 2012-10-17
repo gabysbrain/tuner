@@ -135,6 +135,13 @@ class GpModel(val thetas:Vector, val alphas:Vector,
   }
 
   def sampleTable(samples:Table) : Table = {
+    // verify that the input table has the proper fields
+    val sampleFields:Set[String] = samples.fieldNames.toSet
+    if(!(dims.toSet subsetOf sampleFields)) {
+      val missingFields:Set[String] = dims.toSet -- sampleFields
+      throw new tuner.error.NonMatchingParameterException(missingFields toList)
+    }
+
     val outTbl = new Table
     for(r <- 0 until samples.numRows) {
       val tpl = samples.tuple(r)
