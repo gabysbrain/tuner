@@ -19,7 +19,7 @@ class RgpSpec extends FunSuite
   import TableGen._
 
   test("test creation of a gp model from data using R") {
-    forAll(TableGen.tableGen suchThat (_.numRows>3), minSuccessful(10)) 
+    forAll(TableGen.tableGen suchThat (_.numRows>3), minSuccessful(5)) 
     {data:Table =>
       val savePath = Path.random + ".csv"
       data.toCsv(savePath)
