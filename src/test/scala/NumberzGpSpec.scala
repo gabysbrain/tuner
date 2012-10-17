@@ -151,10 +151,10 @@ class NumberzGpSpec extends FunSuite with Checkers {
       val resps = Vector.fill(mtx.rows)(1.0)
       try {
         val gp = new NumberzGp
-        gp.logLikelihood(mtx, resps, thetas, alphas)
-        thetas.forall(_ > 0.0)
+        gp.negLogLikelihood(mtx, resps, thetas, alphas)
+        thetas.forall(_ >= 0.0)
       } catch {
-        case iae:tuner.error.NonPositiveThetaException => thetas.exists(_ <= 0.0)
+        case iae:tuner.error.NonPositiveThetaException => thetas.exists(_ < 0.0)
       }
     })
   }

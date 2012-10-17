@@ -66,7 +66,7 @@ class NumberzGp extends GpBuilder {
         : (Double, Double, Double, Matrix) = {
     
     // check arguments
-    if(thetas.exists(_ <= 0.0))
+    if(thetas.exists(_ < 0.0))
       throw new tuner.error.NonPositiveThetaException(thetas)
 
     val n = samples.rows.toDouble
