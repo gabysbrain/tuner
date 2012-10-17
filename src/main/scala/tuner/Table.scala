@@ -109,6 +109,15 @@ class Table {
   def numRows : Int = data.size
   def numFields : Int = fieldNames.size
 
+  def equals(other:Table) = {
+    // we finish quick if tables aren't same dimensions
+    if(numRows != other.numRows || numFields != other.numFields) {
+      false
+    } else {
+      data == other.data
+    }
+  }
+
   def values(col:String) : SortedSet[Float] = {
     new TreeSet[Float] ++ data.map({_.get(col)}).flatten
   }
