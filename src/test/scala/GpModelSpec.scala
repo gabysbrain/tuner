@@ -17,8 +17,8 @@ class GpModelSpec extends FunSuite
 
   import TableGen._
 
-  implicit override val generatorDrivenConfig = 
-    PropertyCheckConfig(minSuccessful=1000)
+  //implicit override val generatorDrivenConfig = 
+    //PropertyCheckConfig(minSuccessful=1000)
 
   test("should get an exception when estimating unknown fields") {
     forAll(tableGen suchThat {_.numRows>2}, tableGen suchThat {_.numRows > 2},
