@@ -32,9 +32,9 @@ object GpModel {
   def fromJson(json:GpSpecification) = {
     new GpModel(Vector(json.thetas), Vector(json.alphas), 
                 json.mean, json.sigma2,
-                Matrix.fromColumnMajor(json.designMatrix), 
+                Matrix.fromRowMajor(json.designMatrix), 
                 Vector(json.responses),
-                Matrix.fromColumnMajor(json.invCorMtx),
+                Matrix.fromRowMajor(json.invCorMtx),
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
@@ -71,7 +71,7 @@ class GpModel(val thetas:Vector, val alphas:Vector,
   def toJson = {
     GpSpecification(
       respDim, dims, thetas.toList, alphas.toList, mean, sig2,
-      design.toColumnMajorList, responses.toList, rInverse.toColumnMajorList)
+      design.toRowMajorList, responses.toList, rInverse.toRowMajorList)
   }
 
   def maxGain(range:DimRanges):Float = {
