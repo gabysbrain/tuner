@@ -25,7 +25,8 @@ class Prosection(gl:GL2, numDims:Int,
                          values:Array[Double])
     extends Glsl(gl, new ProsectionVertexShader(numDims).toString,
                      None, Glsl.readResource("/shaders/prosection.frag.glsl"), 
-                     List()) {
+                     List("value"->0) ++ 
+                       (0 until Prosection.numVec4(numDims)).map(x=>("data"+x,x+2))) {
   
   // Setup the display list
   val drawListId = gl.glGenLists(1)

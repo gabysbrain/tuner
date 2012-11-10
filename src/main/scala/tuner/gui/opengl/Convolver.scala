@@ -35,7 +35,9 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
                         points:Array[Array[Double]], 
                         coefficients:Array[Double])
     extends Glsl(gl, new ConvolutionVertexShader(numDims).toString,
-                     None, fragment, List()) {
+                     None, fragment, 
+                     List("geomOffset"->0, "coeff"->1) ++
+                       (0 until Convolver.numVec4(numDims)).map(x=>("data"+x,x+2))) {
   
   // The maximum distance to render a point
   val maxSqDist = -math.log(Config.maxSampleSqDistance)

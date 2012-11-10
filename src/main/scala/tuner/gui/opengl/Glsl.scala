@@ -70,9 +70,8 @@ class Glsl(gl:GL,
     progId
   }
 
-  // Build up all the vertex attributes since attribute lookup doesn't seem to
-  // work for some strange reason
-  val attribIds = (0 until attribSize).map(id => (attrib(id) -> id)).toMap
+  // Build up all the vertex attributes
+  var attribIds = bindings.toMap
 
   def this(gl:GL, vertexSource:String, fragmentSource:String) = 
         this(gl, vertexSource, None, fragmentSource, List())
@@ -107,7 +106,18 @@ class Glsl(gl:GL,
     new String(nm).trim
   }
 
-  def attribId(name:String) : Int = attribIds(name)
+  def attribId(name:String) : Int = try {
+    attribIds(name)
+  } catch {
+    case e:NoSuchElementException =>
+      // not found but cache this for later
+      val eleId = es2.glGetAttribLocation(programId, name)
+      if(eleId < 0) {
+        throw new NoSuchElementException("attr " + name + " not in program")
+      }
+      attribIds = attribIds + (name -> eleId)
+      eleId
+  }
 
   def uniformId(name:String) : Int = {
     val id = es2.glGetUniformLocation(programId, name)
