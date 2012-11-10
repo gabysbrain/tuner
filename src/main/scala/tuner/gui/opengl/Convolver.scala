@@ -89,8 +89,8 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     gl.glFlush
   gl.glEndList
 
-  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
-                   trans:Matrix4,
+  def draw(gl:GL2, fboId:Int, textureId:Int, 
+                   texWidth:Int, texHeight:Int, trans:Matrix4,
                    xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
                    xDim:Int, yDim:Int,
                    pointOfInterest:Array[Float]) = {
@@ -113,7 +113,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     gl.glGetIntegerv(GL.GL_VIEWPORT, vp, 0)
 
     // Draw to a texture
-    enableTextureTarget(gl, textureId, texWidth, texHeight)
+    enableTextureTarget(gl, fboId, textureId, texWidth, texHeight)
 
     gl.glUniformMatrix4fv(uniformId("trans"), 
                           1, false, trans.toArray, 0)
@@ -156,9 +156,10 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
   /**
    * Enable the texture renderbuffer
    */
-  def enableTextureTarget(gl:GL2, texId:Int, texWidth:Int, texHeight:Int) = {
+  def enableTextureTarget(gl:GL2, fboId:Int, texId:Int, 
+                                  texWidth:Int, texHeight:Int) = {
 
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
 
     gl.glViewport(0, 0, texWidth, texHeight)
 
@@ -168,10 +169,10 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
 
     // Now attach the texture to the framebuffer we want
     gl.glBindTexture(GL.GL_TEXTURE_2D, texId)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
     gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
                               GL.GL_TEXTURE_2D, texId, 0)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
     gl.glDrawBuffers(1, Array(GL.GL_COLOR_ATTACHMENT0), 0)
 
     // Make sure the framebuffer is ok

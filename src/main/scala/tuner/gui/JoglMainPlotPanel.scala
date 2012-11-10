@@ -49,8 +49,8 @@ class JoglMainPlotPanel(project:Viewable)
   var colormapShader:Option[Glsl] = None
 
   // The buffers we're using
-  var textureFbo:Option[Int] = None
-  var fboTexture:Option[Int] = None
+  var valueFbo:Option[Int] = None
+  var valueTex:Option[Int] = None
 
   // All the plot transforms
   var plotTransforms = Map[(String,String),(Matrix4,Matrix4)]()
@@ -128,19 +128,19 @@ class JoglMainPlotPanel(project:Viewable)
    */
   def setupTextureTarget(gl:GL2, texWidth:Int, texHeight:Int) = {
     // First setup the overall framebuffer
-    if(!textureFbo.isDefined) {
+    if(!valueFbo.isDefined) {
       val fbo = Array(0)
       gl.glGenFramebuffers(1, fbo, 0)
-      textureFbo = Some(fbo(0))
+      valueFbo = Some(fbo(0))
     }
 
     // Create a texture in which to render
-    if(!fboTexture.isDefined) {
+    if(!valueTex.isDefined) {
       val tex = Array(0)
       gl.glGenTextures(1, tex, 0)
-      fboTexture = Some(tex(0))
+      valueTex = Some(tex(0))
 
-      gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
+      gl.glBindTexture(GL.GL_TEXTURE_2D, valueTex.get)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST)
@@ -282,7 +282,7 @@ class JoglMainPlotPanel(project:Viewable)
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
     val minVals = fields.map(project.viewInfo.currentZoom.min(_)).toArray
     val maxVals = fields.map(project.viewInfo.currentZoom.max(_)).toArray
-    shader.draw(gl, fboTexture.get, 
+    shader.draw(gl, valueFbo.get, valueTex.get, 
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
                     xRange, yRange, 
@@ -310,7 +310,7 @@ class JoglMainPlotPanel(project:Viewable)
     }
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
 
-    shader.draw(gl, fboTexture.get, 
+    shader.draw(gl, valueFbo.get, valueTex.get, 
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
                     xRange, yRange, 
@@ -361,7 +361,7 @@ class JoglMainPlotPanel(project:Viewable)
                    1f)
 
     // Enable the texture
-    gl.glBindTexture(GL.GL_TEXTURE_2D, fboTexture.get)
+    gl.glBindTexture(GL.GL_TEXTURE_2D, valueTex.get)
 
     gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
                           1, false, trans.toArray, 0)

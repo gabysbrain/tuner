@@ -53,8 +53,8 @@ class Prosection(gl:GL2, numDims:Int,
     gl.glEnd
   gl.glEndList
   
-  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
-                   trans:Matrix4,
+  def draw(gl:GL2, fboId:Int, textureId:Int, 
+                   texWidth:Int, texHeight:Int, trans:Matrix4,
                    xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
                    xDim:Int, yDim:Int,
                    minDimValues:Array[Float],
@@ -74,7 +74,7 @@ class Prosection(gl:GL2, numDims:Int,
     gl.glGetIntegerv(GL.GL_VIEWPORT, vp, 0)
 
     // Draw to a texture
-    enableTextureTarget(gl, textureId, texWidth, texHeight)
+    enableTextureTarget(gl, fboId, textureId, texWidth, texHeight)
 
     // Send down the uniforms for this set
     gl.glUniform1f(uniformId("radius"), 3.5f)
@@ -115,9 +115,10 @@ class Prosection(gl:GL2, numDims:Int,
   /**
    * Enable the texture renderbuffer
    */
-  def enableTextureTarget(gl:GL2, texId:Int, texWidth:Int, texHeight:Int) = {
+  def enableTextureTarget(gl:GL2, fboId:Int, texId:Int, 
+                                  texWidth:Int, texHeight:Int) = {
 
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
 
     gl.glViewport(0, 0, texWidth, texHeight)
 
@@ -127,10 +128,10 @@ class Prosection(gl:GL2, numDims:Int,
 
     // Now attach the texture to the framebuffer we want
     gl.glBindTexture(GL.GL_TEXTURE_2D, texId)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
     gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0,
                               GL.GL_TEXTURE_2D, texId, 0)
-    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, texId)
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fboId)
     gl.glDrawBuffers(1, Array(GL.GL_COLOR_ATTACHMENT0), 0)
 
     // Make sure the framebuffer is ok
