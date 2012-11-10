@@ -80,7 +80,6 @@ class JoglMainPlotPanel(project:Viewable)
             model.mean, model.sig2,
             model.thetas.toArray,
             model.design, model.corrResponses)
-        println(estShader.attribIds)
         (resFld -> estShader)
       } toMap
     }
@@ -89,7 +88,6 @@ class JoglMainPlotPanel(project:Viewable)
         val model = project.gpModels(resFld)
         val ptShader = Prosection.fromResource(
             gl.getGL2, project.inputFields.size, model.design, model.responses)
-        println(ptShader.attribIds)
         (resFld -> ptShader)
       } toMap
     }
@@ -97,7 +95,6 @@ class JoglMainPlotPanel(project:Viewable)
       colormapShader = Some(Glsl.fromResource(
         gl, "/shaders/cmap.vert.glsl", 
             "/shaders/cmap.frag.glsl"))
-      println(colormapShader.get.attribIds)
     }
   }
 

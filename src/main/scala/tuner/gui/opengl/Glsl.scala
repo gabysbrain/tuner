@@ -54,7 +54,6 @@ class Glsl(gl:GL,
     val progId = es2.glCreateProgram
     // Fix any bindings before linking
     bindings.foreach {case (nm,idx) =>
-      println("binding " + nm + " to " + idx)
       es2.glBindAttribLocation(progId, idx, nm)
     }
     es2.glAttachShader(progId, vertShaderId)

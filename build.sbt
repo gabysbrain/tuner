@@ -32,6 +32,12 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
 
+javaOptions := {
+  val openglPath = "lib/opengl/macosx"
+  val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
+  Seq("-Djava.library.path=" + jriPath + ":" + openglPath,"-Xmx6G")
+}
+
 // Set the classpath assets to the assembly jar
 //classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
 
