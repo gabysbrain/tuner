@@ -44,8 +44,10 @@ object TunerBuild extends Build {
 
   def openglLibPath(theOS:OSType):String = theOS match {
     case OSDetector.Mac => "lib/opengl/macosx"
-    case OSDetector.Win => "lib\\opengl\\windows64"
-    case OSDetector.Nix => ""
+    case OSDetector.Win => "lib\\opengl\\windows" + 
+                           System.getProperty("sun.arch.data.model")
+    case OSDetector.Nix => "lib/opengl/linux" +
+                           System.getProperty("sun.arch.data.model")
   }
 }
 
