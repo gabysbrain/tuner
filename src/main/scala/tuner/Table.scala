@@ -46,6 +46,14 @@ object Table {
     //println("done")
     tbl
   }
+  
+  def fromLists(fieldNames:List[String], data:List[List[Float]]) = {
+    val tbl = new Table
+    data.foreach {dr =>
+      tbl.addRow(fieldNames.zip(dr))
+    }
+    tbl
+  }
 
   // Some fun filters
   def fieldFilter(rmFields:List[String]) : Filter = {
