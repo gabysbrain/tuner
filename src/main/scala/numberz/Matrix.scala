@@ -30,6 +30,11 @@ object Matrix {
     Matrix.fromRowMajor(vals)
   }
 
+  def zeros(rows:Int, cols:Int) = {
+    val vals = Array.fill(rows, cols)(0.0)
+    Matrix.fromRowMajor(vals)
+  }
+
   def random(rows:Int, cols:Int) = {
     val vals = Array.tabulate(rows, cols) {(_,_) => math.random}
     Matrix.fromRowMajor(vals)
@@ -94,6 +99,8 @@ class Matrix(val proxy:RealMatrix) {
   }
 
   def trace : Double = proxy.getTrace
+
+  def norm : Double = proxy.getNorm
 
   def chol : (Matrix,Matrix) = {
     val tmp = new CholeskyDecomposition(proxy, 
