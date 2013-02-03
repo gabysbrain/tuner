@@ -60,15 +60,19 @@ automatically if it can't find them:
 * mlegp
 * labeling
 
-## Installation ##
+## Running Tuner ##
 
-Here are prepatory steps to get Tuner up and running:
+Here are steps to get Tuner up and running:
 
 1. install java
 2. install R (make sure you are using the 64-bit version)
 3. install the required R packages: type 
    `install.packages(c('rJava', 'mlegp', 'lhs', 'labeling'))`
    at the R prompt.
+4. Execute the appropiate `start_tuner.*` script for your platform:
+    * __Mac__:     `start_tuner.mac.sh`
+    * __Windows__: `start_tuner.win.bat`
+    * __Linux__: `start_tuner.linux.sh`
 
 ### Windows ###
 
