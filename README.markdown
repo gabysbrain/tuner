@@ -77,9 +77,9 @@ Here are steps to get Tuner up and running:
 ### Windows ###
 
 Windows stores R package files in different locations depending on the version
-of R installed.  Open up the `start_tuner.bat` file and change R_HOME and JRI
-appropriately.  JRI should end up in the same place relative to R_HOME. R_HOME
-will be something like `C:\Program Files\R\R-2.14.0` on windows.
+of R installed.  Open up the `start_tuner.win.bat` file and change R_HOME and
+JRI appropriately.  JRI should end up in the same place relative to R_HOME.
+R_HOME will be something like `C:\Program Files\R\R-2.14.0` on windows.
 
 ## Usage ##
 
