@@ -14,6 +14,6 @@ else
     OPENGL="${D}/lib/opengl/linux64"
 fi
 java -cp "$D" "-Djava.library.path=${JRI}:${OPENGL}" \
-    -jar "${D}/Tuner-assembly-0.9.jar" "$@"
+    -jar "${D}/Tuner-assembly-0.2.jar" "$@"
 
 
