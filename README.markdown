@@ -16,7 +16,7 @@ The Tuner deployment files consist of the following:
     | -- run_tuner.bat
     | -- run_tuner.mac.sh
     | -- run_tuner.linux.sh
-    | -- Tuner-assembly-0.9.jar
+    | -- Tuner-assembly-0.2.jar
     | -- lib/
          | -- opengl/
               | -- linux32/
@@ -34,7 +34,7 @@ run_tuner.mac.sh
 run_tuner.linux.sh
 :  Tuner startup script for linux
 
-Tuner-assembly-0.9.jar
+Tuner-assembly-0.2.jar
 :  The one and only jar file needed
 
 lib/opengl
@@ -62,15 +62,20 @@ automatically if it can't find them:
 
 ## Installation ##
 
-Here are the steps to get Tuner running:
+Here are prepatory steps to get Tuner up and running:
 
 1. install java
 2. install R (make sure you are using the 64-bit version)
-3. install the rJava R package. To do this type install.packages('rJava') 
+3. install the required R packages: type 
+   `install.packages(c('rJava', 'mlegp', 'lhs', 'labeling'))`
    at the R prompt.
-4. Open up the start_tuner.bat file and change R_HOME and JRI appropriately. 
-   JRI should end up in the same place relative to R_HOME. R_HOME 
-   should be something like 'C:\Program Files\R\R-2.14.0' on windows.
+
+### Windows ###
+
+Windows stores R package files in different locations depending on the version
+of R installed.  Open up the `start_tuner.bat` file and change R_HOME and JRI
+appropriately.  JRI should end up in the same place relative to R_HOME. R_HOME
+will be something like `C:\Program Files\R\R-2.14.0` on windows.
 
 ## Usage ##
 
