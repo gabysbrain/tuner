@@ -4,8 +4,6 @@ import AssemblyKeys._
 
 assemblySettings
 
-webstartSettings
-
 seq(Revolver.settings: _*)
 
 name := "Tuner"
@@ -34,9 +32,6 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
 
-// Set the classpath assets to the assembly jar
-classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
-
 fork := true
 
 test in assembly := {}
@@ -61,32 +56,4 @@ test in assembly := {}
 excludedJars in assembly <<= (fullClasspath in assembly) map {cp =>
   cp filter {List("jogl.all.jar", "gluegen-rt.jar") contains _.data.getName}
 }
-
-webstartGenConf := GenConf(
-  dname       = "CN=Thomas Torsney-Weir, OU=Developmetn, O=Simon Fraser University, L=Burnaby, ST=British Columbia, C=CA",
-  validity    = 365
-)
-
-webstartKeyConf := KeyConf(
-  keyStore    = file("keystore.jks"),
-  storePass   = "password",
-  alias       = "alias",
-  keyPass     = "password"
-)
-
-webstartJnlpConf    := Seq(JnlpConf(
-  mainClass		  = "tuner.Tuner",
-  fileName        = "tuner.jnlp",
-  codeBase        = "http://cdn.bitbucket.org/gabysbrain/tuner/downloads",
-  title           = "Tuner",
-  vendor          = "TTW",
-  description     = "The Tuner Application",
-  iconName        = None,
-  splashName      = None,
-  offlineAllowed  = true,
-  allPermissions  = true,
-  j2seVersion     = "1.6+",
-  maxHeapSize     = 1024,
-  extensions      = List(ExtensionConf("jogl-all-awt", "http://jogamp.org/deployment/archive/rc/v2.0-rc10/jogl-all-awt.jnlp"))
-))
 
