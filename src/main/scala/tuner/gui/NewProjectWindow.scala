@@ -25,7 +25,7 @@ import tuner.project.NewProject
  * The first window for setting up a new project.  Asks for things like
  * the project name, sampling script, and input parameter information.
  */
-class ProjectInfoWindow extends Frame {
+class NewProjectWindow extends Frame {
 
   title = "New Project"
 
