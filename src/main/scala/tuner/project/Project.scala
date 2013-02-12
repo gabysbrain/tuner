@@ -479,6 +479,28 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     }
   }
 
+  def value(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._1)}
+  }
+
+  def value(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._1.toFloat
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._2)}
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._2.toFloat
+  }
+
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
