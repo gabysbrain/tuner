@@ -128,15 +128,6 @@ class ViewInfo(project:Viewable) {
     }
   }
 
-  /**
-   * The number of sample points that are unclipped 
-   * by the current zoom level
-   */
-  def numUnclippedPoints : Int = {
-    val (active,_) = project.viewFilterDesignSites
-    active.numRows
-  }
-
   def toJson = {
     val sliceList = currentSlice.map {case (fld,v) => 
       SliceSpecification(fld, v)
