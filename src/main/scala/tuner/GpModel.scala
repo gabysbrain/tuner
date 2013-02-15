@@ -119,50 +119,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
 
   def theta(dim:String) = thetas(dims.indexOf(dim))
 
-  def sampleSlice(rowDim:(String,(Float,Float)), 
-                  colDim:(String,(Float,Float)),
-                  slices:List[(String,Float)], 
-                  numSamples:Int)
-      : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
-    
-    val arrSlice = Array.fill(dims.length)(0.0)
-    val sliceMap = slices.toMap
-    dims.zipWithIndex.foreach {case (fld, i) =>
-      arrSlice(i) = sliceMap(fld)
-    }
-    val xDim = dims.indexOf(rowDim._1)
-    val yDim = dims.indexOf(colDim._1)
-
-    // generate one matrix from scratch and then copy the rest
-    val startTime = System.currentTimeMillis
-    val response = Sampler.regularSlice(rowDim, colDim, numSamples)
-    val errors = new Matrix2D(response.rowIds, response.colIds)
-    val gains = new Matrix2D(response.rowIds, response.colIds)
-
-    response.rowIds.zipWithIndex.foreach {tmpx =>
-      val (xval,x) = tmpx
-      response.colIds.zipWithIndex.foreach {tmpy =>
-        val (yval, y) = tmpy
-        arrSlice(xDim) = xval
-        arrSlice(yDim) = yval
-        val (est, err) = estimatePoint(arrSlice)
-        response.set(x, y, est.toFloat)
-        errors.set(x, y, err.toFloat)
-        val expgain = calcExpectedGain(est, err)
-        if(!expgain.isNaN) {
-          gains.set(x, y, expgain.toFloat)
-        } else {
-          gains.set(x, y, 0f)
-        }
-      }
-    }
-
-    val endTime = System.currentTimeMillis
-    ((respDim, response), 
-     (Config.errorField, errors), 
-     (Config.gainField, gains))
-  }
-
   def sampleTable(samples:Table) : Table = {
     val outTbl = new Table
     for(r <- 0 until samples.numRows) {
