@@ -521,6 +521,16 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     gpModels(response).runSample(point)._2.toFloat
   }
 
+  def expectedGain(point:List[(String,Float)]) : Map[String,Float] = 
+    estimatePoint(point) map {case (k,v) => 
+      (k -> gpModels(k).calcExpectedGain(v._1, v._2).toFloat)
+    }
+
+  def expectedGain(point:List[(String,Float)], response:String) : Float = {
+    val sample = gpModels(response).runSample(point)
+    gpModels(response).calcExpectedGain(sample._1, sample._2).toFloat
+  }
+
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
