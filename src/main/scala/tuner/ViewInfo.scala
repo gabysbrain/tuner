@@ -25,7 +25,7 @@ case class VisInfo(
  * Includes things like focus point, zoom level, etc.
  */
 object ViewInfo {
-  val DefaultVisInfo = VisInfo (
+  val Default = VisInfo (
     Nil, Nil, None, None, Some("hyperslice"), "value", false, false
   )
 

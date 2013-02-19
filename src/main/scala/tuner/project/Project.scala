@@ -192,8 +192,8 @@ class NewProject(name:String,
     extends Project(ProjConfig(name, scriptPath, 
                                Project.mapInputs(inputDims),
                                Nil, Nil, Nil, false,
-                               ViewInfo.DefaultVisInfo,
-                               Region.DefaultRegionInfo,
+                               ViewInfo.Default,
+                               Region.Default,
                                None)) with Sampler {
 
   val path = Path.join(basePath, name)

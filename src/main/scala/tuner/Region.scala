@@ -14,7 +14,7 @@ object Region {
   case object Box extends Shape
   case object Ellipse extends Shape
 
-  val DefaultRegionInfo = RegionSpecification("Box", Nil)
+  val Default = RegionSpecification("Box", Nil)
 
   def apply(t:Shape, project:Viewable) = t match {
     case Box => new BoxRegion(project)
