@@ -15,6 +15,7 @@ import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
+import scala.swing.event.WindowClosing
 
 import tuner.Config
 import tuner.ViewInfo
@@ -116,6 +117,10 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
       this.close
+    case WindowClosing(_) => project match {
+      case s:Saved => s.save()
+      case _ =>
+    }
   }
 
   private def openSamplerDialog = {
