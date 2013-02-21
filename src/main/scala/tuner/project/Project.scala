@@ -573,13 +573,13 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
       val filepath = Path.join(path, Config.respSampleFilename)
       val tmp = Table.fromCsv(filepath)
       if(tmp.numRows == 0) {
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
       } else {
         tmp
       }
     } catch {
       case e:java.io.FileNotFoundException => 
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
     }
     gpModels.foldLeft(samples) {case (tbl, (fld, model)) =>
       if(!tbl.fieldNames.contains(fld)) {

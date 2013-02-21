@@ -98,7 +98,8 @@ object Config {
 
   val sampleDotColor = 0xffDD1C77
 
-  val respHistogramSampleDensity = 10000
+  val numericSampleDensity = 10000
+
   val respHistogramPanelDims = (paretoDims._1 - 50, 130)
   val respHistogramBars = 11
   val respHistogramBarFill = Some(255)
