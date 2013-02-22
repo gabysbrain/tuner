@@ -52,6 +52,7 @@ object Tuner extends SimpleSwingApplication {
 
   def top = { 
     // Make sure R and rJava are installed otherwise all bets are off
+    /*
     if(!Rapp.pathOk) {
       RNotInstalledDialog
     } else if(!Rapp.jriOk) {
@@ -61,14 +62,17 @@ object Tuner extends SimpleSwingApplication {
     } else {
       val missingPackages = R.missingPackages
       if(missingPackages.isEmpty) {
-        //openProject(Project.fromFile("/Users/tom/Projects/tuner.jogl/test_data/britta_proj"))
+      */
+        //openProject(Project.fromFile("/Users/tom/Downloads/tom/"))
         ProjectChooser
+      /*
       } else {
         new InstallPackageDialog(missingPackages) {
           val installPackage = R.installPackage(_)
         }
       }
     }
+    */
   }
 
   def startNewProject = {
