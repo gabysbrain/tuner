@@ -2,6 +2,9 @@ package tuner
 
 object Color {
 
+  val Black = Color(0, 0, 0)
+  val White = Color(255, 255, 255)
+
   def apply(argb:Int) = {
     if(argb >= 0 && argb < 256) {
       new Color(argb/255f, argb/255f, argb/255f, 1f)
