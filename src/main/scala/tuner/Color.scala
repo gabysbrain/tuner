@@ -13,8 +13,8 @@ object Color {
       new Color(r/255f, g/255f, b/255f, a/255f)
     }
   }
-  def apply(r:Int, g:Int, b:Int) = new Color(r/256f, g/256f, b/256f, 1f)
-  def apply(r:Int, g:Int, b:Int, a:Float) = new Color(r/256f, g/256f, b/256f, a)
+  def apply(r:Int, g:Int, b:Int) = new Color(r/255f, g/255f, b/255f, 1f)
+  def apply(r:Int, g:Int, b:Int, a:Float) = new Color(r/255f, g/255f, b/255f, a)
   def apply(r:Float, g:Float, b:Float, a:Float) = new Color(r, g, b, a)
   def apply(c:Color, a:Float) = new Color(c.r, c.g, c.b, a)
 
