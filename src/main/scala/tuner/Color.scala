@@ -38,6 +38,15 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
     aa | rr | gg | bb
   }
 
+  def toCss : String = {
+    val rr = (r*255).toInt
+    val gg = (g*255).toInt
+    val bb = (b*255).toInt
+    "#" + Integer.toString(rr, 16) + 
+          Integer.toString(gg, 16) + 
+          Integer.toString(bb, 16)
+  }
+
   def toAwt = new java.awt.Color(r, g, b)
 
   override def toString : String = 
