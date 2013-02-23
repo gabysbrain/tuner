@@ -57,6 +57,7 @@ object P5Panel {
   }
 
   object Shape extends Enumeration {
+    val Line = Value(PConstants.LINE)
     val QuadStrip = Value(PConstants.QUAD_STRIP)
     val TriangleStrip = Value(PConstants.TRIANGLE_STRIP)
   }
