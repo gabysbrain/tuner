@@ -45,9 +45,7 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
     val rr = (r*255).toInt
     val gg = (g*255).toInt
     val bb = (b*255).toInt
-    "#" + Integer.toString(rr, 16) + 
-          Integer.toString(gg, 16) + 
-          Integer.toString(bb, 16)
+    "#%02x%02x%02x".format(rr, gg, bb)
   }
 
   def toAwt = new java.awt.Color(r, g, b)
