@@ -60,10 +60,12 @@ object Project {
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  def recent : Array[Project] = {
+  def recent : Array[ProjectInfo] = {
     Config.recentProjects flatMap {rp =>
       try {
-        Some(Project.fromFile(rp))
+        val json = loadJson(rp)
+        Some(ProjectInfo(json.name, rp, new java.util.Date, 
+                         json.inputs.length, json.outputs.length))
       } catch {
         case e:java.io.FileNotFoundException =>
           None
@@ -72,14 +74,7 @@ object Project {
   }
 
   def fromFile(path:String) : Project = {
-    val configFilePath = Path.join(path, Config.projConfigFilename)
-    val json = parse(Source.fromFile(configFilePath).mkString)
-    val config = try {
-      json.extract[ProjConfig]
-    } catch {
-      case me:net.liftweb.json.MappingException =>
-        throw new ProjectLoadException(me.msg, me)
-    }
+    val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
     val samples = try {
@@ -123,7 +118,24 @@ object Project {
     inputs.map {case (fld, mn, mx) =>
       InputSpecification(fld, mn, mx)
     }
+  
+  private def loadJson(path:String) : ProjConfig = {
+    val configFilePath = Path.join(path, Config.projConfigFilename)
+    val json = parse(Source.fromFile(configFilePath).mkString)
+    try {
+      json.extract[ProjConfig]
+    } catch {
+      case me:net.liftweb.json.MappingException =>
+        throw new ProjectLoadException(me.msg, me)
+    }
+  }
+}
 
+case class ProjectInfo(name:String, path:String, 
+                       modificationDate:Date, 
+                       numInputs:Int, numOutputs:Int) {
+
+  val statusString = "Ok"
 }
 
 sealed abstract class Project(config:ProjConfig) {

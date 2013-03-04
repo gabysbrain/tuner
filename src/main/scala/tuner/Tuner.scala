@@ -118,6 +118,10 @@ object Tuner extends SimpleSwingApplication {
     //maybeShowProjectWindow
   }
 
+  def openProject(proj:ProjectInfo) : Unit = {
+    openProject(Project.fromFile(proj.path))
+  }
+
   def openProject(file:File) : Unit = {
     try {
       openProject(Project.fromFile(file.getAbsolutePath))
