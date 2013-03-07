@@ -1,25 +1,25 @@
 package tuner
 
+import tuner.util.AxisTicks
 import tuner.gui.P5Panel
 
 class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
   
-  private var _minVal:Float = mnv
-  private var _maxVal:Float = mxv
-  private var _filterVal:Float = if(invert) mxv else mnv
+  private var _ticks = AxisTicks.ticks(mnv, mxv, Config.colorbarTicks)
+  private var _filterVal:Float = if(invert) _ticks.last else _ticks.head
 
-  def minVal = _minVal
+  def minVal = _ticks.head
   def minVal_=(v:Float) = {
-    _minVal = v
+    _ticks = AxisTicks.ticks(v, maxVal, Config.colorbarTicks)
     _filterVal = P5Panel.constrain(_filterVal, minVal, maxVal)
   }
   def filterVal = _filterVal
   def filterVal_=(v:Float) = {
     _filterVal = P5Panel.constrain(v, minVal, maxVal)
   }
-  def maxVal = _maxVal
+  def maxVal = _ticks.last
   def maxVal_=(v:Float) = {
-    _maxVal = v
+    _ticks = AxisTicks.ticks(minVal, v, Config.colorbarTicks)
     _filterVal = P5Panel.constrain(v, minVal, maxVal)
   }
 
@@ -30,9 +30,7 @@ class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {
     filterVal > minVal
   }
   def colors = cm.colors
-  def breaks = {
-    List(filterVal, maxVal)
-  }
+  def ticks = _ticks
 
   def filterColor = Config.filterColor
   def minColor = cm.colors.head

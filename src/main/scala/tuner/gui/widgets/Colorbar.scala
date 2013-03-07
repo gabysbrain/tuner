@@ -40,9 +40,7 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
                     Config.smallFontSize - 
                     (Config.colorbarHandleSize._2 / 2)
     val barStartY = y + Config.colorbarLabelSpace._1 + Config.smallFontSize
-    val ticks = List(colormap.minVal, 
-                     (colormap.minVal + colormap.maxVal) / 2,
-                     colormap.maxVal)
+    val ticks = colormap.ticks
     
     applet.stroke(Config.lineColor)
     applet.fill(Config.lineColor)
