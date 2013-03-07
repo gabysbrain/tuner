@@ -1,4 +1,4 @@
-package tuner.gui.util
+package tuner.util
 
 import tuner.Config
 import tuner.R

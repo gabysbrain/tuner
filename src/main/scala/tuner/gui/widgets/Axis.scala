@@ -3,7 +3,7 @@ package tuner.gui.widgets
 import tuner.Config
 import tuner.gui.P5Panel
 import tuner.geom.Rectangle
-import tuner.gui.util.AxisTicks
+import tuner.util.AxisTicks
 
 object Axis {
   sealed trait Placement 

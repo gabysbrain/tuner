@@ -11,13 +11,13 @@ import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
+import tuner.util.AxisTicks
 import tuner.util.ColorLib
 
 import scala.collection.mutable.Queue

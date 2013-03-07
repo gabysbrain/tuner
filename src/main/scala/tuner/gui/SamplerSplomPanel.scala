@@ -4,12 +4,12 @@ import tuner.Config
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Sampler
+import tuner.util.AxisTicks
 
 /**
  * A SPLOM showing the locations of sample points taken

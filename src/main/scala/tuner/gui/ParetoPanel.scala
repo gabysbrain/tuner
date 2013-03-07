@@ -7,13 +7,13 @@ import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Viewable
+import tuner.util.AxisTicks
 
 class ParetoPanel(project:Viewable)
     extends P5Panel(Config.paretoDims._1, 
