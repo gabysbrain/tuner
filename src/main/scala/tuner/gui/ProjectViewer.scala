@@ -24,6 +24,7 @@ import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 import tuner.gui.event.ViewChanged
+import tuner.project.Saved
 import tuner.project.Viewable
 
 /**
