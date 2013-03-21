@@ -23,26 +23,7 @@ class Rgp(designFile:String) {
   val (imageDir, sampleFile) = splitFile(designFile)
 
   // Setup the sparkle gp stuff
-  /*
-  val scriptFile = Source.fromURL(getClass.getResource(Config.gpRScript))
-  scriptFile.getLines.foreach{line =>
-    println(line)
-    R.runCommand(line)
-  }
-  */
   R.runCommand("source('%s')".format(Config.gpRScript))
-
-  // Load in the design table and then do any scaling we need
-  /*
-  R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, designFile))
-  logFields.foreach {fld =>
-    R.runCommand("%s <- log.column(%s, '%s')".
-      format(Rgp.DESIGNRVAR, Rgp.DESIGNRVAR, fld))
-  }
-  */
-
-  // Save the adjusted design file
-  //R.runCommand("save.table(%s, '%s')".format(Rgp.DESIGNRVAR, adjDesignFile))
 
   def buildModel(paramFields:List[String], 
                  responseField:String, 
@@ -59,16 +40,6 @@ class Rgp(designFile:String) {
       format(Rgp.MODELRVAR, Rgp.DESIGNRVAR, rvect, responseField))
     println("done")
 
-    /*
-    nsamp:Int => {
-      print("running estimates...")
-      R.runCommand("%s <- take.estimates(%s, %d)".
-        format(ESTIMATERVAR, MODELRVAR, nsamp))
-      R.runCommand("save.table(%s, '%s')".format(ESTIMATERVAR, estimateFile))
-      println("done")
-      estimateFile
-    }
-    */
     new GpModel(fit.asList, paramFields, responseField, errorField)
   }
 
