@@ -155,7 +155,13 @@ object Tuner extends SimpleSwingApplication {
     //maybeShowProjectWindow
   }
 
-  /*
+  def deafTo(tunerWin:tuner.gui.Window) : Unit = {
+    super.deafTo(tunerWin)
+
+    openWindows -= tunerWin
+    maybeShowProjectWindow
+  }
+
   private def maybeShowProjectWindow = {
     // See if we need to show the project chooser
     if(openWindows.isEmpty)
@@ -163,7 +169,6 @@ object Tuner extends SimpleSwingApplication {
     else
       ProjectChooser.close
   }
-  */
 
 }
 
