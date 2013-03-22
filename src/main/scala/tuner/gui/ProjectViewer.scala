@@ -46,8 +46,6 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   val visControlPanel = new VisControlPanel(project.viewInfo)
 
   val controlPanel = new ControlPanel(project)
-  // Need this reference for later
-  val plotControls = controlPanel.controlsTab
 
   val paretoPanel = new ParetoPanel(project) {
     border = Swing.TitledBorder(border, "Pareto")
@@ -89,7 +87,6 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(controlPanel.historyTab)
   listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
-  listenTo(plotControls)
   listenTo(myMenu.importSamples)
 
   val controlsTab = controlPanel.controlsTab
@@ -118,10 +115,14 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
       this.close
-    case WindowClosing(_) => project match {
-      case s:Saved => s.save()
-      case _ =>
-    }
+    case WindowClosing(_) => 
+      paretoPanel.stop
+      controlPanel.infoTab.sampleImagePanel.stop
+
+      project match {
+        case s:Saved => s.save()
+        case _ =>
+      }
   }
 
   private def openSamplerDialog = {
