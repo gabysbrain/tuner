@@ -217,6 +217,8 @@ abstract class P5Panel (
     else  applet.noLoop
   }
 
+  def stop = applet.stop
+
   // TODO: make this look up the actual value
   def frameRate = 0
   def frameRate_=(fr:Int) = applet.frameRate(fr)
