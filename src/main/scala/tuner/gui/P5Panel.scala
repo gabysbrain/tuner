@@ -7,6 +7,7 @@ import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PFont
 import processing.core.PImage
+import processing.opengl.PGraphicsOpenGL
 
 import scala.swing.BorderPanel
 import scala.swing.BoxPanel
@@ -318,6 +319,18 @@ abstract class P5Panel (
   }
   def clearFonts = {
     loadedFonts = Map()
+  }
+
+  // OpenGL functions
+  def beginOpenGL : javax.media.opengl.GL = {
+    val pgl = g.asInstanceOf[PGraphicsOpenGL]
+    pgl.beginPGL
+    processing.opengl.PGL.gl
+  }
+
+  def endOpenGL = {
+    val pgl = g.asInstanceOf[PGraphicsOpenGL]
+    pgl.endPGL
   }
 }
 
