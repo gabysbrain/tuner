@@ -46,6 +46,8 @@ class ResponseStatsPanel(project:Viewable)
     }
   }
 
+  def stop = histogramPanels.values.foreach {panel => panel.stop}
+  
   /*
   reactions += {
     case ReadyToDraw(rhp:ResponseHistogramPanel) =>

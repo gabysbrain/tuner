@@ -116,6 +116,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ButtonClicked(`importSamplesItem`) =>
       this.close
     case WindowClosing(_) => 
+      histogramPanel.stop
       paretoPanel.stop
       controlPanel.infoTab.sampleImagePanel.stop
 
