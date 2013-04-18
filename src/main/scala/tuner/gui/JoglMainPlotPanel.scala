@@ -32,6 +32,8 @@ object JoglMainPlotPanel {
 class JoglMainPlotPanel(project:Viewable) 
     extends ProcessingMainPlotPanel(project) {
 
+  applet.paused = true
+
   val debugGl = true
 
   val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
@@ -51,6 +53,8 @@ class JoglMainPlotPanel(project:Viewable)
 
   // All the plot transforms
   var plotTransforms = Map[(String,String),(Matrix4,Matrix4)]()
+
+  applet.paused = false
 
   def setupGl(gl:GL) = {
     // Make sure opengl can do everything we want it to do

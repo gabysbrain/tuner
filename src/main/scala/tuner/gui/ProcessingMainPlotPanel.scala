@@ -35,6 +35,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
                     P5Panel.OpenGL) 
     with MainPlotPanel {
 
+  applet.paused = true
+
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
 
@@ -52,6 +54,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
   // Cache a bunch of statistics on where the plots are for hit detection
   var mousedPlot:Option[(String,String)] = None
+
+  applet.paused = false
 
   reactions += {
     case UIElementMoved(_) => 
