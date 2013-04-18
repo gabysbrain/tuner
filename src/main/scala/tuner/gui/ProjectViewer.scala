@@ -54,12 +54,12 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     maximumSize = preferredSize
   }
 
+  val histogramPanel = new ResponseStatsPanel(project) {
+    border = Swing.TitledBorder(border, "Response Histograms")
+  }
+
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-  
-    val histogramPanel = new ResponseStatsPanel(project) {
-      border = Swing.TitledBorder(border, "Response Histograms")
-    }
   
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
@@ -116,9 +116,10 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ButtonClicked(`importSamplesItem`) =>
       this.close
     case WindowClosing(_) => 
-      histogramPanel.stop
-      paretoPanel.stop
-      controlPanel.infoTab.sampleImagePanel.stop
+      mainPlotPanel.destroy
+      histogramPanel.destroy
+      paretoPanel.destroy
+      controlPanel.infoTab.sampleImagePanel.destroy
 
       project match {
         case s:Saved => s.save()

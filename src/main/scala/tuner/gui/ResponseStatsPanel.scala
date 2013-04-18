@@ -46,7 +46,7 @@ class ResponseStatsPanel(project:Viewable)
     }
   }
 
-  def stop = histogramPanels.values.foreach {panel => panel.stop}
+  def destroy = histogramPanels.values.foreach {panel => panel.destroy}
   
   /*
   reactions += {

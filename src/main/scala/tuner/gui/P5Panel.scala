@@ -217,6 +217,10 @@ abstract class P5Panel (
   }
 
   def stop = applet.stop
+  def destroy = {
+    applet.stop
+    applet.destroy
+  }
 
   // TODO: make this look up the actual value
   def frameRate = 0
