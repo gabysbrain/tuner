@@ -307,7 +307,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                                     Config.smallFontSize)
         //println("tick compute: " + (System.currentTimeMillis-t10))
         val t11 = System.currentTimeMillis
-        axis.draw(gl2, j2d, textRenderer, 
+        axis.draw(gl2, textRenderer, 
                        sliceDim.minX, bottomAxisBounds.minY,
                        sliceDim.width, bottomAxisBounds.height,
                        800, 600,
@@ -321,10 +321,10 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         val ticks = AxisTicks.ticks(low, high, 
                                     sliceDim.height, 
                                     Config.smallFontSize)
-        axis.draw(gl2, j2d, textRenderer, 
-                            leftAxisBounds.minX, sliceDim.minY,
-                            leftAxisBounds.width, sliceDim.height,
-                            800, 600, fld, ticks)
+        axis.draw(gl2, textRenderer, 
+                       leftAxisBounds.minX, sliceDim.minY,
+                       leftAxisBounds.width, sliceDim.height,
+                       800, 600, fld, ticks)
       }
     }
     //println("r1 axis draw: " + (System.currentTimeMillis-t8))
@@ -338,7 +338,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         val ticks = AxisTicks.ticks(low, high, 
                                     sliceDim.height, 
                                     Config.smallFontSize)
-        axis.draw(gl2, j2d, textRenderer, sliceDim.minX, topAxisBounds.minY,
+        axis.draw(gl2, textRenderer, sliceDim.minX, topAxisBounds.minY,
                        sliceDim.width, topAxisBounds.height,
                        800, 600,
                        fld, ticks)
@@ -350,7 +350,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         val ticks = AxisTicks.ticks(low, high, 
                                     sliceDim.height, 
                                     Config.smallFontSize)
-        axis.draw(gl2, j2d, textRenderer, rightAxisBounds.minX, sliceDim.minY,
+        axis.draw(gl2, textRenderer, rightAxisBounds.minX, sliceDim.minY,
                        rightAxisBounds.width, sliceDim.height,
                        800, 600,
                        fld, ticks)

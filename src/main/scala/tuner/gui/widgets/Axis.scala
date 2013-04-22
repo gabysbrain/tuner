@@ -10,7 +10,7 @@ import tuner.gui.util.FontLib
 import tuner.gui.util.TextAlign
 import tuner.util.AxisTicks
 
-import java.awt.Graphics2D
+//import java.awt.Graphics2D
 
 object Axis {
   sealed trait Placement 
@@ -68,12 +68,10 @@ class Axis(placement:Axis.Placement) {
 
   }
 
-  def draw(gl2:GL2, g:Graphics2D, textRenderer:TextRenderer,
+  def draw(gl2:GL2, textRenderer:TextRenderer,
            x:Float, y:Float, w:Float, h:Float, 
            screenW:Int, screenH:Int,
            field:String, ticks:List[Float]) : Unit = {
-    // set up all the colors and such
-    g.setPaint(Config.lineColor)
 
     // Figure out what size to make the text and axes
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace
@@ -87,28 +85,28 @@ class Axis(placement:Axis.Placement) {
         val textBox = Rectangle((x+labelOffset,y), (x+w-axisOffset,y+h)) 
         drawTicksVert(gl2, textRenderer, tickBox, textBox, 
                            screenW, screenH, ticks)
-        drawLabelVert(g, labelBox, field)
+        drawLabelVert(gl2, textRenderer, labelBox, field, screenW, screenH)
       case VerticalRight =>
         val tickBox = Rectangle((x,y), (x+Config.axisTickSize, y+h))
         val labelBox = Rectangle((x+w-labelSize,y), (x+w,y+h))
         val textBox = Rectangle((x+axisOffset,y), (x+w-labelOffset,y+h))
         drawTicksVert(gl2, textRenderer, tickBox, textBox, 
                            screenW, screenH, ticks)
-        drawLabelVert(g, labelBox, field)
+        drawLabelVert(gl2, textRenderer, labelBox, field, screenW, screenH)
       case HorizontalTop =>
         val tickBox = Rectangle((x,y+h-Config.axisTickSize), (x+w, y+h))
         val labelBox = Rectangle((x,y), (x+w,y+labelSize))
         val textBox = Rectangle((x,y+labelOffset), (x+w,y+h-axisOffset))
         drawTicksHoriz(gl2, textRenderer, tickBox, textBox, 
                             screenW, screenH, ticks)
-        drawLabelHoriz(g, labelBox, field)
+        drawLabelHoriz(textRenderer, labelBox, field, screenW, screenH)
       case HorizontalBottom =>
         val tickBox = Rectangle((x,y), (x+w, y+Config.axisTickSize))
         val labelBox = Rectangle((x,y+h-labelSize), (x+w,y+h))
         val textBox = Rectangle((x,y+axisOffset), (x+w,y+h-labelOffset))
         drawTicksHoriz(gl2, textRenderer, tickBox, textBox, 
                             screenW, screenH, ticks)
-        drawLabelHoriz(g, labelBox, field)
+        drawLabelHoriz(textRenderer, labelBox, field, screenW, screenH)
     }
     //println("int axis draw: " + (System.currentTimeMillis-t12))
 
@@ -250,20 +248,15 @@ class Axis(placement:Axis.Placement) {
     applet.popMatrix
   }
 
-  private def drawLabelVert(g:Graphics2D, labelBox:Rectangle,
-                            label:String) = {
+  private def drawLabelVert(gl2:GL2, textRenderer:TextRenderer,
+                            labelBox:Rectangle, label:String,
+                            screenW:Int, screenH:Int) = {
     
-    //applet.textFont(Config.fontPath, Config.smallFontSize)
-    val oldFont = g.getFont
-    g.setFont(oldFont.deriveFont(Config.smallFontSize))
-
     val centerPt = labelBox.center
-    /*
-    FontLib.drawVString(g, label, centerPt._1.toInt, centerPt._2.toInt, 
-                                  TextAlign.Center, TextAlign.Middle)
-
-    */
-    g.setFont(oldFont)
+    FontLib.drawVString(gl2, textRenderer, label, 
+                        centerPt._1.toInt, centerPt._2.toInt, 
+                        TextAlign.Center, TextAlign.Middle,
+                        screenW, screenH)
   }
 
   private def drawLabelHoriz(applet:P5Panel, labelBox:Rectangle, 
@@ -276,20 +269,15 @@ class Axis(placement:Axis.Placement) {
     applet.text(label, centerPt._1, centerPt._2)
   }
 
-  private def drawLabelHoriz(g:Graphics2D, labelBox:Rectangle, 
-                             label:String) = {
-
-    val oldFont = g.getFont
-    g.setFont(oldFont.deriveFont(Config.smallFontSize))
-
+  private def drawLabelHoriz(textRenderer:TextRenderer, 
+                             labelBox:Rectangle, label:String,
+                             screenW:Int, screenH:Int) = {
 
     val centerPt = labelBox.center
-    /*
-    FontLib.drawString(g, label, centerPt._1.toInt, centerPt._2.toInt, 
-                                 TextAlign.Center, TextAlign.Middle)
-
-    */
-    g.setFont(oldFont)
+    FontLib.drawString(textRenderer, label, 
+                       centerPt._1.toInt, centerPt._2.toInt, 
+                       TextAlign.Center, TextAlign.Middle,
+                       screenW, screenH)
   }
 
 }
