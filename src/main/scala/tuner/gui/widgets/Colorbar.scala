@@ -1,10 +1,14 @@
 package tuner.gui.widgets
 
+import java.awt.Graphics2D
+
 import tuner.Config
 import tuner.SpecifiedColorMap
 import tuner.geom.Rectangle
 import tuner.geom.Triangle
 import tuner.gui.P5Panel
+import tuner.gui.util.FontLib
+import tuner.gui.util.TextAlign
 
 import processing.core.PGraphicsJava2D
 
@@ -48,8 +52,8 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
     placement match {
       case Right =>
         drawTicks(applet, x, barStartY, labelWidth, barHeight, ticks)
-        drawColorbar(applet, x+labelWidth, barStartY, barWidth, barHeight, 
-                     colormap)
+        drawColorbar(applet, x+labelWidth, barStartY, 
+                     barWidth, barHeight, colormap)
         if(editable) {
           drawHandle(applet, x+labelWidth+barWidth, barStartY, 
                              barHeight, colormap)
@@ -65,9 +69,62 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
     }
   }
 
+  def draw(g:Graphics2D, x:Float, y:Float, w:Float, h:Float, 
+           field:String, colormap:SpecifiedColorMap) = {
+
+    bounds = Rectangle((x,y), (x+w,y+h))
+
+    val oldFont = g.getFont
+    val newFont = oldFont.deriveFont(Config.smallFontSize)
+    g.setFont(newFont)
+
+    val labelWidth = 
+      FontLib.textWidth(g, "-" + "M" * Config.colorbarTickDigits._1 +
+                           "." + "M" * Config.colorbarTickDigits._2) - 5
+    g.setFont(oldFont)
+
+    // Figure out how much space we can give to the colorbar
+    val barWidth = w - labelWidth - 
+                       Config.colorbarLabelSpace._2 - 
+                       Config.colorbarTickSize -
+                       Config.colorbarHandleSize._1
+    
+    val barHeight = h - Config.colorbarLabelSpace._1 - 
+                    Config.smallFontSize - 
+                    (Config.colorbarHandleSize._2 / 2)
+    val barStartY = y + Config.colorbarLabelSpace._1 + Config.smallFontSize
+    val ticks = colormap.ticks
+    
+    g.setPaint(Config.lineColor)
+    drawLabel(g, x, y, w, field)
+    placement match {
+      case Right =>
+        drawTicks(g, x, barStartY, labelWidth, barHeight, ticks)
+        drawColorbarJ2D(g, x+labelWidth, barStartY, 
+                           barWidth, barHeight, colormap)
+        if(editable) {
+          drawHandle(g, x+labelWidth+barWidth, barStartY, 
+                        barHeight, colormap)
+        }
+      case Left =>
+        drawTicks(g, x+Config.colorbarHandleSize._1+barWidth, barStartY, 
+                     labelWidth, barHeight, ticks)
+        drawColorbarJ2D(g, x+Config.colorbarHandleSize._1, barStartY, 
+                           barWidth, barHeight, colormap)
+        if(editable) {
+          drawHandle(g, x, barStartY, barHeight, colormap)
+        }
+    }
+  }
+
   def drawLabel(applet:P5Panel, x:Float, y:Float, w:Float, field:String) = {
     applet.textAlign(P5Panel.TextHAlign.Center, P5Panel.TextVAlign.Top)
     applet.text(field, x+w/2, y)
+  }
+
+  def drawLabel(g:Graphics2D, x:Float, y:Float, w:Float, field:String) = {
+    FontLib.drawString(g, field, x+w/2 toInt, y toInt, 
+                                 TextAlign.Center, TextAlign.Top)
   }
 
   def drawTicks(applet:P5Panel, x:Float, y:Float, 
@@ -100,12 +157,46 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
     }
   }
 
+  def drawTicks(g:Graphics2D, x:Float, y:Float, 
+                labelWidth:Float, height:Float, ticks:Seq[Float]) = {
+
+    ticks.foreach {tick =>
+      val yy = P5Panel.map(tick, ticks.head, ticks.last, y+height, y) toInt
+      val textX = Config.colorbarTickSize + Config.colorbarLabelSpace._2 toInt
+      val txt = P5Panel.nfs(tick, 
+                            Config.colorbarTickDigits._1, 
+                            Config.colorbarTickDigits._2) 
+
+      val (h, v) = if(tick == ticks.head) {
+        (TextAlign.Left, TextAlign.Bottom)
+      } else if(tick == ticks.last) {
+        (TextAlign.Left, TextAlign.Top)
+      } else {
+        (TextAlign.Left, TextAlign.Middle)
+      }
+
+      placement match {
+        case Right =>
+          FontLib.drawString(g, txt, x.toInt, yy, h, v)
+          val tickStart = (x+labelWidth+Config.colorbarLabelSpace._2).toInt
+          g.drawLine(tickStart, yy, 
+                     tickStart+Config.colorbarTickSize toInt, yy)
+        case Left =>
+          FontLib.drawString(g, txt, x+textX toInt, yy, h, v)
+          g.drawLine(x.toInt, yy, x+Config.colorbarTickSize toInt, yy)
+      }
+    }
+  }
+
   def drawColorbar(applet:P5Panel, x:Float, y:Float, w:Float, h:Float,
                    colormap:SpecifiedColorMap) = {
     barBounds = Rectangle((x,y), (x+w,y+h))
     applet.renderer match {
       case P5Panel.OpenGL => drawColorbarOGL(applet, x, y, w, h, colormap)
-      case P5Panel.Java2D => drawColorbarJ2D(applet, x, y, w, h, colormap)
+      case P5Panel.Java2D => 
+        val pgl = applet.g.asInstanceOf[PGraphicsJava2D]
+        drawColorbarJ2D(pgl.g2, x, y, w, h, colormap)
+      case P5Panel.P3D    => drawColorbarOGL(applet, x, y, w, h, colormap)
     }
   }
 
@@ -132,6 +223,31 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
 
     //handleBounds = Triangle(p1, p2, p3)
     applet.triangle(p1._1, p1._2, p2._1, p2._2, p3._1, p3._2)
+  }
+
+  def drawHandle(g:Graphics2D, x:Float, y:Float, h:Float, 
+                 colormap:SpecifiedColorMap) = {
+
+    val yy = P5Panel.map(colormap.filterVal, 
+                         colormap.minVal, colormap.maxVal,
+                         y+h, y)
+    val yOffset = Config.colorbarHandleSize._2 / 2
+
+    g.setPaint(Config.lineColor)
+
+    val (p1, p2, p3) = placement match {
+      case Right =>
+        ((x.toInt, yy.toInt), 
+         (x+Config.colorbarHandleSize._1 toInt, yy + yOffset toInt),
+         (x+Config.colorbarHandleSize._1 toInt, yy - yOffset toInt))
+      case Left =>
+        ((x+Config.colorbarHandleSize._1 toInt, yy toInt), 
+         (x toInt, yy + yOffset toInt),
+         (x toInt, yy - yOffset toInt))
+    }
+
+    //handleBounds = Triangle(p1, p2, p3)
+    g.fillPolygon(Array(p1._1, p2._1, p3._1), Array(p1._2, p2._2, p3._2), 3)
   }
 
   def isInside(mouseX:Int, mouseY:Int) = bounds.isInside(mouseX, mouseY)
@@ -173,12 +289,10 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
    * draw the colorbar using the Java2D renderer.  Java2D doesn't support
    * automatic color interpolation like opengl :(
    */
-  private def drawColorbarJ2D(applet:P5Panel, x:Float, y:Float, 
-                                              w:Float, h:Float,
-                                              colormap:SpecifiedColorMap) = {
-    // get the java2d graphics context
-    val pgl = applet.g.asInstanceOf[PGraphicsJava2D]
-    val g2 = pgl.g2
+  private def drawColorbarJ2D(g2:Graphics2D, x:Float, y:Float, 
+                                             w:Float, h:Float,
+                                             colormap:SpecifiedColorMap) = {
+    barBounds = Rectangle((x,y), (x+w,y+h))
 
     // Filtered out values get one color
     if(colormap.isFiltered) {
@@ -189,7 +303,8 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
                              colormap.minVal, colormap.maxVal, 
                              y+h, y)
       g2.setPaint(colormap.filterColor)
-      g2.fill(new java.awt.geom.Rectangle2D.Float(x, fyy2, w, fyy1-fyy2))
+      g2.fill(new java.awt.geom.Rectangle2D.Float(x, math.min(fyy1, fyy2), 
+                                                  w, math.abs(fyy1-fyy2)))
     }
 
     // Remaining color needs a gradient
@@ -203,7 +318,8 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
       0,   cyy1, colormap.color(colormap.filterVal),
       100, cyy2, colormap.color(colormap.colorEnd))
     g2.setPaint(gradient)
-    g2.fill(new java.awt.geom.Rectangle2D.Float(x, cyy2, w, cyy1-cyy2))
+    g2.fill(new java.awt.geom.Rectangle2D.Float(x, math.min(cyy1,cyy2), 
+                                                w, math.abs(cyy1-cyy2)))
   }
 }
 
