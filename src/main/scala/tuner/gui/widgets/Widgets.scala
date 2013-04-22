@@ -84,10 +84,10 @@ object Widgets {
                  xRange:(Float,Float), yRange:(Float,Float)) = {
 
     // Put everything in screen space coords
-    val xx1 = x + P5Panel.map(xSlice, xRange._1, xRange._2, 0, w) toInt
-    val yy1 = y + P5Panel.map(ySlice, yRange._2, yRange._1, 0, h) toInt
-    val xx2 = x+ P5Panel.map(xSample, xRange._1, xRange._2, 0, w) toInt
-    val yy2 = y + P5Panel.map(ySample, yRange._2, yRange._1, 0, h) toInt
+    val xx1 = P5Panel.map(xSlice, xRange._1, xRange._2, 0, w) toInt
+    val yy1 = P5Panel.map(ySlice, yRange._2, yRange._1, 0, h) toInt
+    val xx2 = P5Panel.map(xSample, xRange._1, xRange._2, 0, w) toInt
+    val yy2 = P5Panel.map(ySample, yRange._2, yRange._1, 0, h) toInt
 
     val radius = Config.sampleLineDotRadius * 1.2f toInt
 
@@ -95,16 +95,19 @@ object Widgets {
     val border = 1
     val borderColor = Color(math.abs(Config.sampleLineColor - 255))
 
+    g.translate(x, y)
+
     // draw the main part
     g.setPaint(Config.sampleLineColor)
     g.drawLine(xx1, yy1, xx2, yy2)
-    g.fillOval(xx2-radius, yy2-radius, xx2+radius, yy2+radius)
+    g.fillOval(xx2-radius, yy2-radius, radius, radius)
 
     // draw a slight border
     g.setPaint(borderColor)
     g.drawOval(xx2-radius-border, yy2-radius-border, 
-               xx2+radius+border, yy2+radius+border)
+               radius + border*2, radius + border*2)
 
+    g.translate(-x, -y)
   }
   
 }
