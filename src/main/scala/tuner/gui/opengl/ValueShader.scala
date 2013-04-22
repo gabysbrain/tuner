@@ -10,7 +10,7 @@ import tuner.gui.util.Matrix4
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
  */
-object Convolver {
+object ValueShader {
   def fromResource(gl:GL2, numDims:Int, fragment:String,
                            baseValue:Double, globalFactor:Double, 
                            distanceWeights:Array[Double], 
@@ -18,10 +18,10 @@ object Convolver {
                            coefficients:Array[Double]) = {
     val fragSource = Glsl.readResource(fragment)
 
-    new Convolver(gl, numDims, fragSource,
-                      baseValue, globalFactor, 
-                      distanceWeights, 
-                      points, coefficients)
+    new ValueShader(gl, numDims, fragSource,
+                        baseValue, globalFactor, 
+                        distanceWeights, 
+                        points, coefficients)
   }
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -29,12 +29,12 @@ object Convolver {
 
 }
 
-class Convolver(gl:GL2, numDims:Int, fragment:String,
-                        baseValue:Double, globalFactor:Double, 
-                        distanceWeights:Array[Double], 
-                        points:Array[Array[Double]], 
-                        coefficients:Array[Double])
-    extends Glsl(gl, new ConvolutionVertexShader(numDims).toString,
+class ValueShader(gl:GL2, numDims:Int, fragment:String,
+                          baseValue:Double, globalFactor:Double, 
+                          distanceWeights:Array[Double], 
+                          points:Array[Array[Double]], 
+                          coefficients:Array[Double])
+    extends Glsl(gl, new ValueVertexShader(numDims).toString,
                      None, fragment, List()) {
   
   // The maximum distance to render a point
@@ -47,7 +47,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
 
     // Send down all the theta values
     val thetaArray = distanceWeights ++ Array(0.0, 0.0, 0.0, 0.0)
-    for(i <- 0 until Convolver.numVec4(numDims)) {
+    for(i <- 0 until ValueShader.numVec4(numDims)) {
       val tId = uniformId("theta" + i)
       gl.glUniform4f(tId, thetaArray(i*4+0).toFloat, 
                           thetaArray(i*4+1).toFloat, 
@@ -67,7 +67,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
       val pt = points(r)
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
-        for(i <- 0 until Convolver.numVec4(numDims)) {
+        for(i <- 0 until ValueShader.numVec4(numDims)) {
           val ptId = attribId("data" + i)
           val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
           
@@ -125,7 +125,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
     // Send down the uniforms for this set
     // Every 4 fields goes into one attribute
     val sliceArray = pointOfInterest ++ Array(0f, 0f, 0f, 0f)
-    for(i <- 0 until Convolver.numVec4(numDims)) {
+    for(i <- 0 until ValueShader.numVec4(numDims)) {
       // Send down the current slice
       val sId = uniformId("slice" + i)
       gl.glUniform4f(sId, sliceArray(i*4+0), 
@@ -207,7 +207,7 @@ class Convolver(gl:GL2, numDims:Int, fragment:String,
 
 }
 
-class ConvolutionVertexShader(numDims:Int) {
+class ValueVertexShader(numDims:Int) {
   val template = """
   #version 120
 
@@ -272,25 +272,25 @@ class ConvolutionVertexShader(numDims:Int) {
       ttlDistSrc(numDims))
 
   private def attribSrc(numDims:Int) = 
-    (0 until Convolver.numVec4(numDims)).map("attribute vec4 data" + _ + ";").
+    (0 until ValueShader.numVec4(numDims)).map("attribute vec4 data" + _ + ";").
       reduceLeft(_ + "\n" + _)
   private def sliceSrc(numDims:Int) =
-    (0 until Convolver.numVec4(numDims)).map("uniform vec4 slice" + _ + ";").
+    (0 until ValueShader.numVec4(numDims)).map("uniform vec4 slice" + _ + ";").
       reduceLeft(_ + "\n" + _)
   private def thetaSrc(numDims:Int) =
-    (0 until Convolver.numVec4(numDims)).map("uniform vec4 theta" + _ + ";").
+    (0 until ValueShader.numVec4(numDims)).map("uniform vec4 theta" + _ + ";").
       reduceLeft(_ + "\n" + _)
 
   /**
    * code to compute the distance between a data point and the slice point
    */
   private def ttlDistSrc(numDims:Int) =
-    (0 until Convolver.numVec4(numDims)).map {dd =>
+    (0 until ValueShader.numVec4(numDims)).map {dd =>
       "vec4 rawDist%d = data%d - slice%d;".format(dd, dd, dd) + "\n" +
       "vec4 sqDist%d = theta%d * rawDist%d * rawDist%d;".format(dd, dd, dd, dd)
     }.reduceLeft(_ + "\n" + _) + "\n" +
     "centerSqDist = " + 
-    (0 until Convolver.numVec4(numDims)).map {dd =>
+    (0 until ValueShader.numVec4(numDims)).map {dd =>
       "sqDist%d.x + sqDist%d.y + sqDist%d.z + sqDist%d.w".format(dd, dd, dd, dd)
     }.reduceLeft(_ + " + " + _) + ";\n" +
     "centerSqDist = centerSqDist - wtDataDist.x - wtDataDist.y;\n"
@@ -300,7 +300,7 @@ class ConvolutionVertexShader(numDims:Int) {
    */
   private def getDimsFuncSrc(numDims:Int, func:String, varName:String) = 
     "float %s(int d) {\n".format(func) + 
-    (0 until Convolver.numVec4(numDims)).map {dd =>
+    (0 until ValueShader.numVec4(numDims)).map {dd =>
       "if(d==%d) return %s%d.x;\n".format(dd*4+0, varName, dd) +
       "if(d==%d) return %s%d.y;\n".format(dd*4+1, varName, dd) +
       "if(d==%d) return %s%d.z;\n".format(dd*4+2, varName, dd) +
