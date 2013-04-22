@@ -15,7 +15,7 @@ import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
-import tuner.gui.opengl.Convolver
+import tuner.gui.opengl.ValueShader
 import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Prosection
 import tuner.gui.util.Matrix4
@@ -39,7 +39,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
   // These need to wait for the GL context to be set up
   // We use a separate shader program for each response
-  var convolutionShaders:Map[String,Convolver] = Map() // just for estimate
+  var valueShaders:Map[String,ValueShader] = Map() // just for estimate
   var prosectionShaders:Map[String,Prosection] = Map()
   var colormapShader:Option[Glsl] = None
 
@@ -83,10 +83,10 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
   override def init(gl2:GL2) = {
     // Create the shader programs
-    if(convolutionShaders.isEmpty) {
-      convolutionShaders = project.responseFields.map {resFld =>
+    if(valueShaders.isEmpty) {
+      valueShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
-        val estShader = Convolver.fromResource(
+        val estShader = ValueShader.fromResource(
             gl2, project.inputFields.size, 
             "/shaders/est.plot.frag.glsl",
             model.mean, model.sig2,
@@ -427,7 +427,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                                       response:String,
                                       trans:Matrix4) = {
 
-    val shader = convolutionShaders(response)
+    val shader = valueShaders(response)
     val model = project.gpModels(response)
     val fields = model.dims
     val plotRect = sliceBounds((xRange._1, yRange._1))
