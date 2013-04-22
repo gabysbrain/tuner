@@ -188,7 +188,7 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
       val fyy2 = P5Panel.map(colormap.filterVal, 
                              colormap.minVal, colormap.maxVal, 
                              y+h, y)
-      g2.setPaint(colormap.filterColor.toAwt)
+      g2.setPaint(colormap.filterColor)
       g2.fill(new java.awt.geom.Rectangle2D.Float(x, fyy2, w, fyy1-fyy2))
     }
 
@@ -200,8 +200,8 @@ class Colorbar(placement:Colorbar.Placement, editable:Boolean=true) {
                            colormap.minVal, colormap.maxVal, 
                            y+h, y)
     val gradient = new java.awt.GradientPaint(
-      0,   cyy1, colormap.color(colormap.filterVal).toAwt,
-      100, cyy2, colormap.color(colormap.colorEnd).toAwt)
+      0,   cyy1, colormap.color(colormap.filterVal),
+      100, cyy2, colormap.color(colormap.colorEnd))
     g2.setPaint(gradient)
     g2.fill(new java.awt.geom.Rectangle2D.Float(x, cyy2, w, cyy1-cyy2))
   }

@@ -23,7 +23,7 @@ object Color {
 
   implicit def c2Int(c:Color) : Int = c.toInt
   implicit def c2Floats(c:Color) : (Float, Float, Float) = (c.r, c.g, c.b)
-  implicit def c2Awt(c:Color) : java.awt.Color = c.toAwt
+  implicit def c2Paint(c:Color) : java.awt.Color = c.toPaint
 }
 
 class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
@@ -48,7 +48,7 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
     "#%02x%02x%02x".format(rr, gg, bb)
   }
 
-  def toAwt = new java.awt.Color(r, g, b)
+  def toPaint = new java.awt.Color(r, g, b, a)
 
   override def toString : String = 
     "(" + r + ", " + g + ", " + b + ", " + a + ")"
