@@ -68,11 +68,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     }
 
     val rightPanel = new SplitPane(Orientation.Horizontal) {
-      /*
-      contents += mainPlotPanel
-      contents += controlPanel
-      */
       topComponent = mainPlotPanel
+      //topComponent = new scala.swing.Button("push me")
       bottomComponent = controlPanel
     }
 
@@ -116,7 +113,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ButtonClicked(`importSamplesItem`) =>
       this.close
     case WindowClosing(_) => 
-      mainPlotPanel.destroy
+      //mainPlotPanel.destroy
       histogramPanel.destroy
       paretoPanel.destroy
       controlPanel.infoTab.sampleImagePanel.destroy

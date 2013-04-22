@@ -1,12 +1,16 @@
 package tuner.gui
 
 import com.jogamp.common.nio.Buffers
-import javax.media.opengl.{GL,GL2}
-import javax.media.opengl.fixedfunc.GLMatrixFunc
-import javax.media.opengl.fixedfunc.GLPointerFunc
+import javax.media.opengl.{GL,GL2,DebugGL2,GL2GL3,GL2ES1}
+import java.awt.Graphics2D
 
+import scala.swing.GL2Panel
+import scala.swing.event.{MouseClicked, MouseDragged, MouseMoved}
 
+import tuner.BoxRegion
+import tuner.Color
 import tuner.Config
+import tuner.EllipseRegion
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
@@ -15,31 +19,23 @@ import tuner.gui.opengl.Convolver
 import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Prosection
 import tuner.gui.util.Matrix4
+import tuner.gui.util.FacetLayout
+import tuner.gui.widgets.Axis
+import tuner.gui.widgets.Colorbar
+import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
+import tuner.util.AxisTicks
+import tuner.util.ColorLib
 
-object JoglMainPlotPanel {
-  
-  def isCapable(gl:GL) = gl.hasGLSL &&
-                         gl.isFunctionAvailable("glBindFramebuffer") &&
-                         gl.isFunctionAvailable("glDrawBuffers") &&
-                         gl.isExtensionAvailable("GL_ARB_texture_float")
+class JoglMainPlotPanel(val project:Viewable) extends GL2Panel 
+                                              with MainPlotPanel {
 
-}
+  preferredSize = new java.awt.Dimension(800, 600)
 
-/**
- * The Hyperslice view of the GP model rendered using native OpenGL
- */
-class JoglMainPlotPanel(project:Viewable) 
-    extends ProcessingMainPlotPanel(project) {
+  val backgroundColor = Color(Config.backgroundColor)
 
-  applet.paused = true
-
-  val debugGl = true
-
+  // This makes sure everything is in the (0,1) coordinate system
   val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
-
-  // Convenient to keep track of the current size
-  var panelSize = (0f, 0f)
 
   // These need to wait for the GL context to be set up
   // We use a separate shader program for each response
@@ -54,35 +50,49 @@ class JoglMainPlotPanel(project:Viewable)
   // All the plot transforms
   var plotTransforms = Map[(String,String),(Matrix4,Matrix4)]()
 
-  applet.paused = false
+  // Save the highlighted plot
+  var mousedPlot:Option[(String,String)] = None
 
-  def setupGl(gl:GL) = {
-    // Make sure opengl can do everything we want it to do
-    if(!JoglMainPlotPanel.isCapable(gl))
-      throw new Exception("OpenGL not advanced enough")
+  // Everything response 1 needs 
+  val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Left)
+  val resp1XAxes = createAxes(Axis.HorizontalBottom)
+  val resp1YAxes = createAxes(Axis.VerticalLeft)
 
-    //val gl2 = new DebugGL2(gl.getGL2)
-    val gl2 = gl.getGL2
+  // Everything response 2 needs
+  val resp2Colorbar:Colorbar = new Colorbar(Colorbar.Right)
+  val resp2XAxes = createAxes(Axis.HorizontalTop)
+  val resp2YAxes = createAxes(Axis.VerticalRight)
 
-    // processing resets the projection matrices
-    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
-    gl2.glPushMatrix
-    gl2.glLoadIdentity
-    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl2.glPushMatrix
-    gl2.glLoadIdentity
+  listenTo(mouse.clicks, mouse.moves)
 
+  reactions += {
+    case MouseClicked(_, pt, _, _, _) => 
+      handleBarMouse(pt.x, pt.y)
+      handlePlotMouse(pt.x, pt.y)
+    case MouseDragged(_, pt, _) =>
+      handleBarMouse(pt.x, pt.y)
+      handlePlotMouse(pt.x, pt.y)
+    case MouseMoved(_, pt, _) => 
+      val pb = sliceBounds.find {case (_,b) => b.isInside(pt.x, pt.y)}
+      val newPos = pb.map {tmp => tmp._1}
+      if(newPos != mousedPlot) {
+        mousedPlot = newPos
+        redraw
+      }
+  }
+
+  override def init(gl2:GL2) = {
     // Create the shader programs
     if(convolutionShaders.isEmpty) {
       convolutionShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
         val estShader = Convolver.fromResource(
-            gl.getGL2, project.inputFields.size, 
+            gl2, project.inputFields.size, 
             "/shaders/est.plot.frag.glsl",
             model.mean, model.sig2,
             model.thetas.toArray,
             model.design, model.corrResponses)
-        println(estShader.attribIds)
+        //println(estShader.attribIds)
         (resFld -> estShader)
       } toMap
     }
@@ -90,39 +100,98 @@ class JoglMainPlotPanel(project:Viewable)
       prosectionShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
         val ptShader = Prosection.fromResource(
-            gl.getGL2, project.inputFields.size, model.design, model.responses)
-        println(ptShader.attribIds)
+            gl2, project.inputFields.size, model.design, model.responses)
+        //println(ptShader.attribIds)
         (resFld -> ptShader)
       } toMap
     }
     if(!colormapShader.isDefined) {
       colormapShader = Some(Glsl.fromResource(
-        gl, "/shaders/cmap.vert.glsl", 
-            "/shaders/cmap.frag.glsl"))
-      println(colormapShader.get.attribIds)
+        gl2, "/shaders/cmap.vert.glsl", 
+             "/shaders/cmap.frag.glsl"))
+      //println(colormapShader.get.attribIds)
     }
   }
 
-  def disableGl(gl:GL) = {
+  override def dispose(gl2:GL2) = {
     // Make sure there are no remaining errors
-    var errCode = gl.glGetError
+    var errCode = gl2.glGetError
     while(errCode != GL.GL_NONE) {
       println("err: " + errCode)
-      errCode = gl.glGetError
+      errCode = gl2.glGetError
     }
 
-    // Put the matrices back where we found them
-    val gl2 = gl.getGL2
-    gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
-    gl2.glPopMatrix
-    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl2.glPopMatrix
-
     // No more shaders
-    gl.getGL2ES2.glUseProgram(0)
+    gl2.getGL2ES2.glUseProgram(0)
 
     // No more texture
-    gl.glBindTexture(GL.GL_TEXTURE_2D, 0)
+    gl2.glBindTexture(GL.GL_TEXTURE_2D, 0)
+  }
+
+  override def reshape(gl2:GL2, x:Int, y:Int, width:Int, height:Int) = {
+    println("reshape: " + width + " " + height + " " + x + " " + y)
+
+    // Update all the bounding boxes
+    updateBounds(width, height)
+    val (ss, sb) = FacetLayout.plotBounds(plotBounds, project.inputFields)
+    sliceSize = ss
+    sliceBounds = sb
+
+    plotTransforms = computePlotTransforms(sliceBounds, width, height)
+    // All plots are the same size
+    val plotRect = sliceBounds.head._2
+    setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
+
+  }
+
+  def redraw = peer.display
+
+  def display(gl2:GL2) = {
+    // The clear color gets reset by the plot drawings
+    gl2.glClearColor(backgroundColor.r, 
+                     backgroundColor.g, 
+                     backgroundColor.b, 
+                     1f)
+    gl2.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+    // The 2D graphics we need
+    val j2d = overlay.createGraphics
+    j2d.setBackground(new java.awt.Color(0, 0, 0, 0))
+    j2d.clearRect(0, 0, 1000, 1000)
+
+    // See if we should highlight the 2 plots
+    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(j2d, fld1, fld2)}
+
+    // Draw the colorbars
+    project.viewInfo.response1View.foreach {r =>
+      resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
+                              leftColorbarBounds.minY,
+                              leftColorbarBounds.width, 
+                              leftColorbarBounds.height,
+                              r, colormap(r, resp1Colormaps))
+    }
+    project.viewInfo.response2View.foreach {r =>
+      resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
+                              rightColorbarBounds.minY,
+                              rightColorbarBounds.width, 
+                              rightColorbarBounds.height,
+                              r, colormap(r, resp2Colormaps))
+    }
+
+    // Draw the axes
+    project.inputFields.foreach {fld =>
+      val rng = (fld, project.viewInfo.currentZoom.range(fld))
+      drawAxes(j2d, rng)
+    }
+
+    // Draw the responses
+    drawResponses(gl2, j2d)
+
+    overlay.markDirty(0, 0, 1000, 1000)
+    overlay.drawAll
+
+    // Also get rid of the Java2D graphics
+    j2d.dispose
   }
 
   /**
@@ -192,57 +261,116 @@ class JoglMainPlotPanel(project:Viewable)
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 
+  private def drawPlotHighlight(j2d:Graphics2D, field1:String, field2:String) = {
+    val bounds1 = sliceBounds((field1, field2))
+    val bounds2 = sliceBounds((field2, field1))
+
+    j2d.setPaint(java.awt.Color.WHITE)
+
+    val offset = Config.plotSpacing / 2f
+
+    List(bounds1, bounds2).foreach {bounds =>
+      j2d.drawRect(bounds.minX.toInt-1, bounds.minY.toInt-1,
+                   bounds.width.toInt+2, bounds.height.toInt+2)
+    }
+  }
+
+  private def drawAxes(j2d:Graphics2D, range:(String,(Float,Float))) = {
+    val (fld, (low, high)) = range
+    val firstField = project.inputFields.head
+    val lastField = project.inputFields.last
+
+    project.viewInfo.response1View.foreach {r1 =>
+      // See if we draw the x-axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((fld, lastField))
+        val axis = resp1XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(j2d, sliceDim.minX, bottomAxisBounds.minY,
+                       sliceDim.width, bottomAxisBounds.height,
+                       fld, ticks)
+      }
+      // See if we draw the y-axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((firstField, fld))
+        val axis = resp1YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(j2d, leftAxisBounds.minX, sliceDim.minY,
+                       leftAxisBounds.width, sliceDim.height,
+                       fld, ticks)
+      }
+    }
+
+    project.viewInfo.response2View.foreach {r2 =>
+      // See if we draw the x-axis
+      if(fld != lastField) {
+        val sliceDim = sliceBounds((lastField, fld))
+        val axis = resp2XAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(j2d, sliceDim.minX, topAxisBounds.minY,
+                       sliceDim.width, topAxisBounds.height,
+                       fld, ticks)
+      }
+      // See if we draw the y-axis
+      if(fld != firstField) {
+        val sliceDim = sliceBounds((fld, firstField))
+        val axis = resp2YAxes(fld)
+        val ticks = AxisTicks.ticks(low, high, 
+                                    sliceDim.height, 
+                                    Config.smallFontSize)
+        axis.draw(j2d, rightAxisBounds.minX, sliceDim.minY,
+                       rightAxisBounds.width, sliceDim.height,
+                       fld, ticks)
+      }
+    }
+  }
+
   /**
    * Does opengl setup and takedown 
    */
-  override protected def drawResponses = {
+  protected def drawResponses(gl2:GL2, j2d:Graphics2D) = {
 
-    // Make sure all the opengl stuff is set up
-    // only use opengl stuff when looking at value
-    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      // setup the opengl context for drawing
-      //val gl = pgl.beginPGL.gl
-      val gl = beginOpenGL
-      val gl2 = gl.getGL2
-      //val gl2 = new DebugGL2(gl.getGL2)
+    // Find the closest sample
+    val closestSample = project.closestSample(
+      project.viewInfo.currentSlice.toList).toMap
 
-      setupGl(gl)
-      plotTransforms = computePlotTransforms(sliceBounds, width, height)
-      // All plots are the same size
-      val plotRect = sliceBounds.head._2
-      setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
+    // Loop through all field combinations to see what we need to draw
+    project.inputFields.foreach {xFld =>
+      project.inputFields.foreach {yFld =>
+        val xRange = (xFld, project.viewInfo.currentZoom.range(xFld))
+        val yRange = (yFld, project.viewInfo.currentZoom.range(yFld))
 
-      // Return to the real world
-      endOpenGL
+        if(xFld < yFld) {
+          project.viewInfo.response1View.foreach {r1 => 
+            drawResponse(gl2, xRange, yRange, r1)
+            drawResponseWidgets(j2d, xRange, yRange, closestSample)
+          }
+        } else if(xFld > yFld) {
+          project.viewInfo.response2View.foreach {r2 =>
+            drawResponse(gl2, xRange, yRange, r2)
+            drawResponseWidgets(j2d, xRange, yRange, closestSample)
+          }
+        }
+      }
     }
-
-    // the old looping code works fine
-    val drawTimes = super.drawResponses
-
-    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      val gl = beginOpenGL
-    
-      // clean up after ourselves
-      disableGl(gl)
-
-      endOpenGL
-    }
-
-    drawTimes
   }
 
   /**
    * Draw a single continuous plot
    */
-  override protected def drawResponse(xRange:(String,(Float,Float)),
-                                      yRange:(String,(Float,Float)),
-                                      response:String) = {
+  protected def drawResponse(gl2:GL2, 
+                             xRange:(String,(Float,Float)),
+                             yRange:(String,(Float,Float)),
+                             response:String) = {
 
     // only use the opengl renderer if we're looking at the values
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      val gl = beginOpenGL
-      val gl2 = gl.getGL2
-      //val gl2 = new DebugGL2(gl.getGL2)
 
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
@@ -258,10 +386,8 @@ class JoglMainPlotPanel(project:Viewable)
       val (xFld, yFld) = (xRange._1, yRange._1)
       val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
       drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
-
-      endOpenGL
     } else {
-      super.drawResponse(xRange, yRange, response)
+      //super.drawResponse(xRange, yRange, response)
     }
   }
 
@@ -382,5 +508,154 @@ class JoglMainPlotPanel(project:Viewable)
     gl.glUseProgram(0)
   }
 
+  protected def drawResponseWidgets(j2d:Graphics2D,
+                                    xRange:(String,(Float,Float)),
+                                    yRange:(String,(Float,Float)),
+                                    closestSample:Table.Tuple) = {
+    val (xFld, yFld) = (xRange._1, yRange._1)
+    val bounds = sliceBounds((xFld, yFld))
+    val (xf, yf, xr, yr) = if(xFld < yFld) {
+      (xFld, yFld, xRange, yRange)
+    } else {
+      (yFld, xFld, yRange, xRange)
+    }
+
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+                            project.viewInfo.currentSlice(yf))
+
+    // Crosshair showing current location
+    Widgets.crosshair(j2d, bounds.minX, bounds.minY, 
+                           bounds.width, bounds.height,
+                           xSlice, ySlice, xr._2, yr._2)
+
+    // Line to the nearest sample
+    if(project.viewInfo.showSampleLine) {
+      Widgets.sampleLine(j2d, bounds.minX, bounds.minY,
+                              bounds.width, bounds.height,
+                              xSlice, ySlice, 
+                              closestSample(xf), closestSample(yf),
+                              xr._2, yr._2)
+    }
+
+    // The region mask
+    if(project.viewInfo.showRegion)
+      drawMask(j2d:Graphics2D, xFld, yFld)
+  }
+
+  private def drawMask(j2d:Graphics2D, xFld:String, yFld:String) = {
+
+    // The bounding box of the slice on screen
+    val slice = sliceBounds((xFld, yFld))
+
+    val (xf, yf) = if(xFld < yFld) (xFld, yFld)
+                   else            (yFld, xFld)
+    val (xZoom, yZoom) = (project.viewInfo.currentZoom.range(xf),
+                          project.viewInfo.currentZoom.range(yf))
+
+    val (xMinRng, xMaxRng) = project.region.range(xf)
+    val (yMinRng, yMaxRng) = project.region.range(yf)
+
+    // Convert the x and y ranges into screen space
+    val xxMin = P5Panel.constrain(
+      P5Panel.map(xMinRng, xZoom._1, xZoom._2, 0, slice.width),
+      0, slice.width) toInt
+    val xxMax = P5Panel.constrain(
+      P5Panel.map(xMaxRng, xZoom._1, xZoom._2, 0, slice.width),
+      0, slice.width) toInt
+    val yyMin = P5Panel.constrain(
+      P5Panel.map(yMinRng, yZoom._2, yZoom._1, 0, slice.height),
+      0, slice.height) toInt
+    val yyMax = P5Panel.constrain(
+      P5Panel.map(yMaxRng, yZoom._2, yZoom._1, 0, slice.height),
+      0, slice.height) toInt
+
+    j2d.translate(slice.minX.toInt, slice.minY.toInt)
+    project.region match {
+      case _:BoxRegion =>
+        j2d.setPaint(Config.regionColor)
+        j2d.fillRect(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
+        j2d.setPaint(ColorLib.darker(Config.regionColor))
+        j2d.drawRect(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
+        //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
+      case _:EllipseRegion =>
+        j2d.setPaint(Config.regionColor)
+        j2d.fillOval(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
+        j2d.setPaint(ColorLib.darker(Config.regionColor))
+        j2d.drawOval(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
+    }
+    j2d.translate(-slice.minX.toInt, -slice.minY.toInt)
+
+  }
+
+  /**
+   * What to do when the mouse is clicked inside the bounds 
+   * of the hyperslice matrix
+   */
+  def handlePlotMouse(mouseX:Int, mouseY:Int) = {
+
+    // Do a rough check to see if we're near any of the slices
+    if(plotBounds.isInside(mouseX, mouseY)) {
+      sliceBounds.foreach {case ((xfld,yfld), sb) =>
+        if(sb.isInside(mouseX, mouseY)) {
+          // Make sure we're inside a bounds that's active
+          if(xfld < yfld && project.viewInfo.response1View.isDefined) {
+            val (lowZoomX, highZoomX) = project.viewInfo.currentZoom.range(xfld)
+            val (lowZoomY, highZoomY) = project.viewInfo.currentZoom.range(yfld)
+            val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
+                                           lowZoomX, highZoomX)
+            val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
+                                           highZoomY, lowZoomY)
+            publishSliceChanged(this, (xfld, newX), (yfld, newY))
+          } else if(xfld > yfld && project.viewInfo.response2View.isDefined) {
+            // x and y fields are reversed here!!!
+            val (lowZoomX, highZoomX) = project.viewInfo.currentZoom.range(yfld)
+            val (lowZoomY, highZoomY) = project.viewInfo.currentZoom.range(xfld)
+            val newX = P5Panel.map(mouseX, sb.minX, sb.maxX,
+                                           lowZoomX, highZoomX)
+            val newY = P5Panel.map(mouseY, sb.minY, sb.maxY,
+                                           highZoomY, lowZoomY)
+            publishSliceChanged(this, (yfld, newX), (xfld, newY))
+          }
+        }
+      }
+    }
+  }
+
+  def handleBarMouse(mouseX:Int, mouseY:Int) = {
+    if(leftColorbarBounds.isInside(mouseX, mouseY)) {
+      project.viewInfo.response1View.foreach {r1 =>
+        val cb = resp1Colorbar
+        val cm = colormap(r1, resp1Colormaps)
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
+                                            cb.barBounds.minY, 
+                                            cm.minVal, 
+                                            cm.maxVal)
+        cm.filterVal = filterVal
+      }
+    }
+    if(rightColorbarBounds.isInside(mouseX, mouseY)) {
+      project.viewInfo.response2View.foreach {r2 =>
+        val cb = resp2Colorbar
+        val cm = colormap(r2, resp2Colormaps)
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
+                                            cb.barBounds.minY, 
+                                            cm.minVal, 
+                                            cm.maxVal)
+        cm.filterVal = filterVal
+      }
+    }
+  }
+
+  private def createAxes(position:Axis.Placement) = {
+    val fields = position match {
+      case Axis.HorizontalTop | Axis.HorizontalBottom => 
+        project.inputFields.init
+      case Axis.VerticalLeft | Axis.VerticalRight => 
+        project.inputFields.tail
+    }
+    fields.map {fld => (fld, new Axis(position))} toMap
+  }
+  
 }
+
 
