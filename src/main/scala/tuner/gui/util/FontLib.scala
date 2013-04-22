@@ -18,6 +18,11 @@ object FontLib {
 
   import TextAlign._
 
+  def textWidth(g:Graphics2D, str:String) = {
+    val metrics = g.getFontMetrics(g.getFont)
+    metrics.stringWidth(str)
+  }
+
   def drawString(g:Graphics2D, str:String, x:Int, y:Int, 
                  hAlign:TextHAlign, vAlign:TextVAlign) = {
     val metrics = g.getFontMetrics(g.getFont)
