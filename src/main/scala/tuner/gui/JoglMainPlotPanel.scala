@@ -349,12 +349,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         if(xFld < yFld) {
           project.viewInfo.response1View.foreach {r1 => 
             drawResponse(gl2, xRange, yRange, r1)
-            drawResponseWidgets(j2d, xRange, yRange, closestSample)
+            drawResponseWidgets(gl2, j2d, xRange, yRange, closestSample)
           }
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
             drawResponse(gl2, xRange, yRange, r2)
-            drawResponseWidgets(j2d, xRange, yRange, closestSample)
+            drawResponseWidgets(gl2, j2d, xRange, yRange, closestSample)
           }
         }
       }
@@ -508,7 +508,8 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     gl.glUseProgram(0)
   }
 
-  protected def drawResponseWidgets(j2d:Graphics2D,
+  protected def drawResponseWidgets(gl2:GL2,
+                                    j2d:Graphics2D,
                                     xRange:(String,(Float,Float)),
                                     yRange:(String,(Float,Float)),
                                     closestSample:Table.Tuple) = {
@@ -524,9 +525,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                             project.viewInfo.currentSlice(yf))
 
     // Crosshair showing current location
-    Widgets.crosshair(j2d, bounds.minX, bounds.minY, 
+    val t21 = System.currentTimeMillis
+    Widgets.crosshair(gl2, bounds.minX, bounds.minY, 
                            bounds.width, bounds.height,
+                           800, 600,
                            xSlice, ySlice, xr._2, yr._2)
+    //println("crosshair draw: " + (System.currentTimeMillis-t21))
 
     // Line to the nearest sample
     if(project.viewInfo.showSampleLine) {

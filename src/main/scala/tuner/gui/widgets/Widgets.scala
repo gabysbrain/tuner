@@ -4,6 +4,8 @@ import tuner.Color
 import tuner.Config
 import tuner.gui.P5Panel
 
+import javax.media.opengl.{GL,GL2,DebugGL2,GL2GL3,GL2ES1}
+
 import java.awt.Graphics2D
 
 object Widgets {
@@ -25,17 +27,31 @@ object Widgets {
     applet.popMatrix
   }
 
-  def crosshair(g:Graphics2D, x:Float, y:Float, w:Float, h:Float, 
+  def crosshair(gl2:GL2, sliceX:Float, sliceY:Float, 
+                         sliceW:Float, sliceH:Float,
+                         screenW:Float, screenH:Float,
                 xSlice:Float, ySlice:Float,
                 xRange:(Float,Float), yRange:(Float,Float)) = {
 
     // Get the screen coords within the slice
-    val xx = x + P5Panel.map(xSlice, xRange._1, xRange._2, 0, w) toInt
-    val yy = y + P5Panel.map(ySlice, yRange._2, yRange._1, 0, h) toInt
+    val xx = sliceX + P5Panel.map(xSlice, xRange._1, xRange._2, 0, sliceW)
+    val yy = sliceY + P5Panel.map(ySlice, yRange._2, yRange._1, 0, sliceH)
 
-    g.setPaint(Config.crosshairColor)
-    g.drawLine(xx-Config.crosshairRadius, yy, xx+Config.crosshairRadius, yy)
-    g.drawLine(xx, yy-Config.crosshairRadius, xx, yy+Config.crosshairRadius)
+    val gx1 = P5Panel.map(xx-Config.crosshairRadius, 0, screenW, -1, 1)
+    val gyy = P5Panel.map(yy, screenH, 0, -1, 1)
+    val gx2 = P5Panel.map(xx+Config.crosshairRadius, 0, screenW, -1, 1)
+
+    val gxx = P5Panel.map(xx, 0, screenW, -1, 1)
+    val gy1 = P5Panel.map(yy-Config.crosshairRadius, screenH, 0, -1, 1)
+    val gy2 = P5Panel.map(yy+Config.crosshairRadius, screenH, 0, -1, 1)
+
+    gl2.glColor3f(0f, 0f, 0f)
+    gl2.glBegin(GL.GL_LINES)
+      gl2.glVertex2f(gx1, gyy)
+      gl2.glVertex2f(gx2, gyy)
+      gl2.glVertex2f(gxx, gy1)
+      gl2.glVertex2f(gxx, gy2)
+    gl2.glEnd
   }
 
   def sampleLine(applet:P5Panel, x:Float, y:Float, w:Float, h:Float,
