@@ -644,6 +644,8 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         cm.filterVal = filterVal
       }
     }
+
+    redraw
   }
 
   private def createAxes(position:Axis.Placement) = {
