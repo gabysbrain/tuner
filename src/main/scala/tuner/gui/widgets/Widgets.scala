@@ -1,7 +1,10 @@
 package tuner.gui.widgets
 
+import tuner.Color
 import tuner.Config
 import tuner.gui.P5Panel
+
+import java.awt.Graphics2D
 
 object Widgets {
   
@@ -20,6 +23,19 @@ object Widgets {
     applet.line(xx, yy-Config.crosshairRadius, xx, yy+Config.crosshairRadius)
 
     applet.popMatrix
+  }
+
+  def crosshair(g:Graphics2D, x:Float, y:Float, w:Float, h:Float, 
+                xSlice:Float, ySlice:Float,
+                xRange:(Float,Float), yRange:(Float,Float)) = {
+
+    // Get the screen coords within the slice
+    val xx = x + P5Panel.map(xSlice, xRange._1, xRange._2, 0, w) toInt
+    val yy = y + P5Panel.map(ySlice, yRange._2, yRange._1, 0, h) toInt
+
+    g.setPaint(Config.crosshairColor)
+    g.drawLine(xx-Config.crosshairRadius, yy, xx+Config.crosshairRadius, yy)
+    g.drawLine(xx, yy-Config.crosshairRadius, xx, yy+Config.crosshairRadius)
   }
 
   def sampleLine(applet:P5Panel, x:Float, y:Float, w:Float, h:Float,
@@ -61,6 +77,34 @@ object Widgets {
     applet.ellipse(xx2, yy2, radius, radius)
 
     applet.popMatrix
+  }
+  
+  def sampleLine(g:Graphics2D, x:Float, y:Float, w:Float, h:Float,
+                 xSlice:Float, ySlice:Float, xSample:Float, ySample:Float,
+                 xRange:(Float,Float), yRange:(Float,Float)) = {
+
+    // Put everything in screen space coords
+    val xx1 = x + P5Panel.map(xSlice, xRange._1, xRange._2, 0, w) toInt
+    val yy1 = y + P5Panel.map(ySlice, yRange._2, yRange._1, 0, h) toInt
+    val xx2 = x+ P5Panel.map(xSample, xRange._1, xRange._2, 0, w) toInt
+    val yy2 = y + P5Panel.map(ySample, yRange._2, yRange._1, 0, h) toInt
+
+    val radius = Config.sampleLineDotRadius * 1.2f toInt
+
+    // Draw a slight border around the whole thing
+    val border = 1
+    val borderColor = Color(math.abs(Config.sampleLineColor - 255))
+
+    // draw the main part
+    g.setPaint(Config.sampleLineColor)
+    g.drawLine(xx1, yy1, xx2, yy2)
+    g.fillOval(xx2-radius, yy2-radius, xx2+radius, yy2+radius)
+
+    // draw a slight border
+    g.setPaint(borderColor)
+    g.drawOval(xx2-radius-border, yy2-radius-border, 
+               xx2+radius+border, yy2+radius+border)
+
   }
   
 }
