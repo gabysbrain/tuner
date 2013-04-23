@@ -61,7 +61,7 @@ class Glsl(gl:GL,
     es2.glAttachShader(progId, fragShaderId)
     es2.glLinkProgram(progId)
     es2.glValidateProgram(progId)
-    val ok = ShaderUtil.isProgramLinkStatusValid(gl, progId, System.err)
+    val ok = ShaderUtil.isProgramStatusValid(es2, progId, GL2ES2.GL_LINK_STATUS)
     if(!ok) {
       throw new GLException(ShaderUtil.getProgramInfoLog(es2, progId))
     }
@@ -79,8 +79,7 @@ class Glsl(gl:GL,
     val shaderId = es2.glCreateShader(typeId)
     es2.glShaderSource(shaderId, 1, Array(source), null)
     es2.glCompileShader(shaderId)
-    //val ok = ShaderUtil.isShaderStatusValid(gl, shaderId, GL2ES2.GL_COMPILE_STATUS)
-    val ok = true
+    val ok = ShaderUtil.isShaderStatusValid(es2, shaderId, GL2ES2.GL_COMPILE_STATUS, null)
     if(!ok) {
       throw new javax.media.opengl.GLException(
         source.split("\n").zipWithIndex.map {case (ln:String, no:Int) =>
