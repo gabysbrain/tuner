@@ -63,7 +63,6 @@ object Tuner extends SimpleSwingApplication {
       val missingPackages = R.missingPackages
       if(missingPackages.isEmpty) {
       */
-        //openProject(Project.fromFile("/Users/tom/Downloads/tom/"))
         ProjectChooser
       /*
       } else {

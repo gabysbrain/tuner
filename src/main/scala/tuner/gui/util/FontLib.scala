@@ -124,7 +124,6 @@ object FontLib {
     renderer.beginRendering(screenW, screenH)
     gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
     gl2.glPushMatrix
-    //gl2.glRotatef(-90, xx.toFloat, screenH-yy.toFloat, 1)
     gl2.glLoadIdentity
     gl2.glTranslatef(xx.toFloat, screenH-yy.toFloat, 0)
     gl2.glRotatef(90, 0, 0, 1)

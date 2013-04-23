@@ -77,7 +77,6 @@ class Axis(placement:Axis.Placement) {
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace
     val labelSize = Config.smallFontSize
     val labelOffset = labelSize + Config.axisLabelSpace
-    val t12 = System.currentTimeMillis
     placement match {
       case VerticalLeft =>
         val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
@@ -108,8 +107,6 @@ class Axis(placement:Axis.Placement) {
                             screenW, screenH, ticks)
         drawLabelHoriz(textRenderer, labelBox, field, screenW, screenH)
     }
-    //println("int axis draw: " + (System.currentTimeMillis-t12))
-
   }
 
   private def drawTicksVert(applet:P5Panel, tickBox:Rectangle, 

@@ -196,12 +196,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     //println("colorbar draw: " + (System.currentTimeMillis-t4))
 
     // Draw the axes
-    val t5 = System.currentTimeMillis
+    //val t5 = System.currentTimeMillis
     project.inputFields.foreach {fld =>
       val rng = (fld, project.viewInfo.currentZoom.range(fld))
       drawAxes(gl2, rng)
     }
-    println("axis draw: " + (System.currentTimeMillis - t5))
+    //println("axis draw: " + (System.currentTimeMillis - t5))
 
     // Draw the responses
     drawResponses(gl2, j2d)
