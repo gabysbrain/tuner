@@ -82,7 +82,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(paretoPanel)
   listenTo(controlPanel.controlsTab)
   listenTo(controlPanel.historyTab)
-  listenTo(controlPanel.candidatesTab)
+  //listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
   listenTo(myMenu.importSamples)
 
@@ -90,15 +90,18 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   val localTab = controlPanel.localTab
   val importSamplesItem = myMenu.importSamples
   reactions += {
-    case CandidateChanged(_, newCand) =>
-      project.updateCandidates(newCand)
-      controlPanel.candidatesTab.updateTable
+    case CandidateChanged(x, newCand) =>
+      val newSlice = project.sliceForResponse(newCand)
+      publish(new SliceChanged(x, newSlice))
     case SliceChanged(_, sliceInfo) => 
+      deafTo(controlPanel.controlsTab)
       sliceInfo.foreach {case (fld, v) =>
         controlPanel.controlsTab.sliceSliders.get(fld).foreach {slider =>
           slider.value = v
         }
       }
+      listenTo(controlPanel.controlsTab)
+      mainPlotPanel.redraw
     case ViewChanged(`visControlPanel`) =>
       mainPlotPanel.redraw
     case AddSamples(_) => 
