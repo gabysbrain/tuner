@@ -196,12 +196,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     //println("colorbar draw: " + (System.currentTimeMillis-t4))
 
     // Draw the axes
-    //val t5 = System.currentTimeMillis
+    val t5 = System.currentTimeMillis
     project.inputFields.foreach {fld =>
       val rng = (fld, project.viewInfo.currentZoom.range(fld))
-      drawAxes(gl2, j2d, rng)
+      drawAxes(gl2, rng)
     }
-    //println("axis draw: " + (System.currentTimeMillis - t5))
+    println("axis draw: " + (System.currentTimeMillis - t5))
 
     // Draw the responses
     drawResponses(gl2, j2d)
@@ -299,27 +299,27 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
   }
 
-  private def drawAxes(gl2:GL2, j2d:Graphics2D, range:(String,(Float,Float))) = {
+  private def drawAxes(gl2:GL2, range:(String,(Float,Float))) = {
     val (fld, (low, high)) = range
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
 
-    val t8 = System.currentTimeMillis
+    //val t8 = System.currentTimeMillis
     project.viewInfo.response1View.foreach {r1 =>
       // See if we draw the x-axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        val t10 = System.currentTimeMillis
+        //val t10 = System.currentTimeMillis
         val ticks = AxisTicks.ticks(low, high, 
                                     sliceDim.height, 
                                     Config.smallFontSize)
         //println("tick compute: " + (System.currentTimeMillis-t10))
-        val t11 = System.currentTimeMillis
+        //val t11 = System.currentTimeMillis
         axis.draw(gl2, textRenderer, 
                        sliceDim.minX, bottomAxisBounds.minY,
                        sliceDim.width, bottomAxisBounds.height,
-                       800, 600,
+                       screenWidth, screenHeight,
                        fld, ticks)
         //println("axis draw: " + (System.currentTimeMillis-t11))
       }
@@ -333,12 +333,13 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         axis.draw(gl2, textRenderer, 
                        leftAxisBounds.minX, sliceDim.minY,
                        leftAxisBounds.width, sliceDim.height,
-                       800, 600, fld, ticks)
+                       screenWidth, screenHeight,
+                       fld, ticks)
       }
     }
     //println("r1 axis draw: " + (System.currentTimeMillis-t8))
 
-    val t9 = System.currentTimeMillis
+    //val t9 = System.currentTimeMillis
     project.viewInfo.response2View.foreach {r2 =>
       // See if we draw the x-axis
       if(fld != lastField) {
@@ -349,7 +350,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                                     Config.smallFontSize)
         axis.draw(gl2, textRenderer, sliceDim.minX, topAxisBounds.minY,
                        sliceDim.width, topAxisBounds.height,
-                       800, 600,
+                       screenWidth, screenHeight,
                        fld, ticks)
       }
       // See if we draw the y-axis
@@ -361,7 +362,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                                     Config.smallFontSize)
         axis.draw(gl2, textRenderer, rightAxisBounds.minX, sliceDim.minY,
                        rightAxisBounds.width, sliceDim.height,
-                       800, 600,
+                       screenWidth, screenHeight,
                        fld, ticks)
       }
     }
