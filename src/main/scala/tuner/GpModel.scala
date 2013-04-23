@@ -114,8 +114,8 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   }
 
   // Store the most recently seen max value for the function
-  def funcMax:Float = responses.max.toFloat
-  def funcMin:Float = responses.min.toFloat
+  def funcMax:Float = math.max(responses.max.toFloat, mean.toFloat)
+  def funcMin:Float = math.min(responses.min.toFloat, mean.toFloat)
 
   def theta(dim:String) = thetas(dims.indexOf(dim))
 
