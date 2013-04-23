@@ -67,6 +67,10 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   val resp2XAxes = createAxes(Axis.HorizontalTop)
   val resp2YAxes = createAxes(Axis.VerticalRight)
 
+  // These will get reset later
+  var screenWidth = 0
+  var screenHeight = 0
+
   listenTo(mouse.clicks, mouse.moves)
 
   reactions += {
@@ -136,7 +140,8 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   }
 
   override def reshape(gl2:GL2, x:Int, y:Int, width:Int, height:Int) = {
-    println("reshape: " + width + " " + height + " " + x + " " + y)
+    screenWidth = width
+    screenHeight = height
 
     // Update all the bounding boxes
     updateBounds(width, height)
@@ -148,7 +153,6 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     // All plots are the same size
     val plotRect = sliceBounds.head._2
     setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
-
   }
 
   def redraw = peer.display
@@ -171,7 +175,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     //println("t2: " + (System.currentTimeMillis-t2))
 
     // See if we should highlight the 2 plots
-    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(j2d, fld1, fld2)}
+    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(gl2, fld1, fld2)}
 
     // Draw the colorbars
     //val t4 = System.currentTimeMillis
@@ -276,17 +280,22 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 
-  private def drawPlotHighlight(j2d:Graphics2D, field1:String, field2:String) = {
+  private def drawPlotHighlight(gl2:GL2, field1:String, field2:String) = {
     val bounds1 = sliceBounds((field1, field2))
     val bounds2 = sliceBounds((field2, field1))
 
-    j2d.setPaint(java.awt.Color.WHITE)
-
-    val offset = Config.plotSpacing / 2f
-
+    gl2.glColor3f(1f, 1f, 1f)
     List(bounds1, bounds2).foreach {bounds =>
-      j2d.drawRect(bounds.minX.toInt-1, bounds.minY.toInt-1,
-                   bounds.width.toInt+2, bounds.height.toInt+2)
+      val xx1 = P5Panel.map(bounds.minX-1, 0, screenWidth, -1, 1)
+      val yy1 = P5Panel.map(bounds.minY-1, screenHeight, 0, -1, 1)
+      val xx2 = P5Panel.map(bounds.maxX+1, 0, screenWidth, -1, 1)
+      val yy2 = P5Panel.map(bounds.maxY+1, screenHeight, 0, -1, 1)
+      gl2.glBegin(GL.GL_LINE_LOOP)
+        gl2.glVertex2f(xx1, yy1)
+        gl2.glVertex2f(xx2, yy1)
+        gl2.glVertex2f(xx2, yy2)
+        gl2.glVertex2f(xx1, yy2)
+      gl2.glEnd
     }
   }
 
