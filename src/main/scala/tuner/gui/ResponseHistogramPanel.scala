@@ -35,12 +35,14 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
     val data = project.modelSamples
 
     val startTime = System.currentTimeMillis
-    counts = Histogram.pctData(responseField, data, Config.respHistogramBars)
-    //xAxisTicks = breaks.window(2)
-    xAxisTicks = counts.keys.toList
-    val minY = counts.values.min
-    val maxY = counts.values.max
-    yAxisTicks = List(minY, (minY+maxY)/2, maxY)
+    if(data.fieldNames contains responseField) {
+      counts = Histogram.pctData(responseField, data, Config.respHistogramBars)
+      //xAxisTicks = breaks.window(2)
+      xAxisTicks = counts.keys.toList
+      val minY = counts.values.min
+      val maxY = counts.values.max
+      yAxisTicks = List(minY, (minY+maxY)/2, maxY)
+    }
     val endTime = System.currentTimeMillis
     //println("resp histo setup: " + (endTime-startTime) + "ms")
     //publish(new ReadyToDraw(this))

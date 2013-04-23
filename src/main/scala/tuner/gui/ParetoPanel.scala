@@ -76,22 +76,24 @@ class ParetoPanel(project:Viewable)
   }
 
   def draw1dPareto(resp:String) {
-    val model = models(resp)
-    val ticks = AxisTicks.ticks(model.funcMin, model.funcMax, 
-                                xAxisBox.width, Config.smallFontSize)
-    xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
-                     xAxisBox.width, xAxisBox.height,
-                     resp, ticks)
-    if(resp != pareto1dField) {
-      pareto1dField = resp
-      val data = project.modelSamples
-      pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
+    val data = project.modelSamples
+    if(data.fieldNames.contains(resp)) {
+      val model = models(resp)
+      val ticks = AxisTicks.ticks(model.funcMin, model.funcMax, 
+                                  xAxisBox.width, Config.smallFontSize)
+      xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
+                       xAxisBox.width, xAxisBox.height,
+                       resp, ticks)
+      if(resp != pareto1dField) {
+        pareto1dField = resp
+        pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
+      }
+      val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
+      histogram.draw(this, plotBox.minX, plotBox.minY, 
+                           plotBox.width, plotBox.height,
+                           pareto1dCounts.values.map(_.toFloat).toList,
+                           yMin, yMax)
     }
-    val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
-    histogram.draw(this, plotBox.minX, plotBox.minY, 
-                         plotBox.width, plotBox.height,
-                         pareto1dCounts.values.map(_.toFloat).toList,
-                         yMin, yMax)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {
