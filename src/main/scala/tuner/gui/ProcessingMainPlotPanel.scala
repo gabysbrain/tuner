@@ -65,8 +65,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
   }
 
   override def setup = {
-    super.setup
     loop = false
+    super.setup
   }
 
   def redraw = applet.loop
