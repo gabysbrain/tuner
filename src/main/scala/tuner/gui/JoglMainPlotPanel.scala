@@ -31,7 +31,8 @@ import tuner.util.ColorLib
 class JoglMainPlotPanel(val project:Viewable) extends GL2Panel 
                                               with MainPlotPanel {
 
-  preferredSize = new java.awt.Dimension(800, 600)
+  preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
+                                         Config.mainPlotDims._2)
 
   val backgroundColor = Color(Config.backgroundColor)
 
@@ -566,7 +567,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val t21 = System.currentTimeMillis
     Widgets.crosshair(gl2, bounds.minX, bounds.minY, 
                            bounds.width, bounds.height,
-                           800, 600,
+                           Config.mainPlotDims._1, Config.mainPlotDims._2,
                            xSlice, ySlice, xr._2, yr._2)
     //println("crosshair draw: " + (System.currentTimeMillis-t21))
 
