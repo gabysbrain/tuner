@@ -72,10 +72,34 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   var screenWidth = 0
   var screenHeight = 0
 
-  listenTo(mouse.clicks, mouse.moves)
+  // The GLCanvas absorbs the mouse events so they never make it to the panel
+  canvas.addMouseListener(new java.awt.event.MouseAdapter {
+    override def mouseClicked(e:java.awt.event.MouseEvent) = {
+      val pt = e.getPoint
+      handleBarMouse(pt.x, pt.y)
+      handlePlotMouse(pt.x, pt.y)
+    }
+  })
+  canvas.addMouseMotionListener(new java.awt.event.MouseMotionAdapter {
+    override def mouseDragged(e:java.awt.event.MouseEvent) = {
+      val pt = e.getPoint
+      handleBarMouse(pt.x, pt.y)
+      handlePlotMouse(pt.x, pt.y)
+    }
+    override def mouseMoved(e:java.awt.event.MouseEvent) = {
+      val pt = e.getPoint
+      val pb = sliceBounds.find {case (_,b) => b.isInside(pt.x, pt.y)}
+      val newPos = pb.map {tmp => tmp._1}
+      if(newPos != mousedPlot) {
+        mousedPlot = newPos
+        redraw
+      }
+    }
+  })
 
   reactions += {
     case MouseClicked(_, pt, _, _, _) => 
+      println("here")
       handleBarMouse(pt.x, pt.y)
       handlePlotMouse(pt.x, pt.y)
     case MouseDragged(_, pt, _) =>
@@ -156,7 +180,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
   }
 
-  def redraw = peer.display
+  def redraw = canvas.display
 
   def display(gl2:GL2) = {
     // The clear color gets reset by the plot drawings
@@ -408,26 +432,25 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                              yRange:(String,(Float,Float)),
                              response:String) = {
 
-    // only use the opengl renderer if we're looking at the values
-    if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
+    val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
-      val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
-
-      // First draw to the texture
-      project.viewInfo.currentVis match {
-        case ViewInfo.Hyperslice =>
-          drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
-        case ViewInfo.Splom =>
-          drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
-      }
-
-      // Now put the texture on a quad
-      val (xFld, yFld) = (xRange._1, yRange._1)
-      val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
-      drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
-    } else {
-      //super.drawResponse(xRange, yRange, response)
+    // First draw to the texture
+    project.viewInfo.currentVis match {
+      case ViewInfo.Hyperslice =>
+        project.viewInfo.currentMetric match {
+          case ViewInfo.ValueMetric =>
+            drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
+          case ViewInfo.ErrorMetric =>
+            drawErrorToTexture(gl2, xRange, yRange, response, texTrans)
+        }
+      case ViewInfo.Splom =>
+        drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
     }
+
+    // Now put the texture on a quad
+    val (xFld, yFld) = (xRange._1, yRange._1)
+    val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
+    drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
   }
 
   /**
@@ -465,6 +488,35 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                                       yRange:(String,(Float,Float)),
                                       response:String,
                                       trans:Matrix4) = {
+
+    val shader = valueShaders(response)
+    val model = project.gpModels(response)
+    val fields = model.dims
+    val plotRect = sliceBounds((xRange._1, yRange._1))
+    val corrResponses = model.corrResponses
+    // Keep the lower left and upper right plots the same orientation
+    val (xi,yi) = if(xRange._1 < yRange._1) {
+      (fields.indexOf(xRange._1), fields.indexOf(yRange._1))
+    } else {
+      (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
+    }
+    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
+
+    shader.draw(gl, fboTexture.get, 
+                    plotRect.width.toInt, plotRect.height.toInt,
+                    trans,
+                    xRange, yRange, 
+                    xi, yi, 
+                    slice)
+  }
+
+  /**
+   * This puts the estimated value in a texture
+   */
+  def drawErrorToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                 yRange:(String,(Float,Float)),
+                                 response:String,
+                                 trans:Matrix4) = {
 
     val shader = valueShaders(response)
     val model = project.gpModels(response)
