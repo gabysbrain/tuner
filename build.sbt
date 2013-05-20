@@ -43,7 +43,7 @@ javaOptions := {
   Seq("-Djava.library.path=" + jriPath)
   //val openglPath = """lib\opengl\windows64"""
   //val jriPath = """C:\Users\tom\Documents\R\win-library\2.13\rJava\jri"""
-  //Seq("-Djava.library.path=" + jriPath + """\x64;""" + jriPath + ";" + openglPath)
+  //Seq("-Djava.library.path=" + jriPath + """\x64;""" + jriPath)
 }
 
 parallelExecution := false
