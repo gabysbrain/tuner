@@ -191,42 +191,38 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     gl2.glClear(GL.GL_COLOR_BUFFER_BIT)
 
     // The 2D graphics we need
-    val t1 = System.currentTimeMillis
     val j2d = overlay.createGraphics
-    //println("t1: " + (System.currentTimeMillis-t1))
     j2d.setBackground(new java.awt.Color(0, 0, 0, 0))
-    val t2 = System.currentTimeMillis
-    j2d.clearRect(0, 0, 1000, 1000)
-    //println("t2: " + (System.currentTimeMillis-t2))
+    j2d.clearRect(0, 0, screenWidth, screenHeight)
 
     // See if we should highlight the 2 plots
     mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(gl2, fld1, fld2)}
 
     // Draw the colorbars
-    //val t4 = System.currentTimeMillis
     project.viewInfo.response1View.foreach {r =>
-      resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
-                              leftColorbarBounds.minY,
-                              leftColorbarBounds.width, 
-                              leftColorbarBounds.height,
-                              r, colormap(r, resp1Colormaps))
+      resp1Time += timed {
+        resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
+                                leftColorbarBounds.minY,
+                                leftColorbarBounds.width, 
+                                leftColorbarBounds.height,
+                                r, colormap(r, resp1Colormaps))
+      }
     }
     project.viewInfo.response2View.foreach {r =>
-      resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
-                              rightColorbarBounds.minY,
-                              rightColorbarBounds.width, 
-                              rightColorbarBounds.height,
-                              r, colormap(r, resp2Colormaps))
+      resp2Time += timed {
+        resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
+                                rightColorbarBounds.minY,
+                                rightColorbarBounds.width, 
+                                rightColorbarBounds.height,
+                                r, colormap(r, resp2Colormaps))
+      }
     }
-    //println("colorbar draw: " + (System.currentTimeMillis-t4))
 
     // Draw the axes
-    //val t5 = System.currentTimeMillis
     project.inputFields.foreach {fld =>
       val rng = (fld, project.viewInfo.currentZoom.range(fld))
       drawAxes(gl2, rng)
     }
-    //println("axis draw: " + (System.currentTimeMillis - t5))
 
     // Draw the responses
     drawResponses(gl2, j2d)
