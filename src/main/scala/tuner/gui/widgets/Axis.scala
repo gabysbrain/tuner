@@ -2,6 +2,7 @@ package tuner.gui.widgets
 
 import javax.media.opengl.{GL,GL2,DebugGL2,GL2GL3,GL2ES1}
 import com.jogamp.opengl.util.awt.TextRenderer
+import java.awt.Graphics2D
 
 import tuner.Config
 import tuner.geom.Rectangle
@@ -109,6 +110,42 @@ class Axis(placement:Axis.Placement) {
     }
   }
 
+  def draw(j2d:Graphics2D, x:Float, y:Float, w:Float, h:Float, 
+           screenW:Int, screenH:Int,
+           field:String, ticks:List[Float]) : Unit = {
+
+    // Figure out what size to make the text and axes
+    val axisOffset = Config.axisTickSize + Config.axisLabelSpace
+    val labelSize = Config.smallFontSize
+    val labelOffset = labelSize + Config.axisLabelSpace
+    placement match {
+      case VerticalLeft =>
+        val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
+        val labelBox = Rectangle((x,y), (x+labelSize,y+h))
+        val textBox = Rectangle((x+labelOffset,y), (x+w-axisOffset,y+h)) 
+        drawTicksVert(j2d, tickBox, textBox, screenW, screenH, ticks)
+        drawLabelVert(j2d, labelBox, field, screenW, screenH)
+      case VerticalRight =>
+        val tickBox = Rectangle((x,y), (x+Config.axisTickSize, y+h))
+        val labelBox = Rectangle((x+w-labelSize,y), (x+w,y+h))
+        val textBox = Rectangle((x+axisOffset,y), (x+w-labelOffset,y+h))
+        drawTicksVert(j2d, tickBox, textBox, screenW, screenH, ticks)
+        drawLabelVert(j2d, labelBox, field, screenW, screenH)
+      case HorizontalTop =>
+        val tickBox = Rectangle((x,y+h-Config.axisTickSize), (x+w, y+h))
+        val labelBox = Rectangle((x,y), (x+w,y+labelSize))
+        val textBox = Rectangle((x,y+labelOffset), (x+w,y+h-axisOffset))
+        drawTicksHoriz(j2d, tickBox, textBox, screenW, screenH, ticks)
+        drawLabelHoriz(j2d, labelBox, field, screenW, screenH)
+      case HorizontalBottom =>
+        val tickBox = Rectangle((x,y), (x+w, y+Config.axisTickSize))
+        val labelBox = Rectangle((x,y+h-labelSize), (x+w,y+h))
+        val textBox = Rectangle((x,y+axisOffset), (x+w,y+h-labelOffset))
+        drawTicksHoriz(j2d, tickBox, textBox, screenW, screenH, ticks)
+        drawLabelHoriz(j2d, labelBox, field, screenW, screenH)
+    }
+  }
+
   private def drawTicksVert(applet:P5Panel, tickBox:Rectangle, 
                             textBox:Rectangle, ticks:Seq[Float]) = {
     ticks.foreach {tick =>
@@ -162,6 +199,33 @@ class Axis(placement:Axis.Placement) {
                          textBox.maxX.toInt, yy, 
                          h, v, 
                          screenW, screenH)
+    }
+    //println("vert tick draw: " + (System.currentTimeMillis-t13))
+  }
+
+  private def drawTicksVert(j2d:Graphics2D,
+                            tickBox:Rectangle, textBox:Rectangle, 
+                            screenW:Int, screenH:Int,
+                            ticks:Seq[Float]) = {
+    ticks.foreach {tick =>
+      val yy = P5Panel.map(tick, ticks.head, ticks.last, 
+                                 tickBox.maxY, tickBox.minY).toInt
+      j2d.drawLine(tickBox.minX.toInt, yy, tickBox.maxX.toInt, yy)
+
+      // Also draw the label
+      val (h, v) = if(tick == ticks.head) {
+        (TextAlign.Right, TextAlign.Bottom)
+      } else if(tick == ticks.last) {
+        (TextAlign.Right, TextAlign.Top)
+      } else {
+        (TextAlign.Right, TextAlign.Middle)
+      }
+
+      val txt = P5Panel.nfs(tick, Config.axisTickDigits._1,
+                                  Config.axisTickDigits._2)
+      FontLib.drawString(j2d, txt, 
+                         textBox.maxX.toInt, yy, 
+                         h, v)
     }
     //println("vert tick draw: " + (System.currentTimeMillis-t13))
   }
@@ -228,6 +292,32 @@ class Axis(placement:Axis.Placement) {
     }
   }
 
+  private def drawTicksHoriz(j2d:Graphics2D,
+                             tickBox:Rectangle, textBox:Rectangle, 
+                             screenW:Int, screenH:Int,
+                             ticks:Seq[Float]) = {
+    ticks.foreach {tick =>
+      val xx = P5Panel.map(tick, ticks.head, ticks.last, 
+                                 tickBox.minX, tickBox.maxX).toInt
+      //g.drawLine(xx, tickBox.minY.toInt, xx, tickBox.maxY.toInt)
+      j2d.drawLine(xx, tickBox.minY.toInt, xx, tickBox.maxY.toInt)
+
+      val (h, v) = if(tick == ticks.head) {
+        (TextAlign.Left, TextAlign.Bottom)
+      } else if(tick == ticks.last) {
+        (TextAlign.Right, TextAlign.Bottom)
+      } else {
+        (TextAlign.Center, TextAlign.Bottom)
+      }
+
+      val txt = P5Panel.nfs(tick, Config.axisTickDigits._1, 
+                                  Config.axisTickDigits._2)
+      FontLib.drawVString(j2d, txt, 
+                          xx, textBox.minY.toInt, 
+                          h, v)
+    }
+  }
+
   private def drawLabelVert(applet:P5Panel, labelBox:Rectangle,
                             label:String) = {
     
@@ -256,6 +346,16 @@ class Axis(placement:Axis.Placement) {
                         screenW, screenH)
   }
 
+  private def drawLabelVert(j2d:Graphics2D,
+                            labelBox:Rectangle, label:String,
+                            screenW:Int, screenH:Int) = {
+    
+    val centerPt = labelBox.center
+    FontLib.drawVString(j2d, label, 
+                        centerPt._1.toInt, centerPt._2.toInt, 
+                        TextAlign.Center, TextAlign.Middle)
+  }
+
   private def drawLabelHoriz(applet:P5Panel, labelBox:Rectangle, 
                              label:String) = {
 
@@ -275,6 +375,16 @@ class Axis(placement:Axis.Placement) {
                        centerPt._1.toInt, centerPt._2.toInt, 
                        TextAlign.Center, TextAlign.Middle,
                        screenW, screenH)
+  }
+
+  private def drawLabelHoriz(j2d:Graphics2D,
+                             labelBox:Rectangle, label:String,
+                             screenW:Int, screenH:Int) = {
+
+    val centerPt = labelBox.center
+    FontLib.drawString(j2d, label, 
+                       centerPt._1.toInt, centerPt._2.toInt, 
+                       TextAlign.Center, TextAlign.Middle)
   }
 
 }
