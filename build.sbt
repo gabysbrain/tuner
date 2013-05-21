@@ -53,8 +53,3 @@ mainClass := Some("tuner.Tuner")
 // testing stalls the build
 test in assembly := {}
 
-// Don't include the jogl stuff since that will come from jnlp
-excludedJars in assembly <<= (fullClasspath in assembly) map {cp =>
-  cp filter {List("jogl.all.jar", "gluegen-rt.jar") contains _.data.getName}
-}
-
