@@ -30,14 +30,17 @@ object Axis {
   case object HorizontalBottom extends Placement
 }
 
+// Need this accross multiple calls
 object OpenGLAxis {
   // We add and clear this
-  val points = new ArrayBuffer[Float]
+  private val points = new ArrayBuffer[Float]
 
   val tickVBO = Array(-1)
   var shader:Option[Glsl] = None
 
-  def drawAll(gl2:GL2) = {
+  def add(x:Float, y:Float) = points.append(x, y)
+
+  def begin(gl2:GL2, tr:TextRenderer) = {
     val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
 
     if(tickVBO(0) == -1) {
@@ -47,6 +50,12 @@ object OpenGLAxis {
       shader = Some(Glsl.fromResource(es2, "/shaders/ticks.vert.glsl", 
                                            "/shaders/ticks.frag.glsl"))
     }
+
+    points.clear
+  }
+
+  def end(gl2:GL2, tr:TextRenderer, screenW:Int, screenH:Int) = {
+    val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
 
     // Load the data into our buffer
     es2.glBindBuffer(GL.GL_ARRAY_BUFFER, tickVBO(0))
@@ -72,12 +81,18 @@ class Axis(placement:Axis.Placement) {
   
   import Axis._
 
+  var minVal:Float = 0f
+  var maxVal:Float = 1f
+  var size:Float = 0f
+  var ticks = List(minVal, maxVal)
+
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
-           field:String, ticks:List[Float]) : Unit = {
+           field:String, low:Float, high:Float) : Unit = {
     // set up all the colors and such
     applet.fill(Config.lineColor)
     applet.stroke(Config.lineColor)
     applet.strokeWeight(1)
+    updateTicks(low, high, h)
 
     // Figure out what size to make the text and axes
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace
@@ -115,12 +130,14 @@ class Axis(placement:Axis.Placement) {
   def draw(gl2:GL2, textRenderer:TextRenderer,
            x:Float, y:Float, w:Float, h:Float, 
            screenW:Int, screenH:Int,
-           field:String, ticks:List[Float]) : Unit = {
+           field:String, low:Float, high:Float) : Unit = {
 
     // Figure out what size to make the text and axes
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace
     val labelSize = Config.smallFontSize
     val labelOffset = labelSize + Config.axisLabelSpace
+    updateTicks(low, high, h)
+
     placement match {
       case VerticalLeft =>
         val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
@@ -155,12 +172,14 @@ class Axis(placement:Axis.Placement) {
 
   def draw(j2d:Graphics2D, x:Float, y:Float, w:Float, h:Float, 
            screenW:Int, screenH:Int,
-           field:String, ticks:List[Float]) : Unit = {
+           field:String, low:Float, high:Float) : Unit = {
 
     // Figure out what size to make the text and axes
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace
     val labelSize = Config.smallFontSize
     val labelOffset = labelSize + Config.axisLabelSpace
+    updateTicks(low, high, h)
+
     placement match {
       case VerticalLeft =>
         val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
@@ -187,6 +206,17 @@ class Axis(placement:Axis.Placement) {
         drawTicksHoriz(j2d, tickBox, textBox, screenW, screenH, ticks)
         drawLabelHoriz(j2d, labelBox, field, screenW, screenH)
     }
+  }
+
+  // The calls to R tick calculator is slow, so cache results
+  private def updateTicks(low:Float, high:Float, height:Float) = {
+    if(low != minVal || high != maxVal || height != size) {
+      minVal = low
+      maxVal = high
+      size = height
+      ticks = AxisTicks.ticks(low, high, height, Config.smallFontSize)
+    }
+    ticks
   }
 
   private def drawTicksVert(applet:P5Panel, tickBox:Rectangle, 
@@ -221,8 +251,9 @@ class Axis(placement:Axis.Placement) {
       val gx1 = P5Panel.map(tickBox.minX, 0, screenW, -1, 1)
       val gx2 = P5Panel.map(tickBox.maxX, 0, screenW, -1, 1)
       val gyy = P5Panel.map(yy, screenH, 0, -1, 1)
-      OpenGLAxis.points.append(gx1, gyy)
-      OpenGLAxis.points.append(gx2, gyy)
+      OpenGLAxis.add(gx1, gyy)
+      OpenGLAxis.add(gx2, gyy)
+
       // Also draw the label
       val (h, v) = if(tick == ticks.head) {
         (TextAlign.Right, TextAlign.Bottom)
@@ -239,7 +270,6 @@ class Axis(placement:Axis.Placement) {
                          h, v, 
                          screenW, screenH)
     }
-    //println("vert tick draw: " + (System.currentTimeMillis-t13))
   }
 
   private def drawTicksVert(j2d:Graphics2D,
@@ -266,7 +296,6 @@ class Axis(placement:Axis.Placement) {
                          textBox.maxX.toInt, yy, 
                          h, v)
     }
-    //println("vert tick draw: " + (System.currentTimeMillis-t13))
   }
 
   private def drawTicksHoriz(applet:P5Panel, tickBox:Rectangle, 
@@ -304,12 +333,12 @@ class Axis(placement:Axis.Placement) {
     ticks.foreach {tick =>
       val xx = P5Panel.map(tick, ticks.head, ticks.last, 
                                  tickBox.minX, tickBox.maxX).toInt
-      //g.drawLine(xx, tickBox.minY.toInt, xx, tickBox.maxY.toInt)
       val gxx = P5Panel.map(xx, 0, screenW, -1, 1)
       val gy1 = P5Panel.map(tickBox.minY, screenH, 0, -1, 1)
       val gy2 = P5Panel.map(tickBox.maxY, screenH, 0, -1, 1)
-      OpenGLAxis.points.append(gxx, gy1)
-      OpenGLAxis.points.append(gxx, gy2)
+      OpenGLAxis.add(gxx, gy1)
+      OpenGLAxis.add(gxx, gy2)
+      
       val (h, v) = if(tick == ticks.head) {
         (TextAlign.Left, TextAlign.Bottom)
       } else if(tick == ticks.last) {
@@ -334,7 +363,6 @@ class Axis(placement:Axis.Placement) {
     ticks.foreach {tick =>
       val xx = P5Panel.map(tick, ticks.head, ticks.last, 
                                  tickBox.minX, tickBox.maxX).toInt
-      //g.drawLine(xx, tickBox.minY.toInt, xx, tickBox.maxY.toInt)
       j2d.drawLine(xx, tickBox.minY.toInt, xx, tickBox.maxY.toInt)
 
       val (h, v) = if(tick == ticks.head) {

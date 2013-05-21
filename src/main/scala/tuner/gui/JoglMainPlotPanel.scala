@@ -21,6 +21,7 @@ import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Prosection
 import tuner.gui.util.Matrix4
 import tuner.gui.util.FacetLayout
+import tuner.gui.util.FontLib
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.Widgets
@@ -195,6 +196,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     j2d.setBackground(new java.awt.Color(0, 0, 0, 0))
     j2d.clearRect(0, 0, screenWidth, screenHeight)
 
+    // Prep all the text drawing
+    FontLib.begin(textRenderer)
+
     // See if we should highlight the 2 plots
     mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(j2d, fld1, fld2)}
 
@@ -216,6 +220,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
     // Draw the responses
     drawResponses(gl2, j2d)
+
+    // Finalize all the text drawing
+    FontLib.end(gl2, textRenderer, screenWidth, screenHeight)
 
     overlay.markDirty(0, 0, screenWidth, screenHeight)
     overlay.drawAll
@@ -321,69 +328,57 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val lastField = project.inputFields.last
 
     project.viewInfo.response1View.foreach {r1 =>
-      tuner.gui.widgets.OpenGLAxis.points.clear
+      tuner.gui.widgets.OpenGLAxis.begin(gl2, textRenderer)
 
       // See if we draw the x-axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(gl2, textRenderer, 
                        sliceDim.minX, bottomAxisBounds.minY,
                        sliceDim.width, bottomAxisBounds.height,
                        screenWidth, screenHeight,
-                       fld, ticks)
+                       fld, low, high)
       }
       // See if we draw the y-axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(gl2, textRenderer, 
                        leftAxisBounds.minX, sliceDim.minY,
                        leftAxisBounds.width, sliceDim.height,
                        screenWidth, screenHeight,
-                       fld, ticks)
+                       fld, low, high)
       }
 
-      tuner.gui.widgets.OpenGLAxis.drawAll(gl2)
+      tuner.gui.widgets.OpenGLAxis.end(gl2, textRenderer, 
+                                       screenWidth, screenHeight)
     }
 
     project.viewInfo.response2View.foreach {r2 =>
-      tuner.gui.widgets.OpenGLAxis.points.clear
+      tuner.gui.widgets.OpenGLAxis.begin(gl2, textRenderer)
 
       // See if we draw the x-axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(gl2, textRenderer, sliceDim.minX, topAxisBounds.minY,
                        sliceDim.width, topAxisBounds.height,
                        screenWidth, screenHeight,
-                       fld, ticks)
+                       fld, low, high)
       }
       // See if we draw the y-axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((fld, firstField))
         val axis = resp2YAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(gl2, textRenderer, rightAxisBounds.minX, sliceDim.minY,
                        rightAxisBounds.width, sliceDim.height,
                        screenWidth, screenHeight,
-                       fld, ticks)
+                       fld, low, high)
       }
 
-      tuner.gui.widgets.OpenGLAxis.drawAll(gl2)
-    }
-    //println("r2 axis draw: " + (System.currentTimeMillis-t9))
+      tuner.gui.widgets.OpenGLAxis.end(gl2, textRenderer, 
+                                       screenWidth, screenHeight)
   }
 
   /**

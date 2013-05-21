@@ -79,11 +79,9 @@ class ParetoPanel(project:Viewable)
     val data = project.modelSamples
     if(data.fieldNames.contains(resp)) {
       val model = models(resp)
-      val ticks = AxisTicks.ticks(model.funcMin, model.funcMax, 
-                                  xAxisBox.width, Config.smallFontSize)
       xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
                        xAxisBox.width, xAxisBox.height,
-                       resp, ticks)
+                       resp, model.funcMin, model.funcMax)
       if(resp != pareto1dField) {
         pareto1dField = resp
         pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
@@ -125,10 +123,10 @@ class ParetoPanel(project:Viewable)
 
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
                      xAxisBox.width, xAxisBox.height,
-                     resp1, xAxisTicks)
+                     resp1, r1Model.funcMin, r1Model.funcMax)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
-                     resp2, yAxisTicks)
+                     resp2, r2Model.funcMin, r2Model.funcMax)
 
     // Now for the csp
     /*

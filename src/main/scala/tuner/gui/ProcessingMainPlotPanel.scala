@@ -256,12 +256,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
                         leftAxisBounds.width, sliceDim.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
     }
     project.viewInfo.response2View.foreach {r2 =>
@@ -269,12 +266,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.width, 
-                                    Config.smallFontSize)
         axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
                         sliceDim.width, topAxisBounds.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
       // See if we draw the y axis
       if(fld != firstField) {

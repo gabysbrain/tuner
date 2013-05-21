@@ -8,6 +8,8 @@ import tuner.gui.P5Panel
 
 import com.jogamp.opengl.util.awt.TextRenderer
 
+import scala.collection.mutable.ListBuffer
+
 object TextAlign {
   sealed trait TextVAlign
   case object Top extends TextVAlign
@@ -24,9 +26,38 @@ object FontLib {
 
   import TextAlign._
 
+  val horizStrings = new ListBuffer[(String,Int,Int)]
+  val vertStrings = new ListBuffer[(String,Int,Int)]
+
   def textWidth(g:Graphics2D, str:String) = {
     val metrics = g.getFontMetrics(g.getFont)
     metrics.stringWidth(str)
+  }
+
+  def begin(renderer:TextRenderer) = {
+    horizStrings.clear
+    vertStrings.clear
+  }
+
+  def end(gl2:GL2, renderer:TextRenderer, screenW:Int, screenH:Int) = {
+    renderer.beginRendering(screenW, screenH)
+
+    horizStrings.foreach {case (str,x,y) => renderer.draw(str, x, y)}
+
+    // vertical strings are more complex
+    vertStrings.foreach {case (str,x,y) => 
+      gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
+      gl2.glPushMatrix
+      gl2.glLoadIdentity
+      gl2.glTranslatef(x, y, 0)
+      gl2.glRotatef(90, 0, 0, 1)
+
+      renderer.draw(str, 0, 0)
+      renderer.flush
+      gl2.glPopMatrix
+    }
+
+    renderer.endRendering
   }
 
   def drawString(g:Graphics2D, str:String, x:Int, y:Int, 
@@ -52,7 +83,9 @@ object FontLib {
   def drawString(renderer:TextRenderer, str:String, x:Int, y:Int,
                  hAlign:TextHAlign, vAlign:TextVAlign,
                  screenW:Int, screenH:Int) = {
-    val stringBounds = renderer.getBounds(str)
+
+    val stringBounds = renderer.getFont.getStringBounds(
+      str, renderer.getFontRenderContext)
     val (width, height) = (stringBounds.getWidth, stringBounds.getHeight)
 
     val xx = hAlign match {
@@ -66,9 +99,7 @@ object FontLib {
       case Bottom => y 
     }
 
-    renderer.beginRendering(screenW, screenH)
-    renderer.draw(str, xx.toInt, screenH-yy.toInt)
-    renderer.endRendering
+    horizStrings.append((str, xx.toInt, screenH-yy.toInt))
   }
 
   def drawVString(g:Graphics2D, str:String, x:Int, y:Int,
@@ -106,7 +137,8 @@ object FontLib {
                   screenW:Int, screenH:Int) = {
 
     // Need to compute these before rotation
-    val stringBounds = renderer.getBounds(str)
+    val stringBounds = renderer.getFont.getStringBounds(
+      str, renderer.getFontRenderContext)
     val (width, height) = (stringBounds.getWidth, stringBounds.getHeight)
 
     val xx = hAlign match {
@@ -120,19 +152,7 @@ object FontLib {
       case Bottom => y + width
     }
 
-
-    renderer.beginRendering(screenW, screenH)
-    gl2.glMatrixMode(GLMatrixFunc.GL_MODELVIEW)
-    gl2.glPushMatrix
-    gl2.glLoadIdentity
-    gl2.glTranslatef(xx.toFloat, screenH-yy.toFloat, 0)
-    gl2.glRotatef(90, 0, 0, 1)
-
-    //renderer.draw(str, xx.toInt, screenH-yy.toInt)
-    renderer.draw(str, 0, 0)
-    renderer.flush
-    gl2.glPopMatrix
-    renderer.endRendering
+    vertStrings.append((str, xx.toInt, (screenH-yy).toInt))
   }
 
 }

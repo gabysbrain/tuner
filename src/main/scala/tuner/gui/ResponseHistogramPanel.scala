@@ -78,6 +78,7 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
                      yAxisTicks.min, yAxisTicks.max)
           // Figure out how to draw the y axis
       //val maxCount = counts.values.max
+      /*
       yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                        yAxisBounds.width, yAxisBounds.height,
                        "Pct", yAxisTicks)
@@ -85,6 +86,7 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
       xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                        xAxisBounds.width, xAxisBounds.height,
                        responseField, xAxisTicks)
+      */
       drawSlider
     } else {
       visible = false
