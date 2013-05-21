@@ -1,12 +1,17 @@
 package tuner.gui.widgets
 
+import com.jogamp.common.nio.Buffers
 import javax.media.opengl.{GL,GL2,DebugGL2,GL2GL3,GL2ES1}
+import javax.media.opengl.fixedfunc.GLPointerFunc
 import com.jogamp.opengl.util.awt.TextRenderer
 import java.awt.Graphics2D
+
+import scala.collection.mutable.ArrayBuffer
 
 import tuner.Config
 import tuner.geom.Rectangle
 import tuner.gui.P5Panel
+import tuner.gui.opengl.Glsl
 import tuner.gui.util.FontLib
 import tuner.gui.util.TextAlign
 import tuner.util.AxisTicks
@@ -23,6 +28,44 @@ object Axis {
   case object HorizontalTop extends Placement
   // Horizontal, text on bottom
   case object HorizontalBottom extends Placement
+}
+
+object OpenGLAxis {
+  // We add and clear this
+  val points = new ArrayBuffer[Float]
+
+  val tickVBO = Array(-1)
+  var shader:Option[Glsl] = None
+
+  def drawAll(gl2:GL2) = {
+    val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
+
+    if(tickVBO(0) == -1) {
+      es2.glGenBuffers(1, tickVBO, 0)
+    }
+    if(shader == None) {
+      shader = Some(Glsl.fromResource(es2, "/shaders/ticks.vert.glsl", 
+                                           "/shaders/ticks.frag.glsl"))
+    }
+
+    // Load the data into our buffer
+    es2.glBindBuffer(GL.GL_ARRAY_BUFFER, tickVBO(0))
+    val buf = Buffers.newDirectFloatBuffer(points.toArray)
+    buf.rewind
+    es2.glBufferData(GL.GL_ARRAY_BUFFER, points.length*Buffers.SIZEOF_FLOAT, 
+                     buf, GL.GL_DYNAMIC_DRAW)
+
+    // Do the draw
+    es2.glUseProgram(shader.get.programId)
+    es2.glBindBuffer(GL.GL_ARRAY_BUFFER, tickVBO(0))
+    es2.glVertexAttribPointer(shader.get.attribId("pos"), 2, GL.GL_FLOAT, false, 2*Buffers.SIZEOF_FLOAT, 0)
+    es2.glEnableVertexAttribArray(shader.get.attribId("pos"))
+    es2.glDrawArrays(GL.GL_LINES, 0, points.length / 2)
+
+    // Cleanup
+    es2.glUseProgram(0)
+    es2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
+  }
 }
 
 class Axis(placement:Axis.Placement) {
@@ -178,12 +221,8 @@ class Axis(placement:Axis.Placement) {
       val gx1 = P5Panel.map(tickBox.minX, 0, screenW, -1, 1)
       val gx2 = P5Panel.map(tickBox.maxX, 0, screenW, -1, 1)
       val gyy = P5Panel.map(yy, screenH, 0, -1, 1)
-      gl2.glColor3f(1f, 1f, 1f)
-      gl2.glBegin(GL.GL_LINES)
-        gl2.glVertex2f(gx1, gyy)
-        gl2.glVertex2f(gx2, gyy)
-      gl2.glEnd
-
+      OpenGLAxis.points.append(gx1, gyy)
+      OpenGLAxis.points.append(gx2, gyy)
       // Also draw the label
       val (h, v) = if(tick == ticks.head) {
         (TextAlign.Right, TextAlign.Bottom)
@@ -269,12 +308,8 @@ class Axis(placement:Axis.Placement) {
       val gxx = P5Panel.map(xx, 0, screenW, -1, 1)
       val gy1 = P5Panel.map(tickBox.minY, screenH, 0, -1, 1)
       val gy2 = P5Panel.map(tickBox.maxY, screenH, 0, -1, 1)
-      gl2.glColor3f(1f, 1f, 1f)
-      gl2.glBegin(GL.GL_LINES)
-        gl2.glVertex2f(gxx, gy1)
-        gl2.glVertex2f(gxx, gy2)
-      gl2.glEnd
-
+      OpenGLAxis.points.append(gxx, gy1)
+      OpenGLAxis.points.append(gxx, gy2)
       val (h, v) = if(tick == ticks.head) {
         (TextAlign.Left, TextAlign.Bottom)
       } else if(tick == ticks.last) {

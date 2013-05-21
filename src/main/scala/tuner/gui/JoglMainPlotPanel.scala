@@ -325,24 +325,21 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val firstField = project.inputFields.head
     val lastField = project.inputFields.last
 
-    //val t8 = System.currentTimeMillis
     project.viewInfo.response1View.foreach {r1 =>
+      tuner.gui.widgets.OpenGLAxis.points.clear
+
       // See if we draw the x-axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        //val t10 = System.currentTimeMillis
         val ticks = AxisTicks.ticks(low, high, 
                                     sliceDim.height, 
                                     Config.smallFontSize)
-        //println("tick compute: " + (System.currentTimeMillis-t10))
-        //val t11 = System.currentTimeMillis
         axis.draw(gl2, textRenderer, 
                        sliceDim.minX, bottomAxisBounds.minY,
                        sliceDim.width, bottomAxisBounds.height,
                        screenWidth, screenHeight,
                        fld, ticks)
-        //println("axis draw: " + (System.currentTimeMillis-t11))
       }
       // See if we draw the y-axis
       if(fld != firstField) {
@@ -357,11 +354,13 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                        screenWidth, screenHeight,
                        fld, ticks)
       }
-    }
-    //println("r1 axis draw: " + (System.currentTimeMillis-t8))
 
-    //val t9 = System.currentTimeMillis
+      tuner.gui.widgets.OpenGLAxis.drawAll(gl2)
+    }
+
     project.viewInfo.response2View.foreach {r2 =>
+      tuner.gui.widgets.OpenGLAxis.points.clear
+
       // See if we draw the x-axis
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
@@ -386,6 +385,8 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                        screenWidth, screenHeight,
                        fld, ticks)
       }
+
+      tuner.gui.widgets.OpenGLAxis.drawAll(gl2)
     }
     //println("r2 axis draw: " + (System.currentTimeMillis-t9))
   }
