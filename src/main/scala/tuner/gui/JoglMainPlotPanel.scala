@@ -200,22 +200,18 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
     // Draw the colorbars
     project.viewInfo.response1View.foreach {r =>
-      resp1Time += timed {
-        resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
-                                leftColorbarBounds.minY,
-                                leftColorbarBounds.width, 
-                                leftColorbarBounds.height,
-                                r, colormap(r, resp1Colormaps))
-      }
+      resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
+                              leftColorbarBounds.minY,
+                              leftColorbarBounds.width, 
+                              leftColorbarBounds.height,
+                              r, colormap(r, resp1Colormaps))
     }
     project.viewInfo.response2View.foreach {r =>
-      resp2Time += timed {
-        resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
-                                rightColorbarBounds.minY,
-                                rightColorbarBounds.width, 
-                                rightColorbarBounds.height,
-                                r, colormap(r, resp2Colormaps))
-      }
+      resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
+                              rightColorbarBounds.minY,
+                              rightColorbarBounds.width, 
+                              rightColorbarBounds.height,
+                              r, colormap(r, resp2Colormaps))
     }
 
     // Draw the axes
@@ -227,7 +223,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     // Draw the responses
     drawResponses(gl2, j2d)
 
-    overlay.markDirty(0, 0, 1000, 1000)
+    overlay.markDirty(0, 0, screenWidth, screenHeight)
     overlay.drawAll
 
     // Also get rid of the Java2D graphics
