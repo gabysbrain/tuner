@@ -196,7 +196,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     j2d.clearRect(0, 0, screenWidth, screenHeight)
 
     // See if we should highlight the 2 plots
-    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(gl2, fld1, fld2)}
+    mousedPlot.foreach {case (fld1, fld2) => drawPlotHighlight(j2d, fld1, fld2)}
 
     // Draw the colorbars
     project.viewInfo.response1View.foreach {r =>
@@ -212,12 +212,6 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                               rightColorbarBounds.width, 
                               rightColorbarBounds.height,
                               r, colormap(r, resp2Colormaps))
-    }
-
-    // Draw the axes
-    project.inputFields.foreach {fld =>
-      val rng = (fld, project.viewInfo.currentZoom.range(fld))
-      drawAxes(gl2, rng)
     }
 
     // Draw the responses
@@ -297,22 +291,27 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 
-  private def drawPlotHighlight(gl2:GL2, field1:String, field2:String) = {
+  //private def drawPlotHighlight(gl2:GL2, field1:String, field2:String) = {
+  private def drawPlotHighlight(j2d:Graphics2D, field1:String, field2:String) = {
     val bounds1 = sliceBounds((field1, field2))
     val bounds2 = sliceBounds((field2, field1))
 
-    gl2.glColor3f(1f, 1f, 1f)
+    //gl2.glColor3f(1f, 1f, 1f)
     List(bounds1, bounds2).foreach {bounds =>
       val xx1 = P5Panel.map(bounds.minX-1, 0, screenWidth, -1, 1)
       val yy1 = P5Panel.map(bounds.minY-1, screenHeight, 0, -1, 1)
       val xx2 = P5Panel.map(bounds.maxX+1, 0, screenWidth, -1, 1)
       val yy2 = P5Panel.map(bounds.maxY+1, screenHeight, 0, -1, 1)
+      /*
       gl2.glBegin(GL.GL_LINE_LOOP)
         gl2.glVertex2f(xx1, yy1)
         gl2.glVertex2f(xx2, yy1)
         gl2.glVertex2f(xx2, yy2)
         gl2.glVertex2f(xx1, yy2)
       gl2.glEnd
+      */
+      j2d.setColor(java.awt.Color.white)
+      j2d.drawRect(bounds.minX.toInt, bounds.minY.toInt, bounds.width.toInt, bounds.height.toInt)
     }
   }
 
