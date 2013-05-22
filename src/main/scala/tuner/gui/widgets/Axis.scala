@@ -31,7 +31,7 @@ object Axis {
 }
 
 // Need this accross multiple calls
-object OpenGLAxis {
+class OpenGLAxis(val gl2:GL2, tr:TextRenderer) { 
   // We add and clear this
   private val points = new ArrayBuffer[Float]
 
@@ -40,7 +40,7 @@ object OpenGLAxis {
 
   def add(x:Float, y:Float) = points.append(x, y)
 
-  def begin(gl2:GL2, tr:TextRenderer) = {
+  def begin = {
     val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
 
     if(tickVBO(0) == -1) {
@@ -54,7 +54,7 @@ object OpenGLAxis {
     points.clear
   }
 
-  def end(gl2:GL2, tr:TextRenderer, screenW:Int, screenH:Int) = {
+  def end(screenW:Int, screenH:Int) = {
     val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
 
     // Load the data into our buffer
@@ -74,6 +74,14 @@ object OpenGLAxis {
     // Cleanup
     es2.glUseProgram(0)
     es2.glBindBuffer(GL.GL_ARRAY_BUFFER, 0)
+  }
+
+  def dispose = {
+    if(tickVBO(0) != -1) {
+      gl2.glDeleteBuffers(1, tickVBO, 0)
+      tickVBO(0) = -1
+      shader = None
+    }
   }
 }
 
@@ -127,7 +135,7 @@ class Axis(placement:Axis.Placement) {
 
   }
 
-  def draw(gl2:GL2, textRenderer:TextRenderer,
+  def draw(glAxis:OpenGLAxis, textRenderer:TextRenderer,
            x:Float, y:Float, w:Float, h:Float, 
            screenW:Int, screenH:Int,
            field:String, low:Float, high:Float) : Unit = {
@@ -143,29 +151,31 @@ class Axis(placement:Axis.Placement) {
         val tickBox = Rectangle((x+w-Config.axisTickSize,y), (x+w, y+h))
         val labelBox = Rectangle((x,y), (x+labelSize,y+h))
         val textBox = Rectangle((x+labelOffset,y), (x+w-axisOffset,y+h)) 
-        drawTicksVert(gl2, textRenderer, tickBox, textBox, 
-                           screenW, screenH, ticks)
-        drawLabelVert(gl2, textRenderer, labelBox, field, screenW, screenH)
+        drawTicksVert(glAxis, textRenderer, tickBox, textBox, 
+                              screenW, screenH, ticks)
+        drawLabelVert(glAxis.gl2, textRenderer, labelBox, field, 
+                                  screenW, screenH)
       case VerticalRight =>
         val tickBox = Rectangle((x,y), (x+Config.axisTickSize, y+h))
         val labelBox = Rectangle((x+w-labelSize,y), (x+w,y+h))
         val textBox = Rectangle((x+axisOffset,y), (x+w-labelOffset,y+h))
-        drawTicksVert(gl2, textRenderer, tickBox, textBox, 
-                           screenW, screenH, ticks)
-        drawLabelVert(gl2, textRenderer, labelBox, field, screenW, screenH)
+        drawTicksVert(glAxis, textRenderer, tickBox, textBox, 
+                              screenW, screenH, ticks)
+        drawLabelVert(glAxis.gl2, textRenderer, labelBox, field, 
+                                  screenW, screenH)
       case HorizontalTop =>
         val tickBox = Rectangle((x,y+h-Config.axisTickSize), (x+w, y+h))
         val labelBox = Rectangle((x,y), (x+w,y+labelSize))
         val textBox = Rectangle((x,y+labelOffset), (x+w,y+h-axisOffset))
-        drawTicksHoriz(gl2, textRenderer, tickBox, textBox, 
-                            screenW, screenH, ticks)
+        drawTicksHoriz(glAxis, textRenderer, tickBox, textBox, 
+                               screenW, screenH, ticks)
         drawLabelHoriz(textRenderer, labelBox, field, screenW, screenH)
       case HorizontalBottom =>
         val tickBox = Rectangle((x,y), (x+w, y+Config.axisTickSize))
         val labelBox = Rectangle((x,y+h-labelSize), (x+w,y+h))
         val textBox = Rectangle((x,y+axisOffset), (x+w,y+h-labelOffset))
-        drawTicksHoriz(gl2, textRenderer, tickBox, textBox, 
-                            screenW, screenH, ticks)
+        drawTicksHoriz(glAxis, textRenderer, tickBox, textBox, 
+                               screenW, screenH, ticks)
         drawLabelHoriz(textRenderer, labelBox, field, screenW, screenH)
     }
   }
@@ -241,7 +251,7 @@ class Axis(placement:Axis.Placement) {
     }
   }
 
-  private def drawTicksVert(gl2:GL2, textRenderer:TextRenderer,
+  private def drawTicksVert(glAxis:OpenGLAxis, textRenderer:TextRenderer,
                             tickBox:Rectangle, textBox:Rectangle, 
                             screenW:Int, screenH:Int,
                             ticks:Seq[Float]) = {
@@ -251,8 +261,8 @@ class Axis(placement:Axis.Placement) {
       val gx1 = P5Panel.map(tickBox.minX, 0, screenW, -1, 1)
       val gx2 = P5Panel.map(tickBox.maxX, 0, screenW, -1, 1)
       val gyy = P5Panel.map(yy, screenH, 0, -1, 1)
-      OpenGLAxis.add(gx1, gyy)
-      OpenGLAxis.add(gx2, gyy)
+      glAxis.add(gx1, gyy)
+      glAxis.add(gx2, gyy)
 
       // Also draw the label
       val (h, v) = if(tick == ticks.head) {
@@ -326,7 +336,7 @@ class Axis(placement:Axis.Placement) {
     }
   }
 
-  private def drawTicksHoriz(gl2:GL2, textRenderer:TextRenderer,
+  private def drawTicksHoriz(glAxis:OpenGLAxis, textRenderer:TextRenderer,
                              tickBox:Rectangle, textBox:Rectangle, 
                              screenW:Int, screenH:Int,
                              ticks:Seq[Float]) = {
@@ -336,8 +346,8 @@ class Axis(placement:Axis.Placement) {
       val gxx = P5Panel.map(xx, 0, screenW, -1, 1)
       val gy1 = P5Panel.map(tickBox.minY, screenH, 0, -1, 1)
       val gy2 = P5Panel.map(tickBox.maxY, screenH, 0, -1, 1)
-      OpenGLAxis.add(gxx, gy1)
-      OpenGLAxis.add(gxx, gy2)
+      glAxis.add(gxx, gy1)
+      glAxis.add(gxx, gy2)
       
       val (h, v) = if(tick == ticks.head) {
         (TextAlign.Left, TextAlign.Bottom)
@@ -349,7 +359,7 @@ class Axis(placement:Axis.Placement) {
 
       val txt = P5Panel.nfs(tick, Config.axisTickDigits._1, 
                                   Config.axisTickDigits._2)
-      FontLib.drawVString(gl2, textRenderer, txt, 
+      FontLib.drawVString(glAxis.gl2, textRenderer, txt, 
                           xx, textBox.minY.toInt, 
                           h, v, 
                           screenW, screenH)

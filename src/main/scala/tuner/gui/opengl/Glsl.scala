@@ -115,5 +115,13 @@ class Glsl(gl:GL,
     id
   }
 
+  // Need this to free resources associated with the shader
+  def dispose = {
+    es2.glDeleteShader(vertShaderId)
+    geomShaderId.foreach {id => es2.glDeleteShader(id)}
+    es2.glDeleteShader(fragShaderId)
+    es2.glDeleteProgram(programId)
+  }
+
 }
 
