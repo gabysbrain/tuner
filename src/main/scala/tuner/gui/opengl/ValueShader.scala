@@ -253,7 +253,10 @@ class ValueVertexShader(numDims:Int) {
     %s
 
     // This won't get rasterized if the distance is too great
-    vec2 actOffset = centerSqDist < maxSqDist ? geomOffset * dataMax : vec2(0.0, 0.0);
+    vec2 actOffset = centerSqDist < maxSqDist ? 
+                     dataMin + geomOffset * (dataMax-dataMin) : 
+                     vec2(0.0, 0.0);
+    // Put the 4 corners of the quad inside the data space
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
     vertexDist = offset - dataPos;
     fragCoeff = coeff;
