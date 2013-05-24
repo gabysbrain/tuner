@@ -229,7 +229,7 @@ class ValueVertexShader(numDims:Int) {
   // Outputs
   varying float fragCoeff;
   varying float centerSqDist;
-  varying vec2 vertexDist;
+  varying vec2 vertexDist; // This is going to be interpolated over
   varying vec2 theta;
 
   // Function to get data values
@@ -253,8 +253,9 @@ class ValueVertexShader(numDims:Int) {
     %s
 
     // This won't get rasterized if the distance is too great
+    float maxRemDist = maxSqDist - centerSqDist;
     vec2 actOffset = centerSqDist < maxSqDist ? 
-                     dataMin + geomOffset * (dataMax-dataMin) : 
+                     geomOffset * sqrt(maxRemDist / theta) :
                      vec2(0.0, 0.0);
     // Put the 4 corners of the quad inside the data space
     vec2 offset = clamp(dataPos + actOffset, dataMin, dataMax);
