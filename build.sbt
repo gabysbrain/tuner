@@ -26,6 +26,8 @@ libraryDependencies += "org.apache.commons" % "commons-math" % "2.2"
 
 libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
 
+libraryDependencies += "org.jblas" % "jblas" % "1.2.3"
+
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
