@@ -40,7 +40,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
                      None, fragment, List()) {
   
   // The maximum distance to render a point
-  val maxSqDist = -math.log(Config.maxSampleSqDistance)
+  val maxSqDist = -math.log(Config.minSampleEffect)
 
   // Setup the display list
   val drawListId = gl.glGenLists(1)
