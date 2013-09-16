@@ -43,6 +43,7 @@ object FontLib {
     renderer.beginRendering(screenW, screenH)
 
     horizStrings.foreach {case (str,x,y) => renderer.draw(str, x, y)}
+    renderer.flush
 
     // vertical strings are more complex
     vertStrings.foreach {case (str,x,y) => 

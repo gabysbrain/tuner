@@ -257,7 +257,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
 
     // Draw the responses
-    //drawResponses(gl2, j2d)
+    drawResponses(gl2, j2d)
 
     // Finalize all the text drawing
     FontLib.end(gl2, textRenderer, screenWidth, screenHeight)
