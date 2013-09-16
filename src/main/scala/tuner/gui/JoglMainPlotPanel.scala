@@ -1,13 +1,10 @@
 package tuner.gui
 
 import com.jogamp.common.nio.Buffers
-import javax.media.opengl.DebugGL2
-import javax.media.opengl.TraceGL2
-import javax.media.opengl.{GL,GL2,GL2GL3,GL2ES1}
+import javax.media.opengl.{GL,GL2}
 import javax.media.opengl.fixedfunc.GLMatrixFunc
 import javax.media.opengl.fixedfunc.GLPointerFunc
 
-import processing.opengl.PGraphicsOpenGL
 
 import tuner.Config
 import tuner.SpecifiedColorMap
@@ -60,7 +57,8 @@ class JoglMainPlotPanel(project:Viewable)
     if(!JoglMainPlotPanel.isCapable(gl))
       throw new Exception("OpenGL not advanced enough")
 
-    val gl2 = new DebugGL2(gl.getGL2)
+    //val gl2 = new DebugGL2(gl.getGL2)
+    val gl2 = gl.getGL2
 
     // processing resets the projection matrices
     gl2.glMatrixMode(GLMatrixFunc.GL_PROJECTION)
@@ -147,9 +145,9 @@ class JoglMainPlotPanel(project:Viewable)
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
       val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*texWidth*texHeight)(0f))
       fakeBuffer.rewind
-      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2GL3.GL_RGBA32F, 
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA32F, 
                       texWidth, texHeight, 0, 
-                      GL2GL3.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
+                      GL.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
       //gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
     }
   }
@@ -194,14 +192,15 @@ class JoglMainPlotPanel(project:Viewable)
    * Does opengl setup and takedown 
    */
   override protected def drawResponses = {
-    val pgl = g.asInstanceOf[PGraphicsOpenGL]
 
     // Make sure all the opengl stuff is set up
     // only use opengl stuff when looking at value
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
       // setup the opengl context for drawing
-      val gl = pgl.beginGL
-      val gl2 = new DebugGL2(gl.getGL2)
+      //val gl = pgl.beginPGL.gl
+      val gl = beginOpenGL
+      val gl2 = gl.getGL2
+      //val gl2 = new DebugGL2(gl.getGL2)
 
       setupGl(gl)
       plotTransforms = computePlotTransforms(sliceBounds, width, height)
@@ -210,19 +209,19 @@ class JoglMainPlotPanel(project:Viewable)
       setupTextureTarget(gl2, plotRect.width.toInt, plotRect.height.toInt)
 
       // Return to the real world
-      pgl.endGL
+      endOpenGL
     }
 
     // the old looping code works fine
     val drawTimes = super.drawResponses
 
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      val gl = pgl.beginGL
+      val gl = beginOpenGL
     
       // clean up after ourselves
       disableGl(gl)
 
-      pgl.endGL
+      endOpenGL
     }
 
     drawTimes
@@ -237,9 +236,9 @@ class JoglMainPlotPanel(project:Viewable)
 
     // only use the opengl renderer if we're looking at the values
     if(project.viewInfo.currentMetric == ViewInfo.ValueMetric) {
-      val pgl = g.asInstanceOf[PGraphicsOpenGL]
-      val gl = pgl.beginGL
-      val gl2 = new DebugGL2(gl.getGL2)
+      val gl = beginOpenGL
+      val gl2 = gl.getGL2
+      //val gl2 = new DebugGL2(gl.getGL2)
 
       val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
 
@@ -256,7 +255,7 @@ class JoglMainPlotPanel(project:Viewable)
       val cm = if(xFld < yFld) resp1Colormaps else resp2Colormaps
       drawResponseTexturedQuad(gl2, colormap(response, cm), plotTrans)
 
-      pgl.endGL
+      endOpenGL
     } else {
       super.drawResponse(xRange, yRange, response)
     }

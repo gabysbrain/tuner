@@ -85,6 +85,7 @@ object Config {
   val colorbarLabelSpace = (5, 3)
   val colorbarTickDigits = (1, 3)
   val colorbarHandleSize = (15, 9) // width, height
+  val colorbarTicks = 3
 
   val crosshairColor = 0
   val crosshairRadius = 3
@@ -98,7 +99,8 @@ object Config {
 
   val sampleDotColor = 0xffDD1C77
 
-  val respHistogramSampleDensity = 10000
+  val numericSampleDensity = 10000
+
   val respHistogramPanelDims = (paretoDims._1 - 50, 130)
   val respHistogramBars = 11
   val respHistogramBarFill = Some(255)

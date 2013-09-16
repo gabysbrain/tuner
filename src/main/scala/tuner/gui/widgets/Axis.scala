@@ -26,6 +26,7 @@ class Axis(placement:Axis.Placement) {
     // set up all the colors and such
     applet.fill(Config.lineColor)
     applet.stroke(Config.lineColor)
+    applet.strokeWeight(1)
 
     // Figure out what size to make the text and axes
     val axisOffset = Config.axisTickSize + Config.axisLabelSpace

@@ -12,12 +12,12 @@ import java.io.File
 
 import tuner.error.MissingJriException
 import tuner.error.ProjectLoadException
-import tuner.gui.WindowMenu
+import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
-import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
 import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
+import tuner.gui.WindowMenu
 import tuner.gui.R.InstallPackageDialog
 import tuner.gui.R.RNotInstalledDialog
 import tuner.project._
@@ -52,6 +52,7 @@ object Tuner extends SimpleSwingApplication {
 
   def top = { 
     // Make sure R and rJava are installed otherwise all bets are off
+    /*
     if(!Rapp.pathOk) {
       RNotInstalledDialog
     } else if(!Rapp.jriOk) {
@@ -61,19 +62,22 @@ object Tuner extends SimpleSwingApplication {
     } else {
       val missingPackages = R.missingPackages
       if(missingPackages.isEmpty) {
-        //openProject(Project.fromFile("/Users/tom/Projects/tuner.jogl/test_data/britta_proj"))
+      */
+        //openProject(Project.fromFile("/Users/tom/Downloads/tom/"))
         ProjectChooser
+      /*
       } else {
         new InstallPackageDialog(missingPackages) {
           val installPackage = R.installPackage(_)
         }
       }
     }
+    */
   }
 
   def startNewProject = {
     println("Starting new project")
-    val window = new ProjectInfoWindow
+    val window = new NewProjectWindow
     window.open
   }
 
@@ -112,6 +116,10 @@ object Tuner extends SimpleSwingApplication {
     }
 
     //maybeShowProjectWindow
+  }
+
+  def openProject(proj:ProjectInfo) : Unit = {
+    openProject(Project.fromFile(proj.path))
   }
 
   def openProject(file:File) : Unit = {

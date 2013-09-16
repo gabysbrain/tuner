@@ -18,6 +18,7 @@ import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
+import tuner.gui.util.AxisTicks
 import tuner.util.ColorLib
 
 import scala.collection.mutable.Queue

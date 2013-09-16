@@ -25,7 +25,7 @@ case class VisInfo(
  * Includes things like focus point, zoom level, etc.
  */
 object ViewInfo {
-  val DefaultVisInfo = VisInfo (
+  val Default = VisInfo (
     Nil, Nil, None, None, Some("hyperslice"), "value", false, false
   )
 
@@ -126,15 +126,6 @@ class ViewInfo(project:Viewable) {
       val (mn, mx) = currentZoom.range(fld)
       v >= mn && v <= mx
     }
-  }
-
-  /**
-   * The number of sample points that are unclipped 
-   * by the current zoom level
-   */
-  def numUnclippedPoints : Int = {
-    val (active,_) = project.viewFilterDesignSites
-    active.numRows
   }
 
   def toJson = {

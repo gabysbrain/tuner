@@ -76,7 +76,7 @@ class GpModel(val thetas:Vector, val alphas:Vector,
 
   def maxGain(range:DimRanges):Float = {
     var mx = Double.MinValue
-    Sampler.lhc(range, Config.respHistogramSampleDensity, pt => {
+    Sampler.lhc(range, Config.numericSampleDensity, pt => {
       val (est, err) = runSample(pt)
       val expgain = calcExpectedGain(est, err)
       mx = math.max(mx, expgain)

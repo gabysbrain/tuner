@@ -6,11 +6,11 @@ import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gp.GpModel
 import tuner.gui.event.ReadyToDraw
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Bars
 import tuner.project.Viewable
+import tuner.gui.util.AxisTicks
 
 class ResponseHistogramPanel(project:Viewable, responseField:String) 
     extends P5Panel(Config.respHistogramPanelDims._1, 

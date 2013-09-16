@@ -59,10 +59,12 @@ object Project {
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  def recent : Array[Project] = {
+  def recent : Array[ProjectInfo] = {
     Config.recentProjects flatMap {rp =>
       try {
-        Some(Project.fromFile(rp))
+        val json = loadJson(rp)
+        Some(ProjectInfo(json.name, rp, new java.util.Date, 
+                         json.inputs.length, json.outputs.length))
       } catch {
         case e:java.io.FileNotFoundException =>
           None
@@ -71,14 +73,7 @@ object Project {
   }
 
   def fromFile(path:String) : Project = {
-    val configFilePath = Path.join(path, Config.projConfigFilename)
-    val json = parse(Source.fromFile(configFilePath).mkString)
-    val config = try {
-      json.extract[ProjConfig]
-    } catch {
-      case me:net.liftweb.json.MappingException =>
-        throw new ProjectLoadException(me.msg, me)
-    }
+    val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
     val samples = try {
@@ -122,7 +117,24 @@ object Project {
     inputs.map {case (fld, mn, mx) =>
       InputSpecification(fld, mn, mx)
     }
+  
+  private def loadJson(path:String) : ProjConfig = {
+    val configFilePath = Path.join(path, Config.projConfigFilename)
+    val json = parse(Source.fromFile(configFilePath).mkString)
+    try {
+      json.extract[ProjConfig]
+    } catch {
+      case me:net.liftweb.json.MappingException =>
+        throw new ProjectLoadException(me.msg, me)
+    }
+  }
+}
 
+case class ProjectInfo(name:String, path:String, 
+                       modificationDate:Date, 
+                       numInputs:Int, numOutputs:Int) {
+
+  val statusString = "Ok"
 }
 
 sealed abstract class Project(config:ProjConfig) {
@@ -192,8 +204,8 @@ class NewProject(name:String,
     extends Project(ProjConfig(name, scriptPath, 
                                Project.mapInputs(inputDims),
                                Nil, Nil, Nil, false,
-                               ViewInfo.DefaultVisInfo,
-                               Region.DefaultRegionInfo,
+                               ViewInfo.Default,
+                               Region.Default,
                                None)) with Sampler {
 
   val path = Path.join(basePath, name)
@@ -425,6 +437,26 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     _region = r
   }
 
+  def numSamplesInRegion = {
+    var count = 0
+    for(i <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(i)
+      val inputs = tpl.filterKeys {k => inputFields contains k}
+      if(region.inside(inputs.toList))
+        count += 1
+    }
+    count
+  }
+
+  /**
+   * The number of sample points that are unclipped 
+   * by the current zoom level
+   */
+  def numUnclippedPoints : Int = {
+    val (active,_) = viewFilterDesignSites
+    active.numRows
+  }
+
   def newFields : List[String] = {
     val knownFields : Set[String] = 
       (responseFields ++ ignoreFields ++ inputFields).toSet
@@ -479,6 +511,38 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     }
   }
 
+  def value(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._1)}
+  }
+
+  def value(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._1.toFloat
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._2)}
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._2.toFloat
+  }
+
+  def expectedGain(point:List[(String,Float)]) : Map[String,Float] = 
+    estimatePoint(point) map {case (k,v) => 
+      (k -> gpModels(k).calcExpectedGain(v._1, v._2).toFloat)
+    }
+
+  def expectedGain(point:List[(String,Float)], response:String) : Float = {
+    val sample = gpModels(response).runSample(point)
+    gpModels(response).calcExpectedGain(sample._1, sample._2).toFloat
+  }
+
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
@@ -486,19 +550,26 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     Density2D.density(modelSamples, numSamples, resp2Dim, resp1Dim)
   }
 
+  def viewValueFunction : (List[(String,Float)],String)=>Float = 
+    viewInfo.currentMetric match {
+      case ViewInfo.ValueMetric => value
+      case ViewInfo.ErrorMetric => uncertainty
+      case ViewInfo.GainMetric  => expectedGain
+    }
+
   private def loadResponseSamples(path:String) : Table = {
     // First try to load up an old file
     val samples = try {
       val filepath = Path.join(path, Config.respSampleFilename)
       val tmp = Table.fromCsv(filepath)
       if(tmp.numRows == 0) {
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
       } else {
         tmp
       }
     } catch {
       case e:java.io.FileNotFoundException => 
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
     }
     gpModels.foldLeft(samples) {case (tbl, (fld, model)) =>
       if(!tbl.fieldNames.contains(fld)) {

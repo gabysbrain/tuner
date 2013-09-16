@@ -2,6 +2,9 @@ package tuner
 
 object Color {
 
+  val Black = Color(0, 0, 0)
+  val White = Color(255, 255, 255)
+
   def apply(argb:Int) = {
     if(argb >= 0 && argb < 256) {
       new Color(argb/255f, argb/255f, argb/255f, 1f)
@@ -13,7 +16,10 @@ object Color {
       new Color(r/255f, g/255f, b/255f, a/255f)
     }
   }
+  def apply(r:Int, g:Int, b:Int) = new Color(r/255f, g/255f, b/255f, 1f)
+  def apply(r:Int, g:Int, b:Int, a:Float) = new Color(r/255f, g/255f, b/255f, a)
   def apply(r:Float, g:Float, b:Float, a:Float) = new Color(r, g, b, a)
+  def apply(c:Color, a:Float) = new Color(c.r, c.g, c.b, a)
 
   implicit def c2Int(c:Color) : Int = c.toInt
   implicit def c2Floats(c:Color) : (Float, Float, Float) = (c.r, c.g, c.b)
@@ -33,6 +39,13 @@ class Color(val r:Float, val g:Float, val b:Float, val a:Float) {
     val gg = (g*255).toInt << 8   // Binary: 00000000000000001100110000000000
     val bb = (b*255).toInt
     aa | rr | gg | bb
+  }
+
+  def toCss : String = {
+    val rr = (r*255).toInt
+    val gg = (g*255).toInt
+    val bb = (b*255).toInt
+    "#%02x%02x%02x".format(rr, gg, bb)
   }
 
   def toAwt = new java.awt.Color(r, g, b)
