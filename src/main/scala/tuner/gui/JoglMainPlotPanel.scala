@@ -250,8 +250,14 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                               r, colormap(r, resp2Colormaps))
     }
 
+    // Draw the axes
+    project.inputFields.foreach {fld =>
+      val rng = (fld, project.viewInfo.currentZoom.range(fld))
+      drawAxes(gl2, rng)
+    }
+
     // Draw the responses
-    drawResponses(gl2, j2d)
+    //drawResponses(gl2, j2d)
 
     // Finalize all the text drawing
     FontLib.end(gl2, textRenderer, screenWidth, screenHeight)
