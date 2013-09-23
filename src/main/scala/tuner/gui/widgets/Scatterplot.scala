@@ -1,5 +1,6 @@
 package tuner.gui.widgets
 
+import tuner.Color
 import tuner.Config
 import tuner.Table
 import tuner.gui.P5Panel
@@ -30,7 +31,7 @@ class Scatterplot(resizeOnMouse:Boolean=false) {
       val xx = P5Panel.map(xVal, minX, maxX, x, x+w)
       val yy = P5Panel.map(yVal, maxY, minY, y, y+h)
 
-      val dotColor = color(tpl)
+      val dotColor = Color(color(tpl))
       applet.fill(dotColor)
       applet.stroke(ColorLib.darker(dotColor))
       if(xx >= x && xx <= x+w && yy >= y && yy <= y+h) {

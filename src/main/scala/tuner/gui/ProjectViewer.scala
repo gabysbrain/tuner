@@ -54,12 +54,12 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     maximumSize = preferredSize
   }
 
+  val histogramPanel = new ResponseStatsPanel(project) {
+    border = Swing.TitledBorder(border, "Response Histograms")
+  }
+
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-  
-    val histogramPanel = new ResponseStatsPanel(project) {
-      border = Swing.TitledBorder(border, "Response Histograms")
-    }
   
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
@@ -68,11 +68,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     }
 
     val rightPanel = new SplitPane(Orientation.Horizontal) {
-      /*
-      contents += mainPlotPanel
-      contents += controlPanel
-      */
       topComponent = mainPlotPanel
+      //topComponent = new scala.swing.Button("push me")
       bottomComponent = controlPanel
     }
 
@@ -85,7 +82,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(paretoPanel)
   listenTo(controlPanel.controlsTab)
   listenTo(controlPanel.historyTab)
-  listenTo(controlPanel.candidatesTab)
+  //listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
   listenTo(myMenu.importSamples)
 
@@ -93,15 +90,18 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   val localTab = controlPanel.localTab
   val importSamplesItem = myMenu.importSamples
   reactions += {
-    case CandidateChanged(_, newCand) =>
-      project.updateCandidates(newCand)
-      controlPanel.candidatesTab.updateTable
+    case CandidateChanged(x, newCand) =>
+      val newSlice = project.sliceForResponse(newCand)
+      publish(new SliceChanged(x, newSlice))
     case SliceChanged(_, sliceInfo) => 
+      deafTo(controlPanel.controlsTab)
       sliceInfo.foreach {case (fld, v) =>
         controlPanel.controlsTab.sliceSliders.get(fld).foreach {slider =>
           slider.value = v
         }
       }
+      listenTo(controlPanel.controlsTab)
+      mainPlotPanel.redraw
     case ViewChanged(`visControlPanel`) =>
       mainPlotPanel.redraw
     case AddSamples(_) => 
@@ -116,8 +116,10 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ButtonClicked(`importSamplesItem`) =>
       this.close
     case WindowClosing(_) => 
-      paretoPanel.stop
-      controlPanel.infoTab.sampleImagePanel.stop
+      //mainPlotPanel.destroy
+      histogramPanel.destroy
+      paretoPanel.destroy
+      controlPanel.infoTab.sampleImagePanel.destroy
 
       project match {
         case s:Saved => s.save()

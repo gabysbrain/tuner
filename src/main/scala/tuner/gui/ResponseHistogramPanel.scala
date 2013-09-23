@@ -35,12 +35,14 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
     val data = project.modelSamples
 
     val startTime = System.currentTimeMillis
-    counts = Histogram.pctData(responseField, data, Config.respHistogramBars)
-    //xAxisTicks = breaks.window(2)
-    xAxisTicks = counts.keys.toList
-    val minY = counts.values.min
-    val maxY = counts.values.max
-    yAxisTicks = List(minY, (minY+maxY)/2, maxY)
+    if(data.fieldNames contains responseField) {
+      counts = Histogram.pctData(responseField, data, Config.respHistogramBars)
+      //xAxisTicks = breaks.window(2)
+      xAxisTicks = counts.keys.toList
+      val minY = counts.values.min
+      val maxY = counts.values.max
+      yAxisTicks = List(minY, (minY+maxY)/2, maxY)
+    }
     val endTime = System.currentTimeMillis
     //println("resp histo setup: " + (endTime-startTime) + "ms")
     //publish(new ReadyToDraw(this))
@@ -76,6 +78,7 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
                      yAxisTicks.min, yAxisTicks.max)
           // Figure out how to draw the y axis
       //val maxCount = counts.values.max
+      /*
       yAxis.draw(this, yAxisBounds.minX, yAxisBounds.minY,
                        yAxisBounds.width, yAxisBounds.height,
                        "Pct", yAxisTicks)
@@ -83,6 +86,7 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
       xAxis.draw(this, xAxisBounds.minX, xAxisBounds.minY,
                        xAxisBounds.width, xAxisBounds.height,
                        responseField, xAxisTicks)
+      */
       drawSlider
     } else {
       visible = false

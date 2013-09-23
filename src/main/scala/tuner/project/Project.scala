@@ -402,7 +402,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     case None     => new HistoryManager
   }
 
-  val candidateGenerator = new CandidateGenerator(this)
+  //val candidateGenerator = new CandidateGenerator(this)
 
   val previewImages:Option[PreviewImages] = loadImages(path)
 
@@ -464,13 +464,16 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     designSites.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
-  def updateCandidates(newValues:List[(String,Float)]) = {
-    candidateGenerator.update(newValues)
+  def sliceForResponse(outputValues:List[(String,Float)]) = {
+    var outTpl:Table.Tuple = null
+    for(r <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(r)
+      if(outputValues.forall {case (fld, v) => v == tpl(fld)}) {
+        outTpl = tpl
+      }
+    }
+    outTpl.toList
   }
-
-  def candidates = candidateGenerator.candidates
-
-  def candidateFilter = candidateGenerator.currentFilter
 
   def closestSample(point:List[(String,Float)]) : List[(String,Float)] = {
     def ptDist(tpl:Table.Tuple) : Double = {
