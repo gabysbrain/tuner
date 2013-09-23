@@ -19,6 +19,7 @@ import tuner.geom.Rectangle
 import tuner.gui.opengl.ValueShader
 import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Prosection
+import tuner.gui.opengl.RawValueShader
 import tuner.gui.util.Matrix4
 import tuner.gui.util.FacetLayout
 import tuner.gui.util.FontLib
@@ -44,6 +45,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   // These need to wait for the GL context to be set up
   // We use a separate shader program for each response
   var valueShaders:Map[String,ValueShader] = Map() // just for estimate
+  var rawValueShaders:Map[String,RawValueShader] = Map()
   var prosectionShaders:Map[String,Prosection] = Map()
   var colormapShader:Option[Glsl] = None
 
@@ -136,6 +138,17 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         (resFld -> estShader)
       } toMap
     }
+    if(rawValueShaders.isEmpty) {
+      rawValueShaders = project.responseFields.map {resFld =>
+        val model = project.gpModels(resFld)
+        val shader = RawValueShader.fromResource(
+            gl2, 
+            "/shaders/raw.value.vert.glsl", "/shaders/raw.value.frag.glsl",
+            project)
+        //println(estShader.attribIds)
+        (resFld -> shader)
+      } toMap
+    }
     if(prosectionShaders.isEmpty) {
       prosectionShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
@@ -173,6 +186,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     // No more shaders
     gl2.getGL2ES2.glUseProgram(0)
     valueShaders.foreach {case (_, shader) => shader.dispose}
+    rawValueShaders.foreach {case (_, shader) => shader.dispose}
     prosectionShaders.foreach {case (_, shader) => shader.dispose}
     colormapShader.foreach {shader => shader.dispose}
 
@@ -470,7 +484,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
           case ViewInfo.ValueMetric =>
             drawEstimationToTexture(gl2, xRange, yRange, response, texTrans)
           case ViewInfo.ErrorMetric =>
-            drawErrorToTexture(gl2, xRange, yRange, response, texTrans)
+            drawRawValueToTexture(gl2, xRange, yRange, response, texTrans)
+          case ViewInfo.GainMetric =>
+            drawRawValueToTexture(gl2, xRange, yRange, response, texTrans)
         }
       case ViewInfo.Splom =>
         drawProsectionToTexture(gl2, xRange, yRange, response, texTrans)
@@ -542,12 +558,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   /**
    * This puts the estimated value in a texture
    */
-  def drawErrorToTexture(gl:GL2, xRange:(String,(Float,Float)),
-                                 yRange:(String,(Float,Float)),
-                                 response:String,
-                                 trans:Matrix4) = {
+  def drawRawValueToTexture(gl:GL2, xRange:(String,(Float,Float)),
+                                    yRange:(String,(Float,Float)),
+                                    response:String,
+                                    trans:Matrix4) = {
 
-    val shader = valueShaders(response)
+    val shader = rawValueShaders(response)
     val model = project.gpModels(response)
     val fields = model.dims
     val plotRect = sliceBounds((xRange._1, yRange._1))
@@ -557,14 +573,14 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     } else {
       (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
     }
-    val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
 
     shader.draw(gl, fboTexture.get, 
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
                     xRange, yRange, 
                     xi, yi, 
-                    slice)
+                    response,
+                    project.viewInfo.currentSlice.toList)
   }
 
   /**
