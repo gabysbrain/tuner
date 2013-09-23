@@ -1,6 +1,6 @@
 package tuner.gui.util
 
-import numberz.Matrix
+import org.jblas.FloatMatrix
 
 object Matrix4 {
   def apply( v1:Float,  v5:Float,  v9:Float, v13:Float, 
@@ -13,12 +13,7 @@ object Matrix4 {
                 v4, v8, v12, v16)
   }
 
-  def identity = new Matrix4(
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1
-  )
+  def identity = new Matrix4(FloatMatrix.eye(4).toArray)
 
   def scale(x:Float, y:Float, z:Float) = new Matrix4(
     x, 0, 0, 0,
@@ -33,21 +28,40 @@ object Matrix4 {
     0, 0, 1, z,
     0, 0, 0, 1
   )
+
+  implicit def mtx2Matrix4(mm:FloatMatrix) = new Matrix4(mm.toArray)
 }
 
-class Matrix4(val proxy:Matrix) {
+class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float, 
+               v2:Float,  v6:Float, v10:Float, v14:Float, 
+               v3:Float,  v7:Float, v11:Float, v15:Float, 
+               v4:Float,  v8:Float, v12:Float, v16:Float)
+  extends FloatMatrix(Array(Array(v1,  v5,  v9,  v13),
+                            Array(v2,  v6, v10,  v14),
+                            Array(v3,  v7, v11,  v15),
+                            Array(v4,  v8, v12,  v16))) {
+  
 
-  def this( v1:Float,  v5:Float,  v9:Float, v13:Float, 
-            v2:Float,  v6:Float, v10:Float, v14:Float, 
-            v3:Float,  v7:Float, v11:Float, v15:Float, 
-            v4:Float,  v8:Float, v12:Float, v16:Float) = 
-        this(Matrix.fromRowMajor(Array(
-          Array( v1.toDouble, v5.toDouble,  v9.toDouble, v13.toDouble),
-          Array( v2.toDouble, v6.toDouble, v10.toDouble, v14.toDouble),
-          Array( v3.toDouble, v7.toDouble, v11.toDouble, v15.toDouble),
-          Array( v4.toDouble, v8.toDouble, v12.toDouble, v16.toDouble))))
+  def this(vv:Array[Float]) = 
+    this( vv(0),  vv(4),  vv(8), vv(12), 
+          vv(1),  vv(5),  vv(9), vv(13), 
+          vv(2),  vv(6), vv(10), vv(14), 
+          vv(3),  vv(7), vv(11), vv(15))
 
-  def dot(m2:Matrix4) : Matrix4 = new Matrix4(proxy dot m2.proxy)
-  def toArray : Array[Float] = proxy.toColumnMajorArray.flatten.map {_.toFloat} 
+  def *(m:Matrix4) : Matrix4 = dot(m)
+
+  //def toArray = toArray2
+
+  override def toString = {
+    (0 until rows).map({r =>
+      "|" + 
+      (0 until columns).map {c => 
+        get(r, c).toString
+      }.reduceLeft(_ + " " + _) + 
+      "|"
+    }).reduceLeft(_ + "\n" + _)
+  }
+
+  def dot(m2:Matrix4) : Matrix4 = mmul(m2)
 }
 

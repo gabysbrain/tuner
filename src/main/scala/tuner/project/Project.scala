@@ -17,6 +17,7 @@ import tuner.CandidateGenerator
 import tuner.Config
 import tuner.ConsoleLine
 import tuner.DimRanges
+import tuner.Grid2D
 import tuner.HistoryManager
 import tuner.HistorySpecification
 import tuner.PreviewImages
@@ -401,7 +402,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     case None     => new HistoryManager
   }
 
-  val candidateGenerator = new CandidateGenerator(this)
+  //val candidateGenerator = new CandidateGenerator(this)
 
   val previewImages:Option[PreviewImages] = loadImages(path)
 
@@ -463,13 +464,16 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     designSites.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
-  def updateCandidates(newValues:List[(String,Float)]) = {
-    candidateGenerator.update(newValues)
+  def sliceForResponse(outputValues:List[(String,Float)]) = {
+    var outTpl:Table.Tuple = null
+    for(r <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(r)
+      if(outputValues.forall {case (fld, v) => v == tpl(fld)}) {
+        outTpl = tpl
+      }
+    }
+    outTpl.toList
   }
-
-  def candidates = candidateGenerator.candidates
-
-  def candidateFilter = candidateGenerator.currentFilter
 
   def closestSample(point:List[(String,Float)]) : List[(String,Float)] = {
     def ptDist(tpl:Table.Tuple) : Double = {
@@ -548,6 +552,27 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
     val numSamples = viewInfo.estimateSampleDensity * 2
     Density2D.density(modelSamples, numSamples, resp2Dim, resp1Dim)
+  }
+
+  def sampleGrid2D(xDim:(String,(Float,Float)),
+                   yDim:(String,(Float,Float)),
+                   response:String,
+                   point:List[(String,Float)]) : Grid2D = {
+    val remainingPt = point.filter {case (fld,_) => 
+      fld!=xDim._1 && fld!=yDim._1
+    }
+    val outData = tuner.Sampler.regularSlice(xDim, yDim, viewInfo.estimateSampleDensity)
+
+    // Populate the slice
+    outData.rowIds.zipWithIndex.foreach {tmpx =>
+      val (xval,x) = tmpx
+      outData.colIds.zipWithIndex.foreach {tmpy =>
+        val (yval,y) = tmpy
+        val samplePt = (xDim._1,xval)::(yDim._1,yval)::remainingPt
+        outData.set(x, y, viewValueFunction(samplePt, response))
+      }
+    }
+    outData
   }
 
   def viewValueFunction : (List[(String,Float)],String)=>Float = 

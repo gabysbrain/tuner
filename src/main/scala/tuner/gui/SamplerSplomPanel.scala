@@ -148,12 +148,12 @@ class SamplerSplomPanel(project:Sampler)
     if(xFld != inputFields.last && !xTicks.isEmpty) {
       xAxes(xFld).draw(this, bounds.minX, splomBounds.maxY, 
                              bounds.width, Config.axisSize,
-                             xFld, xTicks)
+                             xFld, minX, maxX)
     }
     if(yFld != inputFields.head && !yTicks.isEmpty) {
       yAxes(yFld).draw(this, Config.plotSpacing, bounds.minY, 
                              Config.axisSize, bounds.height, 
-                             yFld, yTicks)
+                             yFld, minY, maxY)
     }
   }
 

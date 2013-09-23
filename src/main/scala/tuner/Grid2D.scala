@@ -8,6 +8,7 @@ class Grid2D(rids:List[Float],
 
   def rows : Int = rowIds.size
   def columns : Int = colIds.size
+  def size = rows * columns
 
   // Cache these
   private var _min:Float = Float.MaxValue

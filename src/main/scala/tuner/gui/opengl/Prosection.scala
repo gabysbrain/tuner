@@ -1,5 +1,7 @@
 package tuner.gui.opengl
 
+import org.jblas.DoubleMatrix
+
 import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
 

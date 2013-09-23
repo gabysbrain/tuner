@@ -16,6 +16,8 @@ abstract class Window(val project:Project) extends Frame {
   }
 
   override def closeOperation = {
+    Tuner.deafTo(this)
+
     menuBar match {
       case mb:tuner.gui.MainMenu => WindowMenu.menus -= mb
       case _ =>
