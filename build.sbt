@@ -10,34 +10,28 @@ name := "Tuner"
 
 version := "0.2"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.10.2"
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
   "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
 )
 
-libraryDependencies += "org.bitbucket.gabysbrain" %% "datescala" % "0.9"
+libraryDependencies ++= Seq(
+  "org.bitbucket.gabysbrain" %% "datescala" % "0.9",
+  "net.liftweb" %% "lift-json" % "2.5",
+  "tablelayout" % "TableLayout" % "20050920",
+  "org.prefuse" % "prefuse" % "beta-20060220",
+  "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
+  "org.scalatest" %% "scalatest" % "2.0.M8" % "test",
+  "com.typesafe.akka" %% "akka-actor" % "2.2.1"
+)
+
+libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
 
 libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
-
-libraryDependencies += "org.apache.commons" % "commons-math3" % "3.0"
-
-libraryDependencies += "net.liftweb" %% "lift-json" % "2.4"
-
-libraryDependencies += "tablelayout" % "TableLayout" % "20050920"
-
-libraryDependencies += "org.prefuse" % "prefuse" % "beta-20060220"
-
-libraryDependencies += "org.jblas" % "jblas" % "1.2.3"
-
-libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
-
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0" % "test"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.0.M4" % "test"
 
 scalacOptions := Seq("-deprecation", "-unchecked")
 

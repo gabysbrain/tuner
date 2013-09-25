@@ -7,8 +7,7 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.{Actor, ActorRef}
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -25,7 +24,7 @@ import tuner.Progress
 import tuner.ProgressComplete
 import tuner.Region
 import tuner.RegionSpecification
-import tuner.SampleRunner
+//import tuner.SampleRunner
 import tuner.SamplesCompleted
 import tuner.SamplingComplete
 import tuner.SamplingError
@@ -185,16 +184,15 @@ sealed abstract class Project(config:ProjConfig) {
 
 }
 
-abstract class InProgress(config:ProjConfig) 
-    extends Project(config) with Actor {
+abstract class InProgress(config:ProjConfig) extends Project(config) {
 
   var buildInBackground:Boolean
 
   //def start:Unit
-  def stop:Unit
+  //def stop:Unit
 
-  private var eventListeners:ArrayBuffer[Actor] = ArrayBuffer()
-  def addListener(a:Actor) = eventListeners.append(a)
+  private var eventListeners:ArrayBuffer[ActorRef] = ArrayBuffer()
+  def addListener(a:Actor) = eventListeners.append(a.self)
   protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
 }
 
@@ -237,13 +235,12 @@ class NewProject(name:String,
 
 class RunningSamples(config:ProjConfig, val path:String, 
                      val newSamples:Table, val designSites:Table) 
-    extends InProgress(config) with Saved {
+    extends InProgress(config) with Saved with Actor {
   
   var buildInBackground:Boolean = config.buildInBackground
 
   // See if we should start running some samples
-  var sampleRunner:Option[SampleRunner] = None 
-  if(buildInBackground) start
+  //var sampleRunner:Option[SampleRunner] = None 
 
   def statusString = 
     "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
@@ -263,47 +260,40 @@ class RunningSamples(config:ProjConfig, val path:String,
     designSites.toCsv(designName)
   }
 
-  override def start = {
-    runSamples
-    super.start
-  }
-  def stop = {}
-
   def next = {
     save()
     Project.fromFile(path).asInstanceOf[BuildingGp]
   }
 
-  def act = {
+  override def preStart() = {
     // Publish one of these right at the beginning just to get things going
     publish(Progress(currentTime, totalTime, statusString, true))
 
-    var finished = false
-    loopWhile(!finished) {
-      react {
-        case x:ConsoleLine => 
-          publish(x)
-        case SamplesCompleted(num) => 
-          currentTime += num
-          publish(Progress(currentTime, totalTime, statusString, true))
-        case SamplingError(exitCode) =>
-          val msg = "Sampler script exited with code: " + exitCode
-          publish(Progress(currentTime, totalTime, msg, false))
-        case SamplingComplete =>
-          finished = true
-          publish(ProgressComplete)
-      }
-    }
+    //runSamples
   }
 
+  def receive = {
+    case x:ConsoleLine => 
+      publish(x)
+    case SamplesCompleted(num) => 
+      currentTime += num
+      publish(Progress(currentTime, totalTime, statusString, true))
+    case SamplingError(exitCode) =>
+      val msg = "Sampler script exited with code: " + exitCode
+      publish(Progress(currentTime, totalTime, msg, false))
+    case SamplingComplete =>
+      publish(ProgressComplete)
+  }
+
+  /*
   private def runSamples = {
     // only run if we aren't running something
     if(!sampleRunner.isDefined && newSamples.numRows > 0) {
       val runner = new SampleRunner(this)
-      runner.start
       sampleRunner = Some(runner)
     }
   }
+  */
 }
 
 class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
@@ -317,7 +307,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def stop = {}
 
-  def act = {
+  def preStart() = {
     publish(Progress(-1, -1, statusString, true))
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)
