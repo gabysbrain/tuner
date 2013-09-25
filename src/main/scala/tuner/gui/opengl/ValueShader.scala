@@ -1,13 +1,12 @@
 package tuner.gui.opengl
 
+import breeze.linalg.{DenseVector, DenseMatrix}
+
 import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
 
 import tuner.Config
 import tuner.gui.util.Matrix4
-
-import numberz.Matrix
-import numberz.Vector
 
 /**
  * Special loader for the continuous plot stuff since 
@@ -16,9 +15,9 @@ import numberz.Vector
 object ValueShader {
   def fromResource(gl:GL2, numDims:Int, fragment:String,
                            baseValue:Double, globalFactor:Double, 
-                           distanceWeights:Vector, 
-                           points:Matrix, 
-                           coefficients:Vector) = {
+                           distanceWeights:DenseVector[Double], 
+                           points:DenseMatrix[Double], 
+                           coefficients:DenseVector[Double]) = {
     val fragSource = Glsl.readResource(fragment)
 
     new ValueShader(gl, numDims, fragSource,
@@ -34,9 +33,9 @@ object ValueShader {
 
 class ValueShader(gl:GL2, numDims:Int, fragment:String,
                           baseValue:Double, globalFactor:Double, 
-                          distanceWeights:Vector, 
-                          points:Matrix,
-                          coefficients:Vector)
+                          distanceWeights:DenseVector[Double], 
+                          points:DenseMatrix[Double],
+                          coefficients:DenseVector[Double])
     extends Glsl(gl, new ValueVertexShader(numDims).toString,
                      None, fragment, List()) {
   
@@ -67,7 +66,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
     for(r <- 0 until points.rows) {
-      val pt = points.row(r).toArray
+      val pt = points(r,::).data
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until ValueShader.numVec4(numDims)) {

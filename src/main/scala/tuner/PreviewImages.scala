@@ -1,5 +1,7 @@
 package tuner
 
+import breeze.linalg.{DenseMatrix, DenseVector}
+
 import tuner.gp.GpModel
 
 import processing.core.PApplet
@@ -38,7 +40,7 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
     val gps = (0 until (xSize * ySize)).map({i =>
       val (x, y) = (i / xSize, i % xSize)
       (0 until numFields).map({fld =>
-        val res = numberz.Vector(fields.map({pf => pf.data(fld).get(x, y).toDouble}))
+        val res = new DenseVector(fields.map({pf => pf.data(fld).get(x, y).toDouble}))
         new GpModel(estModel.thetas, estModel.alphas, 
                     estModel.design, res, estModel.rInverse,
                     estModel.dims, estModel.respDim, estModel.errDim)

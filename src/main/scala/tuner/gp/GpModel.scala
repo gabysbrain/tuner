@@ -1,11 +1,11 @@
 package tuner.gp
 
+import breeze.linalg.{DenseMatrix, DenseVector}
+import breeze.linalg._
+
 import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
-
-import numberz.Matrix
-import numberz.Vector
 
 import org.rosuda.JRI.RList
 
@@ -30,11 +30,15 @@ case class GpSpecification(
 
 object GpModel {
   def fromJson(json:GpSpecification) = {
-    new GpModel(Vector(json.thetas), Vector(json.alphas), 
+    new GpModel(DenseVector(json.thetas.toArray), 
+                DenseVector(json.alphas.toArray), 
                 json.mean, json.sigma2,
-                Matrix.fromRowMajor(json.designMatrix), 
-                Vector(json.responses),
-                Matrix.fromRowMajor(json.invCorMtx),
+                new DenseMatrix(json.responses.length, 
+                                json.dimNames.length,
+                                json.designMatrix.flatten.toArray),
+                DenseVector(json.responses.toArray),
+                new DenseMatrix(json.responses.length, json.responses.length,
+                                json.designMatrix.flatten.toArray),
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
@@ -42,36 +46,49 @@ object GpModel {
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
 //type Model = Int => String
-class GpModel(val thetas:Vector, val alphas:Vector, 
+class GpModel(val thetas:DenseVector[Double], 
+              val alphas:DenseVector[Double], 
               val mean:Double, val sig2:Double, 
-              val design:Matrix, val responses:Vector, 
-              val rInverse:Matrix, 
+              val design:DenseMatrix[Double], 
+              val responses:DenseVector[Double], 
+              val rInverse:DenseMatrix[Double], 
               val dims:List[String], val respDim:String, val errDim:String) {
 
-  def this(thetas:Vector, alphas:Vector, mean:Double, 
-           design:Matrix, responses:Vector, 
-           rInverse:Matrix, 
+  // Automatically compute sig2
+  def this(thetas:DenseVector[Double], alphas:DenseVector[Double], mean:Double, 
+           design:DenseMatrix[Double], responses:DenseVector[Double], 
+           rInverse:DenseMatrix[Double], 
            dims:List[String], respDim:String, errDim:String) =
     this(thetas, alphas, mean, 
-         (responses.map {_ - mean} dot (rInverse dot responses.map {_ - mean})) / responses.size,
+         {
+           val diff = responses - mean
+           (diff dot (rInverse * diff)) / responses.length
+         },
          design, responses, rInverse, dims, respDim, errDim)
 
-  def this(thetas:Vector, alphas:Vector, 
-           design:Matrix, responses:Vector, 
-           rInverse:Matrix, 
+  // Automatically compute mu and sig2
+  def this(thetas:DenseVector[Double], alphas:DenseVector[Double], 
+           design:DenseMatrix[Double], responses:DenseVector[Double], 
+           rInverse:DenseMatrix[Double], 
            dims:List[String], respDim:String, errDim:String) =
     this(thetas, alphas, 
-         (Vector.ones(responses.size) dot (rInverse dot responses)) /
-           (Vector.ones(responses.size) dot (rInverse dot Vector.ones(responses.size))),
+         (DenseVector.ones[Double](responses.length) dot (rInverse * responses)) /
+           (DenseVector.ones[Double](responses.length) dot (rInverse * DenseVector.ones[Double](responses.length))),
          design, responses, rInverse, dims, respDim, errDim)
 
   // Also precompute rInverse . (responses - mean)
-  val corrResponses = rInverse dot (responses map {_ - mean})
+  val corrResponses = rInverse * (responses - mean)
 
   def toJson = {
     GpSpecification(
-      respDim, dims, thetas.toList, alphas.toList, mean, sig2,
-      design.toRowMajorList, responses.toList, rInverse.toRowMajorList)
+      respDim, 
+      dims.toList, 
+      thetas.toArray.toList, 
+      alphas.toArray.toList, 
+      mean, sig2,
+      (0 until design.cols).map {c => design(::,c).data.toList} toList,
+      responses.toArray.toList, 
+      (0 until rInverse.cols).map {c => rInverse(::,c).data.toList} toList)
   }
 
   def maxGain(range:DimRanges):Float = {
@@ -116,7 +133,7 @@ class GpModel(val thetas:Vector, val alphas:Vector,
         val (yval, y) = tmpy
         arrSlice(xDim) = xval
         arrSlice(yDim) = yval
-        val (est, err) = estimatePoint(Vector(arrSlice))
+        val (est, err) = estimatePoint(DenseVector(arrSlice))
         response.set(x, y, est.toFloat)
         errors.set(x, y, err.toFloat)
         val expgain = calcExpectedGain(est, err)
@@ -156,22 +173,25 @@ class GpModel(val thetas:Vector, val alphas:Vector,
 
   def runSample(pt:Table.Tuple) : (Double, Double) = {
     val xx = dims.map(pt.get(_)).flatten.map(_.toDouble)
-    val (est, err) = estimatePoint(Vector(xx))
+    val (est, err) = estimatePoint(DenseVector(xx.toArray))
     //curFuncMax = math.max(est.toFloat, curFuncMax)
     (est, err)
   }
 
   // Compute the correlation wrt each design point
-  private def estimatePoint(point:Vector) : (Double,Double) = {
-    def cf(x:Vector):Double = corrFunction(x, point)
-    val ptCors = design.mapRows(cf _)
+  private def estimatePoint(point:DenseVector[Double]) : (Double,Double) = {
+    val ptCors = DenseVector.zeros[Double](design.rows)
+    for(r <- 0 until design.rows) {
+      ptCors.update(r, corrFunction(design(r, ::).toDenseVector, point))
+    }
     val est = mean + sig2 * (ptCors dot corrResponses)
-    val err = sig2 * (1 - sig2 * (ptCors dot (rInverse dot ptCors)))
+    val err = sig2 * (1 - sig2 * (ptCors dot (rInverse * ptCors)))
     if(err < 0) (est, 0)
     else        (est, math.sqrt(err))
   }
 
-  private def corrFunction(p1:Vector, p2:Vector) : Double = {
+  private def corrFunction(p1:DenseVector[Double], 
+                           p2:DenseVector[Double]) : Double = {
     var sum:Double = 0
     for(d <- 0 until p1.length) {
       sum += corrFunction(p1(d), p2(d), thetas(d), alphas(d))

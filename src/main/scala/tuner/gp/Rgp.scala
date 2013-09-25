@@ -3,12 +3,11 @@ package tuner.gp
 import org.rosuda.JRI.RList
 import org.rosuda.JRI.REXP
 
+import breeze.linalg.{DenseMatrix, DenseVector}
+
 import tuner.Config
 import tuner.R
 import tuner.Table
-
-import numberz.Matrix
-import numberz.Vector
 
 import scala.io.Source
 
@@ -47,13 +46,17 @@ class Rgp extends GpBuilder {
     println("done")
 
     val fm = fit.asList
-    new GpModel(new Vector(fm.at("beta").asDoubleArray),
-                new Vector(fm.at("a").asDoubleArray),
+    new GpModel(DenseVector(fm.at("beta").asDoubleArray),
+                DenseVector(fm.at("a").asDoubleArray),
                 fm.at("mu").asDouble,
                 fm.at("sig2").asDouble,
-                Matrix.fromRowMajor(fm.at("X").asDoubleMatrix),
-                new Vector(fm.at("Z").asDoubleArray),
-                Matrix.fromColumnMajor(fm.at("invVarMatrix").asDoubleMatrix),
+                new DenseMatrix(fm.at("Z").asDoubleArray.length, 
+                                paramFields.length,
+                                fm.at("X").asDoubleArray),
+                DenseVector(fm.at("Z").asDoubleArray),
+                new DenseMatrix(fm.at("Z").asDoubleArray.length, 
+                                fm.at("Z").asDoubleArray.length,
+                                fm.at("invVarMatrix").asDoubleArray),
                 paramFields, responseField, errorField)
   }
 }

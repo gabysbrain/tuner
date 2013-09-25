@@ -1,6 +1,6 @@
 package tuner.gui.opengl
 
-import org.jblas.DoubleMatrix
+import breeze.linalg.{DenseVector, DenseMatrix}
 
 import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
@@ -8,16 +8,13 @@ import javax.media.opengl.GLAutoDrawable
 import tuner.Config
 import tuner.gui.util.Matrix4
 
-import numberz.Matrix
-import numberz.Vector
-
 /**
  * Special loader for the continuous plot stuff since 
  * the vertex shader gets dynamically created
  */
 object Prosection {
   def fromResource(
-      gl:GL2, numDims:Int, points:Matrix, values:Vector) = 
+      gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVector[Double]) = 
     new Prosection(gl, numDims, points, values)
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -25,7 +22,7 @@ object Prosection {
 
 }
 
-class Prosection(gl:GL2, numDims:Int, points:Matrix, values:Vector)
+class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVector[Double])
     extends Glsl(gl, new ProsectionVertexShader(numDims).toString,
                      None, Glsl.readResource("/shaders/prosection.frag.glsl"), 
                      List()) {
@@ -38,7 +35,7 @@ class Prosection(gl:GL2, numDims:Int, points:Matrix, values:Vector)
     gl.glPointSize(10)
     gl.glBegin(GL.GL_POINTS)
     for(r <- 0 until points.rows) {
-      val pt = points.row(r).toArray
+      val pt = points(r, ::).data
       // Draw all the point data
       for(i <- 0 until Prosection.numVec4(numDims)) {
         val ptId = attribId("data" + i)
