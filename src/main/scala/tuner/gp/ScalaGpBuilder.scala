@@ -9,7 +9,7 @@ import tuner.Table
 /**
  * Build the Gaussian Process model using the numberz package
  */
-object NumberzGp extends GpBuilder {
+object ScalaGpBuilder extends GpBuilder {
 
 
   def buildModel(dataFile:String,
