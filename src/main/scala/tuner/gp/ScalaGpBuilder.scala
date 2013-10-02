@@ -25,7 +25,7 @@ object ScalaGpBuilder extends GpBuilder {
                  responseField:String,
                  errorField:String) : GpModel = {
 
-    val locs = DenseMatrix.zeros[Double](data.numRows, data.numFields)
+    val locs = DenseMatrix.zeros[Double](data.numRows, paramFields.length)
     (0 until data.numRows).foreach { r =>
       val tpl = data.tuple(r)
       paramFields.zipWithIndex.foreach {case(f, c) => 
@@ -46,39 +46,32 @@ object ScalaGpBuilder extends GpBuilder {
     val alphas = DenseVector.fill(samples.cols){2.0}
 
     // need to do error checking on the minimization
-    // find the negative log lilihood
-    def optimFunc(x:DenseVector[Double]) = 
-      negLogLikelihood(samples, responses, x, alphas)._1
-    def optimFunc2(x:DenseVector[Double]) = {
-      // Map x so it's positive
-      val x2 = x.map {xx => 
-        val halfPct = math.abs(xx) / Double.MaxValue
-        xx
-      }
-      negLogLikelihood(samples, responses, x2, alphas)._1
+    // find the negative log liklihood
+    def optimFunc(x:DenseVector[Double]) = {
+      // force the thetas to be positive
+      val xx = x.map {math.exp(_)}
+      -logLikelihood(samples, responses, xx, alphas)._1
     }
-    val f = new ApproximateGradientFunction(optimFunc2)
-    //val bounds = Array.fill(samples.cols)((1e-16, Double.MaxValue))
+    val f = new ApproximateGradientFunction(optimFunc)
 
     // so in the spirit of the mlegp package do 
     // 5 optimizations with random restart 
     var minLL = Double.MaxValue
     var minPt:DenseVector[Double] = null
     for(i <- 0 until 5) {
-      /*
-      val (pt,_) = Minimizer.bobyqa(samples.cols, optimFunc, 
-                                    bounds, 
-                                    Array.fill(samples.cols)(math.random))
-      */
-      val lbfgs = new LBFGS[DenseVector[Double]](maxIter=100, m=3)
-      val pt = lbfgs.minimize(f, DenseVector.zeros[Double](samples.cols))
+      val optim = new LBFGS[DenseVector[Double]](maxIter=100, m=3)
+      //val optim = new breeze.optimize.StochasticGradientDescent.SimpleSGD[DenseVector[Double]]
+      //val optim = new breeze.optimize.OWLQN[DenseVector[Double]](maxIter=100, m=3)
+      val start = DenseVector.rand(samples.cols)
+      val pt = optim.minimize(f, start)
       val ll = optimFunc(pt)
       /*
       println("optimization #" + i 
            + " with log likelihood " + ll 
-           + " at point " + Vector(pt))
+           + " at point " + pt.map(math.exp(_))
+           + " starting at " + start.map(math.exp(_)))
       */
-      if(ll < minLL) {
+      if(ll <= minLL) {
         minLL = ll
         minPt = pt
       }
@@ -86,13 +79,13 @@ object ScalaGpBuilder extends GpBuilder {
 
     /*
     println("minimum found" 
-         + " with log likelihood " + -minLL
-         + " at point " + Vector(minPt))
+         + " with log likelihood " + minLL
+         + " at point " + minPt.map(math.exp(_)))
     */
     // One more time to get the final versions of the values
-    val thetas = minPt
-    val (ll, mu, sig2, rInv) = negLogLikelihood(samples, responses, 
-                                                thetas, alphas)
+    val thetas = minPt map {math.exp(_)}
+    val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
+                                             thetas, alphas)
     (ll, mu, sig2, rInv, thetas, alphas)
   }
 
@@ -102,10 +95,10 @@ object ScalaGpBuilder extends GpBuilder {
    * Returns the log-likelihood, the calibrated mean, std-deviation, 
    * and inverse correlation matrix
    */
-  def negLogLikelihood(samples:DenseMatrix[Double], 
-                       responses:DenseVector[Double], 
-                       thetas:DenseVector[Double], 
-                       alphas:DenseVector[Double]) 
+  def logLikelihood(samples:DenseMatrix[Double], 
+                    responses:DenseVector[Double], 
+                    thetas:DenseVector[Double], 
+                    alphas:DenseVector[Double]) 
         : (Double, Double, Double, DenseMatrix[Double]) = {
     
     // check arguments
@@ -130,7 +123,7 @@ object ScalaGpBuilder extends GpBuilder {
                          + (sigTop/sig2))
 
       //println("logL: " + logL)
-      (-logL, mean, sig2, rInv)
+      (logL, mean, sig2, rInv)
     } else {
       (Double.MaxValue, 0.0, 0.0, DenseMatrix.eye[Double](samples.rows))
     }
