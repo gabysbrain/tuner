@@ -11,13 +11,13 @@ import tuner.Table
 
 import scala.io.Source
 
-object Rgp {
+object RGpBuilder {
   val DESIGNRVAR = "data.design"
   val ESTIMATERVAR = "data.estimates"
   val MODELRVAR = "gp.fit"
 }
 
-class Rgp extends GpBuilder {
+class RGpBuilder extends GpBuilder {
   
   // Setup the sparkle gp stuff
   R.runCommand("source('%s')".format(Config.gpRScript))
@@ -37,12 +37,12 @@ class Rgp extends GpBuilder {
 
     // Read the design file
     val rDesignFile = designFile.replace("\\", "/")
-    R.runCommand("%s <- read.design('%s')".format(Rgp.DESIGNRVAR, rDesignFile))
+    R.runCommand("%s <- read.design('%s')".format(RGpBuilder.DESIGNRVAR, rDesignFile))
     // Create an r vector of all the strings
     val rvect = "c(" + paramFields.map("'"+_+"'").reduceLeft(_+","+_) + ")"
     //println("params: " + rvect)
     val fit = R.runCommand("%s <- fit.model(%s, %s, '%s')".
-      format(Rgp.MODELRVAR, Rgp.DESIGNRVAR, rvect, responseField))
+      format(RGpBuilder.MODELRVAR, RGpBuilder.DESIGNRVAR, rvect, responseField))
     println("done")
 
     val fm = fit.asList

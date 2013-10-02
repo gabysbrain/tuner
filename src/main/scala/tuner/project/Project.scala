@@ -34,7 +34,7 @@ import tuner.VisInfo
 import tuner.error.ProjectLoadException
 import tuner.gp.GpModel
 import tuner.gp.GpSpecification
-import tuner.gp.Rgp
+import tuner.gp.RGpBuilder
 import tuner.util.Density2D
 import tuner.util.Path
 
@@ -311,7 +311,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     publish(Progress(-1, -1, statusString, true))
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)
-    val gp = new Rgp
+    val gp = new RGpBuilder
 
     val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
 
