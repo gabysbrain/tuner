@@ -1,7 +1,7 @@
 package tuner.gp
 
-import breeze.linalg.{DenseMatrix, DenseVector}
 import breeze.linalg._
+import breeze.numerics._
 
 import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
@@ -236,6 +236,39 @@ class GpModel(val thetas:DenseVector[Double],
     val t3 = stddev * pdf((est - curFuncMax) / stddev)
 
     math.abs(t1 * t2 + t3)
+  }
+
+  def crossValidate : (Vector[Double], Vector[Double]) = {
+    val predResps = DenseVector.zeros[Double](design.rows)
+    val predVars = DenseVector.zeros[Double](design.rows)
+
+    val origR = breeze.linalg.inv(rInverse)
+    for(row <- 0 until design.rows) {
+      val testSample = design(row, ::).toDenseVector
+      val testResp = responses(row)
+
+      // Extract all the new model building bits
+      val newModelRows = (0 until design.rows).filterNot(_ == row)
+      val newDesign = design(newModelRows, ::).toDenseMatrix
+      val newRInv = breeze.linalg.inv(origR(newModelRows, newModelRows))
+      val newResps = responses(newModelRows).toDenseVector
+      val newGp = new GpModel(thetas, alphas, 
+                              newDesign, newResps, 
+                              newRInv, 
+                              dims, respDim, errDim)
+
+      val (predResp, predSD) = estimatePoint(testSample)
+      predResps.update(row, predResp)
+      predVars.update(row, predSD)
+    }
+
+    (predResps, predVars)
+  }
+
+  def validateModel : (Boolean, Vector[Double]) = {
+    val (preds, vars) = crossValidate
+    val sds = (responses - preds) / vars
+    (sds.map {x => x > -3.0 && x < 3.0} all, sds)
   }
 
 }
