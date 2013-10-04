@@ -15,13 +15,7 @@ object RGpBuilder {
   val DESIGNRVAR = "data.design"
   val ESTIMATERVAR = "data.estimates"
   val MODELRVAR = "gp.fit"
-}
-
-class RGpBuilder extends GpBuilder {
   
-  // Setup the sparkle gp stuff
-  R.runCommand("source('%s')".format(Config.gpRScript))
-
   def buildModel(design:Table,
                  paramFields:List[String], 
                  responseField:String, 
@@ -34,6 +28,9 @@ class RGpBuilder extends GpBuilder {
                  responseField:String, 
                  errorField:String) : GpModel = {
     print("building model...")
+
+    // Setup the sparkle gp stuff
+    R.runCommand("source('%s')".format(Config.gpRScript))
 
     // Read the design file
     val rDesignFile = designFile.replace("\\", "/")
