@@ -22,7 +22,7 @@ class GpModelSpec extends WordSpec {
     // Create an r vector of all the strings
     val rvect = "c(" + fields.map("'"+_+"'").reduceLeft(_+","+_) + ")"
     //println("params: " + rvect)
-    val fit = R.runCommand("%s <- fit.model(%s, %s, '%s')".
+    val fit = R.runCommand("%s <- fit.model(%s, %s, '%s', 0)".
       format(RGpBuilder.MODELRVAR, RGpBuilder.DESIGNRVAR, rvect, resp))
 
     fit.asList
