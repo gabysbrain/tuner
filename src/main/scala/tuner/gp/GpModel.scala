@@ -240,7 +240,7 @@ class GpModel(val thetas:DenseVector[Double],
 
   def crossValidate : (Vector[Double], Vector[Double]) = {
     val predResps = DenseVector.zeros[Double](design.rows)
-    val predVars = DenseVector.zeros[Double](design.rows)
+    val predErrs = DenseVector.zeros[Double](design.rows)
 
     val origR = breeze.linalg.inv(rInverse)
     for(row <- 0 until design.rows) {
@@ -253,16 +253,17 @@ class GpModel(val thetas:DenseVector[Double],
       val newRInv = breeze.linalg.inv(origR(newModelRows, newModelRows))
       val newResps = responses(newModelRows).toDenseVector
       val newGp = new GpModel(thetas, alphas, 
+                              mean, sig2,
                               newDesign, newResps, 
                               newRInv, 
                               dims, respDim, errDim)
 
-      val (predResp, predSD) = estimatePoint(testSample)
+      val (predResp, predErr) = newGp.estimatePoint(testSample)
       predResps.update(row, predResp)
-      predVars.update(row, predSD)
+      predErrs.update(row, predErr)
     }
 
-    (predResps, predVars)
+    (predResps, predErrs)
   }
 
   def validateModel : (Boolean, Vector[Double]) = {
