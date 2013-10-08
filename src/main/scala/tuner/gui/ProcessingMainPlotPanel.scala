@@ -11,13 +11,13 @@ import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
+import tuner.util.AxisTicks
 import tuner.util.ColorLib
 
 import scala.collection.mutable.Queue
@@ -34,6 +34,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
                     Config.mainPlotDims._2, 
                     P5Panel.OpenGL) 
     with MainPlotPanel {
+
+  applet.paused = true
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
@@ -53,6 +55,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
   // Cache a bunch of statistics on where the plots are for hit detection
   var mousedPlot:Option[(String,String)] = None
 
+  applet.paused = false
+
   reactions += {
     case UIElementMoved(_) => 
       clearFonts
@@ -60,24 +64,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
       clearFonts
   }
 
-  def plotData(model:GpModel,
-               xDim:(String,(Float,Float)), 
-               yDim:(String,(Float,Float)), 
-               slice:Map[String,Float]) : Matrix2D = {
-    // Progressive rendering
-    val idealSize = project.viewInfo.estimateSampleDensity
-    val sample = model.sampleSlice(xDim, yDim, slice.toList, idealSize)
-    val data = project.viewInfo.currentMetric match {
-      case ViewInfo.ValueMetric => sample._1
-      case ViewInfo.ErrorMetric => sample._2
-      case ViewInfo.GainMetric => sample._3
-    }
-    data._2
-  }
-
   override def setup = {
-    super.setup
     loop = false
+    super.setup
   }
 
   def redraw = applet.loop
@@ -194,7 +183,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
                              response:String) = {
 
     val (xFld, yFld) = (xRange._1, yRange._1)
-    val model = project.gpModels(response)
     val bounds = sliceBounds((xFld, yFld))
     val (slice, cm, xf, yf, xr, yr) = if(xFld < yFld) {
       (resp1Plots((xFld, yFld)), colormap(response, resp1Colormaps),
@@ -204,7 +192,8 @@ class ProcessingMainPlotPanel(val project:Viewable)
        yFld, xFld, yRange, xRange)
     }
 
-    val data = plotData(model, xr, yr, project.viewInfo.currentSlice)
+    val data = project.sampleMatrix(xr, yr, response, 
+                                    project.viewInfo.currentSlice.toList)
     val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
                             project.viewInfo.currentSlice(yf))
 
@@ -256,23 +245,17 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.width, 
-                                    Config.smallFontSize)
         axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
                         sliceDim.width, bottomAxisBounds.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
       // See if we draw the y axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
                         leftAxisBounds.width, sliceDim.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
     }
     project.viewInfo.response2View.foreach {r2 =>
@@ -280,23 +263,17 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.width, 
-                                    Config.smallFontSize)
         axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
                         sliceDim.width, topAxisBounds.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
       // See if we draw the y axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((fld, firstField))
         val axis = resp2YAxes(fld)
-        val ticks = AxisTicks.ticks(low, high, 
-                                    sliceDim.height, 
-                                    Config.smallFontSize)
         axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
                         rightAxisBounds.width, sliceDim.height, 
-                        fld, ticks)
+                        fld, low, high)
       }
     }
   }

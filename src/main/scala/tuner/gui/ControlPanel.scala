@@ -33,10 +33,12 @@ class ControlPanel(project:Viewable) extends TabbedPane {
     preferredSize = dims
     maximumSize = dims
   }
+  /*
   val candidatesTab = new CandidatesPanel(project) {
     preferredSize = dims
     maximumSize = dims
   }
+  */
   val historyTab = new HistoryPanel(project) {
     preferredSize = dims
     maximumSize = dims

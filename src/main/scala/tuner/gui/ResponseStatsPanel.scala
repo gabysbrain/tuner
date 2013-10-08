@@ -46,6 +46,8 @@ class ResponseStatsPanel(project:Viewable)
     }
   }
 
+  def destroy = histogramPanels.values.foreach {panel => panel.destroy}
+  
   /*
   reactions += {
     case ReadyToDraw(rhp:ResponseHistogramPanel) =>

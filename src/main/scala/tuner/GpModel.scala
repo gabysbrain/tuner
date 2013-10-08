@@ -4,6 +4,8 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+import org.jblas.DoubleMatrix
+
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction
 import org.apache.commons.math.analysis.MultivariateRealFunction
 import org.apache.commons.math.analysis.MultivariateVectorialFunction
@@ -32,10 +34,12 @@ case class GpSpecification(
 
 object GpModel {
   def fromJson(json:GpSpecification) = {
-    new GpModel(json.thetas, json.alphas, json.mean, json.sigma2,
-                json.designMatrix.map(_.toArray).toArray,
-                json.responses.toArray,
-                json.invCorMtx.map(_.toArray).toArray,
+    new GpModel(new DoubleMatrix(json.thetas.toArray), 
+                new DoubleMatrix(json.alphas.toArray), 
+                json.mean, json.sigma2,
+                new DoubleMatrix(json.designMatrix.map(_.toArray).toArray),
+                new DoubleMatrix(json.responses.toArray),
+                new DoubleMatrix(json.invCorMtx.map(_.toArray).toArray),
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
@@ -43,69 +47,62 @@ object GpModel {
 // A gp model takes a sampling density and returns 
 // a filename from which to read the sampled data
 //type Model = Int => String
-class GpModel(val thetas:List[Double], val alphas:List[Double], 
+class GpModel(val thetas:DoubleMatrix, val alphas:DoubleMatrix, 
               val mean:Double, val sig2:Double, 
-              val design:Array[Array[Double]], val responses:Array[Double], 
-              val rInverse:Array[Array[Double]], 
-              val dims:List[String], val respDim:String, val errDim:String) {
+              val design:DoubleMatrix, val responses:DoubleMatrix, 
+              val rInverse:DoubleMatrix, 
+              val dims:Seq[String], val respDim:String, val errDim:String) {
 
-  def this(thetas:List[Double], alphas:List[Double], mean:Double, 
-           design:Array[Array[Double]], responses:Array[Double], 
-           rInverse:Array[Array[Double]], 
-           dims:List[String], respDim:String, errDim:String) =
-    this(thetas, alphas, mean, 
-         LinAlg.dotProd(LinAlg.dotProd(rInverse, 
-                                       responses.map({_ - mean})), 
-                                       responses.map({_ - mean})) / responses.size,
+  // Automatically compute sig2
+  def this(thetas:DoubleMatrix, alphas:DoubleMatrix, mean:Double, 
+           design:DoubleMatrix, responses:DoubleMatrix, 
+           rInverse:DoubleMatrix, 
+           dims:Seq[String], respDim:String, errDim:String) =
+    this(thetas, alphas, mean,
+         {
+           val diff = responses.sub(mean)
+           diff.dot(rInverse.mmul(diff)) / responses.length
+         },
          design, responses, rInverse, dims, respDim, errDim)
 
-  def this(thetas:List[Double], alphas:List[Double], 
-           design:Array[Array[Double]], 
-           responses:Array[Double], rInverse:Array[Array[Double]], 
-           dims:List[String], respDim:String, errDim:String) =
+  // Automatically compute mu and sig2
+  def this(thetas:DoubleMatrix, alphas:DoubleMatrix, 
+           design:DoubleMatrix, 
+           responses:DoubleMatrix, rInverse:DoubleMatrix, 
+           dims:Seq[String], respDim:String, errDim:String) =
     this(thetas, alphas, 
-         LinAlg.dotProd(LinAlg.dotProd(rInverse, responses), 
-                                       LinAlg.ones(responses.size)) / 
-          LinAlg.dotProd(LinAlg.dotProd(rInverse, LinAlg.ones(responses.size)), 
-                         LinAlg.ones(responses.size)), 
+         DoubleMatrix.ones(responses.length).dot(rInverse.mmul(responses)) /
+           DoubleMatrix.ones(responses.length).dot(rInverse.mmul(DoubleMatrix.ones(responses.length))),
          design, responses, rInverse, dims, respDim, errDim)
 
-  def this(fm:RList, dims:List[String], respDim:String, errDim:String) =
-    this(fm.at("beta").asDoubleArray.toList,
-         fm.at("a").asDoubleArray.toList,
+  def this(fm:RList, dims:Seq[String], respDim:String, errDim:String) =
+    this(new DoubleMatrix(fm.at("beta").asDoubleArray),
+         new DoubleMatrix(fm.at("a").asDoubleArray),
          fm.at("mu").asDouble,
          fm.at("sig2").asDouble,
-         fm.at("X").asDoubleMatrix,
-         fm.at("Z").asDoubleArray,
-         fm.at("invVarMatrix").asDoubleMatrix,
+         new DoubleMatrix(fm.at("X").asDoubleMatrix),
+         new DoubleMatrix(fm.at("Z").asDoubleArray),
+         new DoubleMatrix(fm.at("invVarMatrix").asDoubleMatrix),
          dims, respDim, errDim)
 
   // Also precompute rInverse . (responses - mean)
-  val corrResponses = LinAlg.dotProd(rInverse, responses.map({_ - mean}))
-
-  // Also precompute the square of the sum of the rows 
-  // of the cholesky decomposition of rInverse
-  val sqCholCols:Array[Double] = {
-    val mtx = new Jama.Matrix(rInverse).times(sig2).chol.getL
-    (0 until mtx.getRowDimension).map {r =>
-      val tmp = (0 until mtx.getColumnDimension).foldLeft(0.0){(s,c) => 
-        s + mtx.get(r,c)
-      }
-      tmp * tmp
-    }.toArray
-  }
+  val corrResponses = rInverse.mmul(responses.sub(mean))
 
   def toJson = {
     GpSpecification(
-      respDim, dims, thetas, alphas, mean, sig2,
-      design.map(_.toList).toList, 
-      responses.toList, 
-      rInverse.map(_.toList).toList)
+      respDim, 
+      dims.toList, 
+      thetas.toArray.toList, 
+      alphas.toArray.toList, 
+      mean, sig2,
+      design.toArray2.map(_.toList).toList, 
+      responses.toArray.toList, 
+      rInverse.toArray2.map(_.toList).toList)
   }
 
   def maxGain(range:DimRanges):Float = {
     var mx = Double.MinValue
-    Sampler.lhc(range, Config.respHistogramSampleDensity, pt => {
+    Sampler.lhc(range, Config.numericSampleDensity, pt => {
       val (est, err) = runSample(pt)
       val expgain = calcExpectedGain(est, err)
       mx = math.max(mx, expgain)
@@ -114,54 +111,10 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   }
 
   // Store the most recently seen max value for the function
-  def funcMax:Float = responses.max.toFloat
-  def funcMin:Float = responses.min.toFloat
+  def funcMax:Float = math.max(responses.max.toFloat, mean.toFloat)
+  def funcMin:Float = math.min(responses.min.toFloat, mean.toFloat)
 
-  def theta(dim:String) = thetas(dims.indexOf(dim))
-
-  def sampleSlice(rowDim:(String,(Float,Float)), 
-                  colDim:(String,(Float,Float)),
-                  slices:List[(String,Float)], 
-                  numSamples:Int)
-      : ((String, Matrix2D), (String, Matrix2D), (String, Matrix2D)) = {
-    
-    val arrSlice = Array.fill(dims.length)(0.0)
-    val sliceMap = slices.toMap
-    dims.zipWithIndex.foreach {case (fld, i) =>
-      arrSlice(i) = sliceMap(fld)
-    }
-    val xDim = dims.indexOf(rowDim._1)
-    val yDim = dims.indexOf(colDim._1)
-
-    // generate one matrix from scratch and then copy the rest
-    val startTime = System.currentTimeMillis
-    val response = Sampler.regularSlice(rowDim, colDim, numSamples)
-    val errors = new Matrix2D(response.rowIds, response.colIds)
-    val gains = new Matrix2D(response.rowIds, response.colIds)
-
-    response.rowIds.zipWithIndex.foreach {tmpx =>
-      val (xval,x) = tmpx
-      response.colIds.zipWithIndex.foreach {tmpy =>
-        val (yval, y) = tmpy
-        arrSlice(xDim) = xval
-        arrSlice(yDim) = yval
-        val (est, err) = estimatePoint(arrSlice)
-        response.set(x, y, est.toFloat)
-        errors.set(x, y, err.toFloat)
-        val expgain = calcExpectedGain(est, err)
-        if(!expgain.isNaN) {
-          gains.set(x, y, expgain.toFloat)
-        } else {
-          gains.set(x, y, 0f)
-        }
-      }
-    }
-
-    val endTime = System.currentTimeMillis
-    ((respDim, response), 
-     (Config.errorField, errors), 
-     (Config.gainField, gains))
-  }
+  def theta(dim:String) = thetas.get(dims.indexOf(dim))
 
   def sampleTable(samples:Table) : Table = {
     val outTbl = new Table
@@ -175,26 +128,29 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
 
   def runSample(pt:List[(String, Float)]) : (Double, Double) = {
     val mapx = pt.toMap
-    val xx = dims.map({mapx.get(_)}).flatten.map({_.toDouble}).toArray
+    val xx = new DoubleMatrix(dims.map({mapx.get(_)}).flatten.map({_.toDouble}).toArray)
     val (est, err) = estimatePoint(xx)
     //curFuncMax = math.max(est.toFloat, curFuncMax)
     (est, err)
   }
 
   // Compute the correlation wrt each design point
-  private def estimatePoint(point:Array[Double]) : (Double,Double) = {
-    val ptCors = design.map({corrFunction(_,point)})
-    val est = mean + sig2 * LinAlg.dotProd(ptCors, corrResponses)
-    val err = sig2 * (1 - sig2 * LinAlg.dotProd(ptCors, 
-                                   LinAlg.dotProd(rInverse, ptCors)))
+  private def estimatePoint(point:DoubleMatrix) : (Double,Double) = {
+    val ptCors = DoubleMatrix.zeros(design.rows)
+    (0 until ptCors.length).foreach {i =>
+      ptCors.put(i, corrFunction(design.getRow(i), point))
+    }
+    val est = mean + sig2 * ptCors.dot(corrResponses)
+    val err = sig2 * (1 - sig2 * ptCors.dot(rInverse.mmul(ptCors)))
     if(err < 0) (est, 0)
     else        (est, math.sqrt(err))
   }
 
-  private def corrFunction(p1:Array[Double], p2:Array[Double]) : Double = {
-    var sum:Double = 0
-    for(d <- 0 until p1.size) {
-      sum += corrFunction(p1(d), p2(d), thetas(d), alphas(d))
+  private def corrFunction(p1:DoubleMatrix, p2:DoubleMatrix) : Double = {
+    var sum = 0.0
+
+    for(d <- 0 until p1.length) {
+      sum += corrFunction(p1.get(d), p2.get(d), thetas.get(d), alphas.get(d))
     }
     math.exp(-sum)
   }
@@ -220,6 +176,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     pt.zip(outVals).map {case ((fld,_),v2) => (fld, v2)}
   }
 
+  /*
   // Compute the density for a set of dimensions
   // This is assuming the GP model
   def anova(ranges:DimRanges, fields:List[String]) 
@@ -267,6 +224,7 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
     }
     computeAnova
   }
+  */
 
   def calcExpectedGain(est:Double, stddev:Double) : Double = {
     // These will come in handy later
@@ -287,10 +245,11 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
   }
 
   // NOTE: This assumes the gaussian correlation model!
+  /*
   def levelSets(c:Float) : List[DimRanges] = {
     // Start with just generating everything
     // We'll filter later
-    val glen = LinAlg.dotProd(corrResponses, corrResponses)
+    val glen = corrResponses.dot(corrResponses)
     val ginv = corrResponses.map {g => g / glen}
     val initialSets = design.zip(ginv).map({tmp =>
       val (designPt, g) = tmp
@@ -329,5 +288,6 @@ class GpModel(val thetas:List[Double], val alphas:List[Double],
       }
     }
   }
+  */
 
 }

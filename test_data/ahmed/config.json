@@ -171,31 +171,35 @@
   "currentVis":{
     "currentSlice":[{
       "name":"alpha5",
-      "value":0.64000004529953
+      "value":1.852000117301941
     },{
       "name":"alpha2",
-      "value":3.5
+      "value":5.569999694824219
     },{
       "name":"alpha6",
-      "value":0.9620000720024109
+      "value":0.9660000205039978
     },{
       "name":"sigma",
       "value":0.2720000147819519
     },{
       "name":"alpha3",
-      "value":0.4390000104904175
+      "value":0.48500001430511475
     },{
       "name":"alpha4",
-      "value":0.7750000357627869
+      "value":1.0
     },{
       "name":"alpha7",
-      "value":0.7220000624656677
+      "value":0.4140000343322754
     },{
       "name":"alpha1",
-      "value":0.7230000495910645
+      "value":0.33000001311302185
     }],
     "currentZoom":[{
-      "name":"alpha5",
+      "name":"alpha1",
+      "lowValue":0.0,
+      "highValue":1.0
+    },{
+      "name":"alpha6",
       "lowValue":0.0,
       "highValue":2.0
     },{
@@ -203,13 +207,13 @@
       "lowValue":0.0,
       "highValue":10.0
     },{
-      "name":"alpha6",
-      "lowValue":0.0,
-      "highValue":2.0
-    },{
       "name":"sigma",
       "lowValue":0.0,
       "highValue":1.0
+    },{
+      "name":"alpha7",
+      "lowValue":0.0,
+      "highValue":2.0
     },{
       "name":"alpha3",
       "lowValue":0.0,
@@ -219,13 +223,9 @@
       "lowValue":0.0,
       "highValue":1.0
     },{
-      "name":"alpha7",
+      "name":"alpha5",
       "lowValue":0.0,
       "highValue":2.0
-    },{
-      "name":"alpha1",
-      "lowValue":0.0,
-      "highValue":1.0
     }],
     "response1":"dice6",
     "response2":"Error6",

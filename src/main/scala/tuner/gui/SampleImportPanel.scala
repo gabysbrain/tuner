@@ -18,7 +18,7 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
   extends TablePanel(2, 2) {
 
   val fileChooser = new PathPanel
-  val valueSelector = new ComboBox(List("None")) {
+  var valueSelector = new ComboBox(List("None")) {
     enabled = false
   }
 
@@ -36,7 +36,7 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
     case ValueChanged(`fileChooser`) => if(fileChooser.validPath) {
       publish(new NewDesignSelected(this))
     }
-    case SelectionChanged(`valueSelector`) => 
+    case SelectionChanged(_) => 
       publish(new NewResponseSelected(this, valueSelector.selection.item))
   }
 
@@ -45,7 +45,7 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
     valueSelector.enabled = false
   } else {
     // No direct way to change the contents of a combobox
-    valueSelector.peer.setModel(ComboBox.newConstantModel(r))
+    valueSelector = new ComboBox(r)
     valueSelector.enabled = true
     valueSelector.selection.index = 0
   }

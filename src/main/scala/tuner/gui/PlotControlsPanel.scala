@@ -29,8 +29,10 @@ class PlotControlsPanel(project:Viewable)
     listenTo(slider)
     reactions += {
       case ValueChanged(`slider`) =>
-        project.viewInfo.updateSlice(fld, slider.value)
-        publish(new ValueChanged(PlotControlsPanel.this))
+        if(slider.value != project.viewInfo.currentSlice(fld)) {
+          project.viewInfo.updateSlice(fld, slider.value)
+          publish(new ValueChanged(PlotControlsPanel.this))
+        }
     }
     (fld, slider)
   } toMap

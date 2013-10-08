@@ -68,7 +68,7 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
     val gps = (0 until (xSize * ySize)).map({i =>
       val (x, y) = (i / xSize, i % xSize)
       (0 until numFields).map({fld =>
-        val res = fields.map({pf => pf.data(fld).get(x, y).toDouble})
+        val res = new org.jblas.DoubleMatrix(fields.map({pf => pf.data(fld).get(x, y).toDouble}))
         new GpModel(estModel.thetas, estModel.alphas, 
                     estModel.design, res, estModel.rInverse,
                     estModel.dims, estModel.respDim, estModel.errDim)

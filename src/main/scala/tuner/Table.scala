@@ -109,9 +109,7 @@ class Table {
   def numRows : Int = data.size
   def numFields : Int = fieldNames.size
 
-  def values(col:String) : SortedSet[Float] = {
-    new TreeSet[Float] ++ data.map({_.get(col)}).flatten
-  }
+  def values(col:String) : Seq[Float] = data.map({_.get(col)}).flatten
 
   def to2dMatrix(rowField:String, colField:String, valField:String) : Matrix2D = {
     // First collect all the columns from the datastore

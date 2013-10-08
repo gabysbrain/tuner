@@ -2,7 +2,6 @@ package tuner.gui.opengl
 
 import com.jogamp.opengl.util.glsl.ShaderUtil
 import javax.media.opengl.{GL,GL2,GL2ES2}
-import javax.media.opengl.DebugGL2ES2
 import javax.media.opengl.GLAutoDrawable
 import javax.media.opengl.GLException
 
@@ -40,8 +39,8 @@ class Glsl(gl:GL,
            fragmentSource:String,
            bindings:List[(String,Int)]) {
 
-  //val es2 = gl.getGL2ES2
-  val es2 = new DebugGL2ES2(gl.getGL2ES2)
+  val es2 = gl.getGL2ES2
+  //val es2 = new DebugGL2ES2(gl.getGL2ES2)
 
   val vertShaderId = 
     createShader(GL2ES2.GL_VERTEX_SHADER, vertexSource)
@@ -61,8 +60,7 @@ class Glsl(gl:GL,
     es2.glAttachShader(progId, fragShaderId)
     es2.glLinkProgram(progId)
     es2.glValidateProgram(progId)
-    val ok = ShaderUtil.isProgramValid(es2, progId) &&
-             ShaderUtil.isProgramStatusValid(es2, progId, GL2ES2.GL_LINK_STATUS)
+    val ok = ShaderUtil.isProgramStatusValid(es2, progId, GL2ES2.GL_LINK_STATUS)
     if(!ok) {
       throw new GLException(ShaderUtil.getProgramInfoLog(es2, progId))
     }
@@ -79,7 +77,7 @@ class Glsl(gl:GL,
     val shaderId = es2.glCreateShader(typeId)
     es2.glShaderSource(shaderId, 1, Array(source), null)
     es2.glCompileShader(shaderId)
-    val ok = ShaderUtil.isShaderStatusValid(es2, shaderId, GL2ES2.GL_COMPILE_STATUS)
+    val ok = ShaderUtil.isShaderStatusValid(es2, shaderId, GL2ES2.GL_COMPILE_STATUS, null)
     if(!ok) {
       throw new javax.media.opengl.GLException(
         source.split("\n").zipWithIndex.map {case (ln:String, no:Int) =>
@@ -124,6 +122,14 @@ class Glsl(gl:GL,
       throw new GLException("uniform " + name + " not found")
     }
     id
+  }
+
+  // Need this to free resources associated with the shader
+  def dispose = {
+    es2.glDeleteShader(vertShaderId)
+    geomShaderId.foreach {id => es2.glDeleteShader(id)}
+    es2.glDeleteShader(fragShaderId)
+    es2.glDeleteProgram(programId)
   }
 
 }
