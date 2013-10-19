@@ -101,6 +101,8 @@ class Table {
   def removeRow(row:Int) = data.remove(row)
 
   def clear = data.clear
+  
+  def isEmpty = data.isEmpty
 
   def min(col:String) : Float = {
     data.map({_.get(col)}).flatten.min
