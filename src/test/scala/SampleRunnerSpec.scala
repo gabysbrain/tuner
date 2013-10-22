@@ -3,6 +3,8 @@ package test.tuner
 import org.scalatest._
 import org.scalatest.Matchers._
 
+import scala.io.Source
+
 import tuner.SampleRunner
 import tuner.Table
 
@@ -55,13 +57,24 @@ class SampleRunnerSpec extends WordSpec {
       "log both the stdout and stderr of the script" in {
         val scriptOutput = new java.io.ByteArrayOutputStream
         SampleRunner.runSamples(testSamples, resource("/sims/run_sim_noisy.sh", true), "/", Some(scriptOutput))
-        scriptOutput.size should be > (0)
+        val stdout = Source.fromFile(new java.io.File(resource("/sims/sim_stdout.log"))).mkString.trim
+        val stderr = Source.fromFile(new java.io.File(resource("/sims/sim_stderr.log"))).mkString.trim
+        val recordedOutput:String = scriptOutput.toString
+
+        //recordedOutput should have length (stdout.length + stderr.length)
+        //recordedOutput should be (stdout + stderr)
+        recordedOutput.size should be > (0)
       }
     }
     "run the sample script from the given directory" in {
       val scriptOutput = new java.io.ByteArrayOutputStream
-      SampleRunner.runSamples(testSamples, resource("/sims/run_sim_noisy.sh", true), "/tmp", Some(scriptOutput))
-      scriptOutput.toString should be ("/tmp")
+      val tmpdir = new java.io.File("/tmp")
+      SampleRunner.runSamples(testSamples, resource("/sims/run_sim_pwd.sh", true), tmpdir.getAbsolutePath, Some(scriptOutput))
+
+      // need to actually check the files as the paths might be different due
+      // to filesystem links
+      val testFile = new java.io.File(scriptOutput.toString)
+      testFile === tmpdir
     }
   }
 }
