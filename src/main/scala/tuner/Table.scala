@@ -185,6 +185,16 @@ class Table {
     outTbl
   }
 
+  def subsample(startRow:Int, numRows:Int) : Table = {
+    val t = new Table
+    // silently return less than numRows if we have less
+    val extractRows = math.min(numRows, this.numRows)
+    for(r <- startRow until (startRow+extractRows)) {
+      t.addRow(tuple(r).toList)
+    }
+    t
+  }
+
   def toRanges : DimRanges = toRanges(Nil)
 
   def toRanges(filterFields:List[String]) : DimRanges = {

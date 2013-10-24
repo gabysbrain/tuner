@@ -37,6 +37,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   }
   val console = new HideableConsole
 
+  listenTo(project)
   listenTo(backgroundButton)
   listenTo(stopButton)
   listenTo(console)
@@ -68,20 +69,15 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       close
     case UIElementResized(_) =>
       this.pack
+    case Progress(currentTime, totalTime, msg, ok) =>
+      updateProgress(currentTime, totalTime, msg, ok)
+    case ConsoleLine(line) => 
+      console.text += line
+      console.text += "\n"
+    case ProgressComplete =>
+      openNextStage
   }
 
-  val progressListener = new Actor {
-    def receive = {
-      case Progress(currentTime, totalTime, msg, ok) =>
-        updateProgress(currentTime, totalTime, msg, ok)
-      case ConsoleLine(line) => 
-        console.text += line
-        console.text += "\n"
-      case ProgressComplete =>
-        openNextStage
-    }
-  }
-  project.addListener(progressListener)
   this.pack
 
   def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {
