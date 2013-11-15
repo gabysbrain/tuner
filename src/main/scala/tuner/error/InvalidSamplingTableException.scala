@@ -7,7 +7,7 @@ class InvalidSamplingTableException(val input:Table, val output:Table)
     if(!input.fieldNames.toSet.subsetOf(output.fieldNames.toSet)) {
       val inputFields = input.fieldNames.mkString(", ")
       val outputFields = output.fieldNames.mkString(", ")
-      s"Input table fields ($inputFields) does not match output table fields ($outputFields)"
+      s"Input table fields ($inputFields) do not match output table fields ($outputFields)"
     } else {
       "Input table does not match output table"
     }
