@@ -1,4 +1,4 @@
-package test.tuner.project
+package tuner.test.integration
 
 import org.scalatest._
 import org.scalatest.Matchers._
@@ -13,7 +13,7 @@ import tuner.Region
 import tuner.Table
 import tuner.ViewInfo
 
-import test.tuner.Util._
+import tuner.test.Util._
 
 class ProxyReactor(project:InProgress) extends Reactor {
   val events = new scala.collection.mutable.ArrayBuffer[Event]

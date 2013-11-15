@@ -1,4 +1,4 @@
-package test.tuner
+package tuner.test.integration
 
 import org.scalatest._
 import org.scalatest.Matchers._
@@ -8,7 +8,7 @@ import scala.io.Source
 import tuner.SampleRunner
 import tuner.Table
 
-import Util._
+import tuner.test.Util._
 
 class SampleRunnerSpec extends WordSpec {
 
