@@ -226,7 +226,7 @@ class Table {
       //val (hdr, _) = row0.unzip
       val hdr = row0.keys.filter({x => x != "rowNum"}).toList
       // write out the header
-      file.write(hdr.reduceLeft(_ + "," + _) + "\n")
+      file.write(hdr.mkString(",") + "\n")
       hdr
     } else {
       Nil
@@ -235,7 +235,7 @@ class Table {
     for(r <- 0 until numRows) {
       val tpl = tuple(r)
       val vals = header.map(tpl(_)).map(_.toString)
-      file.write(vals.reduceLeft(_ + "," + _) + "\n")
+      file.write(vals.mkString(",") + "\n")
     }
 
     file.close
