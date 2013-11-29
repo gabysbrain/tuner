@@ -167,23 +167,13 @@ object Tuner extends SimpleSwingApplication {
     //println(openWindows)
     WindowMenu.updateWindows
     super.listenTo(tunerWin)
-    //maybeShowProjectWindow
   }
 
   def deafTo(tunerWin:tuner.gui.Window) : Unit = {
     super.deafTo(tunerWin)
 
     openWindows -= tunerWin
-    maybeShowProjectWindow
+    //maybeShowProjectWindow
   }
-
-  private def maybeShowProjectWindow = {
-    // See if we need to show the project chooser
-    if(openWindows.isEmpty)
-      ProjectChooser.open
-    else
-      ProjectChooser.close
-  }
-
 }
 
