@@ -114,7 +114,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ValueChanged(`localTab`) =>
       mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
-      this.close
+      this.dispose
     case WindowClosing(_) => 
       //mainPlotPanel.destroy
       histogramPanel.destroy
@@ -134,7 +134,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save()
-          openNextStage
+          dispose
         case Dialog.Result.Cancel =>
           project.newSamples.clear
       }

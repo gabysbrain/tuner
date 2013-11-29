@@ -11,11 +11,14 @@ import tuner.util.ResourceLoader
 
 object Config {
   
-  def recentProjects : Set[String] = Prefs.list("recentProjects") toSet
+  //def recentProjects : Set[String] = Prefs.list("recentProjects") toSet
+  def recentProjects:Set[String] = Set()
   def recentProjects_=(rp:Set[String]) = {
     Prefs.saveList("recentProjects", rp.toList)
   }
   
+  var testingMode = false
+
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
   val designFilename = "responses.csv"

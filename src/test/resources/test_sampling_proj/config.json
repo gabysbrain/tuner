@@ -1,0 +1,41 @@
+{
+  "name":"Rosenbrock",
+  "scriptPath":"ruby rosenbrock.rb",
+  "inputs":[{
+    "name":"x1",
+    "minRange":0.0,
+    "maxRange":10.0
+  },{
+    "name":"x2",
+    "minRange":0.0,
+    "maxRange":10.0
+  },{
+    "name":"x3",
+    "minRange":0.0,
+    "maxRange":10.0
+  },{
+    "name":"x4",
+    "minRange":0.0,
+    "maxRange":10.0
+  },{
+    "name":"x5",
+    "minRange":0.0,
+    "maxRange":10.0
+  }],
+  "outputs":[],
+  "ignoreFields":[],
+  "gpModels":[],
+  "buildInBackground":false,
+  "currentVis":{
+    "currentSlice":[],
+    "currentZoom":[],
+    "currentVis":"hyperslice",
+    "currentMetric":"value",
+    "showSampleLine":false,
+    "showRegion":false
+  },
+  "currentRegion":{
+    "shape":"Box",
+    "radii":[]
+  }
+}

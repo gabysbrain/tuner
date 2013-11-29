@@ -1,4 +1,4 @@
-package test.tuner
+package tuner.test.unit
 
 import org.scalatest._
 

@@ -6,6 +6,9 @@ import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+
 import javax.swing.UIManager
 
 import java.io.File
@@ -47,8 +50,20 @@ object Tuner extends SimpleSwingApplication {
       openWindows -= tw
       WindowMenu.updateWindows
       deafTo(tw)
-      // If there are no more open windows open the project chooser again
-      if(openWindows.isEmpty) ProjectChooser.open
+
+      if(!Config.testingMode) {
+        // If a project is moving to another stage then we 
+        // should automatically open that window
+        (tw.project, tw.project.next) match {
+          case (p:Viewable, pn:Viewable) =>
+          case _ => Tuner.openProject(tw.project.next)
+        }
+  
+        // If there are no more open windows open the project chooser again
+        if(openWindows.isEmpty) ProjectChooser.open
+      } else {
+        System.exit(0)
+      }
   }
 
   def top = { 
@@ -106,6 +121,7 @@ object Tuner extends SimpleSwingApplication {
         val waitWindow = new SamplingProgressBar(ip)
         ProjectChooser.close
         waitWindow.open
+        future {ip.start}
       case v:Viewable => 
         val projWindow = new ProjectViewer(v)
         ProjectChooser.close
@@ -150,23 +166,13 @@ object Tuner extends SimpleSwingApplication {
     //println(openWindows)
     WindowMenu.updateWindows
     super.listenTo(tunerWin)
-    //maybeShowProjectWindow
   }
 
   def deafTo(tunerWin:tuner.gui.Window) : Unit = {
     super.deafTo(tunerWin)
 
     openWindows -= tunerWin
-    maybeShowProjectWindow
+    //maybeShowProjectWindow
   }
-
-  private def maybeShowProjectWindow = {
-    // See if we need to show the project chooser
-    if(openWindows.isEmpty)
-      ProjectChooser.open
-    else
-      ProjectChooser.close
-  }
-
 }
 

@@ -12,6 +12,8 @@ import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
+import scala.swing.Publisher
+
 import tuner.CandidateGenerator
 import tuner.Config
 import tuner.ConsoleLine
@@ -27,11 +29,13 @@ import tuner.RegionSpecification
 //import tuner.SampleRunner
 import tuner.SamplesCompleted
 import tuner.SamplingComplete
-import tuner.SamplingError
+import tuner.SampleRunner
 import tuner.Table
 import tuner.ViewInfo
 import tuner.VisInfo
+import tuner.error.InvalidSamplingTableException
 import tuner.error.ProjectLoadException
+import tuner.error.SamplingErrorException
 import tuner.gp.GpModel
 import tuner.gp.GpSpecification
 import tuner.gp.ScalaGpBuilder
@@ -73,6 +77,7 @@ object Project {
   }
 
   def fromFile(path:String) : Project = {
+    println("reading project from " + path)
     val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
@@ -110,6 +115,7 @@ object Project {
       new Viewable(config, path, designSites)
     }
 
+    println(proj)
     proj
   }
 
@@ -184,16 +190,17 @@ sealed abstract class Project(config:ProjConfig) {
 
 }
 
-abstract class InProgress(config:ProjConfig) extends Project(config) {
+abstract class InProgress(config:ProjConfig) extends Project(config) with Publisher {
 
   var buildInBackground:Boolean
 
+  def start:Unit
   //def start:Unit
   //def stop:Unit
 
-  private var eventListeners:ArrayBuffer[ActorRef] = ArrayBuffer()
-  def addListener(a:Actor) = eventListeners.append(a.self)
-  protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
+  //private var eventListeners:ArrayBuffer[ActorRef] = ArrayBuffer()
+  //def addListener(a:Actor) = eventListeners.append(a.self)
+  //protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
 }
 
 class NewProject(name:String, 
@@ -234,10 +241,11 @@ class NewProject(name:String,
 }
 
 class RunningSamples(config:ProjConfig, val path:String, 
-                     val newSamples:Table, val designSites:Table) 
-    extends InProgress(config) with Saved with Actor {
+                     val newSamples:Table, val designSites:Table)
+    extends InProgress(config) with Saved {
   
   var buildInBackground:Boolean = config.buildInBackground
+  var logStream:Option[java.io.OutputStream] = None
 
   // See if we should start running some samples
   //var sampleRunner:Option[SampleRunner] = None 
@@ -247,6 +255,7 @@ class RunningSamples(config:ProjConfig, val path:String,
   
   val totalTime = newSamples.numRows
   var currentTime = 0
+  var running = false
 
   override def save(savePath:String) = {
     super.save(savePath)
@@ -265,35 +274,39 @@ class RunningSamples(config:ProjConfig, val path:String,
     Project.fromFile(path).asInstanceOf[BuildingGp]
   }
 
-  override def preStart() = {
+  def start = {
     // Publish one of these right at the beginning just to get things going
     publish(Progress(currentTime, totalTime, statusString, true))
+    running = true
 
-    //runSamples
-  }
+    try {
+      while(!newSamples.isEmpty) {
+        val subsamples = newSamples.subsample(0, Config.samplingRowsPerReq)
+  
+        val newDesign = SampleRunner.runSamples(subsamples, scriptPath, 
+                                                path, logStream)
+  
+        for(r <- 0 until newDesign.numRows) {
+          designSites.addRow(newDesign.tuple(r).toList)
+          newSamples.removeRow(0) // Always the first row
+        }
+  
+        currentTime += subsamples.numRows
+        //println("ct " + currentTime)
+        publish(Progress(currentTime, totalTime, statusString, true))
+      }
 
-  def receive = {
-    case x:ConsoleLine => 
-      publish(x)
-    case SamplesCompleted(num) => 
-      currentTime += num
-      publish(Progress(currentTime, totalTime, statusString, true))
-    case SamplingError(exitCode) =>
-      val msg = "Sampler script exited with code: " + exitCode
-      publish(Progress(currentTime, totalTime, msg, false))
-    case SamplingComplete =>
       publish(ProgressComplete)
-  }
-
-  /*
-  private def runSamples = {
-    // only run if we aren't running something
-    if(!sampleRunner.isDefined && newSamples.numRows > 0) {
-      val runner = new SampleRunner(this)
-      sampleRunner = Some(runner)
+    } catch {
+      case sae:SamplingErrorException => 
+        publish(Progress(currentTime, totalTime, sae.getMessage, false))
+      case ite:InvalidSamplingTableException => 
+        println(ite.getMessage)
+        publish(Progress(currentTime, totalTime, ite.getMessage, false))
+    } finally {
+      running = false
     }
   }
-  */
 }
 
 class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
@@ -305,9 +318,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def statusString = "Building GP"
 
-  def stop = {}
-
-  def preStart() = {
+  def start = {
     publish(Progress(-1, -1, statusString, true))
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)

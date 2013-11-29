@@ -1,10 +1,10 @@
-package test.tuner.gp
+package tuner.test.integration
 
 import org.scalatest._
 
 import tuner.gp.ScalaGpBuilder
 
-import test.tuner.Util._
+import tuner.test.Util._
 
 class ScalaGpBuilderSpec extends WordSpec {
 

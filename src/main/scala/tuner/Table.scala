@@ -101,6 +101,8 @@ class Table {
   def removeRow(row:Int) = data.remove(row)
 
   def clear = data.clear
+  
+  def isEmpty = data.isEmpty
 
   def min(col:String) : Float = {
     data.map({_.get(col)}).flatten.min
@@ -183,6 +185,16 @@ class Table {
     outTbl
   }
 
+  def subsample(startRow:Int, numRows:Int) : Table = {
+    val t = new Table
+    // silently return less than numRows if we have less
+    val extractRows = math.min(numRows, this.numRows)
+    for(r <- startRow until (startRow+extractRows)) {
+      t.addRow(tuple(r).toList)
+    }
+    t
+  }
+
   def toRanges : DimRanges = toRanges(Nil)
 
   def toRanges(filterFields:List[String]) : DimRanges = {
@@ -214,7 +226,7 @@ class Table {
       //val (hdr, _) = row0.unzip
       val hdr = row0.keys.filter({x => x != "rowNum"}).toList
       // write out the header
-      file.write(hdr.reduceLeft(_ + "," + _) + "\n")
+      file.write(hdr.mkString(",") + "\n")
       hdr
     } else {
       Nil
@@ -223,7 +235,7 @@ class Table {
     for(r <- 0 until numRows) {
       val tpl = tuple(r)
       val vals = header.map(tpl(_)).map(_.toString)
-      file.write(vals.reduceLeft(_ + "," + _) + "\n")
+      file.write(vals.mkString(",") + "\n")
     }
 
     file.close

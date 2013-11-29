@@ -114,10 +114,10 @@ class NewProjectWindow extends Frame {
     case ButtonClicked(`nextButton`) =>
       val samplerWindow = 
         new InitialSamplerWindow(createProject, locationChooser.path)
-      close
+      dispose
       samplerWindow.visible = true
     case ButtonClicked(`cancelButton`) => 
-      close
+      dispose
       Tuner.top
     case ControlTableRowAdded(`inputDimTable`) =>
       this.pack

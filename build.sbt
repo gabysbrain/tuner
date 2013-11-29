@@ -46,11 +46,8 @@ javaOptions <<= (jriPathKey, openglPathKey) map {(j,o) => Seq("-Djava.library.pa
 fork := true
 
 javaOptions := {
-  val openglPath = "lib/opengl/macosx"
   val jriPath = "/Library/Frameworks/R.framework/Versions/Current/Resources/library/rJava/jri"
-  //Seq("-Djava.library.path=" + jriPath + ":" + openglPath)
   Seq("-Djava.library.path=" + jriPath, "-Xmx4G")
-  //val openglPath = """lib\opengl\windows64"""
   //val jriPath = """C:\Users\tom\Documents\R\win-library\2.13\rJava\jri"""
   //Seq("-Djava.library.path=" + jriPath + """\x64;""" + jriPath)
 }

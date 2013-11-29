@@ -37,10 +37,10 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
   reactions += {
     case ButtonClicked(`okButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Ok))
-      close
+      dispose
     case ButtonClicked(`cancelButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Cancel))
-      close
+      dispose
   }
 
   contents = new BorderPanel {

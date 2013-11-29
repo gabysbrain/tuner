@@ -1,9 +1,9 @@
-package test.tuner.gp
+package tuner.test.integration
 
 import org.scalatest._
 import org.scalatest.Matchers._
 
-import test.tuner.Util._
+import tuner.test.Util._
 
 import breeze.linalg._
 

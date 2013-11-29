@@ -29,14 +29,17 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   }
   val alwaysBackgroundCheckbox = new CheckBox("Always Background") {
     selected = project.buildInBackground
+    enabled = false
   }
   val backgroundButton = new Button("Background")
+  backgroundButton.enabled = false
   val stopButton = new Button("Stop")
   val progressLabel = new Label {
     text = "   "
   }
   val console = new HideableConsole
 
+  listenTo(project)
   listenTo(backgroundButton)
   listenTo(stopButton)
   listenTo(console)
@@ -62,26 +65,21 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
         case s:Saved => s.save
         case _       =>
       }
-      close
+      dispose
     case ButtonClicked(`stopButton`) => 
       //project.stop
-      close
+      dispose
     case UIElementResized(_) =>
       this.pack
+    case Progress(currentTime, totalTime, msg, ok) =>
+      updateProgress(currentTime, totalTime, msg, ok)
+    case ConsoleLine(line) => 
+      console.text += line
+      console.text += "\n"
+    case ProgressComplete =>
+      dispose
   }
 
-  val progressListener = new Actor {
-    def receive = {
-      case Progress(currentTime, totalTime, msg, ok) =>
-        updateProgress(currentTime, totalTime, msg, ok)
-      case ConsoleLine(line) => 
-        console.text += line
-        console.text += "\n"
-      case ProgressComplete =>
-        openNextStage
-    }
-  }
-  project.addListener(progressListener)
   this.pack
 
   def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {
