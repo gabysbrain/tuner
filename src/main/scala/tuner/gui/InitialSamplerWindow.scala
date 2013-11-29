@@ -60,7 +60,7 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
       this.dispose
     case ButtonClicked(`clusterButton`) =>
       samplerPanel.saveSamples
-      this.close
+      this.dispose
   }
 
 }

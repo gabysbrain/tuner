@@ -63,10 +63,10 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
         case s:Saved => s.save
         case _       =>
       }
-      close
+      dispose
     case ButtonClicked(`stopButton`) => 
       //project.stop
-      close
+      dispose
     case UIElementResized(_) =>
       this.pack
     case Progress(currentTime, totalTime, msg, ok) =>

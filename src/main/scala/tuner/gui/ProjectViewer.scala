@@ -114,7 +114,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ValueChanged(`localTab`) =>
       mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
-      this.close
+      this.dispose
     case WindowClosing(_) => 
       //mainPlotPanel.destroy
       histogramPanel.destroy
