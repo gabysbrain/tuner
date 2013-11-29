@@ -6,6 +6,9 @@ import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+
 import javax.swing.UIManager
 
 import java.io.File
@@ -107,6 +110,7 @@ object Tuner extends SimpleSwingApplication {
         val waitWindow = new SamplingProgressBar(ip)
         ProjectChooser.close
         waitWindow.open
+        future {ip.start}
       case v:Viewable => 
         val projWindow = new ProjectViewer(v)
         ProjectChooser.close
