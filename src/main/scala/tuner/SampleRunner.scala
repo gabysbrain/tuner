@@ -21,9 +21,10 @@ object SampleRunner {
       val designFile = File.createTempFile("tuner_design", ".csv")
 
       // We should validate the script path and dir somehow...
-      val pb = new ProcessBuilder(scriptPath, 
-                                  sampleFile.getAbsolutePath, 
-                                  designFile.getAbsolutePath)
+      val scriptArgs = scriptPath.split(" ").toList ++
+                       List(sampleFile.getAbsolutePath, 
+                            designFile.getAbsolutePath)
+      val pb = new ProcessBuilder(scriptArgs:_*)
       pb.directory(new File(scriptDir))
       pb.redirectErrorStream(true)
 
