@@ -77,6 +77,7 @@ object Project {
   }
 
   def fromFile(path:String) : Project = {
+    println("reading project from " + path)
     val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
@@ -290,7 +291,7 @@ class RunningSamples(config:ProjConfig, val path:String,
         }
   
         currentTime += subsamples.numRows
-        println("ct " + currentTime)
+        //println("ct " + currentTime)
         publish(Progress(currentTime, totalTime, statusString, true))
       }
 
