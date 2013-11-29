@@ -192,6 +192,7 @@ abstract class InProgress(config:ProjConfig) extends Project(config) with Publis
 
   var buildInBackground:Boolean
 
+  def start:Unit
   //def start:Unit
   //def stop:Unit
 
@@ -252,6 +253,7 @@ class RunningSamples(config:ProjConfig, val path:String,
   
   val totalTime = newSamples.numRows
   var currentTime = 0
+  var running = false
 
   override def save(savePath:String) = {
     super.save(savePath)
@@ -273,6 +275,7 @@ class RunningSamples(config:ProjConfig, val path:String,
   def start = {
     // Publish one of these right at the beginning just to get things going
     publish(Progress(currentTime, totalTime, statusString, true))
+    running = true
 
     try {
       while(!newSamples.isEmpty) {
@@ -296,7 +299,10 @@ class RunningSamples(config:ProjConfig, val path:String,
       case sae:SamplingErrorException => 
         publish(Progress(currentTime, totalTime, sae.getMessage, false))
       case ite:InvalidSamplingTableException => 
+        println(ite.getMessage)
         publish(Progress(currentTime, totalTime, ite.getMessage, false))
+    } finally {
+      running = false
     }
   }
 }
