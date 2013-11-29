@@ -29,8 +29,10 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   }
   val alwaysBackgroundCheckbox = new CheckBox("Always Background") {
     selected = project.buildInBackground
+    enabled = false
   }
   val backgroundButton = new Button("Background")
+  backgroundButton.enabled = false
   val stopButton = new Button("Stop")
   val progressLabel = new Label {
     text = "   "
