@@ -86,9 +86,9 @@ class GpModel(val thetas:DenseVector[Double],
       thetas.toArray.toList, 
       alphas.toArray.toList, 
       mean, sig2,
-      (0 until design.cols).map {c => design(::,c).data.toList} toList,
+      (0 until design.rows).map {r => design(r, ::).data.toList} toList,
       responses.toArray.toList, 
-      (0 until rInverse.cols).map {c => rInverse(::,c).data.toList} toList)
+      (0 until rInverse.rows).map {r => rInverse(r, ::).data.toList} toList)
   }
 
   def maxGain(range:DimRanges):Float = {
