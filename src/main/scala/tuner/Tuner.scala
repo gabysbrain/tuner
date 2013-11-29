@@ -21,8 +21,6 @@ import tuner.gui.ProjectViewer
 import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
 import tuner.gui.WindowMenu
-import tuner.gui.R.InstallPackageDialog
-import tuner.gui.R.RNotInstalledDialog
 import tuner.project._
 
 /**

@@ -70,26 +70,22 @@ object Sampler {
     }
     val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}
 
-    // Use R to generate the maximim lhc
-    R.runCommand("library(lhs)")
     // for larger sample sizes the maximin stuff takes way too long
-    val lhcCmd = if(n <= 1000) {
-      "maximinLHS(%d, %d)".format(n, sampleDims.size)
+    val res = if(n <= 1000) {
+      LHS.maximin(n, sampleDims.size)
     } else {
-      "randomLHS(%d, %d)".format(n, sampleDims.size)
+      LHS.random(n, sampleDims.size)
     }
-    //println("R: " + lhcCmd)
-    val res = R.runCommand(lhcCmd)
-    val x:Array[Array[Double]] = res.asDoubleMatrix
     
-    x.foreach({row => 
+    for(r <- 0 until res.rows) {
+      val row = res(r, ::).data
       val vals = sampleDims.zip(row.map(_.toFloat)).map {vs =>
         val ((dimname, (dimMin, dimMax)), value) = vs
         // Conveniently all the values from the lhs are on a 0->1 scale
         (dimname, dimMin + value * (dimMax - dimMin))
       }
       f(vals.toList ++ slices)
-    })
+    }
   }
 
   def lhc(dims:DimRanges, n:Int) : Table = {
