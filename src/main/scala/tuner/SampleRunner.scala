@@ -46,7 +46,7 @@ object SampleRunner {
         val responseTable = Table.fromCsv(designFile.getAbsolutePath)
         if(samples.numRows != responseTable.numRows)
           throw new InvalidSamplingTableException(samples, responseTable)
-        if(!samples.fieldNames.toSet.subsetOf(responseTable.fieldNames.toSet))
+        if(!samples.fieldNames.toSet.subsetOf(responseTable.fieldNames.toSet++List("rowNum")))
           throw new InvalidSamplingTableException(samples, responseTable)
         responseTable
       }
