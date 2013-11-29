@@ -80,7 +80,7 @@ class ResponseSelector(project:NewResponses) extends Window(project) {
         case ResponseSelector.Ignore   => project.addIgnore(fld)
       }}
       project.save
-      openNextStage
+      dispose
     case ButtonClicked(`cancelButton`) =>
       close
   }

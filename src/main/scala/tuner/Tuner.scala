@@ -49,8 +49,20 @@ object Tuner extends SimpleSwingApplication {
       openWindows -= tw
       WindowMenu.updateWindows
       deafTo(tw)
-      // If there are no more open windows open the project chooser again
-      if(openWindows.isEmpty) ProjectChooser.open
+
+      if(!Config.testingMode) {
+        // If a project is moving to another stage then we 
+        // should automatically open that window
+        (tw.project, tw.project.next) match {
+          case (p:Viewable, pn:Viewable) =>
+          case _ => Tuner.openProject(tw.project.next)
+        }
+  
+        // If there are no more open windows open the project chooser again
+        if(openWindows.isEmpty) ProjectChooser.open
+      } else {
+        System.exit(0)
+      }
   }
 
   def top = { 

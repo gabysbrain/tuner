@@ -134,7 +134,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save()
-          openNextStage
+          dispose
         case Dialog.Result.Cancel =>
           project.newSamples.clear
       }

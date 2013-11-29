@@ -57,7 +57,7 @@ class InitialSamplerWindow(project:NewProject, saveDir:String)
   reactions += {
     case ButtonClicked(`runButton`) =>
       project.save(Path.join(saveDir, project.name))
-      openNextStage
+      this.dispose
     case ButtonClicked(`clusterButton`) =>
       samplerPanel.saveSamples
       this.close

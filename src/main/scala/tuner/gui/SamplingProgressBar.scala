@@ -75,7 +75,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       console.text += line
       console.text += "\n"
     case ProgressComplete =>
-      openNextStage
+      dispose
   }
 
   this.pack
