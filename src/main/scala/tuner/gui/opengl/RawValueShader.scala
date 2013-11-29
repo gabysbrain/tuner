@@ -7,7 +7,7 @@ import javax.media.opengl.GLAutoDrawable
 import scala.collection.mutable.ArrayBuffer
 
 import tuner.Config
-import tuner.Matrix2D
+import tuner.Grid2D
 import tuner.gui.util.Matrix4
 import tuner.project.Viewable
 
@@ -44,7 +44,7 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
     }
 
     // The project knows which view needs to be drawn
-    val data = project.sampleMatrix(xr, yr, response, focusPoint)
+    val data = project.sampleGrid2D(xr, yr, response, focusPoint)
 
     // Put all the data into our vertex array buffer
     es2.glBindBuffer(GL.GL_ARRAY_BUFFER, pointVbo)
@@ -139,9 +139,9 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
   }
 
   /**
-   * Converts the Matrix2D into something easy for opengl to render
+   * Converts the Grid2D into something easy for opengl to render
    */
-  def matrixToDataArray(mtx:Matrix2D) : Array[Float] = {
+  def matrixToDataArray(mtx:Grid2D) : Array[Float] = {
     val out = new ArrayBuffer[Float]
 
     // In the data the rows are the x values...
@@ -158,7 +158,7 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
   /**
    * Creates the triangles we need to draw
    */
-  def matrixToElementArray(mtx:Matrix2D) : Array[Int] = {
+  def matrixToElementArray(mtx:Grid2D) : Array[Int] = {
     val out = new ArrayBuffer[Int]
     val rows = mtx.rows
 

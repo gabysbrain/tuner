@@ -5,19 +5,20 @@ import tuner.ColorMap
 import tuner.Config
 import tuner.DimRanges
 import tuner.EllipseRegion
-import tuner.GpModel
-import tuner.Matrix2D
+import tuner.Grid2D
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.ViewInfo
 import tuner.geom.Rectangle
+import tuner.gp.GpModel
+import tuner.gui.util.AxisTicks
 import tuner.gui.util.FacetLayout
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
-import tuner.util.AxisTicks
+import tuner.gui.util.AxisTicks
 import tuner.util.ColorLib
 
 import scala.collection.mutable.Queue
@@ -62,6 +63,21 @@ class ProcessingMainPlotPanel(val project:Viewable)
       clearFonts
     case UIElementResized(_) => 
       clearFonts
+  }
+
+  def plotData(model:GpModel,
+               xDim:(String,(Float,Float)), 
+               yDim:(String,(Float,Float)), 
+               slice:Map[String,Float]) : Grid2D = {
+    // Progressive rendering
+    val idealSize = project.viewInfo.estimateSampleDensity
+    val sample = model.sampleSlice(xDim, yDim, slice.toList, idealSize)
+    val data = project.viewInfo.currentMetric match {
+      case ViewInfo.ValueMetric => sample._1
+      case ViewInfo.ErrorMetric => sample._2
+      case ViewInfo.GainMetric => sample._3
+    }
+    data._2
   }
 
   override def setup = {
@@ -192,7 +208,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
        yFld, xFld, yRange, xRange)
     }
 
-    val data = project.sampleMatrix(xr, yr, response, 
+    val data = project.sampleGrid2D(xr, yr, response, 
                                     project.viewInfo.currentSlice.toList)
     val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
                             project.viewInfo.currentSlice(yf))

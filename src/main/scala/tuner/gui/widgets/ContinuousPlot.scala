@@ -1,7 +1,7 @@
 package tuner.gui.widgets
 
 import tuner.Config
-import tuner.Matrix2D
+import tuner.Grid2D
 import tuner.SpecifiedColorMap
 import tuner.geom.Rectangle
 import tuner.gui.P5Panel
@@ -21,7 +21,7 @@ class ContinuousPlot {
   /*
   */
   def draw(applet:P5Panel, x:Float, y:Float, w:Float, h:Float, 
-           data:Matrix2D, xSlice:Float, ySlice:Float, 
+           data:Grid2D, xSlice:Float, ySlice:Float, 
            xRange:(Float,Float), yRange:(Float,Float),
            colormap:SpecifiedColorMap) = {
     _bounds = Rectangle((x,y), (x+w,y+h))
@@ -74,7 +74,7 @@ class ContinuousPlot {
 
   def drawPoint(applet:P5Panel, r:Int, c:Int, w:Float, h:Float, 
                 xRange:(Float,Float), yRange:(Float,Float), 
-                data:Matrix2D, colormap:SpecifiedColorMap) = {
+                data:Grid2D, colormap:SpecifiedColorMap) = {
     val x = data.rowVal(r)
     val y = data.colVal(c)
     val cc = data.get(r, c)

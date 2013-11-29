@@ -1,7 +1,7 @@
 package tuner.gui
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import akka.actor.Actor._
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.CheckBox
@@ -64,27 +64,24 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       }
       close
     case ButtonClicked(`stopButton`) => 
-      project.stop
+      //project.stop
       close
     case UIElementResized(_) =>
       this.pack
   }
 
-  val progressListener = actor {
-    loop {
-      react {
-        case Progress(currentTime, totalTime, msg, ok) =>
-          updateProgress(currentTime, totalTime, msg, ok)
-        case ConsoleLine(line) => 
-          console.text += line
-          console.text += "\n"
-        case ProgressComplete =>
-          openNextStage
-      }
+  val progressListener = new Actor {
+    def receive = {
+      case Progress(currentTime, totalTime, msg, ok) =>
+        updateProgress(currentTime, totalTime, msg, ok)
+      case ConsoleLine(line) => 
+        console.text += line
+        console.text += "\n"
+      case ProgressComplete =>
+        openNextStage
     }
   }
   project.addListener(progressListener)
-  project.start
   this.pack
 
   def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {

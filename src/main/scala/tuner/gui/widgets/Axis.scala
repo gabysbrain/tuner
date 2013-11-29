@@ -14,7 +14,7 @@ import tuner.gui.P5Panel
 import tuner.gui.opengl.Glsl
 import tuner.gui.util.FontLib
 import tuner.gui.util.TextAlign
-import tuner.util.AxisTicks
+import tuner.gui.util.AxisTicks
 
 //import java.awt.Graphics2D
 

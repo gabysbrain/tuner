@@ -59,16 +59,19 @@ save.table <- function(data, fname) {
 ##' @param resp.col A string for which column to 
 ##'                 consider as the response measure
 ##' @return A list object containing the model we've built
-fit.model <- function(design, param.cols, resp.col) {
+fit.model <- function(design, param.cols, resp.col, verbose=1) {
   X.samples <- design[,param.cols]
   Y.samples <- design[,resp.col]
 
   # now build the gp model
   fit <- mlegp(as.matrix(X.samples), as.vector(Y.samples),
-               param.names=param.cols, gp.names=resp.col, constantMean=1)
+               param.names=param.cols, gp.names=resp.col, 
+               constantMean=1, verbose=verbose)
 
-  print(names(X.samples))
-  print(fit$beta)
+  if(verbose > 0) {
+    print(names(X.samples))
+    print(fit$beta)
+  }
 
   return(fit)
 }

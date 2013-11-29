@@ -48,7 +48,7 @@ class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float,
           vv(2),  vv(6), vv(10), vv(14), 
           vv(3),  vv(7), vv(11), vv(15))
 
-  def *(m:Matrix4) : Matrix4 = mmul(m)
+  def *(m:Matrix4) : Matrix4 = dot(m)
 
   //def toArray = toArray2
 
@@ -62,5 +62,6 @@ class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float,
     }).reduceLeft(_ + "\n" + _)
   }
 
+  def dot(m2:Matrix4) : Matrix4 = mmul(m2)
 }
 

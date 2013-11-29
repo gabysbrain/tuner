@@ -46,6 +46,14 @@ object Table {
     //println("done")
     tbl
   }
+  
+  def fromLists(fieldNames:List[String], data:List[List[Float]]) = {
+    val tbl = new Table
+    data.foreach {dr =>
+      tbl.addRow(fieldNames.zip(dr))
+    }
+    tbl
+  }
 
   // Some fun filters
   def fieldFilter(rmFields:List[String]) : Filter = {
@@ -109,13 +117,24 @@ class Table {
   def numRows : Int = data.size
   def numFields : Int = fieldNames.size
 
-  def values(col:String) : Seq[Float] = data.map({_.get(col)}).flatten
+  def equals(other:Table) = {
+    // we finish quick if tables aren't same dimensions
+    if(numRows != other.numRows || numFields != other.numFields) {
+      false
+    } else {
+      data == other.data
+    }
+  }
 
-  def to2dMatrix(rowField:String, colField:String, valField:String) : Matrix2D = {
+  def values(col:String) : SortedSet[Float] = {
+    new TreeSet[Float] ++ data.map({_.get(col)}).flatten
+  }
+
+  def to2dMatrix(rowField:String, colField:String, valField:String) : Grid2D = {
     // First collect all the columns from the datastore
     val rowVals = values(rowField)
     val colVals = values(colField)
-    val m = new Matrix2D(rowVals toList, colVals toList)
+    val m = new Grid2D(rowVals toList, colVals toList)
 
     // Now populate the matrix
     data.foreach(v => {
@@ -146,6 +165,8 @@ class Table {
     data(row) + (Config.rowField -> row)
   }
 
+  def map[A](f:Table.Tuple=>A) = data.map(f)
+
   // Adds all rows of t to this table
   def merge(t:Table) = {
     for(r <- 0 until t.numRows)
@@ -172,6 +193,16 @@ class Table {
     }
     val ranges = fns.map({fn => (fn, (min(fn), max(fn)))}).toMap
     new DimRanges(ranges)
+  }
+
+  override def toString : String = if(numRows == 0) {
+    "(empty table)"
+  } else {
+    val header = fieldNames.reduceLeft(_ + " " + _)
+    val rows = data.map {row => 
+      fieldNames.map {fn => row(fn).toString} reduceLeft(_ + " " + _)
+    }
+    header + "\n" + rows.reduceLeft(_ + "\n" + _)
   }
 
   def toCsv(filename:String) = {

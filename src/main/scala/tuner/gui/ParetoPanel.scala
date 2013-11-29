@@ -1,7 +1,6 @@
 package tuner.gui
 
 import tuner.Config
-import tuner.Matrix2D
 import tuner.Sampler
 import tuner.SpecifiedColorMap
 import tuner.Table
@@ -13,7 +12,7 @@ import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Viewable
-import tuner.util.AxisTicks
+import tuner.gui.util.AxisTicks
 
 class ParetoPanel(project:Viewable)
     extends P5Panel(Config.paretoDims._1, 

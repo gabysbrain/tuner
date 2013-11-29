@@ -9,7 +9,7 @@ import tuner.gui.widgets.Axis
 import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Sampler
-import tuner.util.AxisTicks
+import tuner.gui.util.AxisTicks
 
 /**
  * A SPLOM showing the locations of sample points taken

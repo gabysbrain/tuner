@@ -1,6 +1,6 @@
 package tuner
 
-import tuner.util.AxisTicks
+import tuner.gui.util.AxisTicks
 import tuner.gui.P5Panel
 
 class SpecifiedColorMap(cm:ColorMap, mnv:Float, mxv:Float, invert:Boolean) {

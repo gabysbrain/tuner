@@ -1,13 +1,13 @@
 package tuner.util
 
-import tuner.Matrix2D
+import tuner.Grid2D
 import tuner.Table
 
 object Density2D {
   
   def density(data:Table, n:Int,
               rowFieldRange:(String,(Float,Float)), 
-              colFieldRange:(String,(Float,Float))) : Matrix2D = {
+              colFieldRange:(String,(Float,Float))) : Grid2D = {
 
     val rowField = rowFieldRange._1
     val colField = colFieldRange._1

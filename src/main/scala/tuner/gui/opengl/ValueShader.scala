@@ -1,6 +1,6 @@
 package tuner.gui.opengl
 
-import org.jblas.DoubleMatrix
+import breeze.linalg.{DenseVector, DenseMatrix}
 
 import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
@@ -15,9 +15,9 @@ import tuner.gui.util.Matrix4
 object ValueShader {
   def fromResource(gl:GL2, numDims:Int, fragment:String,
                            baseValue:Double, globalFactor:Double, 
-                           distanceWeights:DoubleMatrix, 
-                           points:DoubleMatrix, 
-                           coefficients:DoubleMatrix) = {
+                           distanceWeights:DenseVector[Double], 
+                           points:DenseMatrix[Double], 
+                           coefficients:DenseVector[Double]) = {
     val fragSource = Glsl.readResource(fragment)
 
     new ValueShader(gl, numDims, fragSource,
@@ -33,9 +33,9 @@ object ValueShader {
 
 class ValueShader(gl:GL2, numDims:Int, fragment:String,
                           baseValue:Double, globalFactor:Double, 
-                          distanceWeights:DoubleMatrix, 
-                          points:DoubleMatrix,
-                          coefficients:DoubleMatrix)
+                          distanceWeights:DenseVector[Double], 
+                          points:DenseMatrix[Double],
+                          coefficients:DenseVector[Double])
     extends Glsl(gl, new ValueVertexShader(numDims).toString,
                      None, fragment, List()) {
   
@@ -66,7 +66,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
     for(r <- 0 until points.rows) {
-      val pt = points.getRow(r).toArray
+      val pt = points(r,::).data
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until ValueShader.numVec4(numDims)) {
@@ -79,7 +79,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
                                     fieldVals(i*4+3).toFloat)
         }
         val respId = attribId("coeff")
-        gl.glVertexAttrib1f(respId, coefficients.get(r).toFloat)
+        gl.glVertexAttrib1f(respId, coefficients(r).toFloat)
 
         // Need to call this last to flush
         val offsetId = attribId("geomOffset")

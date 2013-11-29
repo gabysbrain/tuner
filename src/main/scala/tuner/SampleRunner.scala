@@ -1,7 +1,8 @@
+/*
 package tuner
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import scala.concurrent.Future
 
 import java.io.File
 
@@ -25,16 +26,16 @@ class SampleRunner(project:RunningSamples) extends Actor {
   pb.directory(new File(project.path))
   pb.redirectErrorStream(true)
 
-  def stop = {
+  override def postStop() = {
     if(currentProcess != null)
       currentProcess.destroy
   }
 
-  def act = {
+  override def preStart() = {
     var error = false
     while(samples.numRows > 0 && !error) {
       val subSamples = subsample
-      project ! ConsoleLine("> " + cmd)
+      project.self ! ConsoleLine("> " + cmd)
       subSamples.toCsv(sampleFile.getAbsolutePath)
       currentProcess = pb.start
       readOutput(currentProcess.getInputStream)
@@ -43,7 +44,7 @@ class SampleRunner(project:RunningSamples) extends Actor {
 
       if(currentProcess.exitValue != 0) {
         error = true
-        project ! SamplingError(currentProcess.exitValue)
+        project.self ! SamplingError(currentProcess.exitValue)
       } else {
         currentProcess = null
 
@@ -55,20 +56,22 @@ class SampleRunner(project:RunningSamples) extends Actor {
           samples.removeRow(0) // Always the first row
         }
         project.save()
-        project ! SamplesCompleted(newDesTbl.numRows)
+        project.self ! SamplesCompleted(newDesTbl.numRows)
 
         // TODO: delete the file?
       }
     }
     // We're only done if there was no error
     if(!error) {
-      project ! SamplingComplete
+      project.self ! SamplingComplete
     }
   }
+  */
 
   /** 
    * Splits a file into its directory and filename components
    */
+  /*
   private def splitFile(fname:String) : (String,String) = {
     val f = new File(fname)
     (f.getParent, f.getName)
@@ -85,18 +88,17 @@ class SampleRunner(project:RunningSamples) extends Actor {
   }
 
   private def readOutput(stream:java.io.InputStream) : Unit = {
-    actor {
+    Future {
       // Too lazy to figure this out so this is from:
       // http://www.qualitybrain.com/?p=84
       val streamReader = new java.io.InputStreamReader(stream)
       val bufferedReader = new java.io.BufferedReader(streamReader)
       var line:String = null
       while({line = bufferedReader.readLine; line != null}){
-        project ! ConsoleLine(line)
+        project.self ! ConsoleLine(line)
       }
       bufferedReader.close
     }
   }
-
 }
-
+*/

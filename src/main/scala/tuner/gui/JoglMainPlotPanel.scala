@@ -20,6 +20,7 @@ import tuner.gui.opengl.ValueShader
 import tuner.gui.opengl.Glsl
 import tuner.gui.opengl.Prosection
 import tuner.gui.opengl.RawValueShader
+import tuner.gui.util.AxisTicks
 import tuner.gui.util.Matrix4
 import tuner.gui.util.FacetLayout
 import tuner.gui.util.FontLib
@@ -28,7 +29,6 @@ import tuner.gui.widgets.Colorbar
 import tuner.gui.widgets.OpenGLAxis
 import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
-import tuner.util.AxisTicks
 import tuner.util.ColorLib
 
 class JoglMainPlotPanel(val project:Viewable) extends GL2Panel 
@@ -40,7 +40,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   val backgroundColor = Color(Config.backgroundColor)
 
   // This makes sure everything is in the (0,1) coordinate system
-  val projectionMatrix = Matrix4.translate(-1, -1, 0) * Matrix4.scale(2, 2, 1)
+  val projectionMatrix = Matrix4.translate(-1, -1, 0) dot Matrix4.scale(2, 2, 1)
 
   // These need to wait for the GL context to be set up
   // We use a separate shader program for each response
@@ -346,8 +346,8 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformations
-    val ttlProj = projectionMatrix * dataTrans * dataScale
-    val ttlPlot = projectionMatrix * plotTrans * plotScale
+    val ttlProj = projectionMatrix dot dataTrans dot dataScale
+    val ttlPlot = projectionMatrix dot plotTrans dot plotScale
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
 
