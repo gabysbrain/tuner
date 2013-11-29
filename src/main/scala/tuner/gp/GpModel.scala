@@ -14,6 +14,7 @@ import tuner.DimRanges
 import tuner.Grid2D
 import tuner.Sampler
 import tuner.Table
+import tuner.error.ProjectLoadException
 import tuner.util.Util
 
 case class GpSpecification(
@@ -30,6 +31,12 @@ case class GpSpecification(
 
 object GpModel {
   def fromJson(json:GpSpecification) = {
+    if(json.sigma2.isNaN) {
+      throw new ProjectLoadException("sigma2 parameter cannot be NaN", null)
+    }
+    if(json.sigma2 == 0) {
+      throw new ProjectLoadException("sigma2 parameter cannot be 0", null)
+    }
     new GpModel(DenseVector(json.thetas.toArray), 
                 DenseVector(json.alphas.toArray), 
                 json.mean, json.sigma2,
@@ -230,12 +237,18 @@ class GpModel(val thetas:DenseVector[Double],
     def pdf(v:Double) : Double = 1/(2*math.Pi) * math.exp(-(v*v) / 2)
     def cdf(v:Double) : Double = 0.5 * (1 + erf(v / math.sqrt(2)))
 
-    val curFuncMax = funcMax
-    val t1 = (est - curFuncMax)
-    val t2 = cdf((est - curFuncMax) / stddev)
-    val t3 = stddev * pdf((est - curFuncMax) / stddev)
+    if(stddev == 0) {
+      //Double.MaxValue
+      10000.0
+    } else {
+      val curFuncMax = funcMax
+      val t1 = (est - curFuncMax)
+      val t2 = cdf((est - curFuncMax) / stddev)
+      val t3 = stddev * pdf((est - curFuncMax) / stddev)
+      println(s"${t1} ${t2} ${t3} ${est} ${stddev}")
 
-    math.abs(t1 * t2 + t3)
+      math.abs(t1 * t2 + t3)
+    }
   }
 
   def crossValidate : (Vector[Double], Vector[Double]) = {

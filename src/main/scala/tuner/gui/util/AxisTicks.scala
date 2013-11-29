@@ -25,9 +25,19 @@ object AxisTicks {
     ticks(min, max, numTicks(width, fontSize))
 
   def ticks(min:Float, max:Float, n:Int=Config.axisNumTicks) : List[Float] = {
+    if(min == max) {
+      throw new Exception("min cannot equal max")
+    }
+    if(min.isNaN) {
+      throw new Exception("min cannot be NaN")
+    }
+    if(max.isNaN) {
+      throw new Exception("max cannot be NaN")
+    }
     if(n < 2) {
       Nil
     } else {
+      println(s"ticks for ${min} ${max} ${n}")
       val labelInfo = labeler.search(min, max, n)
       labelInfo.toList.asScala.map {_.toFloat} toList
     }
