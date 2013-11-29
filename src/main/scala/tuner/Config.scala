@@ -17,6 +17,8 @@ object Config {
     Prefs.saveList("recentProjects", rp.toList)
   }
   
+  var testingMode = false
+
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
   val designFilename = "responses.csv"
