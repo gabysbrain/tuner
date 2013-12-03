@@ -2,18 +2,11 @@ package tuner.test.unit
 
 import org.scalatest._
 
-import breeze.linalg.DenseMatrix
 import tuner.LHS
 
-class LHSSpec extends WordSpec {
+import tuner.test.Util._
 
-  def isLhc(mtx:DenseMatrix[Double]) : Boolean = {
-    val indexMtx = mtx map {x => math.floor(x * mtx.rows).toInt}
-    // All columns must be a permutation of 0 -> mtx.rows
-    (0 until mtx.cols) forall {c =>
-      indexMtx(::,c).data.toSet == (0 until mtx.rows).toSet
-    }
-  }
+class LHSSpec extends WordSpec {
 
   "A maximin latin hypercube" should {
     "given a particular dimensionality" when {

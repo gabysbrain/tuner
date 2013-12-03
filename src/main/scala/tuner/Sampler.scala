@@ -77,8 +77,9 @@ object Sampler {
       LHS.random(n, sampleDims.size)
     }
     
+    // Convert from the matrix to my table
     for(r <- 0 until res.rows) {
-      val row = res(r, ::).data
+      val row = res(r, ::).toDenseVector.data
       val vals = sampleDims.zip(row.map(_.toFloat)).map {vs =>
         val ((dimname, (dimMin, dimMax)), value) = vs
         // Conveniently all the values from the lhs are on a 0->1 scale
