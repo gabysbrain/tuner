@@ -84,9 +84,11 @@ object LHS {
     }
 
     // Last point is whatever's left
-    for(c <- 0 until d) {
-      val xx = candidates(c).head
-      result.update(n-1, c, xx)
+    if(n > 1) {
+      for(c <- 0 until d) {
+        val xx = candidates(c).head
+        result.update(n-1, c, xx)
+      }
     }
 
     //println(result)

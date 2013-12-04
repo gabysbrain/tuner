@@ -22,6 +22,14 @@ class LHSSpec extends WordSpec {
         assert(isLhc(lhc))
       }
     }
+
+    "asked for one point" when {
+      "return a single row matrix" in {
+        val lhc = LHS.maximin(1, 3)
+        assert(lhc.rows == 1)
+        assert(lhc.cols == 3)
+      }
+    }
   }
 
   "A random latin hypercube" should {
@@ -36,6 +44,14 @@ class LHSSpec extends WordSpec {
       }
       "have only 1 value per row and column" in {
         assert(isLhc(lhc))
+      }
+    }
+
+    "asked for one point" when {
+      "return a single row matrix" in {
+        val lhc = LHS.random(1, 3)
+        assert(lhc.rows == 1)
+        assert(lhc.cols == 3)
       }
     }
   }
