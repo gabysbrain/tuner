@@ -13,7 +13,6 @@ import javax.swing.UIManager
 
 import java.io.File
 
-import tuner.error.MissingJriException
 import tuner.error.ProjectLoadException
 import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
