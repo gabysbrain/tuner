@@ -5,6 +5,7 @@ import akka.actor.Actor._
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.CheckBox
+import scala.swing.Dialog
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ProgressBar
@@ -14,6 +15,7 @@ import scala.swing.event.UIElementResized
 import tuner.ConsoleLine
 import tuner.Progress
 import tuner.ProgressComplete
+import tuner.ProgressWarning
 import tuner.project.InProgress
 import tuner.project.Project
 import tuner.project.Saved
@@ -73,6 +75,9 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       this.pack
     case Progress(currentTime, totalTime, msg, ok) =>
       updateProgress(currentTime, totalTime, msg, ok)
+    case ProgressWarning(msg) =>
+      Dialog.showMessage(contents.head, msg, "Build warning", 
+                         Dialog.Message.Warning)
     case ConsoleLine(line) => 
       console.text += line
       console.text += "\n"
