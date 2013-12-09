@@ -13,7 +13,6 @@ import javax.swing.UIManager
 
 import java.io.File
 
-import tuner.error.MissingJriException
 import tuner.error.ProjectLoadException
 import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
@@ -21,9 +20,6 @@ import tuner.gui.ProjectViewer
 import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
 import tuner.gui.WindowMenu
-import tuner.gui.R.InstallPackageDialog
-import tuner.gui.R.RNotInstalledDialog
-import tuner.gui.R.RJavaNotInstalledDialog
 import tuner.project._
 
 /**
