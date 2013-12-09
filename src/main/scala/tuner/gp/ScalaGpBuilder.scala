@@ -4,6 +4,8 @@ import breeze.linalg._
 import breeze.numerics._
 import breeze.optimize._
 
+import scala.util.Try
+
 import tuner.Table
 
 /**
@@ -39,7 +41,8 @@ object ScalaGpBuilder extends GpBuilder {
                 paramFields, responseField, errorField)
   }
 
-  def findParams(samples:DenseMatrix[Double], responses:DenseVector[Double]) 
+  def findParams(samples:DenseMatrix[Double], responses:DenseVector[Double], 
+                 retries:Int = 5) 
       : (Double, Double, Double, DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
     
     // default to e^(-x^2) for now for correlation
@@ -55,38 +58,47 @@ object ScalaGpBuilder extends GpBuilder {
     val f = new ApproximateGradientFunction(optimFunc)
 
     // so in the spirit of the mlegp package do 
-    // 5 optimizations with random restart 
-    var minLL = Double.MaxValue
-    var minPt:DenseVector[Double] = null
-    for(i <- 0 until 5) {
+    //  a number of optimizations with random restart 
+    val results:List[Try[(Double,DenseVector[Double])]] = List.fill(retries) {
       val optim = new LBFGS[DenseVector[Double]](maxIter=100, m=3)
       //val optim = new breeze.optimize.StochasticGradientDescent.SimpleSGD[DenseVector[Double]]
       //val optim = new breeze.optimize.OWLQN[DenseVector[Double]](maxIter=100, m=3)
       val start = DenseVector.rand(samples.cols)
-      val pt = optim.minimize(f, start)
-      val ll = optimFunc(pt)
-      /*
-      println("optimization #" + i 
-           + " with log likelihood " + ll 
-           + " at point " + pt.map(math.exp(_))
-           + " starting at " + start.map(math.exp(_)))
-      */
-      if(ll <= minLL) {
-        minLL = ll
-        minPt = pt
-      }
+      //println("start: " + start)
+      Try({
+        val pt = optim.minimize(f, start)
+        //val ll = optimFunc(pt)
+        (optimFunc(pt), pt)
+      })
+        /*
+        println("optimization #" + i 
+             + " with log likelihood " + ll 
+             + " at point " + pt.map(math.exp(_))
+             + " starting at " + start.map(math.exp(_)))
+        */
     }
 
-    /*
-    println("minimum found" 
-         + " with log likelihood " + minLL
-         + " at point " + minPt.map(math.exp(_)))
-    */
-    // One more time to get the final versions of the values
-    val thetas = minPt map {math.exp(_)}
-    val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
-                                             thetas, alphas)
-    (ll, mu, sig2, rInv, thetas, alphas)
+    val (minLL, minPt) = results.map {r => 
+      r.getOrElse(Double.MaxValue, DenseVector.zeros[Double](samples.cols))
+    } minBy {_._1}
+
+    // If there's no result from any of the attempts 
+    // then the calibration has failed
+    if(minLL == Double.MaxValue) {
+      throw new tuner.error.GpBuildException("could not find suitable parameters.  This is probably due to a singlar matrix")
+    } else {
+      /*
+      println("minimum found" 
+           + " with log likelihood " + minLL
+           + " at point " + minPt.map(math.exp(_)))
+      */
+      
+      // One more time to get the final versions of the values
+      val thetas = minPt map {math.exp(_)}
+      val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
+                                               thetas, alphas)
+      (ll, mu, sig2, rInv, thetas, alphas)
+    }
   }
 
   /**
@@ -109,25 +121,30 @@ object ScalaGpBuilder extends GpBuilder {
     val ones = DenseVector.ones[Double](samples.rows)
 
     val r = corrMatrix(samples, thetas, alphas)
-    val rDet = breeze.linalg.det(r)
-    if(rDet > 0.0) {
-      val rInv = breeze.linalg.inv(r)
-      // Using a constant mean
-      val mean = (ones dot (rInv * responses)) / (ones dot (rInv * ones))
-      val devs = responses - mean
-      val sigTop = devs dot (rInv * devs) // so we only compute this once
-      val sig2 = sigTop / n
-
-      val logL = -0.5 * (n * (math.log(2*math.Pi) + math.log(sig2)) 
-                         + math.log(rDet) 
-                         + (sigTop/sig2))
-
-      //println("logL: " + logL)
-      (logL, mean, sig2, rInv)
-    } else {
-      (Double.MaxValue, 0.0, 0.0, DenseMatrix.eye[Double](samples.rows))
+    var rDet = breeze.linalg.det(r)
+    // If the determinant is 0 then try adding a little bit to the diagonal
+    if(rDet == 0.0) {
+      //throw new tuner.error.SingularMatrixException(r)
+      r += 1e-3 * DenseMatrix.eye[Double](r.rows)
+      rDet = breeze.linalg.det(r)
     }
+    if(rDet == 0.0) {
+      // If its still broken then give up
+      throw new tuner.error.SingularMatrixException(r)
+    }
+    val rInv = breeze.linalg.inv(r)
+    // Using a constant mean
+    val mean = (ones dot (rInv * responses)) / (ones dot (rInv * ones))
+    val devs = responses - mean
+    val sigTop = devs dot (rInv * devs) // so we only compute this once
+    val sig2 = sigTop / n
 
+    val logL = -0.5 * (n * (math.log(2*math.Pi) + math.log(sig2)) 
+                       + math.log(rDet) 
+                       + (sigTop/sig2))
+
+    //println("logL: " + logL)
+    (logL, mean, sig2, rInv)
   }
 
   def corrMatrix(samples:DenseMatrix[Double], 

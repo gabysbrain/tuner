@@ -24,6 +24,7 @@ import tuner.HistorySpecification
 import tuner.PreviewImages
 import tuner.Progress
 import tuner.ProgressComplete
+import tuner.ProgressWarning
 import tuner.Region
 import tuner.RegionSpecification
 //import tuner.SampleRunner
@@ -328,7 +329,11 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
     val newModels = buildFields.map({fld => 
       println("building model for " + fld)
-      (fld, ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField))
+      val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
+      if(!m.validateModel._1) {
+        publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
+      }
+      (fld, m)
     }).toMap
     config.gpModels = newModels.values.map(_.toJson).toList
     save()
