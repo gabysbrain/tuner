@@ -31,6 +31,18 @@ class ScalaGpBuilderSpec extends WordSpec {
         gp.validateModel._1 should be (true)
       }
     }
+
+    "given a dataset that at one time produced sig2=0" must {
+      val dataset = resource("/datasets/sig2_0.csv")
+      val params = List("x1", "x2", "x3", "x4")
+      val resp = "y"
+
+      "return a valid model" in {
+        val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
+        gp.mean should not be (0.0)
+        gp.sig2 should be > 0.0
+      }
+    }
   }
 
 }
