@@ -32,7 +32,10 @@ class LocalPanel(project:Viewable) extends BoxPanel(Orientation.Vertical) {
     SortedMap[String,SpinSlider]() ++
     project.inputFields.map {fld =>
       val (minVal, maxVal) = project.viewInfo.currentZoom.range(fld)
-      val maxRadius = (minVal + maxVal) / 2
+      if(minVal == maxVal) {
+        throw new Exception("minVal == maxVal for zoom level for " + fld + " field")
+      }
+      val maxRadius = (math.abs(minVal) + math.abs(maxVal)) / 2f
       val slider = new SpinSlider(0f, maxRadius, Config.sliderResolution)
       slider.value = project.region.radius(fld)
       listenTo(slider)

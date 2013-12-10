@@ -88,14 +88,27 @@ everything draws correctly then Tuner should be at least mostly working.  Here
 is how to open an external project:
 
 1. Click on the 'open other' button in the project browser
-   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/open_other_button.png)
+   ![](https://raw.github.com/gabysbrain/tuner/master/doc/images/open_other_button.png)
 
 2. Navigate to test_data and click on the test_proj directory.  Then click
    choose
-   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/open_test_project.png)
+   ![](https://raw.github.com/gabysbrain/tuner/master/doc/images/open_test_project.png)
 
 3. A window such as the following should open
-   ![](https://bitbucket.org/gabysbrain/tuner/raw/3856d9d1c0aa/doc/images/test_project_viewer.png)
+   ![](https://raw.github.com/gabysbrain/tuner/master/doc/images/test_project_viewer.png)
+
+## Black box scripts ##
+
+The scripts needs to take 2 command line arguments: The first argument is a
+file path to an input csv file, which is where Tuner will place the sample
+point locations.  The second argument is the output file path where Tuner
+expects the result csv file to be written.  The output csv file must contain
+both the sample locations (i.e. the same columns as in the input file) as well
+as the assessment results (dice coefficients, volume errors, etc.) from the
+segmentation.
+
+The CSV files use standard US/international format, i.e. ',' as separator, '.'
+as decimal point, and the first line contains comma-separated column headers.
 
 ## Build dependencies ##
 
