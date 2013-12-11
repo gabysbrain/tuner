@@ -400,7 +400,11 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
   val gpModels:SortedMap[String,GpModel] = SortedMap[String,GpModel]() ++
     config.gpModels.map {gpConfig =>
-      (gpConfig.responseDim, GpModel.fromJson(gpConfig))
+      try {
+        (gpConfig.responseDim, GpModel.fromJson(gpConfig))
+      } catch {
+        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}")
+      }
     }
 
   val history:HistoryManager = config.history match {
