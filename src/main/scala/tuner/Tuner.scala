@@ -5,6 +5,7 @@ import scala.swing.Dialog
 import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
+import scala.io.Source
 
 import scala.concurrent._
 import ExecutionContext.Implicits.global
@@ -12,6 +13,7 @@ import ExecutionContext.Implicits.global
 import javax.swing.UIManager
 
 import java.io.File
+import java.io.FileWriter
 
 import tuner.error.ProjectLoadException
 import tuner.gui.NewProjectWindow
@@ -22,10 +24,50 @@ import tuner.gui.SamplingProgressBar
 import tuner.gui.WindowMenu
 import tuner.project._
 
+import net.liftweb.json._
+import net.liftweb.json.Extraction._
+import net.liftweb.json.JsonDSL._
+
+case class TunerPrefs(
+  recentProjects:scala.collection.mutable.MutableList[String]
+)
+
 /**
  * The entry application object for Tuner
  */
 object Tuner extends SimpleSwingApplication {
+
+  // Serializers to get the json parser to work
+  implicit val formats = net.liftweb.json.DefaultFormats
+
+  //val userPrefs = Preferences.userNodeForPackage(Tuner.getClass)
+  val prefsPath = System.getProperty("user.home") + "/" + (OS.detect match {
+    case OS.Mac  => "Library/Preferences/at.ac.univie.cs.tuner.json"
+    //case OS.Win  =>
+    //case OS.Unix =>
+  })
+
+  private def savePrefs(p:TunerPrefs) = {
+    val outFile = new FileWriter(prefsPath)
+    outFile.write(pretty(render(decompose(p))))
+    outFile.close
+  }
+
+
+  val prefs = {
+    try {
+      val json = parse(Source.fromFile(prefsPath).mkString)
+      json.extract[TunerPrefs]
+    } catch {
+      case ioe:java.io.FileNotFoundException =>
+        // If there's no prefs file create a default one
+        val newJson = TunerPrefs(
+          recentProjects = new scala.collection.mutable.MutableList[String]
+        )
+        savePrefs(newJson)
+        newJson
+    }
+  }
 
   override def main(args:Array[String]) = {
     // Set up the menu bar for a mac
@@ -104,7 +146,7 @@ object Tuner extends SimpleSwingApplication {
   def openProject(proj:Project) : Unit = {
     println("opening project")
     proj match {
-      case p:Saved => Config.recentProjects += p.path
+      case p:Saved => prefs.recentProjects += p.path
       case _       =>
     }
 
