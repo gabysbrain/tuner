@@ -7,8 +7,6 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
-import org.rosuda.JRI.RList
-
 import tuner.Config
 import tuner.DimRanges
 import tuner.Grid2D

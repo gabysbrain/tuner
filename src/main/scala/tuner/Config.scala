@@ -27,9 +27,6 @@ object Config {
 
   val smallScreen = Toolkit.getDefaultToolkit.getScreenSize.height < 800
 
-  val gpRScript = 
-    ResourceLoader.fileResource("/sparkle.R").replace("\\", "/")
-
   val errorField = "stddev"
   val gainField = "estgain"
 
