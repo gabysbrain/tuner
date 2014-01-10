@@ -37,15 +37,30 @@ object GpModel {
     if(json.sigma2 == 0) {
       throw new ProjectLoadException("sigma2 parameter cannot be 0", null)
     }
+    val resps = DenseVector(json.responses.toArray)
+    val design = new DenseMatrix(json.responses.length, 
+                                 json.dimNames.length,
+                                 json.designMatrix.flatten.toArray)
+    val invCov = new DenseMatrix(json.responses.length, json.responses.length,
+                                 json.designMatrix.flatten.toArray)
+    // Make sure the arrays are the proper size
+    if(design.rows != resps.length) {
+      throw new ProjectLoadException(s"design matrix has ${design.rows} rows but there are ${resps.length} responses", null)
+    }
+    if(design.cols != json.thetas.length) {
+      throw new ProjectLoadException(s"design matrix has ${design.cols} columns but there are ${json.thetas.length} dimensions", null)
+    }
+    if(invCov.rows != resps.length) {
+      throw new ProjectLoadException(s"covariance matrix has ${invCov.rows} rows but there are ${resps.length} responses", null)
+    }
+    if(invCov.cols != resps.length) {
+      throw new ProjectLoadException(s"covariance matrix has ${invCov.cols} columns but there are ${resps.length} responses", null)
+    }
+       
     new GpModel(DenseVector(json.thetas.toArray), 
                 DenseVector(json.alphas.toArray), 
                 json.mean, json.sigma2,
-                new DenseMatrix(json.responses.length, 
-                                json.dimNames.length,
-                                json.designMatrix.flatten.toArray),
-                DenseVector(json.responses.toArray),
-                new DenseMatrix(json.responses.length, json.responses.length,
-                                json.designMatrix.flatten.toArray),
+                design, resps, invCov,
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
