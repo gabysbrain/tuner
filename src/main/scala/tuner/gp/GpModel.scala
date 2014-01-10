@@ -38,11 +38,8 @@ object GpModel {
       throw new ProjectLoadException("sigma2 parameter cannot be 0", null)
     }
     val resps = DenseVector(json.responses.toArray)
-    val design = new DenseMatrix(json.responses.length, 
-                                 json.dimNames.length,
-                                 json.designMatrix.flatten.toArray)
-    val invCov = new DenseMatrix(json.responses.length, json.responses.length,
-                                 json.designMatrix.flatten.toArray)
+    val design = DenseMatrix(json.designMatrix.map(_.toArray):_*)
+    val invCov = DenseMatrix(json.invCorMtx.map(_.toArray):_*)
     // Make sure the arrays are the proper size
     if(design.rows != resps.length) {
       throw new ProjectLoadException(s"design matrix has ${design.rows} rows but there are ${resps.length} responses", null)
@@ -100,6 +97,9 @@ class GpModel(val thetas:DenseVector[Double],
 
   // Also precompute rInverse . (responses - mean)
   val corrResponses = rInverse * (responses - mean)
+  //println("cr2: " + corrResponses)
+  //println("rs: " + responses)
+  //println("ri: " + rInverse)
 
   def toJson = {
     GpSpecification(
@@ -206,6 +206,8 @@ class GpModel(val thetas:DenseVector[Double],
     for(r <- 0 until design.rows) {
       ptCors.update(r, corrFunction(design(r, ::).toDenseVector, point))
     }
+    //println("pc: " + ptCors.toString)
+    //println("cr: " + corrResponses.toString)
     val est = mean + sig2 * (ptCors dot corrResponses)
     val err = sig2 * (1 - sig2 * (ptCors dot (rInverse * ptCors)))
     if(err < 0) (est, 0)
@@ -243,6 +245,9 @@ class GpModel(val thetas:DenseVector[Double],
   }
 
   def calcExpectedGain(est:Double, stddev:Double) : Double = {
+    if(est.isNaN) {
+      throw new Exception("estimate is NaN")
+    }
     // These will come in handy later
     def erf(v:Double) : Double = {
       val a = (8*(math.Pi - 3)) / (3*math.Pi*(4 - math.Pi))
@@ -260,7 +265,7 @@ class GpModel(val thetas:DenseVector[Double],
       val t1 = (est - curFuncMax)
       val t2 = cdf((est - curFuncMax) / stddev)
       val t3 = stddev * pdf((est - curFuncMax) / stddev)
-      println(s"${t1} ${t2} ${t3} ${est} ${stddev}")
+      //println(s"${t1} ${t2} ${t3} ${est} ${stddev}")
 
       math.abs(t1 * t2 + t3)
     }
