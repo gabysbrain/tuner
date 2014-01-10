@@ -146,6 +146,7 @@ object Tuner extends SimpleSwingApplication {
     println("opening project")
     proj match {
       case p:Saved => prefs.recentProjects += p.path
+                      savePrefs(prefs)
       case _       =>
     }
 
