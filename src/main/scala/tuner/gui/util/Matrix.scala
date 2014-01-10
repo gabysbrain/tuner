@@ -42,26 +42,11 @@ class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float,
                v3:Float,  v7:Float, v11:Float, v15:Float, 
                v4:Float,  v8:Float, v12:Float, v16:Float) {
 
-  val mtx = new DenseMatrix[Float](4, 4, Array( v1,  v5,  v9,  v13,
-                                                v2,  v6, v10,  v14,
-                                                v3,  v7, v11,  v15,
-                                                v4,  v8, v12,  v16))
+  val mtx = DenseMatrix((v1,  v5,  v9, v13), 
+                        (v2,  v6, v10, v14), 
+                        (v3,  v7, v11, v15), 
+                        (v4,  v8, v12, v16))
   
-
-  /*
-  def this(vv:Array[Float]) = 
-    this( vv(0),  vv(4),  vv(8), vv(12), 
-          vv(1),  vv(5),  vv(9), vv(13), 
-          vv(2),  vv(6), vv(10), vv(14), 
-          vv(3),  vv(7), vv(11), vv(15))
-  */
-  /*
-  def this(mm:DenseMatrix[Float]) =
-    this(mm(0, 0), mm(0, 1), mm(0, 2), mm(0, 3),
-         mm(1, 0), mm(1, 1), mm(1, 2), mm(1, 3),
-         mm(2, 0), mm(2, 1), mm(2, 2), mm(2, 3),
-         mm(3, 0), mm(3, 1), mm(3, 2), mm(3, 3))
-  */
 
   def *(m:Matrix4) : Matrix4 = {
     var tmp = mtx * m.mtx
@@ -72,7 +57,18 @@ class Matrix4( v1:Float,  v5:Float,  v9:Float, v13:Float,
   }
 
   //def toArray = toArray2
-  def toOpenGl = mtx.data
+  def toOpenGl = {
+    /*
+    println(Array(mtx(0, 0), mtx(1, 0), mtx(2, 0), mtx(3, 0),
+          mtx(0, 1), mtx(1, 1), mtx(2, 1), mtx(3, 1),
+          mtx(0, 2), mtx(1, 2), mtx(2, 2), mtx(3, 2),
+          mtx(0, 3), mtx(1, 3), mtx(2, 3), mtx(3, 3)).mkString(" "))
+    */
+    Array(mtx(0, 0), mtx(1, 0), mtx(2, 0), mtx(3, 0),
+          mtx(0, 1), mtx(1, 1), mtx(2, 1), mtx(3, 1),
+          mtx(0, 2), mtx(1, 2), mtx(2, 2), mtx(3, 2),
+          mtx(0, 3), mtx(1, 3), mtx(2, 3), mtx(3, 3))
+  }
 
   override def toString = {
     (0 until 4).map({r =>
