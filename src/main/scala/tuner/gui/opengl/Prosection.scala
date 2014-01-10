@@ -80,7 +80,7 @@ class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVe
     // Send down the uniforms for this set
     gl.glUniform1f(uniformId("radius"), 3.5f)
     gl.glUniformMatrix4fv(uniformId("trans"), 
-                          1, false, trans.toArray, 0)
+                          1, false, trans.toOpenGl, 0)
     gl.glUniform1i(uniformId("d1"), xDim)
     gl.glUniform1i(uniformId("d2"), yDim)
     gl.glUniform2f(uniformId("halfWindowSize"), texWidth.toFloat / 2, 

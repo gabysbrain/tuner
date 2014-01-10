@@ -118,7 +118,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     enableTextureTarget(gl, fboId, textureId, texWidth, texHeight)
 
     gl.glUniformMatrix4fv(uniformId("trans"), 
-                          1, false, trans.toArray, 0)
+                          1, false, trans.toOpenGl, 0)
     gl.glUniform1i(uniformId("d1"), xDim)
     gl.glUniform1i(uniformId("d2"), yDim)
     gl.glUniform2f(uniformId("dataMin"), xr._2._1, yr._2._1)
@@ -138,7 +138,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     }
 
     gl.glUniformMatrix4fv(uniformId("trans"), 
-                          1, false, trans.toArray, 0)
+                          1, false, trans.toOpenGl, 0)
     gl.glUniform1i(uniformId("d1"), xDim)
     gl.glUniform1i(uniformId("d2"), yDim)
     gl.glUniform2f(uniformId("dataMin"), xr._2._1, yr._2._1)
