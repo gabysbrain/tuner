@@ -40,11 +40,11 @@ object Tuner extends SimpleSwingApplication {
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  val prefsFilename = "at.ac.univie.cs.tuner.json"
   val prefsPath = System.getProperty("user.home") + (OS.detect match {
-    case OS.Mac  => "/Library/Preferences/" + prefsFilename
-    case OS.Win  => "\\" + System.getenv("APPDATA") + "\\" + prefsFilename
-    case OS.Unix => "/." + prefsFilename
+    case OS.Mac  => "/Library/Preferences/at.ac.univie.cs.tuner.json"
+    case OS.Win  => "\\" + System.getenv("APPDATA") + 
+                    "\\UniVie Software\\Tuner\\prefs.json"
+    case OS.Unix => "/.univie.tuner.json"
   })
 
   private def savePrefs(p:TunerPrefs) = {
