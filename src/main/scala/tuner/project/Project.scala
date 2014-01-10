@@ -404,7 +404,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
       try {
         (gpConfig.responseDim, GpModel.fromJson(gpConfig))
       } catch {
-        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}")
+        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}", x)
       }
     }
 
