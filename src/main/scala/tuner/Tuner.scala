@@ -28,9 +28,9 @@ import net.liftweb.json._
 import net.liftweb.json.Extraction._
 import net.liftweb.json.JsonDSL._
 
-class TunerPrefs(
-  val recentProjects:scala.collection.mutable.HashSet[String]
-) {}
+case class TunerPrefs(
+  var recentProjects:Set[String]
+)
 
 /**
  * The entry application object for Tuner
@@ -61,7 +61,7 @@ object Tuner extends SimpleSwingApplication {
       case ioe:java.io.FileNotFoundException =>
         // If there's no prefs file create a default one
         val newJson = new TunerPrefs(
-          recentProjects = new scala.collection.mutable.HashSet[String]
+          recentProjects = Set()
         )
         savePrefs(newJson)
         newJson
@@ -125,7 +125,7 @@ object Tuner extends SimpleSwingApplication {
   def openProject(proj:Project) : Unit = {
     println("opening project")
     proj match {
-      case p:Saved => prefs.recentProjects += p.path
+      case p:Saved => prefs.recentProjects = prefs.recentProjects + p.path
                       savePrefs(prefs)
       case _       =>
     }
