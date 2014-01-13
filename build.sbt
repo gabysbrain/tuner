@@ -12,6 +12,9 @@ version := "0.2"
 
 scalaVersion := "2.9.1"
 
+resolvers +=
+  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
 libraryDependencies += "org.bitbucket.gabysbrain" %% "datescala" % "0.9"
 
 libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
