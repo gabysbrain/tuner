@@ -12,10 +12,10 @@ version := "0.2"
 
 scalaVersion := "2.10.2"
 
-resolvers ++= Seq(
-  "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
-)
+//resolvers ++= Seq(
+  //"Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+  //"Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
+//)
 
 libraryDependencies ++= Seq(
   "org.bitbucket.gabysbrain" %% "datescala" % "0.9",
