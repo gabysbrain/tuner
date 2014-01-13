@@ -38,7 +38,8 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
 
-javaOptions := Seq("-Xmx6G")
+javaOptions := Seq("-Xmx6G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK")
+
 
 // Set the classpath assets to the assembly jar
 //classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
