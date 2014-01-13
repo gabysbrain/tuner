@@ -1,6 +1,6 @@
 package tuner
 
-import java.awt.Toolkit
+//import java.awt.Toolkit
 
 import java.io.File
 import java.io.FileInputStream
@@ -18,7 +18,8 @@ object Config {
   val respSampleFilename = "response_samples.csv"
   val imageDirname = "images"
 
-  val smallScreen = Toolkit.getDefaultToolkit.getScreenSize.height < 800
+  //val smallScreen = Toolkit.getDefaultToolkit.getScreenSize.height < 800
+  val smallScreen = false
 
   val errorField = "stddev"
   val gainField = "estgain"
