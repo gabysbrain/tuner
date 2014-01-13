@@ -40,6 +40,9 @@ object GpModel {
     val resps = DenseVector(json.responses.toArray)
     val design = DenseMatrix(json.designMatrix.map(_.toArray):_*)
     val invCov = DenseMatrix(json.invCorMtx.map(_.toArray):_*)
+    //println(json.dimNames)
+    //println(design)
+    //println(resps)
     // Make sure the arrays are the proper size
     if(design.rows != resps.length) {
       throw new ProjectLoadException(s"design matrix has ${design.rows} rows but there are ${resps.length} responses", null)
