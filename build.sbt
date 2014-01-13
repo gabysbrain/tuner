@@ -1,21 +1,14 @@
 
-// assembly task
-import AssemblyKeys._
 
-assemblySettings
+packSettings
 
 seq(Revolver.settings: _*)
 
 name := "Tuner"
 
-version := "0.2"
+version := "0.10.0"
 
 scalaVersion := "2.10.2"
-
-//resolvers ++= Seq(
-  //"Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  //"Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
-//)
 
 libraryDependencies ++= Seq(
   "org.bitbucket.gabysbrain" %% "datescala" % "0.9",
@@ -38,20 +31,18 @@ scalacOptions := Seq("-deprecation", "-unchecked")
 
 javacOptions := Seq("-Xlint:deprecation")
 
-javaOptions := Seq("-Xmx6G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK")
+// Packaging settings
+packMain := Map("tuner" -> "tuner.Tuner")
 
+packJvmOpts := Map("tuner" -> Seq("-Xmx6G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"))
 
-// Set the classpath assets to the assembly jar
-//classpathAssets <<= assembly map { jar:File => Seq(Asset(true, true, jar))}
+javaOptions := packJvmOpts.value("tuner")
 
 fork := true
 
 parallelExecution := false
 
-mainClass := Some("tuner.Tuner")
-
-// testing stalls the assembly build
-test in assembly := {}
+mainClass := Some(packMain.value("tuner"))
 
 // functional tests are really slow 
 // plus they break the rest of the tests right now
