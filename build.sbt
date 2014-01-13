@@ -54,5 +54,5 @@ test in assembly := {}
 
 // functional tests are really slow 
 // plus they break the rest of the tests right now
-testOptions in Test := Seq(Tests.Filter(s => !s.startsWith("tuner.test.functional")), Tests.Argument("-oD"))
+testOptions in Test := Seq(Tests.Filter(s => !s.startsWith("tuner.test.functional")), Tests.Argument("-oDF"))
 
