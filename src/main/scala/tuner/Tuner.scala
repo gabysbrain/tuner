@@ -81,7 +81,7 @@ object Tuner extends SimpleSwingApplication {
   var openWindows:Set[tuner.gui.Window] = Set()
 
   reactions += {
-    case WindowClosed(tw:tuner.gui.Window) => 
+    case WindowClosing(tw:tuner.gui.Window) => 
       openWindows -= tw
       WindowMenu.updateWindows
       deafTo(tw)
