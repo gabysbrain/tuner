@@ -75,8 +75,6 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
-    //UIManager.setLookAndFeel(
-      //UIManager.getSystemLookAndFeelClassName())
     super.main(args)
   }
 
@@ -104,25 +102,7 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def top = { 
-    // Make sure R and rJava are installed otherwise all bets are off
-    /*
-    if(!Rapp.pathOk) {
-      RNotInstalledDialog
-    } else if(!Rapp.jriOk) {
-        RJavaNotInstalledDialog
-    } else {
-      val missingPackages = R.missingPackages
-      if(missingPackages.isEmpty) {
-      */
-        ProjectChooser
-      /*
-      } else {
-        new InstallPackageDialog(missingPackages) {
-          val installPackage = R.installPackage(_)
-        }
-      }
-    }
-    */
+    ProjectChooser
   }
 
   def startNewProject = {
