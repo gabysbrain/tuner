@@ -46,6 +46,14 @@ object Table {
     //println("done")
     tbl
   }
+  
+  def fromLists(fieldNames:List[String], data:List[List[Float]]) = {
+    val tbl = new Table
+    data.foreach {dr =>
+      tbl.addRow(fieldNames.zip(dr))
+    }
+    tbl
+  }
 
   // Some fun filters
   def fieldFilter(rmFields:List[String]) : Filter = {
@@ -93,6 +101,8 @@ class Table {
   def removeRow(row:Int) = data.remove(row)
 
   def clear = data.clear
+  
+  def isEmpty = data.isEmpty
 
   def min(col:String) : Float = {
     data.map({_.get(col)}).flatten.min
@@ -109,15 +119,24 @@ class Table {
   def numRows : Int = data.size
   def numFields : Int = fieldNames.size
 
+  def equals(other:Table) = {
+    // we finish quick if tables aren't same dimensions
+    if(numRows != other.numRows || numFields != other.numFields) {
+      false
+    } else {
+      data == other.data
+    }
+  }
+
   def values(col:String) : SortedSet[Float] = {
     new TreeSet[Float] ++ data.map({_.get(col)}).flatten
   }
 
-  def to2dMatrix(rowField:String, colField:String, valField:String) : Matrix2D = {
+  def to2dMatrix(rowField:String, colField:String, valField:String) : Grid2D = {
     // First collect all the columns from the datastore
     val rowVals = values(rowField)
     val colVals = values(colField)
-    val m = new Matrix2D(rowVals toList, colVals toList)
+    val m = new Grid2D(rowVals toList, colVals toList)
 
     // Now populate the matrix
     data.foreach(v => {
@@ -148,6 +167,8 @@ class Table {
     data(row) + (Config.rowField -> row)
   }
 
+  def map[A](f:Table.Tuple=>A) = data.map(f)
+
   // Adds all rows of t to this table
   def merge(t:Table) = {
     for(r <- 0 until t.numRows)
@@ -164,6 +185,16 @@ class Table {
     outTbl
   }
 
+  def subsample(startRow:Int, numRows:Int) : Table = {
+    val t = new Table
+    // silently return less than numRows if we have less
+    val extractRows = math.min(numRows, this.numRows)
+    for(r <- startRow until (startRow+extractRows)) {
+      t.addRow(tuple(r).toList)
+    }
+    t
+  }
+
   def toRanges : DimRanges = toRanges(Nil)
 
   def toRanges(filterFields:List[String]) : DimRanges = {
@@ -176,6 +207,16 @@ class Table {
     new DimRanges(ranges)
   }
 
+  override def toString : String = if(numRows == 0) {
+    "(empty table)"
+  } else {
+    val header = fieldNames.reduceLeft(_ + " " + _)
+    val rows = data.map {row => 
+      fieldNames.map {fn => row(fn).toString} reduceLeft(_ + " " + _)
+    }
+    header + "\n" + rows.reduceLeft(_ + "\n" + _)
+  }
+
   def toCsv(filename:String) = {
     //print("writing " + filename + "...")
     val file = new java.io.FileWriter(filename)
@@ -185,7 +226,7 @@ class Table {
       //val (hdr, _) = row0.unzip
       val hdr = row0.keys.filter({x => x != "rowNum"}).toList
       // write out the header
-      file.write(hdr.reduceLeft(_ + "," + _) + "\n")
+      file.write(hdr.mkString(",") + "\n")
       hdr
     } else {
       Nil
@@ -194,7 +235,7 @@ class Table {
     for(r <- 0 until numRows) {
       val tpl = tuple(r)
       val vals = header.map(tpl(_)).map(_.toString)
-      file.write(vals.reduceLeft(_ + "," + _) + "\n")
+      file.write(vals.mkString(",") + "\n")
     }
 
     file.close

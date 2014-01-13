@@ -5,28 +5,68 @@ import scala.swing.Dialog
 import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
+import scala.io.Source
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 import javax.swing.UIManager
 
 import java.io.File
+import java.io.FileWriter
 
-import tuner.error.MissingJriException
 import tuner.error.ProjectLoadException
-import tuner.gui.WindowMenu
+import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
-import tuner.gui.ProjectInfoWindow
 import tuner.gui.ProjectViewer
 import tuner.gui.ResponseSelector
 import tuner.gui.SamplingProgressBar
-import tuner.gui.R.InstallPackageDialog
-import tuner.gui.R.RNotInstalledDialog
-import tuner.gui.R.RJavaNotInstalledDialog
+import tuner.gui.WindowMenu
 import tuner.project._
+
+import net.liftweb.json._
+import net.liftweb.json.Extraction._
+import net.liftweb.json.JsonDSL._
+
+case class TunerPrefs(
+  var recentProjects:Set[String]
+)
 
 /**
  * The entry application object for Tuner
  */
 object Tuner extends SimpleSwingApplication {
+
+  // Serializers to get the json parser to work
+  implicit val formats = net.liftweb.json.DefaultFormats
+
+  val prefsPath = System.getProperty("user.home") + (OS.detect match {
+    case OS.Mac  => "/Library/Preferences/at.ac.univie.cs.tuner.json"
+    case OS.Win  => "\\" + System.getenv("APPDATA") + 
+                    "\\UniVie Software\\Tuner\\prefs.json"
+    case OS.Unix => "/.univie.tuner.json"
+  })
+
+  private def savePrefs(p:TunerPrefs) = {
+    val outFile = new FileWriter(prefsPath)
+    outFile.write(pretty(render(decompose(p))))
+    outFile.close
+  }
+
+  val prefs = {
+    try {
+      val json = parse(Source.fromFile(prefsPath).mkString)
+      json.extract[TunerPrefs]
+    } catch {
+      case ioe:java.io.FileNotFoundException =>
+        // If there's no prefs file create a default one
+        val newJson = new TunerPrefs(
+          recentProjects = Set()
+        )
+        savePrefs(newJson)
+        newJson
+    }
+  }
 
   override def main(args:Array[String]) = {
     // Set up the menu bar for a mac
@@ -35,44 +75,39 @@ object Tuner extends SimpleSwingApplication {
     System.setProperty("com.apple.mrj.application.growbox.intrudes", "false")
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Tuner")
 
-    //UIManager.setLookAndFeel(
-      //UIManager.getSystemLookAndFeelClassName())
     super.main(args)
   }
 
   var openWindows:Set[tuner.gui.Window] = Set()
 
   reactions += {
-    case WindowClosed(tw:tuner.gui.Window) => 
+    case WindowClosing(tw:tuner.gui.Window) => 
       openWindows -= tw
       WindowMenu.updateWindows
       deafTo(tw)
-      // If there are no more open windows open the project chooser again
-      if(openWindows.isEmpty) ProjectChooser.open
+
+      if(!Config.testingMode) {
+        // If a project is moving to another stage then we 
+        // should automatically open that window
+        (tw.project, tw.project.next) match {
+          case (p:Viewable, pn:Viewable) =>
+          case _ => Tuner.openProject(tw.project.next)
+        }
+  
+        // If there are no more open windows open the project chooser again
+        if(openWindows.isEmpty) ProjectChooser.open
+      } else {
+        System.exit(0)
+      }
   }
 
   def top = { 
-    // Make sure R and rJava are installed otherwise all bets are off
-    if(!Rapp.pathOk) {
-      RNotInstalledDialog
-    } else if(!Rapp.jriOk) {
-        RJavaNotInstalledDialog
-    } else {
-      val missingPackages = R.missingPackages
-      if(missingPackages.isEmpty) {
-        //openProject(Project.fromFile("/Users/tom/Projects/tuner.jogl/test_data/britta_proj"))
-        ProjectChooser
-      } else {
-        new InstallPackageDialog(missingPackages) {
-          val installPackage = R.installPackage(_)
-        }
-      }
-    }
+    ProjectChooser
   }
 
   def startNewProject = {
     println("Starting new project")
-    val window = new ProjectInfoWindow
+    val window = new NewProjectWindow
     window.open
   }
 
@@ -90,7 +125,8 @@ object Tuner extends SimpleSwingApplication {
   def openProject(proj:Project) : Unit = {
     println("opening project")
     proj match {
-      case p:Saved => Config.recentProjects += p.path
+      case p:Saved => prefs.recentProjects = prefs.recentProjects + p.path
+                      savePrefs(prefs)
       case _       =>
     }
 
@@ -103,6 +139,7 @@ object Tuner extends SimpleSwingApplication {
         val waitWindow = new SamplingProgressBar(ip)
         ProjectChooser.close
         waitWindow.open
+        future {ip.start}
       case v:Viewable => 
         val projWindow = new ProjectViewer(v)
         ProjectChooser.close
@@ -111,6 +148,10 @@ object Tuner extends SimpleSwingApplication {
     }
 
     //maybeShowProjectWindow
+  }
+
+  def openProject(proj:ProjectInfo) : Unit = {
+    openProject(Project.fromFile(proj.path))
   }
 
   def openProject(file:File) : Unit = {
@@ -143,18 +184,13 @@ object Tuner extends SimpleSwingApplication {
     //println(openWindows)
     WindowMenu.updateWindows
     super.listenTo(tunerWin)
+  }
+
+  def deafTo(tunerWin:tuner.gui.Window) : Unit = {
+    super.deafTo(tunerWin)
+
+    openWindows -= tunerWin
     //maybeShowProjectWindow
   }
-
-  /*
-  private def maybeShowProjectWindow = {
-    // See if we need to show the project chooser
-    if(openWindows.isEmpty)
-      ProjectChooser.open
-    else
-      ProjectChooser.close
-  }
-  */
-
 }
 

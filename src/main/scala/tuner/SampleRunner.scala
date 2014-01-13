@@ -1,102 +1,70 @@
 package tuner
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 import java.io.File
 
-import tuner.project.RunningSamples
+import tuner.error.SamplingErrorException
+import tuner.error.InvalidSamplingTableException
 
-class SampleRunner(project:RunningSamples) extends Actor {
-  
-  val sampleFile = File.createTempFile("tuner_samples", ".csv")
-  val designFile = File.createTempFile("tuner_design", ".csv")
+object SampleRunner {
 
-  val samples = project.newSamples
+  def runSamples(samples:Table, 
+                 scriptPath:String, 
+                 scriptDir:String, 
+                 logStream:Option[java.io.OutputStream]) : Table = {
+    if(samples.isEmpty) {
+      new Table
+    } else {
+      val sampleFile = File.createTempFile("tuner_samples", ".csv")
+      val designFile = File.createTempFile("tuner_design", ".csv")
 
-  private var currentProcess:Process = null
+      // We should validate the script path and dir somehow...
+      val scriptArgs = scriptPath.split(" ").toList ++
+                       List(sampleFile.getAbsolutePath, 
+                            designFile.getAbsolutePath)
+      val pb = new ProcessBuilder(scriptArgs:_*)
+      pb.directory(new File(scriptDir))
+      pb.redirectErrorStream(true)
 
-  val cmd = project.scriptPath + " " + 
-            sampleFile.getAbsolutePath + " " + 
-            designFile.getAbsolutePath
-  val pb = new ProcessBuilder(project.scriptPath,
-                              sampleFile.getAbsolutePath, 
-                              designFile.getAbsolutePath)
-  pb.directory(new File(project.path))
-  pb.redirectErrorStream(true)
+      samples.toCsv(sampleFile.getAbsolutePath)
 
-  def stop = {
-    if(currentProcess != null)
-      currentProcess.destroy
-  }
+      val currentProc = pb.start
+      // inputStream is the stdout and stderr of the proc
+      logStream foreach {log => 
+        future {readOutput(currentProc.getInputStream, log)}
+      }
+      currentProc.waitFor
 
-  def act = {
-    var error = false
-    while(samples.numRows > 0 && !error) {
-      val subSamples = subsample
-      project ! ConsoleLine("> " + cmd)
-      subSamples.toCsv(sampleFile.getAbsolutePath)
-      currentProcess = pb.start
-      readOutput(currentProcess.getInputStream)
-      readOutput(currentProcess.getErrorStream)
-      currentProcess.waitFor // Run until we're done
-
-      if(currentProcess.exitValue != 0) {
-        error = true
-        project ! SamplingError(currentProcess.exitValue)
+      if(currentProc.exitValue != 0) {
+        // this is an error
+        throw new SamplingErrorException(currentProc.exitValue)
       } else {
-        currentProcess = null
-
-        // Now the sampling is all done, load up the new points
-        val newDesTbl = Table.fromCsv(designFile.getAbsolutePath)
-        for(r <- 0 until newDesTbl.numRows) {
-          val tpl = newDesTbl.tuple(r)
-          project.designSites.addRow(tpl.toList)
-          samples.removeRow(0) // Always the first row
-        }
-        project.save()
-        project ! SamplesCompleted(newDesTbl.numRows)
-
-        // TODO: delete the file?
+        // We also need to validate the table that comes back from 
+        // the sampling script
+        val responseTable = Table.fromCsv(designFile.getAbsolutePath)
+        if(samples.numRows != responseTable.numRows)
+          throw new InvalidSamplingTableException(samples, responseTable)
+        if(!samples.fieldNames.toSet.subsetOf(responseTable.fieldNames.toSet++List("rowNum")))
+          throw new InvalidSamplingTableException(samples, responseTable)
+        responseTable
       }
     }
-    // We're only done if there was no error
-    if(!error) {
-      project ! SamplingComplete
+  }
+
+  private def readOutput(procStream:java.io.InputStream, 
+                         logStream:java.io.OutputStream) : Unit = {
+    // Too lazy to figure this out so this is from:
+    // http://www.qualitybrain.com/?p=84
+    val streamReader = new java.io.InputStreamReader(procStream)
+    val bufferedReader = new java.io.BufferedReader(streamReader)
+    val logger = new java.io.DataOutputStream(logStream)
+    var line:String = null
+    while({line = bufferedReader.readLine; line != null}){
+      logger.writeChars(line)
     }
+    bufferedReader.close
   }
-
-  /** 
-   * Splits a file into its directory and filename components
-   */
-  private def splitFile(fname:String) : (String,String) = {
-    val f = new File(fname)
-    (f.getParent, f.getName)
-  }
-
-  private def absPath(fname:String) : String = new File(fname).getAbsolutePath
-
-  private def subsample : Table = {
-    val subSamples = new Table
-    for(r <- 0 until math.min(samples.numRows, Config.samplingRowsPerReq)) {
-      subSamples.addRow(samples.tuple(r).toList)
-    }
-    subSamples
-  }
-
-  private def readOutput(stream:java.io.InputStream) : Unit = {
-    actor {
-      // Too lazy to figure this out so this is from:
-      // http://www.qualitybrain.com/?p=84
-      val streamReader = new java.io.InputStreamReader(stream)
-      val bufferedReader = new java.io.BufferedReader(streamReader)
-      var line:String = null
-      while({line = bufferedReader.readLine; line != null}){
-        project ! ConsoleLine(line)
-      }
-      bufferedReader.close
-    }
-  }
-
 }
 

@@ -18,7 +18,7 @@ class ControlPanel(project:Viewable) extends TabbedPane {
   
   val dims = new Dimension(Int.MaxValue, Config.controlPanelHeight)
 
-  tabPlacement(Alignment.Top)
+  tabPlacement = Alignment.Top
   maximumSize = new Dimension(Int.MaxValue, Config.controlPanelHeight)
 
   val infoTab = new InfoPanel(project) {
@@ -33,10 +33,12 @@ class ControlPanel(project:Viewable) extends TabbedPane {
     preferredSize = dims
     maximumSize = dims
   }
+  /*
   val candidatesTab = new CandidatesPanel(project) {
     preferredSize = dims
     maximumSize = dims
   }
+  */
   val historyTab = new HistoryPanel(project) {
     preferredSize = dims
     maximumSize = dims

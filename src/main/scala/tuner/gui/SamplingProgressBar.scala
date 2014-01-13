@@ -1,10 +1,11 @@
 package tuner.gui
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import akka.actor.Actor._
 import scala.swing.BoxPanel
 import scala.swing.Button
 import scala.swing.CheckBox
+import scala.swing.Dialog
 import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ProgressBar
@@ -14,6 +15,7 @@ import scala.swing.event.UIElementResized
 import tuner.ConsoleLine
 import tuner.Progress
 import tuner.ProgressComplete
+import tuner.ProgressWarning
 import tuner.project.InProgress
 import tuner.project.Project
 import tuner.project.Saved
@@ -29,14 +31,17 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   }
   val alwaysBackgroundCheckbox = new CheckBox("Always Background") {
     selected = project.buildInBackground
+    enabled = false
   }
   val backgroundButton = new Button("Background")
+  backgroundButton.enabled = false
   val stopButton = new Button("Stop")
   val progressLabel = new Label {
     text = "   "
   }
   val console = new HideableConsole
 
+  listenTo(project)
   listenTo(backgroundButton)
   listenTo(stopButton)
   listenTo(console)
@@ -62,29 +67,24 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
         case s:Saved => s.save
         case _       =>
       }
-      close
+      dispose
     case ButtonClicked(`stopButton`) => 
-      project.stop
-      close
+      //project.stop
+      dispose
     case UIElementResized(_) =>
       this.pack
+    case Progress(currentTime, totalTime, msg, ok) =>
+      updateProgress(currentTime, totalTime, msg, ok)
+    case ProgressWarning(msg) =>
+      Dialog.showMessage(contents.head, msg, "Build warning", 
+                         Dialog.Message.Warning)
+    case ConsoleLine(line) => 
+      console.text += line
+      console.text += "\n"
+    case ProgressComplete =>
+      dispose
   }
 
-  val progressListener = actor {
-    loop {
-      react {
-        case Progress(currentTime, totalTime, msg, ok) =>
-          updateProgress(currentTime, totalTime, msg, ok)
-        case ConsoleLine(line) => 
-          console.text += line
-          console.text += "\n"
-        case ProgressComplete =>
-          openNextStage
-      }
-    }
-  }
-  project.addListener(progressListener)
-  project.start
   this.pack
 
   def updateProgress(cur:Int, max:Int, msg:String, ok:Boolean) = {

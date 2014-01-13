@@ -7,34 +7,40 @@ import java.io.File
 import java.io.FileWriter
 import java.util.Date
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.{Actor, ActorRef}
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
+
+import scala.swing.Publisher
 
 import tuner.CandidateGenerator
 import tuner.Config
 import tuner.ConsoleLine
 import tuner.DimRanges
-import tuner.GpModel
-import tuner.GpSpecification
+import tuner.Grid2D
 import tuner.HistoryManager
 import tuner.HistorySpecification
 import tuner.PreviewImages
 import tuner.Progress
 import tuner.ProgressComplete
+import tuner.ProgressWarning
 import tuner.Region
 import tuner.RegionSpecification
-import tuner.Rgp
-import tuner.SampleRunner
+//import tuner.SampleRunner
 import tuner.SamplesCompleted
 import tuner.SamplingComplete
-import tuner.SamplingError
+import tuner.SampleRunner
 import tuner.Table
+import tuner.Tuner
 import tuner.ViewInfo
 import tuner.VisInfo
+import tuner.error.InvalidSamplingTableException
 import tuner.error.ProjectLoadException
+import tuner.error.SamplingErrorException
+import tuner.gp.GpModel
+import tuner.gp.GpSpecification
+import tuner.gp.ScalaGpBuilder
 import tuner.util.Density2D
 import tuner.util.Path
 
@@ -59,10 +65,12 @@ object Project {
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
 
-  def recent : Array[Project] = {
-    Config.recentProjects flatMap {rp =>
+  def recent : Array[ProjectInfo] = {
+    Tuner.prefs.recentProjects flatMap {rp =>
       try {
-        Some(Project.fromFile(rp))
+        val json = loadJson(rp)
+        Some(ProjectInfo(json.name, rp, new java.util.Date, 
+                         json.inputs.length, json.outputs.length))
       } catch {
         case e:java.io.FileNotFoundException =>
           None
@@ -71,14 +79,8 @@ object Project {
   }
 
   def fromFile(path:String) : Project = {
-    val configFilePath = Path.join(path, Config.projConfigFilename)
-    val json = parse(Source.fromFile(configFilePath).mkString)
-    val config = try {
-      json.extract[ProjConfig]
-    } catch {
-      case me:net.liftweb.json.MappingException =>
-        throw new ProjectLoadException(me.msg, me)
-    }
+    println("reading project from " + path)
+    val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
     val samples = try {
@@ -115,6 +117,7 @@ object Project {
       new Viewable(config, path, designSites)
     }
 
+    println(proj)
     proj
   }
 
@@ -122,7 +125,24 @@ object Project {
     inputs.map {case (fld, mn, mx) =>
       InputSpecification(fld, mn, mx)
     }
+  
+  private def loadJson(path:String) : ProjConfig = {
+    val configFilePath = Path.join(path, Config.projConfigFilename)
+    val json = parse(Source.fromFile(configFilePath).mkString)
+    try {
+      json.extract[ProjConfig]
+    } catch {
+      case me:net.liftweb.json.MappingException =>
+        throw new ProjectLoadException(me.msg, me)
+    }
+  }
+}
 
+case class ProjectInfo(name:String, path:String, 
+                       modificationDate:Date, 
+                       numInputs:Int, numOutputs:Int) {
+
+  val statusString = "Ok"
 }
 
 sealed abstract class Project(config:ProjConfig) {
@@ -172,17 +192,17 @@ sealed abstract class Project(config:ProjConfig) {
 
 }
 
-abstract class InProgress(config:ProjConfig) 
-    extends Project(config) with Actor {
+abstract class InProgress(config:ProjConfig) extends Project(config) with Publisher {
 
   var buildInBackground:Boolean
 
+  def start:Unit
   //def start:Unit
-  def stop:Unit
+  //def stop:Unit
 
-  private var eventListeners:ArrayBuffer[Actor] = ArrayBuffer()
-  def addListener(a:Actor) = eventListeners.append(a)
-  protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
+  //private var eventListeners:ArrayBuffer[ActorRef] = ArrayBuffer()
+  //def addListener(a:Actor) = eventListeners.append(a.self)
+  //protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
 }
 
 class NewProject(name:String, 
@@ -192,8 +212,8 @@ class NewProject(name:String,
     extends Project(ProjConfig(name, scriptPath, 
                                Project.mapInputs(inputDims),
                                Nil, Nil, Nil, false,
-                               ViewInfo.DefaultVisInfo,
-                               Region.DefaultRegionInfo,
+                               ViewInfo.Default,
+                               Region.Default,
                                None)) with Sampler {
 
   val path = Path.join(basePath, name)
@@ -223,20 +243,21 @@ class NewProject(name:String,
 }
 
 class RunningSamples(config:ProjConfig, val path:String, 
-                     val newSamples:Table, val designSites:Table) 
+                     val newSamples:Table, val designSites:Table)
     extends InProgress(config) with Saved {
   
   var buildInBackground:Boolean = config.buildInBackground
+  var logStream:Option[java.io.OutputStream] = None
 
   // See if we should start running some samples
-  var sampleRunner:Option[SampleRunner] = None 
-  if(buildInBackground) start
+  //var sampleRunner:Option[SampleRunner] = None 
 
   def statusString = 
     "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
   
   val totalTime = newSamples.numRows
   var currentTime = 0
+  var running = false
 
   override def save(savePath:String) = {
     super.save(savePath)
@@ -250,45 +271,42 @@ class RunningSamples(config:ProjConfig, val path:String,
     designSites.toCsv(designName)
   }
 
-  override def start = {
-    runSamples
-    super.start
-  }
-  def stop = {}
-
   def next = {
     save()
     Project.fromFile(path).asInstanceOf[BuildingGp]
   }
 
-  def act = {
+  def start = {
     // Publish one of these right at the beginning just to get things going
     publish(Progress(currentTime, totalTime, statusString, true))
+    running = true
 
-    var finished = false
-    loopWhile(!finished) {
-      react {
-        case x:ConsoleLine => 
-          publish(x)
-        case SamplesCompleted(num) => 
-          currentTime += num
-          publish(Progress(currentTime, totalTime, statusString, true))
-        case SamplingError(exitCode) =>
-          val msg = "Sampler script exited with code: " + exitCode
-          publish(Progress(currentTime, totalTime, msg, false))
-        case SamplingComplete =>
-          finished = true
-          publish(ProgressComplete)
+    try {
+      while(!newSamples.isEmpty) {
+        val subsamples = newSamples.subsample(0, Config.samplingRowsPerReq)
+  
+        val newDesign = SampleRunner.runSamples(subsamples, scriptPath, 
+                                                path, logStream)
+  
+        for(r <- 0 until newDesign.numRows) {
+          designSites.addRow(newDesign.tuple(r).toList)
+          newSamples.removeRow(0) // Always the first row
+        }
+  
+        currentTime += subsamples.numRows
+        //println("ct " + currentTime)
+        publish(Progress(currentTime, totalTime, statusString, true))
       }
-    }
-  }
 
-  private def runSamples = {
-    // only run if we aren't running something
-    if(!sampleRunner.isDefined && newSamples.numRows > 0) {
-      val runner = new SampleRunner(this)
-      runner.start
-      sampleRunner = Some(runner)
+      publish(ProgressComplete)
+    } catch {
+      case sae:SamplingErrorException => 
+        publish(Progress(currentTime, totalTime, sae.getMessage, false))
+      case ite:InvalidSamplingTableException => 
+        println(ite.getMessage)
+        publish(Progress(currentTime, totalTime, ite.getMessage, false))
+    } finally {
+      running = false
     }
   }
 }
@@ -302,19 +320,21 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
   def statusString = "Building GP"
 
-  def stop = {}
-
-  def act = {
+  def start = {
     publish(Progress(-1, -1, statusString, true))
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)
-    val gp = new Rgp(designSiteFile)
+    //val gp = new RGpBuilder
 
     val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
 
     val newModels = buildFields.map({fld => 
       println("building model for " + fld)
-      (fld, gp.buildModel(inputFields, fld, Config.errorField))
+      val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
+      if(!m.validateModel._1) {
+        publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
+      }
+      (fld, m)
     }).toMap
     config.gpModels = newModels.values.map(_.toJson).toList
     save()
@@ -381,7 +401,11 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
   val gpModels:SortedMap[String,GpModel] = SortedMap[String,GpModel]() ++
     config.gpModels.map {gpConfig =>
-      (gpConfig.responseDim, GpModel.fromJson(gpConfig))
+      try {
+        (gpConfig.responseDim, GpModel.fromJson(gpConfig))
+      } catch {
+        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}", x)
+      }
     }
 
   val history:HistoryManager = config.history match {
@@ -389,7 +413,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     case None     => new HistoryManager
   }
 
-  val candidateGenerator = new CandidateGenerator(this)
+  //val candidateGenerator = new CandidateGenerator(this)
 
   val previewImages:Option[PreviewImages] = loadImages(path)
 
@@ -413,7 +437,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
   def next = {
     save()
-    Project.fromFile(path).asInstanceOf[RunningSamples]
+    Project.fromFile(path)
   }
 
   def statusString = "Ok"
@@ -425,19 +449,42 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     _region = r
   }
 
+  def numSamplesInRegion = {
+    var count = 0
+    for(i <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(i)
+      val inputs = tpl.filterKeys {k => inputFields contains k}
+      if(region.inside(inputs.toList))
+        count += 1
+    }
+    count
+  }
+
+  /**
+   * The number of sample points that are unclipped 
+   * by the current zoom level
+   */
+  def numUnclippedPoints : Int = {
+    val (active,_) = viewFilterDesignSites
+    active.numRows
+  }
+
   def newFields : List[String] = {
     val knownFields : Set[String] = 
       (responseFields ++ ignoreFields ++ inputFields).toSet
     designSites.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
 
-  def updateCandidates(newValues:List[(String,Float)]) = {
-    candidateGenerator.update(newValues)
+  def sliceForResponse(outputValues:List[(String,Float)]) = {
+    var outTpl:Table.Tuple = null
+    for(r <- 0 until designSites.numRows) {
+      val tpl = designSites.tuple(r)
+      if(outputValues.forall {case (fld, v) => v == tpl(fld)}) {
+        outTpl = tpl
+      }
+    }
+    outTpl.toList
   }
-
-  def candidates = candidateGenerator.candidates
-
-  def candidateFilter = candidateGenerator.currentFilter
 
   def closestSample(point:List[(String,Float)]) : List[(String,Float)] = {
     def ptDist(tpl:Table.Tuple) : Double = {
@@ -479,6 +526,38 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     }
   }
 
+  def value(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._1)}
+  }
+
+  def value(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._1.toFloat
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)]) : Map[String,Float] = {
+    estimatePoint(point) map {case (k,v) => (k -> v._2)}
+  }
+
+  /**
+   * Use the std deviation for the model as the "official" uncertainty
+   */
+  def uncertainty(point:List[(String,Float)], response:String) : Float = {
+    gpModels(response).runSample(point)._2.toFloat
+  }
+
+  def expectedGain(point:List[(String,Float)]) : Map[String,Float] = 
+    estimatePoint(point) map {case (k,v) => 
+      (k -> gpModels(k).calcExpectedGain(v._1, v._2).toFloat)
+    }
+
+  def expectedGain(point:List[(String,Float)], response:String) : Float = {
+    val sample = gpModels(response).runSample(point)
+    gpModels(response).calcExpectedGain(sample._1, sample._2).toFloat
+  }
+
   def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
                              resp2Dim:(String,(Float,Float))) = {
 
@@ -486,19 +565,47 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     Density2D.density(modelSamples, numSamples, resp2Dim, resp1Dim)
   }
 
+  def sampleGrid2D(xDim:(String,(Float,Float)),
+                   yDim:(String,(Float,Float)),
+                   response:String,
+                   point:List[(String,Float)]) : Grid2D = {
+    val remainingPt = point.filter {case (fld,_) => 
+      fld!=xDim._1 && fld!=yDim._1
+    }
+    val outData = tuner.Sampler.regularSlice(xDim, yDim, viewInfo.estimateSampleDensity)
+
+    // Populate the slice
+    outData.rowIds.zipWithIndex.foreach {tmpx =>
+      val (xval,x) = tmpx
+      outData.colIds.zipWithIndex.foreach {tmpy =>
+        val (yval,y) = tmpy
+        val samplePt = (xDim._1,xval)::(yDim._1,yval)::remainingPt
+        outData.set(x, y, viewValueFunction(samplePt, response))
+      }
+    }
+    outData
+  }
+
+  def viewValueFunction : (List[(String,Float)],String)=>Float = 
+    viewInfo.currentMetric match {
+      case ViewInfo.ValueMetric => value
+      case ViewInfo.ErrorMetric => uncertainty
+      case ViewInfo.GainMetric  => expectedGain
+    }
+
   private def loadResponseSamples(path:String) : Table = {
     // First try to load up an old file
     val samples = try {
       val filepath = Path.join(path, Config.respSampleFilename)
       val tmp = Table.fromCsv(filepath)
       if(tmp.numRows == 0) {
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
       } else {
         tmp
       }
     } catch {
       case e:java.io.FileNotFoundException => 
-        tuner.Sampler.lhc(inputs, Config.respHistogramSampleDensity)
+        tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
     }
     gpModels.foldLeft(samples) {case (tbl, (fld, model)) =>
       if(!tbl.fieldNames.contains(fld)) {

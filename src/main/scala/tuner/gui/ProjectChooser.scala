@@ -10,6 +10,7 @@ import scala.swing.Swing
 import scala.swing.Table
 import scala.swing.event.ButtonClicked
 import scala.swing.event.TableRowsSelected
+import scala.swing.event.WindowActivated
 
 import javax.swing.table.AbstractTableModel
 
@@ -85,6 +86,7 @@ object ProjectChooser extends Frame {
 
   val importSamplesItem = myMenu.importSamples
   reactions += {
+    case WindowActivated(x) => updateProjects
     case ButtonClicked(`newProjectButton`) => Tuner.startNewProject
     case ButtonClicked(`openOtherButton`) => openOtherProject
     case ButtonClicked(`openButton`) => openSelectedProject
@@ -93,8 +95,7 @@ object ProjectChooser extends Frame {
         case sp:tuner.project.Saved => sp.save()
         case _ =>
       }}
-      projects = Project.recent
-      projectTableModel.fireTableDataChanged
+      updateProjects
     case TableRowsSelected(`projectTable`, _, _) =>
       val row = projectTable.selection.rows.leadIndex
       openButton.enabled = row != -1
@@ -110,12 +111,20 @@ object ProjectChooser extends Frame {
       }
   }
 
-  def openOtherProject = Tuner.openProject
+  def openOtherProject = {
+    Tuner.openProject
+    updateProjects
+  }
 
   def openSelectedProject = {
     val row = projectTable.selection.rows.leadIndex
     val proj = projects(row)
     Tuner.openProject(proj)
+  }
+
+  protected def updateProjects = {
+    projects = Project.recent
+    projectTableModel.fireTableDataChanged
   }
 
 }

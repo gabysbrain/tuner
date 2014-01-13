@@ -6,16 +6,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-import tuner.util.Prefs
 import tuner.util.ResourceLoader
 
 object Config {
   
-  def recentProjects : Set[String] = Prefs.list("recentProjects") toSet
-  def recentProjects_=(rp:Set[String]) = {
-    Prefs.saveList("recentProjects", rp.toList)
-  }
-  
+  var testingMode = false
+
   val projConfigFilename = "config.json"
   val sampleFilename = "samples.csv"
   val designFilename = "responses.csv"
@@ -24,16 +20,13 @@ object Config {
 
   val smallScreen = Toolkit.getDefaultToolkit.getScreenSize.height < 800
 
-  val gpRScript = 
-    ResourceLoader.fileResource("/sparkle.R").replace("\\", "/")
-
   val errorField = "stddev"
   val gainField = "estgain"
 
   val rowField = "rowNum"
 
   val maxEstimateSamples = if(smallScreen) 4000 else 15000
-  val maxSampleSqDistance = 1e-9
+  val minSampleEffect = 1e-9
 
   val sampleImageSize = 120
 
@@ -52,16 +45,16 @@ object Config {
 
   val samplingRowsPerReq = 4
 
-  val backgroundColor = 51
+  val backgroundColor = Color(51)
   val response1ColorMap = OrangeColorMap
   val response2ColorMap = PurpleColorMap
   val errorColorMap = BlueColorMap
   val gainColorMap = GreenColorMap
   val sampleColorMap = RedColorMap
-  val lineColor = 255
+  val lineColor = Color.White
   val filterColor = Color(151)
   val regionAlpha = 0.8f * 255
-  val regionColor = 0xAAABCDFC
+  val regionColor = Color(0xAAABCDFC)
 
   // Font stuff
   val fontPath = ResourceLoader.fileResource("/fonts/MavenPro.otf")
@@ -85,20 +78,22 @@ object Config {
   val colorbarLabelSpace = (5, 3)
   val colorbarTickDigits = (1, 3)
   val colorbarHandleSize = (15, 9) // width, height
+  val colorbarTicks = 3
 
-  val crosshairColor = 0
+  val crosshairColor = Color.Black
   val crosshairRadius = 3
   
   val sliderResolution = 1000
 
   val scatterplotDotSize = 6.5f
 
-  val paretoSampleColor = 0xffDD1C77
-  val paretoInactiveSampleColor = 0xffDDDDDD
+  val paretoSampleColor = Color(0xffDD1C77)
+  val paretoInactiveSampleColor = Color(0xffDDDDDD)
 
-  val sampleDotColor = 0xffDD1C77
+  val sampleDotColor = Color(0xffDD1C77)
 
-  val respHistogramSampleDensity = 10000
+  val numericSampleDensity = 10000
+
   val respHistogramPanelDims = (paretoDims._1 - 50, 130)
   val respHistogramBars = 11
   val respHistogramBarFill = Some(255)
@@ -106,7 +101,7 @@ object Config {
   val respHistogramHandleSize = (colorbarHandleSize._2, colorbarHandleSize._1)
   val respHistogramFramerate = 30
 
-  val sampleLineColor = 255
+  val sampleLineColor = Color.White
   val sampleLineDotRadius = scatterplotDotSize / 2
   val sampleLineWidth = 2f
 }

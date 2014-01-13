@@ -15,6 +15,7 @@ import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
+import scala.swing.event.WindowClosing
 
 import tuner.Config
 import tuner.ViewInfo
@@ -23,6 +24,7 @@ import tuner.gui.event.CandidateChanged
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 import tuner.gui.event.ViewChanged
+import tuner.project.Saved
 import tuner.project.Viewable
 
 /**
@@ -44,8 +46,6 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   val visControlPanel = new VisControlPanel(project.viewInfo)
 
   val controlPanel = new ControlPanel(project)
-  // Need this reference for later
-  val plotControls = controlPanel.controlsTab
 
   val paretoPanel = new ParetoPanel(project) {
     border = Swing.TitledBorder(border, "Pareto")
@@ -54,12 +54,12 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     maximumSize = preferredSize
   }
 
+  val histogramPanel = new ResponseStatsPanel(project) {
+    border = Swing.TitledBorder(border, "Response Histograms")
+  }
+
   contents = new TablePanel(List(305,TablePanel.Size.Fill), 
                             List(TablePanel.Size.Fill)) {
-  
-    val histogramPanel = new ResponseStatsPanel(project) {
-      border = Swing.TitledBorder(border, "Response Histograms")
-    }
   
     val leftPanel = new BoxPanel(Orientation.Vertical) {
       contents += paretoPanel
@@ -68,11 +68,8 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     }
 
     val rightPanel = new SplitPane(Orientation.Horizontal) {
-      /*
-      contents += mainPlotPanel
-      contents += controlPanel
-      */
       topComponent = mainPlotPanel
+      //topComponent = new scala.swing.Button("push me")
       bottomComponent = controlPanel
     }
 
@@ -85,24 +82,26 @@ class ProjectViewer(project:Viewable) extends Window(project) {
   listenTo(paretoPanel)
   listenTo(controlPanel.controlsTab)
   listenTo(controlPanel.historyTab)
-  listenTo(controlPanel.candidatesTab)
+  //listenTo(controlPanel.candidatesTab)
   listenTo(controlPanel.localTab)
-  listenTo(plotControls)
   listenTo(myMenu.importSamples)
 
   val controlsTab = controlPanel.controlsTab
   val localTab = controlPanel.localTab
   val importSamplesItem = myMenu.importSamples
   reactions += {
-    case CandidateChanged(_, newCand) =>
-      project.updateCandidates(newCand)
-      controlPanel.candidatesTab.updateTable
+    case CandidateChanged(x, newCand) =>
+      val newSlice = project.sliceForResponse(newCand)
+      publish(new SliceChanged(x, newSlice))
     case SliceChanged(_, sliceInfo) => 
+      deafTo(controlPanel.controlsTab)
       sliceInfo.foreach {case (fld, v) =>
         controlPanel.controlsTab.sliceSliders.get(fld).foreach {slider =>
           slider.value = v
         }
       }
+      listenTo(controlPanel.controlsTab)
+      mainPlotPanel.redraw
     case ViewChanged(`visControlPanel`) =>
       mainPlotPanel.redraw
     case AddSamples(_) => 
@@ -115,7 +114,17 @@ class ProjectViewer(project:Viewable) extends Window(project) {
     case ValueChanged(`localTab`) =>
       mainPlotPanel.redraw
     case ButtonClicked(`importSamplesItem`) =>
-      this.close
+      this.dispose
+    case WindowClosing(_) => 
+      //mainPlotPanel.destroy
+      histogramPanel.destroy
+      paretoPanel.destroy
+      controlPanel.infoTab.sampleImagePanel.destroy
+
+      project match {
+        case s:Saved => s.save()
+        case _ =>
+      }
   }
 
   private def openSamplerDialog = {
@@ -125,7 +134,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       case DialogClosing(`samplerDialog`, result) => result match {
         case Dialog.Result.Ok => 
           project.save()
-          openNextStage
+          dispose
         case Dialog.Result.Cancel =>
           project.newSamples.clear
       }

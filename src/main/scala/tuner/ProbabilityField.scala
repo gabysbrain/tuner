@@ -71,8 +71,8 @@ object ProbabilityField {
 
 class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int) {
   
-  val data = (0 until numFields).foldLeft(Nil:List[Matrix2D]) {(lst:List[Matrix2D], n:Int) => 
-    val newMtx = new Matrix2D((0 until ySize).toList.map({_.toFloat}),
+  val data = (0 until numFields).foldLeft(Nil:List[Grid2D]) {(lst:List[Grid2D], n:Int) => 
+    val newMtx = new Grid2D((0 until ySize).toList.map({_.toFloat}),
                               (0 until xSize).toList.map({_.toFloat})) 
     newMtx :: lst
   }

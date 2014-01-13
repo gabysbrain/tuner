@@ -1,5 +1,9 @@
 package tuner
 
+import breeze.linalg.{DenseMatrix, DenseVector}
+
+import tuner.gp.GpModel
+
 import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PImage
@@ -30,45 +34,13 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
     fields(count).image(applet)
   }
 
-  // Stuff to memoize last position
-  /*
-  var lastPoint:List[(String,Float)] = null
-  var lastImage:PImage = null
-  def image(applet:PApplet, pt:List[(String,Float)]) : PImage = {
-    if(pt != lastPoint) {
-      //val estFld = new ProbabilityField(applet, xSize, ySize, numFields)
-
-      val newImg = applet.createImage(xSize, ySize, PConstants.RGB)
-      newImg.loadPixels
-      gpEstimators.zipWithIndex.foreach {tmp =>
-        val (gps, i) = tmp
-        val (x, y) = (i / xSize, i % xSize)
-        val (_, mx) = gps.zipWithIndex.foldLeft((Double.MinValue, -1)) {(maxinfo, gpi) =>
-          val (gp, i) = gpi
-          val (estVal, _) = gp.runSample(pt)
-          if(estVal > maxinfo._1)
-            (estVal, i)
-          else
-            maxinfo
-        }
-        newImg.pixels(y * ySize + x) = CategoryColorMap.color(mx)
-      }
-      newImg.updatePixels
-
-      lastImage = newImg
-      lastPoint = pt
-    }
-    lastImage
-  }
-  */
-
   private def rebuildFields : List[List[GpModel]] = {
 
     print("building image predictors...")
     val gps = (0 until (xSize * ySize)).map({i =>
       val (x, y) = (i / xSize, i % xSize)
       (0 until numFields).map({fld =>
-        val res = fields.map({pf => pf.data(fld).get(x, y).toDouble})
+        val res = new DenseVector(fields.map({pf => pf.data(fld).get(x, y).toDouble}))
         new GpModel(estModel.thetas, estModel.alphas, 
                     estModel.design, res, estModel.rInverse,
                     estModel.dims, estModel.respDim, estModel.errDim)

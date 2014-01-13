@@ -1,5 +1,7 @@
 package tuner.gui.opengl
 
+import breeze.linalg.{DenseVector, DenseMatrix}
+
 import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
 
@@ -12,7 +14,7 @@ import tuner.gui.util.Matrix4
  */
 object Prosection {
   def fromResource(
-      gl:GL2, numDims:Int, points:Array[Array[Double]], values:Array[Double]) = 
+      gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVector[Double]) = 
     new Prosection(gl, numDims, points, values)
 
   def numVec4(numDims:Int) = (numDims / 4.0).ceil.toInt
@@ -20,9 +22,7 @@ object Prosection {
 
 }
 
-class Prosection(gl:GL2, numDims:Int, 
-                         points:Array[Array[Double]], 
-                         values:Array[Double])
+class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVector[Double])
     extends Glsl(gl, new ProsectionVertexShader(numDims).toString,
                      None, Glsl.readResource("/shaders/prosection.frag.glsl"), 
                      List("value"->0) ++ 
@@ -35,17 +35,16 @@ class Prosection(gl:GL2, numDims:Int,
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glPointSize(10)
     gl.glBegin(GL.GL_POINTS)
-    for(r <- 0 until points.size) {
-      val pt = points(r)
+    for(r <- 0 until points.rows) {
       // Draw all the point data
       for(i <- 0 until Prosection.numVec4(numDims)) {
         val ptId = attribId("data" + i)
-        val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
         
-        gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
-                                  fieldVals(i*4+1).toFloat, 
-                                  fieldVals(i*4+2).toFloat, 
-                                  fieldVals(i*4+3).toFloat)
+          gl.glVertexAttrib4f(ptId, 
+            if(i*4+0 < points.cols) points(r, i*4+0).toFloat else 0f, 
+            if(i*4+1 < points.cols) points(r, i*4+1).toFloat else 0f, 
+            if(i*4+2 < points.cols) points(r, i*4+2).toFloat else 0f, 
+            if(i*4+3 < points.cols) points(r, i*4+3).toFloat else 0f)
       }
       val respId = attribId("value")
       gl.glVertexAttrib1f(respId, values(r).toFloat)
@@ -80,7 +79,7 @@ class Prosection(gl:GL2, numDims:Int,
     // Send down the uniforms for this set
     gl.glUniform1f(uniformId("radius"), 3.5f)
     gl.glUniformMatrix4fv(uniformId("trans"), 
-                          1, false, trans.toArray, 0)
+                          1, false, trans.toOpenGl, 0)
     gl.glUniform1i(uniformId("d1"), xDim)
     gl.glUniform1i(uniformId("d2"), yDim)
     gl.glUniform2f(uniformId("halfWindowSize"), texWidth.toFloat / 2, 

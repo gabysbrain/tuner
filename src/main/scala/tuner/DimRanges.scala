@@ -47,6 +47,15 @@ class DimRanges(r:Map[String,DimRanges.Range])
     this(dim)._2
   }
 
+  def mean(dim:String) : Float = {
+    // Right now this assumes uniform sampling
+    (max(dim)-min(dim)) / 2f
+  }
+
+  def variance(dim:String) : Float = {
+    math.pow(max(dim)-min(dim), 2).toFloat / 12f
+  }
+
   def update(dim:String, min:Float, max:Float) = {
     this += (dim -> (min, max))
   }

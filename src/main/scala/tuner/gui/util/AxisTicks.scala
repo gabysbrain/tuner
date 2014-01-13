@@ -1,17 +1,17 @@
 package tuner.gui.util
 
 import tuner.Config
-import tuner.R
+
+import org.sittingbull.gt.util.XWilkinson
+import org.sittingbull.gt.util.NiceStepSizeGenerator
+
+import scala.collection.JavaConverters._
 
 object AxisTicks {
   
   // Set up the labeling library
-  try {
-    R.runCommand("library(labeling)")
-  } catch {
-    case e:Exception =>
-      throw new Exception("error loading labeling R libary")
-  }
+  val labeler = new XWilkinson(new NiceStepSizeGenerator)
+  labeler.setLooseFlag(true)
 
   def numTicks(width:Float, fontSize:Float) : Int = {
     val labelSpace = 3
@@ -25,12 +25,21 @@ object AxisTicks {
     ticks(min, max, numTicks(width, fontSize))
 
   def ticks(min:Float, max:Float, n:Int=Config.axisNumTicks) : List[Float] = {
+    if(min == max) {
+      throw new Exception("min cannot equal max")
+    }
+    if(min.isNaN) {
+      throw new Exception("min cannot be NaN")
+    }
+    if(max.isNaN) {
+      throw new Exception("max cannot be NaN")
+    }
     if(n < 2) {
       Nil
     } else {
-      val cmd = "extended(%s, %s, %d, only.loose=TRUE)".format(min, max, n)
-      val rTicks = R.runCommand(cmd)
-      rTicks.asDoubleArray.toList.map {_.toFloat}
+      //println(s"ticks for ${min} ${max} ${n}")
+      val labelInfo = labeler.search(min, max, n)
+      labelInfo.toList.asScala.map {_.toFloat} toList
     }
   }
 

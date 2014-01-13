@@ -10,7 +10,7 @@ object Sampler {
 
   def regularSlice(rowDim:(String,(Float,Float)), 
                    colDim:(String,(Float,Float)),
-                   n:Int) : Matrix2D = {
+                   n:Int) : Grid2D = {
 
     def calcRng(minv:Float, maxv:Float) : List[Float] = {
       val mn = math.min(minv, maxv)
@@ -18,8 +18,8 @@ object Sampler {
       val step = (mx - mn) / (n-1)
       genLinSeq(mn, mx, step)
     }
-    new Matrix2D(calcRng(rowDim._2._1, rowDim._2._2), 
-                 calcRng(colDim._2._1, colDim._2._2))
+    new Grid2D(calcRng(rowDim._2._1, rowDim._2._2), 
+               calcRng(colDim._2._1, colDim._2._2))
   }
 
   /**
@@ -70,26 +70,23 @@ object Sampler {
     }
     val slices = sliceDims.map {tmp => (tmp._1, tmp._2._1)}
 
-    // Use R to generate the maximim lhc
-    R.runCommand("library(lhs)")
     // for larger sample sizes the maximin stuff takes way too long
-    val lhcCmd = if(n <= 1000) {
-      "maximinLHS(%d, %d)".format(n, sampleDims.size)
+    val res = if(n <= 1000) {
+      LHS.maximin(n, sampleDims.size)
     } else {
-      "randomLHS(%d, %d)".format(n, sampleDims.size)
+      LHS.random(n, sampleDims.size)
     }
-    //println("R: " + lhcCmd)
-    val res = R.runCommand(lhcCmd)
-    val x:Array[Array[Double]] = res.asDoubleMatrix
     
-    x.foreach({row => 
+    // Convert from the matrix to my table
+    for(r <- 0 until res.rows) {
+      val row = res(r, ::).toDenseVector.data
       val vals = sampleDims.zip(row.map(_.toFloat)).map {vs =>
         val ((dimname, (dimMin, dimMax)), value) = vs
         // Conveniently all the values from the lhs are on a 0->1 scale
         (dimname, dimMin + value * (dimMax - dimMin))
       }
       f(vals.toList ++ slices)
-    })
+    }
   }
 
   def lhc(dims:DimRanges, n:Int) : Table = {

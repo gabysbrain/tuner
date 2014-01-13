@@ -2,42 +2,43 @@ package tuner.gui.util
 
 import scala.collection.immutable.SortedMap
 
-import tuner.R
 import tuner.Table
 
 object Histogram {
-  private def rHist(values:Iterable[Float], numBreaks:Int) = {
-    val startTime = System.currentTimeMillis
-    val strVals = values.map(_.toString)
-    //val rvect = "c(" + strVals.reduceLeft(_ + "," + _) + ")"
-    val rvect = new StringBuilder(2000)
-    rvect.append("c(")
-    values.foreach {v =>
-      if(rvect(rvect.length-1) != '(')
-        rvect.append(",")
-      rvect.append(v.toString)
+  private def countData(values:Iterable[Float], numBreaks:Int) = {
+    // First figure out the breaks
+    val breaks = new collection.mutable.MutableList[Float]
+    val min = values.min
+    val max = values.max
+    val step = (max-min) / (numBreaks+1).toFloat
+    var cur = min + step
+    breaks += min
+    while(cur <= max) {
+      breaks += cur
+      cur += step
     }
-    rvect.append(")")
-    val endTime = System.currentTimeMillis
-    //println("hist t1: " + (endTime - startTime) + "ms")
-    val cmd = "hist(%s, breaks=%d, plot=FALSE)"
-    R.runCommand(cmd.format(rvect, numBreaks))
+
+    // Now figure out the counts
+    val counts = breaks.sliding(2) map { lims =>
+      val (mn, mx) = (lims(0), lims(1))
+      values.reduceLeft {(sum, x) => sum + (if(x >= mn && x < mx) 1 else 0)}
+    }
+
+    (breaks.toList, counts map {_.toInt} toList)
   }
   
   def countData(field:String, data:Table, numBreaks:Int) 
         : SortedMap[Float,Int] = {
 
-    val hist = rHist(data.values(field), numBreaks).asList
-    val breaks = hist.at("breaks").asDoubleArray.map(_.toFloat)
-    val counts = hist.at("counts").asDoubleArray.map(_.toInt)
+    val (breaks, counts) = countData(data.values(field), numBreaks)
     SortedMap[Float,Int]() ++ breaks.zip(counts)
   }
 
   def pctData(field:String, data:Table, numBreaks:Int) 
         : SortedMap[Float,Float] = {
-    val hist = rHist(data.values(field), numBreaks).asList
-    val breaks = hist.at("breaks").asDoubleArray.map(_.toFloat)
-    val pcts = hist.at("density").asDoubleArray.map(_.toFloat/100f)
+    val (breaks, counts) = countData(data.values(field), numBreaks)
+    val ttlCount = counts.sum.toFloat
+    val pcts = counts map {x => x.toFloat / ttlCount}
     SortedMap[Float,Float]() ++ breaks.zip(pcts)
   }
 

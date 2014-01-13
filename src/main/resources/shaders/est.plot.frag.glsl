@@ -3,7 +3,7 @@
 
 varying float fragCoeff;
 varying float centerSqDist;
-varying vec2 vertexDist;
+varying vec2 vertexDist; // This needs to be the post-clamped distance
 varying vec2 theta;
 
 uniform float sig2;

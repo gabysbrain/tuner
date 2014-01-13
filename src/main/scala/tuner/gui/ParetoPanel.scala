@@ -1,19 +1,18 @@
 package tuner.gui
 
 import tuner.Config
-import tuner.Matrix2D
 import tuner.Sampler
 import tuner.SpecifiedColorMap
 import tuner.Table
 import tuner.geom.Rectangle
 import tuner.gui.event.CandidateChanged
-import tuner.gui.util.AxisTicks
 import tuner.gui.util.Histogram
 import tuner.gui.widgets.Axis
 import tuner.gui.widgets.ContinuousPlot
 import tuner.gui.widgets.Bars
 import tuner.gui.widgets.Scatterplot
 import tuner.project.Viewable
+import tuner.gui.util.AxisTicks
 
 class ParetoPanel(project:Viewable)
     extends P5Panel(Config.paretoDims._1, 
@@ -76,22 +75,22 @@ class ParetoPanel(project:Viewable)
   }
 
   def draw1dPareto(resp:String) {
-    val model = models(resp)
-    val ticks = AxisTicks.ticks(model.funcMin, model.funcMax, 
-                                xAxisBox.width, Config.smallFontSize)
-    xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
-                     xAxisBox.width, xAxisBox.height,
-                     resp, ticks)
-    if(resp != pareto1dField) {
-      pareto1dField = resp
-      val data = project.modelSamples
-      pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
+    val data = project.modelSamples
+    if(data.fieldNames.contains(resp)) {
+      val model = models(resp)
+      xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
+                       xAxisBox.width, xAxisBox.height,
+                       resp, model.funcMin, model.funcMax)
+      if(resp != pareto1dField) {
+        pareto1dField = resp
+        pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
+      }
+      val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
+      histogram.draw(this, plotBox.minX, plotBox.minY, 
+                           plotBox.width, plotBox.height,
+                           pareto1dCounts.values.map(_.toFloat).toList,
+                           yMin, yMax)
     }
-    val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
-    histogram.draw(this, plotBox.minX, plotBox.minY, 
-                         plotBox.width, plotBox.height,
-                         pareto1dCounts.values.map(_.toFloat).toList,
-                         yMin, yMax)
   }
 
   def draw2dPareto(resp1:String, resp2:String) {
@@ -123,10 +122,10 @@ class ParetoPanel(project:Viewable)
 
     xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
                      xAxisBox.width, xAxisBox.height,
-                     resp1, xAxisTicks)
+                     resp1, r1Model.funcMin, r1Model.funcMax)
     yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
                      yAxisBox.width, yAxisBox.height,
-                     resp2, yAxisTicks)
+                     resp2, r2Model.funcMin, r2Model.funcMax)
 
     // Now for the csp
     /*
