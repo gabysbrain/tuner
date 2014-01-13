@@ -36,16 +36,15 @@ class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVe
     gl.glPointSize(10)
     gl.glBegin(GL.GL_POINTS)
     for(r <- 0 until points.rows) {
-      val pt = points(r, ::).data
       // Draw all the point data
       for(i <- 0 until Prosection.numVec4(numDims)) {
         val ptId = attribId("data" + i)
-        val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
         
-        gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
-                                  fieldVals(i*4+1).toFloat, 
-                                  fieldVals(i*4+2).toFloat, 
-                                  fieldVals(i*4+3).toFloat)
+          gl.glVertexAttrib4f(ptId, 
+            if(i*4+0 < points.cols) points(r, i*4+0).toFloat else 0f, 
+            if(i*4+1 < points.cols) points(r, i*4+1).toFloat else 0f, 
+            if(i*4+2 < points.cols) points(r, i*4+2).toFloat else 0f, 
+            if(i*4+3 < points.cols) points(r, i*4+3).toFloat else 0f)
       }
       val respId = attribId("value")
       gl.glVertexAttrib1f(respId, values(r).toFloat)

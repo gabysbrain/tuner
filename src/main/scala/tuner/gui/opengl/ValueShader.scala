@@ -66,17 +66,16 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
     gl.glBegin(GL2.GL_QUADS)
     for(r <- 0 until points.rows) {
-      val pt = points(r,::).data
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
         for(i <- 0 until ValueShader.numVec4(numDims)) {
           val ptId = attribId("data" + i)
-          val fieldVals = pt ++ Array(0.0, 0.0, 0.0, 0.0)
           
-          gl.glVertexAttrib4f(ptId, fieldVals(i*4+0).toFloat, 
-                                    fieldVals(i*4+1).toFloat, 
-                                    fieldVals(i*4+2).toFloat, 
-                                    fieldVals(i*4+3).toFloat)
+          gl.glVertexAttrib4f(ptId, 
+            if(i*4+0 < points.cols) points(r, i*4+0).toFloat else 0f, 
+            if(i*4+1 < points.cols) points(r, i*4+1).toFloat else 0f, 
+            if(i*4+2 < points.cols) points(r, i*4+2).toFloat else 0f, 
+            if(i*4+3 < points.cols) points(r, i*4+3).toFloat else 0f)
         }
         val respId = attribId("coeff")
         gl.glVertexAttrib1f(respId, coefficients(r).toFloat)
