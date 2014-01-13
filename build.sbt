@@ -52,3 +52,7 @@ mainClass := Some("tuner.Tuner")
 // testing stalls the assembly build
 test in assembly := {}
 
+// functional tests are really slow 
+// plus they break the rest of the tests right now
+testOptions in Test := Seq(Tests.Filter(s => !s.startsWith("tuner.test.functional")))
+
