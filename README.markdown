@@ -51,7 +51,7 @@ is how to open an external project:
 3. A window such as the following should open
    ![](https://raw.github.com/gabysbrain/tuner/master/doc/images/test_project_viewer.png)
 
-## Black box scripts
+## Sampling scripts
 
 See the wiki for more detailed information at <https://github.com/gabysbrain/tuner/wiki/SamplingScript>.
 
