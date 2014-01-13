@@ -1,4 +1,4 @@
-# Tuner #
+# Tuner [![Build Status](https://travis-ci.org/gabysbrain/tuner.png?branch=master)](https://travis-ci.org/gabysbrain/tuner)
 
 Tuner is an application for finding optimal parameter settings for complex
 algorithms.  It supports sampling, resampling, and optimizaing withing a 
