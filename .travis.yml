@@ -9,8 +9,6 @@ jdk:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq libatlas3gf-base libopenblas-base
- - sudo update-alternatives --config libblas.so.3
- - sudo update-alternatives --config liblapack.so.3
 #sbt_args: -J-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS -J-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK -J-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK
 cache:
   directories:
