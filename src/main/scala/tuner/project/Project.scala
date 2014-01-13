@@ -32,6 +32,7 @@ import tuner.SamplesCompleted
 import tuner.SamplingComplete
 import tuner.SampleRunner
 import tuner.Table
+import tuner.Tuner
 import tuner.ViewInfo
 import tuner.VisInfo
 import tuner.error.InvalidSamplingTableException
@@ -65,7 +66,7 @@ object Project {
   implicit val formats = net.liftweb.json.DefaultFormats
 
   def recent : Array[ProjectInfo] = {
-    Config.recentProjects flatMap {rp =>
+    Tuner.prefs.recentProjects flatMap {rp =>
       try {
         val json = loadJson(rp)
         Some(ProjectInfo(json.name, rp, new java.util.Date, 
@@ -403,7 +404,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
       try {
         (gpConfig.responseDim, GpModel.fromJson(gpConfig))
       } catch {
-        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}")
+        case x:Throwable => throw new Exception(s"could not load gp model for ${gpConfig.responseDim}", x)
       }
     }
 

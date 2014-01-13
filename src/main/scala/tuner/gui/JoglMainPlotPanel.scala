@@ -627,7 +627,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     gl.glBindTexture(GL.GL_TEXTURE_2D, valueTex.get)
 
     gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
-                          1, false, trans.toArray, 0)
+                          1, false, trans.toOpenGl, 0)
 
     gl.glBegin(GL2.GL_QUADS)
     gl.glVertex3f(0f, 0f, 0f)

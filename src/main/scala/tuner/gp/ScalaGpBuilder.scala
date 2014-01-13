@@ -125,7 +125,7 @@ object ScalaGpBuilder extends GpBuilder {
     // If the determinant is 0 then try adding a little bit to the diagonal
     if(rDet == 0.0) {
       //throw new tuner.error.SingularMatrixException(r)
-      r += 1e-3 * DenseMatrix.eye[Double](r.rows)
+      r += DenseMatrix.eye[Double](r.rows) :* 1e-3
       rDet = breeze.linalg.det(r)
     }
     if(rDet == 0.0) {

@@ -69,7 +69,7 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
     gl.glClearColor(0f, 0f, 0f, 1f)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
 
-    gl.glUniformMatrix4fv(uniformId("trans"), 1, false, trans.toArray, 0)
+    gl.glUniformMatrix4fv(uniformId("trans"), 1, false, trans.toOpenGl, 0)
 
     es2.glBindBuffer(GL.GL_ARRAY_BUFFER, pointVbo)
     es2.glVertexAttribPointer(attribId("dataPt"), 2, GL.GL_FLOAT, false,

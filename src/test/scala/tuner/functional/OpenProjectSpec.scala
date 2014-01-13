@@ -13,7 +13,7 @@ class OpenProjectSpec extends FeatureSpec with GivenWhenThen {
 
   feature("Opening a viewable project shouldn't cause any errors") {
     Given("A project in a viewable state")
-    val projPath = resource("/test_viewable_proj")
+    val projPath = resource("/3d_viewable.proj")
     val proj = Project.fromFile(projPath)
 
     When("The project is opened")

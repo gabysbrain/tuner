@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.prefuse" % "prefuse" % "beta-20060220",
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scalatest" %% "scalatest" % "2.0.M8" % "test",
-  "org.scalanlp" %% "breeze-math" % "0.4",
+  "org.scalanlp" %% "breeze" % "0.5.2",
   "com.typesafe.akka" %% "akka-actor" % "2.2.1"
 )
 

@@ -37,7 +37,7 @@ object AxisTicks {
     if(n < 2) {
       Nil
     } else {
-      println(s"ticks for ${min} ${max} ${n}")
+      //println(s"ticks for ${min} ${max} ${n}")
       val labelInfo = labeler.search(min, max, n)
       labelInfo.toList.asScala.map {_.toFloat} toList
     }

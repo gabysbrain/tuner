@@ -6,16 +6,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-import tuner.util.Prefs
 import tuner.util.ResourceLoader
 
 object Config {
-  
-  //def recentProjects : Set[String] = Prefs.list("recentProjects") toSet
-  def recentProjects:Set[String] = Set()
-  def recentProjects_=(rp:Set[String]) = {
-    Prefs.saveList("recentProjects", rp.toList)
-  }
   
   var testingMode = false
 
