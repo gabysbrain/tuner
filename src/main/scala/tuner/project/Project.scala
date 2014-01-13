@@ -437,7 +437,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
 
   def next = {
     save()
-    Project.fromFile(path).asInstanceOf[RunningSamples]
+    Project.fromFile(path)
   }
 
   def statusString = "Ok"
