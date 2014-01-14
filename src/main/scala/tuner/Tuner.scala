@@ -82,10 +82,8 @@ object Tuner extends SimpleSwingApplication {
 
   reactions += {
     case WindowClosed(tw:tuner.gui.Window) =>
-      println("here 2")
       handleWindowClose(tw)
     case WindowClosing(tw:tuner.gui.Window) => 
-      println("here closing")
       handleWindowClose(tw)
   }
 
