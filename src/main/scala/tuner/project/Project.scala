@@ -277,13 +277,13 @@ class RunningSamples(config:ProjConfig, val path:String,
     Project.fromFile(path)
   }
 
-  def start = {
+  def start = if(!running) {
     // Publish one of these right at the beginning just to get things going
     publish(Progress(currentTime, totalTime, statusString, true))
     running = true
 
     try {
-      while(!newSamples.isEmpty) {
+      while(!newSamples.isEmpty && running) {
         val subsamples = newSamples.subsample(0, Config.samplingRowsPerReq)
   
         val newDesign = SampleRunner.runSamples(subsamples, scriptPath, 
@@ -311,19 +311,26 @@ class RunningSamples(config:ProjConfig, val path:String,
       running = false
     }
   }
+
+  def stop = if(running) {
+    running = false
+  }
 }
 
 class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
     extends InProgress(config) with Saved {
   
   var buildInBackground:Boolean = config.buildInBackground
+  var running = false
   
   //val gps = responseFields.map(fld => (fld, loadGpModel(gp, fld))).toMap
 
   def statusString = "Building GP"
 
-  def start = {
+  def start = if(!running) {
     publish(Progress(-1, -1, statusString, true))
+    running = true
+
     // Build the gp models
     val designSiteFile = Path.join(path, Config.designFilename)
     //val gp = new RGpBuilder
@@ -331,16 +338,26 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
 
     val newModels = buildFields.map({fld => 
+      if(running) {
       println("building model for " + fld)
       val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
       if(!m.validateModel._1) {
         publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
       }
       (fld, m)
+      } else {
+        (null, null)
+      }
     }).toMap
-    config.gpModels = newModels.values.map(_.toJson).toList
-    save()
+    if(running) {
+      config.gpModels = newModels.values.map(_.toJson).toList
+      save()
+    }
     publish(ProgressComplete)
+  }
+
+  def stop = if(running) {
+    running = false
   }
 
   def next = {
