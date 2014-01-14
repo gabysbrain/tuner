@@ -20,7 +20,7 @@ object SampleRunner {
       val sampleFile = File.createTempFile("tuner_samples", ".csv")
       val designFile = File.createTempFile("tuner_design", ".csv")
 
-      // We should validate the script path and dir somehow...
+      // TODO We should validate the script path and dir somehow...
       val scriptArgs = scriptPath.split(" ").toList ++
                        List(sampleFile.getAbsolutePath, 
                             designFile.getAbsolutePath)

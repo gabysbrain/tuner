@@ -15,9 +15,16 @@ class ScalaGpBuilderSpec extends WordSpec {
       val params = List("x1", "x2", "x3")
       val resp = "y1"
 
+      val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
+
       "return a valid model" in {
-        val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
         gp.validateModel._1 should be (true)
+      }
+
+      "save a model that can be reloaded" in {
+        val gpJson = gp.toJson
+        val gp2 = tuner.gp.GpModel.fromJson(gpJson) 
+        //gp2 should equal (gp)
       }
     }
 

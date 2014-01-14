@@ -81,24 +81,10 @@ object Tuner extends SimpleSwingApplication {
   var openWindows:Set[tuner.gui.Window] = Set()
 
   reactions += {
+    case WindowClosed(tw:tuner.gui.Window) =>
+      handleWindowClose(tw)
     case WindowClosing(tw:tuner.gui.Window) => 
-      openWindows -= tw
-      WindowMenu.updateWindows
-      deafTo(tw)
-
-      if(!Config.testingMode) {
-        // If a project is moving to another stage then we 
-        // should automatically open that window
-        (tw.project, tw.project.next) match {
-          case (p:Viewable, pn:Viewable) =>
-          case _ => Tuner.openProject(tw.project.next)
-        }
-  
-        // If there are no more open windows open the project chooser again
-        if(openWindows.isEmpty) ProjectChooser.open
-      } else {
-        System.exit(0)
-      }
+      handleWindowClose(tw)
   }
 
   def top = { 
@@ -191,6 +177,28 @@ object Tuner extends SimpleSwingApplication {
 
     openWindows -= tunerWin
     //maybeShowProjectWindow
+  }
+
+  protected def handleWindowClose(tw:tuner.gui.Window) = {
+    openWindows -= tw
+    WindowMenu.updateWindows
+    deafTo(tw)
+
+    if(!Config.testingMode) {
+      // If a project is moving to another stage then we 
+      // should automatically open that window
+      (tw.project, tw.project.next) match {
+        case (p:Viewable, pn:Viewable) =>
+        case (p:RunningSamples, pn:RunningSamples) =>
+        case (p:BuildingGp, pn:BuildingGp) =>
+        case _ => Tuner.openProject(tw.project.next)
+      }
+
+      // If there are no more open windows open the project chooser again
+      if(openWindows.isEmpty) ProjectChooser.open
+    } else {
+      System.exit(0)
+    }
   }
 }
 

@@ -23,6 +23,7 @@ class GpModelSpec extends WordSpec {
 
       "load the model without errors" in {
         val proj = json.extract[GpSpecification]
+        GpModel.fromJson(proj)
       }
     }
 
@@ -32,6 +33,24 @@ class GpModelSpec extends WordSpec {
 
       "load the model without errors" in {
         val proj = json.extract[GpSpecification]
+        GpModel.fromJson(proj)
+      }
+
+      "create json that is reloadable" in {
+        val gp = GpModel.fromJson(json.extract[GpSpecification])
+        val gpJson = gp.toJson
+        GpModel.fromJson(json.extract[GpSpecification]) should equal (gp)
+      }
+    }
+
+    "2 models are loaded from the same dataset they" must {
+      val jsonPath = resource("/gp/3d_1.json")
+      val json = parse(Source.fromFile(jsonPath).mkString)
+
+      "equal each other" in {
+        val gp1 = GpModel.fromJson(json.extract[GpSpecification])
+        val gp2 = GpModel.fromJson(json.extract[GpSpecification])
+        gp1 should equal (gp2)
       }
     }
 
@@ -41,6 +60,7 @@ class GpModelSpec extends WordSpec {
 
       "load the model without errors" in {
         val proj = json.extract[GpSpecification]
+        GpModel.fromJson(proj)
       }
     }
   }
