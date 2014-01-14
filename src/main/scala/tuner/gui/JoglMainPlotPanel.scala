@@ -311,7 +311,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                       texWidth, texHeight, 0, 
                       GL.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
       //gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
-      println("tex: " + texWidth + " " + texHeight)
+      //println("tex: " + texWidth + " " + texHeight)
     }
   }
 
