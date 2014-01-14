@@ -6,6 +6,10 @@ import tuner.Table
 
 object Histogram {
   private def countData(values:Iterable[Float], numBreaks:Int) = {
+    // Make sure we have enough values for the histogram
+    if(values.isEmpty || values.tail.isEmpty) {
+      throw new IllegalArgumentException("values must have length > 1")
+    }
     // First figure out the breaks
     val breaks = new collection.mutable.MutableList[Float]
     val min = values.min
