@@ -128,8 +128,8 @@ class Table {
     }
   }
 
-  def values(col:String) : SortedSet[Float] = {
-    new TreeSet[Float] ++ data.map({_.get(col)}).flatten
+  def values(col:String) : Seq[Float] = {
+    data.map({_.get(col)}).flatten.sorted
   }
 
   def to2dMatrix(rowField:String, colField:String, valField:String) : Grid2D = {

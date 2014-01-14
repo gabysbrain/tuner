@@ -109,9 +109,13 @@ class GpModel(val thetas:DenseVector[Double],
       thetas.toArray.toList, 
       alphas.toArray.toList, 
       mean, sig2,
-      (0 until design.rows).map {r => design(r, ::).data.toList} toList,
+      (0 until design.rows).map {r => 
+        (0 until design.cols).map {c => design(r, c)} toList
+      } toList,
       responses.toArray.toList, 
-      (0 until rInverse.rows).map {r => rInverse(r, ::).data.toList} toList)
+      (0 until rInverse.rows).map {r => 
+        (0 until rInverse.cols).map {c => rInverse(r, c)} toList
+      } toList)
   }
 
   def maxGain(range:DimRanges):Float = {
@@ -304,6 +308,20 @@ class GpModel(val thetas:DenseVector[Double],
     val (preds, vars) = crossValidate
     val sds = (responses - preds) / vars
     (sds.map {x => x > -3.0 && x < 3.0} all, sds)
+  }
+
+  override def equals(o:Any) : Boolean = o match {
+    case that:GpModel => this.thetas == that.thetas &&
+                         this.alphas == that.alphas &&
+                         this.mean == that.mean &&
+                         this.sig2 == that.sig2 &&
+                         this.design == that.design &&
+                         this.responses == that.responses
+                         this.rInverse == that.rInverse &&
+                         this.dims == that.dims &&
+                         this.respDim == that.respDim &&
+                         this.errDim == that.errDim
+    case _ => false
   }
 
 }

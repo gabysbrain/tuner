@@ -6,16 +6,26 @@ import tuner.Table
 
 object Histogram {
   private def countData(values:Iterable[Float], numBreaks:Int) = {
+    // Make sure we have enough values for the histogram
+    if(values.isEmpty || values.tail.isEmpty) {
+      throw new IllegalArgumentException("values must have length > 1")
+    }
     // First figure out the breaks
     val breaks = new collection.mutable.MutableList[Float]
     val min = values.min
     val max = values.max
-    val step = (max-min) / (numBreaks+1).toFloat
-    var cur = min + step
-    breaks += min
-    while(cur <= max) {
-      breaks += cur
-      cur += step
+    if(min == max) {
+      // Fake a single bucket
+      breaks += min
+      breaks += min + 1e-9f
+    } else {
+      val step = (max-min) / (numBreaks+1).toFloat
+      var cur = min + step
+      breaks += min
+      while(cur <= max) {
+        breaks += cur
+        cur += step
+      }
     }
 
     // Now figure out the counts
