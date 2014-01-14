@@ -189,6 +189,8 @@ object Tuner extends SimpleSwingApplication {
       // should automatically open that window
       (tw.project, tw.project.next) match {
         case (p:Viewable, pn:Viewable) =>
+        case (p:RunningSamples, pn:RunningSamples) =>
+        case (p:BuildingGp, pn:BuildingGp) =>
         case _ => Tuner.openProject(tw.project.next)
       }
 

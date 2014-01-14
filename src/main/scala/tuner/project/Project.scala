@@ -273,7 +273,8 @@ class RunningSamples(config:ProjConfig, val path:String,
 
   def next = {
     save()
-    Project.fromFile(path).asInstanceOf[BuildingGp]
+    //Project.fromFile(path).asInstanceOf[BuildingGp]
+    Project.fromFile(path)
   }
 
   def start = {
@@ -383,7 +384,8 @@ class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
 
   def next = {
     save
-    Project.fromFile(path).asInstanceOf[Viewable]
+    //Project.fromFile(path).asInstanceOf[Viewable]
+    Project.fromFile(path)
   }
 
 }
