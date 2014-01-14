@@ -295,6 +295,7 @@ class RunningSamples(config:ProjConfig, val path:String,
   
         currentTime += subsamples.numRows
         //println("ct " + currentTime)
+        //save()
         publish(Progress(currentTime, totalTime, statusString, true))
       }
 
