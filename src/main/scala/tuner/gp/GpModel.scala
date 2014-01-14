@@ -306,4 +306,18 @@ class GpModel(val thetas:DenseVector[Double],
     (sds.map {x => x > -3.0 && x < 3.0} all, sds)
   }
 
+  override def equals(o:Any) : Boolean = o match {
+    case that:GpModel => this.thetas == that.thetas &&
+                         this.alphas == that.alphas &&
+                         this.mean == that.mean &&
+                         this.sig2 == that.sig2 &&
+                         this.design == that.design &&
+                         this.responses == that.responses
+                         this.rInverse == that.rInverse &&
+                         this.dims == that.dims &&
+                         this.respDim == that.respDim &&
+                         this.errDim == that.errDim
+    case _ => false
+  }
+
 }

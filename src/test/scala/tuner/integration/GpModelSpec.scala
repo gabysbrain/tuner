@@ -32,6 +32,15 @@ class GpModelSpec extends WordSpec {
 
       "load the model without errors" in {
         val proj = json.extract[GpSpecification]
+
+    "2 models are loaded from the same dataset they" must {
+      val jsonPath = resource("/gp/3d_1.json")
+      val json = parse(Source.fromFile(jsonPath).mkString)
+
+      "equal each other" in {
+        val gp1 = GpModel.fromJson(json.extract[GpSpecification])
+        val gp2 = GpModel.fromJson(json.extract[GpSpecification])
+        gp1 should equal (gp2)
       }
     }
 
