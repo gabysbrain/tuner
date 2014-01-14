@@ -16,16 +16,10 @@ Tuner requires Java (version 6 and 7 tested).
 
 A tar.gz file of the Tuner package is located 
 [here](https://github.com/gabysbrain/tuner/releases/download/v0.10.0/Tuner-0.10.0.tar.gz).
-Download this and unpack it.  There is a `Makefile` within the archive that 
-will install Tuner and its associated files to `~/local`.
+Download this and unpack it.
 
     tar xzf Tuner-0.10.0.tar.gz
     cd Tuner-0.10.0
-    make install
-
-If you would like to install Tuner somewhere else then you can run
-
-    make install PREFIX="/usr/local"
 
 ## Usage
 
