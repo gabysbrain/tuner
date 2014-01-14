@@ -117,7 +117,7 @@ object Project {
       new Viewable(config, path, designSites)
     }
 
-    println(proj)
+    //println(proj)
     proj
   }
 
