@@ -14,12 +14,18 @@ object Histogram {
     val breaks = new collection.mutable.MutableList[Float]
     val min = values.min
     val max = values.max
-    val step = (max-min) / (numBreaks+1).toFloat
-    var cur = min + step
-    breaks += min
-    while(cur <= max) {
-      breaks += cur
-      cur += step
+    if(min == max) {
+      // Fake a single bucket
+      breaks += min
+      breaks += min + 1e-9f
+    } else {
+      val step = (max-min) / (numBreaks+1).toFloat
+      var cur = min + step
+      breaks += min
+      while(cur <= max) {
+        breaks += cur
+        cur += step
+      }
     }
 
     // Now figure out the counts
