@@ -15,7 +15,7 @@ Tuner requires Java (version 6 and 7 tested).
 ## Installation
 
 A tar.gz file of the Tuner package is located 
-[here](https://github.com/gabysbrain/tuner/releases/download/v0.10.0/Tuner-0.10.0.tar.gz).
+[here](https://github.com/gabysbrain/tuner/releases/latest).
 Download this and unpack it.
 
     tar xzf Tuner-0.10.0.tar.gz
