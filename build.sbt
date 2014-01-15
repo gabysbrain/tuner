@@ -8,10 +8,10 @@ name := "Tuner"
 
 version := "0.10.1"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
-  "org.bitbucket.gabysbrain" %% "datescala" % "0.9",
+  "com.tomtorsneyweir" %% "datescala" % "0.9",
   "net.liftweb" %% "lift-json" % "2.5",
   "tablelayout" % "TableLayout" % "20050920",
   "org.prefuse" % "prefuse" % "beta-20060220",
