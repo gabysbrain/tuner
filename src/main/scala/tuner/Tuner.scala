@@ -2,7 +2,6 @@ package tuner
 
 import scala.swing._
 import scala.swing.Dialog
-import scala.swing.FileChooser
 import scala.swing.KeyStroke._
 import scala.swing.event._
 import scala.io.Source
@@ -16,6 +15,7 @@ import java.io.File
 import java.io.FileWriter
 
 import tuner.error.ProjectLoadException
+import tuner.gui.FileChooser
 import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectViewer
@@ -98,13 +98,8 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def openProject() : Unit = {
-    val fc = new FileChooser {
-      title = "Select Project"
-      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
-    }
-    fc.showOpenDialog(null) match {
-      case FileChooser.Result.Approve => openProject(fc.selectedFile)
-      case _ =>
+    FileChooser.loadDirectory("Select project") foreach {projDir => 
+      openProject(new java.io.File(projDir))
     }
   }
 
@@ -152,15 +147,8 @@ object Tuner extends SimpleSwingApplication {
 
   def saveProjectAs(project:Project) : Unit = {
     println("here")
-    val fc = new FileChooser {
-      title = "Select Save Path"
-      fileSelectionMode = FileChooser.SelectionMode.DirectoriesOnly
-    }
-    fc.showOpenDialog(null) match {
-      case FileChooser.Result.Approve =>
-        val path = fc.selectedFile.getAbsolutePath
-        project.save(path)
-      case _ =>
+    FileChooser.loadDirectory("Select save path") foreach {projDir => 
+      project.save(projDir)
     }
   }
 
