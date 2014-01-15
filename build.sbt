@@ -8,7 +8,7 @@ name := "Tuner"
 
 version := "0.10.1"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
   "com.tomtorsneyweir" %% "datescala" % "0.9",
