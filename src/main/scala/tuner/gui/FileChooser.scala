@@ -4,6 +4,9 @@ import java.awt.FileDialog
 
 object FileChooser {
 
+  // Making this once preserves state between calls
+  lazy val dialog = new scala.swing.FileChooser
+
   def saveFile(title:String = "Save") : Option[String] = {
     System.setProperty("apple.awt.fileDialogForDirectories", "false")
     dialog.title = title
