@@ -34,7 +34,7 @@ javacOptions := Seq("-Xlint:deprecation")
 // Packaging settings
 packMain := Map("tuner" -> "tuner.Tuner")
 
-packJvmOpts := Map("tuner" -> Seq("-Xmx6G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"))
+packJvmOpts := Map("tuner" -> Seq("-Xmx1G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"))
 
 javaOptions := packJvmOpts.value("tuner")
 
