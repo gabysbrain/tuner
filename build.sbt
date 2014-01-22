@@ -6,7 +6,7 @@ seq(Revolver.settings: _*)
 
 name := "Tuner"
 
-version := "0.10.1"
+version := "0.10.2"
 
 scalaVersion := "2.10.3"
 

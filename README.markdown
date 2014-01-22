@@ -18,8 +18,8 @@ A tar.gz file of the Tuner package is located
 [here](https://github.com/gabysbrain/tuner/releases/latest).
 Download this and unpack it.
 
-    tar xzf Tuner-0.10.1.tar.gz
-    cd Tuner-0.10.1
+    tar xzf Tuner-0.10.2.tar.gz
+    cd Tuner-0.10.2
 
 ## Usage
 
