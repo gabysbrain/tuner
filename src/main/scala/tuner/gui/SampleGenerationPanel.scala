@@ -1,6 +1,6 @@
 package tuner.gui
 
-import org.bitbucket.gabysbrain.datescala.swing.TimeField
+import com.tomtorsneyweir.datescala.swing.TimeField
 
 import scala.swing.ComboBox
 import scala.swing.Label

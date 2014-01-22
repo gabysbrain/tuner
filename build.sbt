@@ -6,12 +6,12 @@ seq(Revolver.settings: _*)
 
 name := "Tuner"
 
-version := "0.10.1"
+version := "0.10.2"
 
-scalaVersion := "2.10.2"
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
-  "org.bitbucket.gabysbrain" %% "datescala" % "0.9",
+  "com.tomtorsneyweir" %% "datescala" % "0.9",
   "net.liftweb" %% "lift-json" % "2.5",
   "tablelayout" % "TableLayout" % "20050920",
   "org.prefuse" % "prefuse" % "beta-20060220",
@@ -34,7 +34,7 @@ javacOptions := Seq("-Xlint:deprecation")
 // Packaging settings
 packMain := Map("tuner" -> "tuner.Tuner")
 
-packJvmOpts := Map("tuner" -> Seq("-Xmx6G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"))
+packJvmOpts := Map("tuner" -> Seq("-Xmx1G", "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"))
 
 javaOptions := packJvmOpts.value("tuner")
 
