@@ -106,7 +106,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
   reactions += {
     case MouseClicked(_, pt, _, _, _) => 
-      println("here")
+      //println("here")
       handleBarMouse(pt.x, pt.y)
       handlePlotMouse(pt.x, pt.y)
     case MouseDragged(_, pt, _) =>
@@ -205,6 +205,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   override def reshape(ggl2:GL2, x:Int, y:Int, width:Int, height:Int) = {
     val gl2 = new DebugGL2(ggl2)
 
+    //println(x + " " + y + " " + width + " " + height)
     screenWidth = width
     screenHeight = height
 
@@ -474,6 +475,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
                              response:String) = {
 
     val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
+    //println(texTrans)
+    //println("===")
+    //println(plotTrans)
 
     // First draw to the texture
     project.viewInfo.currentVis match {
