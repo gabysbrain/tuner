@@ -316,6 +316,11 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
   }
 
+  def updatePlotTransforms = {
+    plotTransforms = computePlotTransforms(sliceBounds, 
+                                           screenWidth, screenHeight)
+  }
+
   /**
    * The plots themselves will be drawn in data space so these 
    * move everything into the proper coordinate system

@@ -110,6 +110,7 @@ class ProjectViewer(project:Viewable) extends Window(project) {
       project.history.add(sliceInfo)
       controlPanel.historyTab.updateTable
     case ValueChanged(`controlsTab`) =>
+      mainPlotPanel.updatePlotTransforms
       mainPlotPanel.redraw
     case ValueChanged(`localTab`) =>
       mainPlotPanel.redraw
