@@ -352,7 +352,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformations
-    val ttlProj = projectionMatrix dot dataTrans dot dataScale
+    val ttlProj = projectionMatrix dot dataScale dot dataTrans 
     val ttlPlot = projectionMatrix dot plotTrans dot plotScale
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
