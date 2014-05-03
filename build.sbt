@@ -18,7 +18,9 @@ libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scalatest" %% "scalatest" % "2.0.M8" % "test",
   "org.scalanlp" %% "breeze" % "0.5.2",
-  "com.typesafe.akka" %% "akka-actor" % "2.2.1"
+  "com.typesafe.akka" %% "akka-actor" % "2.2.1",
+  "org.jogamp.gluegen" % "gluegen-rt-main" % "2.0.2",
+  "org.jogamp.jogl" % "jogl-all-main" % "2.0.2"
 )
 
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"

@@ -2,7 +2,7 @@ package tuner.gui.opengl
 
 import breeze.linalg.{DenseVector, DenseMatrix}
 
-import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
+import javax.media.opengl.{GL,GL2,GL2ES2,GL2ES3,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
 
 import tuner.Config
@@ -64,7 +64,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
     // Actually do the draw
     gl.glClearColor(baseValue.toFloat, 0f, 0f, 1f)
     gl.glClear(GL.GL_COLOR_BUFFER_BIT)
-    gl.glBegin(GL2.GL_QUADS)
+    gl.glBegin(GL2GL3.GL_QUADS)
     for(r <- 0 until points.rows) {
       // Draw all the point data
       List((-1f,1f),(-1f,-1f),(1f,-1f),(1f,1f)).foreach{gpt =>
@@ -178,7 +178,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
 
     // Make sure the framebuffer is ok
     gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) match {
-      case GL2GL3.GL_FRAMEBUFFER_UNDEFINED => 
+      case GL2ES3.GL_FRAMEBUFFER_UNDEFINED => 
         throw new Exception("framebuffer undefined")
       case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT => 
         throw new Exception("incomplete attachment")
@@ -190,7 +190,7 @@ class ValueShader(gl:GL2, numDims:Int, fragment:String,
         throw new Exception("incomplete read buffer")
       case GL.GL_FRAMEBUFFER_UNSUPPORTED => 
         throw new Exception("unsupported buffer")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
+      case GL2ES3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
         throw new Exception("incomplete multisample")
       case GL.GL_FRAMEBUFFER_COMPLETE =>
         // all is well

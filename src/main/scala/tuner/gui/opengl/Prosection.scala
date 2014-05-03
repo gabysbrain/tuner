@@ -2,7 +2,7 @@ package tuner.gui.opengl
 
 import breeze.linalg.{DenseVector, DenseMatrix}
 
-import javax.media.opengl.{GL,GL2,GL2ES2,GL2GL3}
+import javax.media.opengl.{GL,GL2,GL2ES2,GL2ES3,GL2GL3}
 import javax.media.opengl.GLAutoDrawable
 
 import tuner.Config
@@ -136,7 +136,7 @@ class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVe
 
     // Make sure the framebuffer is ok
     gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) match {
-      case GL2GL3.GL_FRAMEBUFFER_UNDEFINED => 
+      case GL2ES3.GL_FRAMEBUFFER_UNDEFINED => 
         throw new Exception("framebuffer undefined")
       case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT => 
         throw new Exception("incomplete attachment")
@@ -148,7 +148,7 @@ class Prosection(gl:GL2, numDims:Int, points:DenseMatrix[Double], values:DenseVe
         throw new Exception("incomplete read buffer")
       case GL.GL_FRAMEBUFFER_UNSUPPORTED => 
         throw new Exception("unsupported buffer")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
+      case GL2ES3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
         throw new Exception("incomplete multisample")
       case GL.GL_FRAMEBUFFER_COMPLETE =>
         // all is well

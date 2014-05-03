@@ -41,7 +41,7 @@ class OpenGLAxis(val gl2:GL2, tr:TextRenderer) {
   def add(x:Float, y:Float) = points.append(x, y)
 
   def begin = {
-    val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
+    val es2 = gl2.getGL2ES2
 
     if(tickVBO(0) == -1) {
       es2.glGenBuffers(1, tickVBO, 0)
@@ -55,7 +55,7 @@ class OpenGLAxis(val gl2:GL2, tr:TextRenderer) {
   }
 
   def end(screenW:Int, screenH:Int) = {
-    val es2 = new javax.media.opengl.DebugGL2ES2(gl2.getGL2ES2)
+    val es2 = gl2.getGL2ES2
 
     // Load the data into our buffer
     es2.glBindBuffer(GL.GL_ARRAY_BUFFER, tickVBO(0))

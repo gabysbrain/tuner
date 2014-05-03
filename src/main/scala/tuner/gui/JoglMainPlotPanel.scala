@@ -638,7 +638,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
                           1, false, trans.toOpenGl, 0)
 
-    gl.glBegin(GL2.GL_QUADS)
+    gl.glBegin(GL2GL3.GL_QUADS)
     gl.glVertex3f(0f, 0f, 0f)
     gl.glVertex3f(1f, 0f, 0f)
     gl.glVertex3f(1f, 1f, 0f)
