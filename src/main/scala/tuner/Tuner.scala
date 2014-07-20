@@ -47,6 +47,10 @@ object Tuner extends SimpleSwingApplication {
   })
 
   private def savePrefs(p:TunerPrefs) = {
+    // Make sure the parent directory exists
+    val parentDir = new File(new File(prefsPath).getParentFile.getAbsolutePath)
+    parentDir.mkdirs
+
     val outFile = new FileWriter(prefsPath)
     outFile.write(pretty(render(decompose(p))))
     outFile.close
