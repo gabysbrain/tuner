@@ -29,7 +29,10 @@ libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
 
-scalacOptions := Seq("-deprecation", "-unchecked")
+scalacOptions in (Compile, doc) := Seq("-deprecation", "-unchecked",
+                                       "-groups", "-implicits")
+
+autoAPIMappings := true
 
 javacOptions := Seq("-Xlint:deprecation")
 
