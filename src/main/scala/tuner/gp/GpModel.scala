@@ -284,7 +284,7 @@ class GpModel(val thetas:DenseVector[Double],
     val predResps = DenseVector.zeros[Double](design.rows)
     val predErrs = DenseVector.zeros[Double](design.rows)
 
-    val origR = breeze.linalg.inv(rInverse)
+    //val origR = breeze.linalg.inv(rInverse)
     for(row <- 0 until design.rows) {
       val testSample = design(row, ::).toDenseVector
       val testResp = responses(row)
@@ -292,8 +292,10 @@ class GpModel(val thetas:DenseVector[Double],
       // Extract all the new model building bits
       val newModelRows = (0 until design.rows).filterNot(_ == row)
       val newDesign = design(newModelRows, ::).toDenseMatrix
-      val newRInv = breeze.linalg.inv(origR(newModelRows, newModelRows))
+      //val newRInv = breeze.linalg.inv(origR(newModelRows, newModelRows))
       val newResps = responses(newModelRows).toDenseVector
+      val newRInv = breeze.linalg.inv(
+        ScalaGpBuilder.corrMatrix(newDesign, thetas, alphas))
       val newGp = new GpModel(thetas, alphas, 
                               mean, sig2,
                               newDesign, newResps, 
@@ -301,6 +303,7 @@ class GpModel(val thetas:DenseVector[Double],
                               dims, respDim, errDim)
 
       val (predResp, predErr) = newGp.estimatePoint(testSample)
+      //println("pe: " + predErr)
       predResps.update(row, predResp)
       predErrs.update(row, predErr)
     }
@@ -310,8 +313,13 @@ class GpModel(val thetas:DenseVector[Double],
 
   def validateModel : (Boolean, Vector[Double]) = {
     val (preds, vars) = crossValidate
-    val sds = (responses - preds) / vars
-    (sds.map {x => x > -3.0 && x < 3.0} all, sds)
+    //println("preds resp: " + preds)
+    println("pred err: " + vars)
+    //println("pred dist: " + (responses-preds))
+    val standardResid = (responses - preds) / vars
+    // This +- 3 comes from Jones:1998
+    println("CV results: " + standardResid)
+    (standardResid.map {x => x > -3.0 && x < 3.0} all, standardResid)
   }
 
   override def equals(o:Any) : Boolean = o match {
