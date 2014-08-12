@@ -11,7 +11,7 @@ import scala.swing.event.ComponentEvent
 import tuner.gui.event.ControlTableRowAdded
 import tuner.gui.event.ControlTableRowChanged
 
-abstract class ControlTable(header0:List[String]) 
+abstract class ControlTable(header0:List[String], initialRows:Int=1) 
     extends TablePanel(header0.length+1, 1) {
 
   def controlRow : List[Component]
@@ -24,7 +24,7 @@ abstract class ControlTable(header0:List[String])
   }
 
   // now set up the first row
-  addControlRow
+  1 to initialRows foreach {i => addControlRow}
 
   def addControlRow = {
     val controls = controlRow

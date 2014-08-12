@@ -41,7 +41,7 @@ class NewProjectWindow extends Frame {
   val nextButton = new Button("Next")
   val cancelButton = new Button("Cancel")
 
-  val inputDimTable = new ControlTable(List("Name", "Lower", "Upper")) {
+  val inputDimTable = new ControlTable(List("Name", "Lower", "Upper"), 3) {
     def controlRow = List(
       new TextField,
       new TextField,
