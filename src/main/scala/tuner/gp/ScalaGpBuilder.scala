@@ -37,10 +37,15 @@ object ScalaGpBuilder extends GpBuilder {
     val resps = DenseVector(data map {tpl => tpl(responseField).toDouble} toArray)
 
     val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)
+    println("here")
     new GpModel(thetas, alphas, mean, sig2, locs, resps, rInv, 
                 paramFields, responseField, errorField)
   }
 
+  /**
+    * Run an optimization to find the GP parameters given the design
+    * samples and sampled responses.
+    */
   def findParams(samples:DenseMatrix[Double], responses:DenseVector[Double], 
                  retries:Int = 5) 
       : (Double, Double, Double, DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
@@ -70,14 +75,9 @@ object ScalaGpBuilder extends GpBuilder {
         //val ll = optimFunc(pt)
         (optimFunc(pt), pt)
       })
-        /*
-        println("optimization #" + i 
-             + " with log likelihood " + ll 
-             + " at point " + pt.map(math.exp(_))
-             + " starting at " + start.map(math.exp(_)))
-        */
     }
 
+    //println("here2")
     val (minLL, minPt) = results.map {r => 
       r.getOrElse(Double.MaxValue, DenseVector.zeros[Double](samples.cols))
     } minBy {_._1}

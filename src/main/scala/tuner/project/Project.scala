@@ -341,6 +341,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
       if(running) {
       println("building model for " + fld)
       val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
+      println("validating model for " + fld)
       if(!m.validateModel._1) {
         publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
       }
@@ -349,10 +350,12 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
         (null, null)
       }
     }).toMap
+    //println("here")
     if(running) {
       config.gpModels = newModels.values.map(_.toJson).toList
       save()
     }
+    //println("here2")
     publish(ProgressComplete)
   }
 
