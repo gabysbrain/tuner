@@ -11,6 +11,7 @@ import akka.actor.{Actor, ActorRef}
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
+import scala.util.{Try,Success,Failure}
 
 import scala.swing.Publisher
 
@@ -340,15 +341,24 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     val newModels = buildFields.map({fld => 
       if(running) {
       println("building model for " + fld)
-      val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
-      println("validating model for " + fld)
-      if(!m.validateModel._1) {
-        publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
-      }
-      (fld, m)
-      } else {
-        (null, null)
-      }
+      val tm = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
+      tm match {
+        case Success(m) =>
+          println("validating model for " + fld)
+          val (cvSuccess, cvStandardResid) = m.validateModel
+          if(!cvSuccess) {
+            //val stringSds = cvSD.mkString("{", ", ", "}")
+            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (sd > 3)."))
+          }
+          (fld, m)
+         case Failure(ex) =>
+           publish(Progress(0, 0, s"output ${fld}: ${ex.getMessage}", false))
+           running = false
+           (null, null)
+       }
+     } else {
+       (null, null)
+     }
     }).toMap
     //println("here")
     if(running) {

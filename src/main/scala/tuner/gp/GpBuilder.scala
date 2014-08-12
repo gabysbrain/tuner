@@ -1,5 +1,7 @@
 package tuner.gp
 
+import scala.util.Try
+
 import tuner.Table
 
 trait GpBuilder {
@@ -7,12 +9,12 @@ trait GpBuilder {
   def buildModel(designFile:String,
                  paramFields:List[String], 
                  responseField:String, 
-                 errorField:String) : GpModel
+                 errorField:String) : Try[GpModel]
 
   def buildModel(design:Table,
                  paramFields:List[String], 
                  responseField:String, 
-                 errorField:String) : GpModel
+                 errorField:String) : Try[GpModel]
 
 
   // Splits a file into its directory and filename components

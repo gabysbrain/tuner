@@ -9,7 +9,7 @@ import scala.util.Try
 import tuner.Table
 
 /**
- * Build the Gaussian Process model using the numberz package
+ * Build the Gaussian Process model using the breeze package
  */
 object ScalaGpBuilder extends GpBuilder {
 
@@ -17,7 +17,7 @@ object ScalaGpBuilder extends GpBuilder {
   def buildModel(dataFile:String,
                  paramFields:List[String],
                  responseField:String,
-                 errorField:String) : GpModel = {
+                 errorField:String) : Try[GpModel] = {
     buildModel(Table.fromCsv(dataFile), 
                paramFields, responseField, errorField)
   }
@@ -25,7 +25,7 @@ object ScalaGpBuilder extends GpBuilder {
   def buildModel(data:Table,
                  paramFields:List[String],
                  responseField:String,
-                 errorField:String) : GpModel = {
+                 errorField:String) : Try[GpModel] = {
 
     val locs = DenseMatrix.zeros[Double](data.numRows, paramFields.length)
     (0 until data.numRows).foreach { r =>
@@ -36,10 +36,12 @@ object ScalaGpBuilder extends GpBuilder {
     }
     val resps = DenseVector(data map {tpl => tpl(responseField).toDouble} toArray)
 
-    val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)
-    println("here")
-    new GpModel(thetas, alphas, mean, sig2, locs, resps, rInv, 
-                paramFields, responseField, errorField)
+    Try({
+      val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)
+      //println("here")
+      new GpModel(thetas, alphas, mean, sig2, locs, resps, rInv, 
+                  paramFields, responseField, errorField)
+    })
   }
 
   /**
@@ -69,22 +71,27 @@ object ScalaGpBuilder extends GpBuilder {
       //val optim = new breeze.optimize.StochasticGradientDescent.SimpleSGD[DenseVector[Double]]
       //val optim = new breeze.optimize.OWLQN[DenseVector[Double]](maxIter=100, m=3)
       val start = DenseVector.rand(samples.cols)
-      //println("start: " + start)
+      println("running optimization...")
+      println("start pos: " + start)
       Try({
         val pt = optim.minimize(f, start)
         //val ll = optimFunc(pt)
         (optimFunc(pt), pt)
       })
     }
+    println("finished with optimizations")
 
     //println("here2")
     val (minLL, minPt) = results.map {r => 
       r.getOrElse(Double.MaxValue, DenseVector.zeros[Double](samples.cols))
     } minBy {_._1}
+    //println("here3")
 
     // If there's no result from any of the attempts 
     // then the calibration has failed
     if(minLL == Double.MaxValue) {
+
+      //println("here4")
       throw new tuner.error.GpBuildException("could not find suitable parameters.  This is probably due to a singlar matrix")
     } else {
       /*
@@ -94,6 +101,7 @@ object ScalaGpBuilder extends GpBuilder {
       */
       
       // One more time to get the final versions of the values
+      println("final value computation")
       val thetas = minPt map {math.exp(_)}
       val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
                                                thetas, alphas)
