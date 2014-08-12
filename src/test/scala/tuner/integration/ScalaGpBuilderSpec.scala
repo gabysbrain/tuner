@@ -7,7 +7,7 @@ import tuner.gp.ScalaGpBuilder
 
 import tuner.test.Util._
 
-class ScalaGpBuilderSpec extends WordSpec {
+class ScalaGpBuilderSpec extends WordSpec with TryValues {
 
   "A ScalaGpBuilder class" when {
     "given a 3D test data set" must {
@@ -17,12 +17,16 @@ class ScalaGpBuilderSpec extends WordSpec {
 
       val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
 
+      "not have thrown an exception" in {
+        gp should be a 'success
+      }
+
       "return a valid model" in {
-        gp.validateModel._1 should be (true)
+        gp.success.value.validateModel._1 should be (true)
       }
 
       "save a model that can be reloaded" in {
-        val gpJson = gp.toJson
+        val gpJson = gp.success.value.toJson
         val gp2 = tuner.gp.GpModel.fromJson(gpJson) 
         //gp2 should equal (gp)
       }
@@ -35,7 +39,7 @@ class ScalaGpBuilderSpec extends WordSpec {
 
       "return a valid model" in {
         val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
-        gp.validateModel._1 should be (true)
+        gp.success.value.validateModel._1 should be (true)
       }
     }
 
@@ -46,8 +50,8 @@ class ScalaGpBuilderSpec extends WordSpec {
 
       "return a valid model" in {
         val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
-        gp.mean should not be (0.0)
-        gp.sig2 should be > 0.0
+        gp.success.value.mean should not be (0.0)
+        gp.success.value.sig2 should be > 0.0
       }
     }
   }
