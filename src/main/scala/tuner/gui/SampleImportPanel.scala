@@ -45,9 +45,15 @@ class SampleImportPanel(newSamples:((Int, Sampler.Method) => Unit))
     valueSelector.enabled = false
   } else {
     // No direct way to change the contents of a combobox
+    deafTo(valueSelector.selection)
+    remove(valueSelector)
     valueSelector = new ComboBox(r)
     valueSelector.enabled = true
     valueSelector.selection.index = 0
+    layout(valueSelector) = (1,1)
+    listenTo(valueSelector.selection)
+    revalidate
+    //repaint
   }
   def designPath : String = fileChooser.path
   def designFile : java.io.File = fileChooser.file

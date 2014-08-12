@@ -135,6 +135,8 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
     publish(new UIElementResized(this))
   }
 
+  def remove(c:Component) = peer.remove(c.peer)
+
   protected def constraintsFor(comp:Component) =
     new Constraints(layoutManager.getConstraints(comp.peer))
 
