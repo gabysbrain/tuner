@@ -209,7 +209,7 @@ class GpModel(val thetas:DenseVector[Double],
   private def estimatePoint(point:DenseVector[Double]) : (Double,Double) = {
     val ptCors = DenseVector.zeros[Double](design.rows)
     for(r <- 0 until design.rows) {
-      ptCors.update(r, corrFunction(design(r, ::).toDenseVector, point))
+      ptCors.update(r, corrFunction(design(r, ::).inner, point))
     }
     //println("pc: " + ptCors.toString)
     //println("cr: " + corrResponses.toString)
@@ -223,8 +223,8 @@ class GpModel(val thetas:DenseVector[Double],
     (est, math.abs(err))
   }
 
-  private def corrFunction(p1:DenseVector[Double], 
-                           p2:DenseVector[Double]) : Double = {
+  private def corrFunction(p1:Vector[Double], 
+                           p2:Vector[Double]) : Double = {
     var sum:Double = 0
     for(d <- 0 until p1.length) {
       sum += corrFunction(p1(d), p2(d), thetas(d), alphas(d))
@@ -258,11 +258,6 @@ class GpModel(val thetas:DenseVector[Double],
       throw new Exception("estimate is NaN")
     }
     // These will come in handy later
-    def erf(v:Double) : Double = {
-      val a = (8*(math.Pi - 3)) / (3*math.Pi*(4 - math.Pi))
-      val tmp = (4 / math.Pi + a * v * v) / (1 + a * v * v)
-      v/math.abs(v) * math.sqrt(1 - math.exp(-(v*v) * tmp))
-    }
     def pdf(v:Double) : Double = 1/(2*math.Pi) * math.exp(-(v*v) / 2)
     def cdf(v:Double) : Double = 0.5 * (1 + erf(v / math.sqrt(2)))
 
@@ -284,26 +279,23 @@ class GpModel(val thetas:DenseVector[Double],
     val predResps = DenseVector.zeros[Double](design.rows)
     val predErrs = DenseVector.zeros[Double](design.rows)
 
-    //val origR = breeze.linalg.inv(rInverse)
+    val origR = inv(rInverse)
     for(row <- 0 until design.rows) {
-      val testSample = design(row, ::).toDenseVector
+      val testSample = design(row, ::)
       val testResp = responses(row)
 
       // Extract all the new model building bits
       val newModelRows = (0 until design.rows).filterNot(_ == row)
       val newDesign = design(newModelRows, ::).toDenseMatrix
-      //val newRInv = breeze.linalg.inv(origR(newModelRows, newModelRows))
       val newResps = responses(newModelRows).toDenseVector
-      val newRInv = breeze.linalg.inv(
-        ScalaGpBuilder.corrMatrix(newDesign, thetas, alphas))
+      val newRInv = inv(ScalaGpBuilder.corrMatrix(newDesign, thetas, alphas))
       val newGp = new GpModel(thetas, alphas, 
                               mean, sig2,
                               newDesign, newResps, 
                               newRInv, 
                               dims, respDim, errDim)
 
-      val (predResp, predErr) = newGp.estimatePoint(testSample)
-      //println("pe: " + predErr)
+      val (predResp, predErr) = newGp.estimatePoint(testSample.inner)
       predResps.update(row, predResp)
       predErrs.update(row, predErr)
     }

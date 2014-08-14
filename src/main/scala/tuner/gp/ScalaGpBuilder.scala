@@ -162,8 +162,8 @@ object ScalaGpBuilder extends GpBuilder {
     for(r1 <- 0 until samples.rows) {
       for(r2 <- 0 until samples.rows) {
         if(r1 != r2) { // don't need to compute corr for the same point
-          val corr = corrFunction(samples(r1,::).toDenseVector, 
-                                  samples(r2,::).toDenseVector, 
+          val corr = corrFunction(samples(r1,::).inner, 
+                                  samples(r2,::).inner, 
                                   thetas, alphas)
           mtx(r1, r2) = corr
         }
