@@ -129,12 +129,12 @@ object Project {
   
   private def loadJson(path:String) : ProjConfig = {
     val configFilePath = Path.join(path, Config.projConfigFilename)
-    val json = parse(Source.fromFile(configFilePath).mkString)
     try {
+      val json = parse(Source.fromFile(configFilePath).mkString)
       json.extract[ProjConfig]
     } catch {
-      case me:net.liftweb.json.MappingException =>
-        throw new ProjectLoadException(me.msg, me)
+      case e:Exception =>
+        throw new ProjectLoadException(s"In file ${path}: ${e.getMessage}", e)
     }
   }
 }
