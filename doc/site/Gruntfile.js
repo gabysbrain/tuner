@@ -151,6 +151,14 @@ module.exports = function(grunt) {
    }
   },
 
+  'gh-pages': {
+    options: {
+      base: 'dist',
+      repo: 'git@github.com:gabysbrain/tuner.git'
+    },
+    src: ['**']
+  },
+
   wiredep: {
    target: {
     src: [
