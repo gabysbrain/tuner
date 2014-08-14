@@ -1,5 +1,9 @@
 node_modules
 .tmp
+.grunt
 app/bower_components
 app/api
+app/css
+app/index.html
+dist
 .sass-cache
