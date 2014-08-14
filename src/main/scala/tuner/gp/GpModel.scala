@@ -254,11 +254,6 @@ class GpModel(val thetas:DenseVector[Double],
       throw new Exception("estimate is NaN")
     }
     // These will come in handy later
-    def erf(v:Double) : Double = {
-      val a = (8*(math.Pi - 3)) / (3*math.Pi*(4 - math.Pi))
-      val tmp = (4 / math.Pi + a * v * v) / (1 + a * v * v)
-      v/math.abs(v) * math.sqrt(1 - math.exp(-(v*v) * tmp))
-    }
     def pdf(v:Double) : Double = 1/(2*math.Pi) * math.exp(-(v*v) / 2)
     def cdf(v:Double) : Double = 0.5 * (1 + erf(v / math.sqrt(2)))
 
