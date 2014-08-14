@@ -29,6 +29,11 @@ libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
 
+// set the documentation config
+apiURL := Some(url("http://gabysbrain.github.io/tuner/api"))
+
+target in Compile in doc := baseDirectory.value / "doc" / "site" / "app" / "api"
+
 scalacOptions in (Compile, doc) := Seq("-deprecation", "-unchecked",
                                        "-groups", "-implicits")
 
