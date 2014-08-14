@@ -29,6 +29,9 @@ libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
 
+// set the documentation directory
+target in Compile in doc := baseDirectory.value / "doc" / "site" / "app" / "api"
+
 scalacOptions in (Compile, doc) := Seq("-deprecation", "-unchecked",
                                        "-groups", "-implicits")
 
