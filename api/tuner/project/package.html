@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>project - tuner.project</title>
+          <meta name="description" content="project - tuner.project" />
+          <meta name="keywords" content="project tuner.project" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../index.html';
+            var hash = 'tuner.project.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../lib/package_big.png" />
+        <p id="owner"><a href="../package.html" class="extype" name="tuner">tuner</a></p>
+        <h1>project</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">project</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="tuner.project.BuildingGp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BuildingGpextendsInProgresswithSaved"></a>
+      <a id="BuildingGp:BuildingGp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="BuildingGp.html"><span class="name">BuildingGp</span></a><span class="result"> extends <a href="InProgress.html" class="extype" name="tuner.project.InProgress">InProgress</a> with <a href="Saved.html" class="extype" name="tuner.project.Saved">Saved</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.InProgress" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="InProgressextendsProjectwithPublisher"></a>
+      <a id="InProgress:InProgress"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="InProgress.html"><span class="name">InProgress</span></a><span class="result"> extends <a href="Project.html" class="extype" name="tuner.project.Project">Project</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.InputSpecification" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InputSpecificationextendsProductwithSerializable"></a>
+      <a id="InputSpecification:InputSpecification"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="InputSpecification.html"><span class="name">InputSpecification</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="minRange">minRange: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="maxRange">maxRange: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.NewProject" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NewProjectextendsProjectwithSampler"></a>
+      <a id="NewProject:NewProject"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="NewProject.html"><span class="name">NewProject</span></a><span class="result"> extends <a href="Project.html" class="extype" name="tuner.project.Project">Project</a> with <a href="Sampler.html" class="extype" name="tuner.project.Sampler">Sampler</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.NewResponses" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NewResponsesextendsProjectwithSaved"></a>
+      <a id="NewResponses:NewResponses"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="NewResponses.html"><span class="name">NewResponses</span></a><span class="result"> extends <a href="Project.html" class="extype" name="tuner.project.Project">Project</a> with <a href="Saved.html" class="extype" name="tuner.project.Saved">Saved</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.OutputSpecification" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OutputSpecificationextendsProductwithSerializable"></a>
+      <a id="OutputSpecification:OutputSpecification"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="OutputSpecification.html"><span class="name">OutputSpecification</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="minimize">minimize: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.ProjConfig" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProjConfigextendsProductwithSerializable"></a>
+      <a id="ProjConfig:ProjConfig"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ProjConfig.html"><span class="name">ProjConfig</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="scriptPath">scriptPath: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="inputs">inputs: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="InputSpecification.html" class="extype" name="tuner.project.InputSpecification">InputSpecification</a>]</span>, <span name="outputs">outputs: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="OutputSpecification.html" class="extype" name="tuner.project.OutputSpecification">OutputSpecification</a>]</span>, <span name="ignoreFields">ignoreFields: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="gpModels">gpModels: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="../gp/GpSpecification.html" class="extype" name="tuner.gp.GpSpecification">GpSpecification</a>]</span>, <span name="buildInBackground">buildInBackground: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="currentVis">currentVis: <a href="../VisInfo.html" class="extype" name="tuner.VisInfo">VisInfo</a></span>, <span name="currentRegion">currentRegion: <a href="../RegionSpecification.html" class="extype" name="tuner.RegionSpecification">RegionSpecification</a></span>, <span name="history">history: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="../HistorySpecification.html" class="extype" name="tuner.HistorySpecification">HistorySpecification</a>]</span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.Project" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ProjectextendsAnyRef"></a>
+      <a id="Project:Project"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Project.html"><span class="name">Project</span></a><span class="result"> extends <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.ProjectInfo" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProjectInfoextendsProductwithSerializable"></a>
+      <a id="ProjectInfo:ProjectInfo"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ProjectInfo.html"><span class="name">ProjectInfo</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="modificationDate">modificationDate: <span class="extype" name="java.util.Date">Date</span></span>, <span name="numInputs">numInputs: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="numOutputs">numOutputs: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.RunningSamples" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RunningSamplesextendsInProgresswithSaved"></a>
+      <a id="RunningSamples:RunningSamples"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RunningSamples.html"><span class="name">RunningSamples</span></a><span class="result"> extends <a href="InProgress.html" class="extype" name="tuner.project.InProgress">InProgress</a> with <a href="Saved.html" class="extype" name="tuner.project.Saved">Saved</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.Sampler" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SamplerextendsAnyRef"></a>
+      <a id="Sampler:Sampler"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Sampler.html"><span class="name">Sampler</span></a><span class="result"> extends <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A type of project that can have additional sample points added to it
+</p>
+    </li><li name="tuner.project.Saved" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SavedextendsAnyRef"></a>
+      <a id="Saved:Saved"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Saved.html"><span class="name">Saved</span></a><span class="result"> extends <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.project.Viewable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ViewableextendsProjectwithSavedwithSampler"></a>
+      <a id="Viewable:Viewable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Viewable.html"><span class="name">Viewable</span></a><span class="result"> extends <a href="Project.html" class="extype" name="tuner.project.Project">Project</a> with <a href="Saved.html" class="extype" name="tuner.project.Saved">Saved</a> with <a href="Sampler.html" class="extype" name="tuner.project.Sampler">Sampler</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="tuner.project.Project" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Project"></a>
+      <a id="Project:Project"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Project$.html"><span class="name">Project</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../lib/template.js"></script>
+    </body>
+      </html>

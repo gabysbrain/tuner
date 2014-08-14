@@ -1,0 +1,921 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>RawValueShader - tuner.gui.opengl.RawValueShader</title>
+          <meta name="description" content="RawValueShader - tuner.gui.opengl.RawValueShader" />
+          <meta name="keywords" content="RawValueShader tuner.gui.opengl.RawValueShader" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'tuner.gui.opengl.RawValueShader';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <a href="RawValueShader$.html" title="Go to companion"><img src="../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../package.html" class="extype" name="tuner">tuner</a>.<a href="../package.html" class="extype" name="tuner.gui">gui</a>.<a href="package.html" class="extype" name="tuner.gui.opengl">opengl</a></p>
+        <h1><a href="RawValueShader$.html" title="Go to companion">RawValueShader</a></h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RawValueShader</span><span class="result"> extends <a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a>, <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="tuner.gui.opengl.RawValueShader"><span>RawValueShader</span></li><li class="in" name="tuner.gui.opengl.Glsl"><span>Glsl</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+                <span class="filtertype">Implicitly<br />
+                </span>
+                <ol id="implicits"> <li class="in" name="scala.Predef.any2stringadd" data-hidden="true"><span>by any2stringadd</span></li><li class="in" name="scala.Predef.any2stringfmt" data-hidden="true"><span>by any2stringfmt</span></li><li class="in" name="scala.Predef.any2ArrowAssoc" data-hidden="true"><span>by any2ArrowAssoc</span></li><li class="in" name="scala.Predef.any2Ensuring" data-hidden="true"><span>by any2Ensuring</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="tuner.gui.opengl.RawValueShader#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(gl:javax.media.opengl.GL2,vertSrc:String,fragSrc:String,project:tuner.project.Viewable):tuner.gui.opengl.RawValueShader"></a>
+      <a id="&lt;init&gt;:RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">RawValueShader</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="vertSrc">vertSrc: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="fragSrc">fragSrc: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="project">project: <a href="../../project/Viewable.html" class="extype" name="tuner.project.Viewable">Viewable</a></span>)</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:AnyRef):Boolean"></a>
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Predef.any2stringadd#+" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="+(other:String):String"></a>
+      <a id="+(String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $plus" class="implicit">+</span><span class="params">(<span name="other">other: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
+    </li><li name="scala.Predef.any2ArrowAssoc#-&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="-&gt;[B](y:B):(A,B)"></a>
+      <a id="-&gt;[B](B):(RawValueShader,B)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $minus$greater" class="implicit">-&gt;</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>, <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span>)</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2ArrowAssoc in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd><dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:AnyRef):Boolean"></a>
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.Any#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#attrib" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="attrib(id:Int):String"></a>
+      <a id="attrib(Int):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">attrib</span><span class="params">(<span name="id">id: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#attribId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="attribId(name:String):Int"></a>
+      <a id="attribId(String):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">attribId</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#attribIds" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="attribIds:scala.collection.immutable.Map[String,Int]"></a>
+      <a id="attribIds:Map[String,Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">var</span>
+      </span>
+      <span class="symbol">
+        <span class="name">attribIds</span><span class="result">: <span class="extype" name="scala.collection.immutable.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#attribSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="attribSize:Int"></a>
+      <a id="attribSize:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">attribSize</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#createShader" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createShader(typeId:Int,source:String):Int"></a>
+      <a id="createShader(Int,String):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createShader</span><span class="params">(<span name="typeId">typeId: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="source">source: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.RawValueShader#disableTextureTarget" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="disableTextureTarget(gl:javax.media.opengl.GL2,windowWidth:Int,windowHeight:Int):Unit"></a>
+      <a id="disableTextureTarget(GL2,Int,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">disableTextureTarget</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="windowWidth">windowWidth: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="windowHeight">windowHeight: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Disable the texture framebuffer target
+</p>
+    </li><li name="tuner.gui.opengl.Glsl#dispose" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dispose:Unit"></a>
+      <a id="dispose:Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dispose</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.RawValueShader#draw" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="draw(gl:javax.media.opengl.GL2,textureId:Int,texWidth:Int,texHeight:Int,trans:tuner.gui.util.Matrix4,xRange:(String,(Float,Float)),yRange:(String,(Float,Float)),xDim:Int,yDim:Int,response:String,focusPoint:List[(String,Float)]):Unit"></a>
+      <a id="draw(GL2,Int,Int,Int,Matrix4,(String,(Float,Float)),(String,(Float,Float)),Int,Int,String,List[(String,Float)]):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">draw</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="textureId">textureId: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texWidth">texWidth: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texHeight">texHeight: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="trans">trans: <a href="../util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="xDim">xDim: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="yDim">yDim: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="focusPoint">focusPoint: <a href="../../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[(<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>)]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.gui.opengl.RawValueShader#enableTextureTarget" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="enableTextureTarget(gl:javax.media.opengl.GL2,texId:Int,texWidth:Int,texHeight:Int):Unit"></a>
+      <a id="enableTextureTarget(GL2,Int,Int,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">enableTextureTarget</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="texId">texId: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texWidth">texWidth: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texHeight">texHeight: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Enable the texture renderbuffer
+</p>
+    </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ensuring(cond:A=&gt;Boolean,msg:=&gt;Any):A"></a>
+      <a id="ensuring((RawValueShader)⇒Boolean,⇒Any):RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2Ensuring in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
+    </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ensuring(cond:A=&gt;Boolean):A"></a>
+      <a id="ensuring((RawValueShader)⇒Boolean):RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2Ensuring in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
+    </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ensuring(cond:Boolean,msg:=&gt;Any):A"></a>
+      <a id="ensuring(Boolean,⇒Any):RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2Ensuring in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
+    </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ensuring(cond:Boolean):A"></a>
+      <a id="ensuring(Boolean):RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2Ensuring in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#es2" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="es2:javax.media.opengl.GL2ES2"></a>
+      <a id="es2:GL2ES2"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">es2</span><span class="result">: <span class="extype" name="javax.media.opengl.GL2ES2">GL2ES2</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.Predef.any2stringfmt#formatted" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="formatted(fmtstr:String):String"></a>
+      <a id="formatted(String):String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit">formatted</span><span class="params">(<span name="fmtstr">fmtstr: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>StringFormat</dd><dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#fragShaderId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fragShaderId:Int"></a>
+      <a id="fragShaderId:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fragShaderId</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#geomShaderId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="geomShaderId:Option[Int]"></a>
+      <a id="geomShaderId:Option[Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">geomShaderId</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="tuner.gui.opengl.RawValueShader#matrixToDataArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="matrixToDataArray(mtx:tuner.Grid2D):Array[Float]"></a>
+      <a id="matrixToDataArray(Grid2D):Array[Float]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">matrixToDataArray</span><span class="params">(<span name="mtx">mtx: <a href="../../Grid2D.html" class="extype" name="tuner.Grid2D">Grid2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Converts the Grid2D into something easy for opengl to render
+</p>
+    </li><li name="tuner.gui.opengl.RawValueShader#matrixToElementArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="matrixToElementArray(mtx:tuner.Grid2D):Array[Int]"></a>
+      <a id="matrixToElementArray(Grid2D):Array[Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">matrixToElementArray</span><span class="params">(<span name="mtx">mtx: <a href="../../Grid2D.html" class="extype" name="tuner.Grid2D">Grid2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates the triangles we need to draw
+</p>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="tuner.gui.opengl.RawValueShader#pointVbo" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="pointVbo:Int"></a>
+      <a id="pointVbo:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pointVbo</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.gui.opengl.Glsl#programId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="programId:Int"></a>
+      <a id="programId:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">programId</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#uniformId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="uniformId(name:String):Int"></a>
+      <a id="uniformId(String):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">uniformId</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="tuner.gui.opengl.Glsl#vertShaderId" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="vertShaderId:Int"></a>
+      <a id="vertShaderId:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">vertShaderId</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.Predef.any2ArrowAssoc#→" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="→[B](y:B):(A,B)"></a>
+      <a id="→[B](B):(RawValueShader,B)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $u2192" class="implicit">→</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>, <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span>)</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2ArrowAssoc in scala.Predef.
+            
+          </dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Shadowed Implicit Value Members</h3>
+              <ol><li name="scala.Predef.any2stringadd#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="self:Any"></a>
+      <a id="self:Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(rawValueShader: StringAdd).self</pre></div></dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
+    </li><li name="scala.Predef.any2stringfmt#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="self:Any"></a>
+      <a id="self:Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(rawValueShader: StringFormat).self</pre></div></dd><dt>Definition Classes</dt><dd>StringFormat</dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Deprecated Value Members</h3>
+              <ol><li name="scala.Predef.any2ArrowAssoc#x" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="x:A"></a>
+      <a id="x:RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use leftOfArrow instead">x</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2ArrowAssoc in scala.Predef.
+            
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(rawValueShader: ArrowAssoc[RawValueShader]).x</pre></div></dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd><dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.10.0)</i> Use <code><u>leftOfArrow<code> instead</code></u></code></p></dd></dl></div>
+    </li><li name="scala.Predef.any2Ensuring#x" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="x:A"></a>
+      <a id="x:RawValueShader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use resultOfEnsuring instead">x</span><span class="result">: <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>] performed by method any2Ensuring in scala.Predef.
+            
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(rawValueShader: Ensuring[RawValueShader]).x</pre></div></dd><dt>Definition Classes</dt><dd>Ensuring</dd><dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.10.0)</i> Use <code><u>resultOfEnsuring<code> instead</code></u></code></p></dd></dl></div>
+    </li></ol>
+            </div>
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="tuner.gui.opengl.Glsl">
+              <h3>Inherited from <a href="Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <a href="../../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+            </div>
+        <div class="conversion" name="scala.Predef.any2stringadd">
+              <h3>Inherited by implicit conversion any2stringadd from
+                <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a>
+              </h3>
+            </div><div class="conversion" name="scala.Predef.any2stringfmt">
+              <h3>Inherited by implicit conversion any2stringfmt from
+                <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a>
+              </h3>
+            </div><div class="conversion" name="scala.Predef.any2ArrowAssoc">
+              <h3>Inherited by implicit conversion any2ArrowAssoc from
+                <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>]
+              </h3>
+            </div><div class="conversion" name="scala.Predef.any2Ensuring">
+              <h3>Inherited by implicit conversion any2Ensuring from
+                <a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a> to <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.opengl.RawValueShader">RawValueShader</a>]
+              </h3>
+            </div>
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../lib/template.js"></script>
+    </body>
+      </html>
