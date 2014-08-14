@@ -1,6 +1,7 @@
 package tuner
 
 import breeze.linalg._
+import breeze.numerics._
 
 import scala.util.Random
 import scala.collection.mutable.HashSet
@@ -57,8 +58,8 @@ object LHS {
       val minDists = DenseVector.fill[Double](candPts.rows) {Double.MaxValue}
       for(cpRow <- 0 until candPts.rows) {
         for(ptRow <- 0 until r) {
-          val diff = (result(ptRow, ::) - candPts(cpRow, ::)).toDenseVector
-          val sqDist = diff dot diff
+          val diff = (result(ptRow, ::) - candPts(cpRow, ::))
+          val sqDist = diff.t dot diff.t
           if(sqDist < minDists(cpRow))
             minDists(cpRow) = sqDist
         }
@@ -73,7 +74,7 @@ object LHS {
         }
       }
 
-      val minPt = candPts(minIdx, ::).toDenseVector
+      val minPt = candPts(minIdx, ::)
       result(r, ::) := minPt
 
       // remove the min pt from the candidates
