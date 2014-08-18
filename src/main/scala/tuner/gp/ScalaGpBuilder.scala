@@ -44,6 +44,41 @@ object ScalaGpBuilder extends GpBuilder {
     })
   }
 
+  def minDist(samples:DenseMatrix[Double]) : Double = {
+    var md = Double.MaxValue
+    for(r1 <- 0 until (samples.rows-1)) {
+      val row1 = samples(r1, ::)
+      for(r2 <- (r1+1) until samples.rows) {
+        val row2 = samples(r2, ::)
+        val dist:Double = {
+          val diffs = row1-row2
+          sum((diffs :* diffs).inner)
+        }
+        if(dist < md) {md = dist}
+      }
+    }
+    math.sqrt(md)
+  }
+
+  /**
+    * find starting parameters for the GP optimization.
+    *
+    * This is based on the mlegp R function which finds the minimum
+    * euclidean distance between the points, then sets the minimum/maximum 
+    * initial parameters to -log(0.65)/mindist and -log(0.3)/mindist.  I'm
+    * not entirely sure why this is but then we generate a list
+    * of random numbers in this range.
+    */
+  def startParams(samples:DenseMatrix[Double], retries:Int=5) 
+      : List[DenseVector[Double]] = {
+    val md = minDist(samples)
+    val minCorr = -math.log(0.65) / md
+    val maxCorr = -math.log(0.30) / md
+    List.fill(retries) {
+      DenseVector.rand(samples.cols) * (maxCorr - minCorr) + minCorr
+    }
+  }
+
   /**
     * Run an optimization to find the GP parameters given the design
     * samples and sampled responses.
@@ -66,20 +101,21 @@ object ScalaGpBuilder extends GpBuilder {
 
     // so in the spirit of the mlegp package do 
     //  a number of optimizations with random restart 
-    val results:List[Try[(Double,DenseVector[Double])]] = List.fill(retries) {
+    val results:List[Try[(Double,DenseVector[Double])]] = 
+          startParams(samples, retries) map {start =>
       val optim = new LBFGS[DenseVector[Double]](maxIter=100, m=3)
       //val optim = new breeze.optimize.StochasticGradientDescent.SimpleSGD[DenseVector[Double]]
       //val optim = new breeze.optimize.OWLQN[DenseVector[Double]](maxIter=100, m=3)
-      val start = DenseVector.rand(samples.cols)
-      println("running optimization...")
-      println("start pos: " + start)
+      //val start = DenseVector.rand(samples.cols)
+      //println("running optimization...")
+      //println("start pos: " + start)
       Try({
         val pt = optim.minimize(f, start)
         //val ll = optimFunc(pt)
         (optimFunc(pt), pt)
       })
     }
-    println("finished with optimizations")
+    //println("finished with optimizations")
 
     //println("here2")
     val (minLL, minPt) = results.map {r => 

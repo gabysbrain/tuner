@@ -306,11 +306,11 @@ class GpModel(val thetas:DenseVector[Double],
   def validateModel : (Boolean, Vector[Double]) = {
     val (preds, vars) = crossValidate
     //println("preds resp: " + preds)
-    println("pred err: " + vars)
+    //println("pred err: " + vars)
     //println("pred dist: " + (responses-preds))
     val standardResid = (responses - preds) / vars
     // This +- 3 comes from Jones:1998
-    println("CV results: " + standardResid)
+    //println("CV results: " + standardResid)
     (standardResid.map {x => x > -3.0 && x < 3.0} all, standardResid)
   }
 
