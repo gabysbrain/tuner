@@ -309,7 +309,7 @@ class GpModel(val thetas:DenseVector[Double],
     val standardResid = (responses - preds) / vars
     // This +- 3 comes from Jones:1998
     //println("CV results: " + standardResid)
-    (standardResid.map {x => x > -3.0 && x < 3.0} all, standardResid)
+    (standardResid.map {x => math.abs(x) < 3.0} all, standardResid)
   }
 
   override def equals(o:Any) : Boolean = o match {
