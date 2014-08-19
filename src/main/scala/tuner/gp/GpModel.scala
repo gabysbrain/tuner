@@ -213,14 +213,13 @@ class GpModel(val thetas:DenseVector[Double],
     }
     //println("pc: " + ptCors.toString)
     //println("cr: " + corrResponses.toString)
-    val est = mean + sig2 * (ptCors dot corrResponses)
-    val err = sig2 * (1 - sig2 * (ptCors dot (rInverse * ptCors)))
+    val est = mean + (ptCors dot corrResponses)
+    val err = sig2 * (1 - (ptCors dot (rInverse * ptCors)))
     //println("s2: " + sig2)
     //println("inner: " + (sig2 * (ptCors dot (rInverse * ptCors))))
     //println("err: " + err)
-    //if(err < 0) (est, 0)
-    //else        (est, math.sqrt(err))
-    (est, math.abs(err))
+    if(err < 0) (est, 0)
+    else        (est, math.sqrt(err))
   }
 
   private def corrFunction(p1:Vector[Double], 
