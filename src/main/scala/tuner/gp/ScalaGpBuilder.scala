@@ -101,7 +101,7 @@ object ScalaGpBuilder extends GpBuilder {
       val xx = x.map {math.exp(_)}
       -logLikelihood(samples, responses, xx, alphas)._1
     }
-    val f = new ApproximateGradientFunction(optimFunc)
+    val f = new ApproximateGradientFunction(optimFunc, 1e-10)
 
     // so in the spirit of the mlegp package do 
     //  a number of optimizations with random restart 
@@ -114,7 +114,8 @@ object ScalaGpBuilder extends GpBuilder {
       //println("running optimization...")
       //println("start pos: " + start)
       Try({
-        val pt = optim.minimize(f, start)
+        val results = optim.minimizeAndReturnState(f, start)
+        val pt = results.x
         /*
         if(results.iter == 0) {
           throw new tuner.error.GpBuildException("start and end points of optimization are equal")
@@ -124,11 +125,11 @@ object ScalaGpBuilder extends GpBuilder {
         }
         */
         //val ll = optimFunc(pt)
-        (optimFunc(pt), pt)
         //println("optim result: " + pt + " " + results.value)
         //println("took " + results.iter + " iterations")
         //println("success? " + !results.searchFailed)
         //println("reason: " + results.convergedReason)
+        (results.value, pt)
       })
     }
     //println("finished with optimizations")
