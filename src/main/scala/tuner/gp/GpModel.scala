@@ -277,6 +277,7 @@ class GpModel(val thetas:DenseVector[Double],
   def crossValidate : (Vector[Double], Vector[Double]) = {
     val predResps = DenseVector.zeros[Double](design.rows)
     val predErrs = DenseVector.zeros[Double](design.rows)
+    //println("cr " + this.corrResponses + " " + this.corrResponses.length)
 
     for(row <- 0 until design.rows) {
       val testSample = design(row, ::)
@@ -293,7 +294,10 @@ class GpModel(val thetas:DenseVector[Double],
                               newRInv, 
                               dims, respDim, errDim)
 
+      //println("ts " + testSample.inner)
       val (predResp, predErr) = newGp.estimatePoint(testSample.inner)
+      //println("real y " + this.estimatePoint(testSample.inner))
+      //println("mu " + mean + " sig2 " + sig2)
       predResps.update(row, predResp)
       predErrs.update(row, predErr)
     }

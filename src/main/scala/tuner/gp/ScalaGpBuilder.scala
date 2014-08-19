@@ -54,6 +54,7 @@ object ScalaGpBuilder extends GpBuilder {
           val diffs = row1-row2
           sum((diffs :* diffs).inner)
         }
+        //println("r1 " + row1 + " r2 " + row2 + " d " + dist)
         if(dist < md) {md = dist}
       }
     }
@@ -74,8 +75,11 @@ object ScalaGpBuilder extends GpBuilder {
     val md = minDist(samples)
     val minCorr = -math.log(0.65) / md
     val maxCorr = -math.log(0.30) / md
+    //println("md " + md + " mn " + minCorr + " mx " + maxCorr)
     List.fill(retries) {
       DenseVector.rand(samples.cols) * (maxCorr - minCorr) + minCorr
+      //DenseVector(0.50, 1.84, 3.54)
+      //DenseVector(1.65, 6.30, 34.49)
     }
   }
 
@@ -111,13 +115,26 @@ object ScalaGpBuilder extends GpBuilder {
       //println("start pos: " + start)
       Try({
         val pt = optim.minimize(f, start)
+        /*
+        if(results.iter == 0) {
+          throw new tuner.error.GpBuildException("start and end points of optimization are equal")
+        }
+        if(pt == start) {
+          throw new tuner.error.GpBuildException("start and end points of optimization are equal")
+        }
+        */
         //val ll = optimFunc(pt)
         (optimFunc(pt), pt)
+        //println("optim result: " + pt + " " + results.value)
+        //println("took " + results.iter + " iterations")
+        //println("success? " + !results.searchFailed)
+        //println("reason: " + results.convergedReason)
       })
     }
     //println("finished with optimizations")
 
     //println("here2")
+    //println("all res " + results)
     val (minLL, minPt) = results.map {r => 
       r.getOrElse(Double.MaxValue, DenseVector.zeros[Double](samples.cols))
     } minBy {_._1}
@@ -137,8 +154,9 @@ object ScalaGpBuilder extends GpBuilder {
       */
       
       // One more time to get the final versions of the values
-      println("final value computation")
+      //println("final value computation")
       val thetas = minPt map {math.exp(_)}
+      //println("m " + corrMatrix(samples, thetas, alphas)(0,::))
       val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
                                                thetas, alphas)
       (ll, mu, sig2, rInv, thetas, alphas)
