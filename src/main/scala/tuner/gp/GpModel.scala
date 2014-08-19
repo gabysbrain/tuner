@@ -278,7 +278,6 @@ class GpModel(val thetas:DenseVector[Double],
     val predResps = DenseVector.zeros[Double](design.rows)
     val predErrs = DenseVector.zeros[Double](design.rows)
 
-    val origR = inv(rInverse)
     for(row <- 0 until design.rows) {
       val testSample = design(row, ::)
       val testResp = responses(row)
