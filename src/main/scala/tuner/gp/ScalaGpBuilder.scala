@@ -114,7 +114,7 @@ object ScalaGpBuilder extends GpBuilder {
       //println("running optimization...")
       //println("start pos: " + start)
       Try({
-        val results = optim.minimizeAndReturnState(f, start)
+        val results = optim.minimizeAndReturnState(f, log(start))
         val pt = results.x
         /*
         if(results.iter == 0) {
