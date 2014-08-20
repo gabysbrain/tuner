@@ -348,7 +348,9 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
           val (cvSuccess, cvStandardResid) = m.validateModel
           if(!cvSuccess) {
             //val stringSds = cvSD.mkString("{", ", ", "}")
-            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (sd > 3)."))
+            val ttlTests = cvStandardResid.length
+            val failTests = cvStandardResid.toArray count {e => math.abs(e) >= 3.0}
+            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (${failTests}/${ttlTests} tests with sd > 3)."))
           }
           (fld, m)
          case Failure(ex) =>
