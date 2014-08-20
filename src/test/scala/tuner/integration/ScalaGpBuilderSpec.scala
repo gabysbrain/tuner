@@ -35,7 +35,11 @@ class ScalaGpBuilderSpec extends WordSpec with TryValues {
 
       "save a model that can be reloaded" in {
         val gpJson = gp.success.value.toJson
-        val gp2 = tuner.gp.GpModel.fromJson(gpJson) 
+        try {
+          val gp2 = tuner.gp.GpModel.fromJson(gpJson) 
+        } catch {
+          case e:Throwable => fail(e.getMessage)
+        }
         //gp2 should equal (gp)
       }
     }
