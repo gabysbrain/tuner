@@ -73,7 +73,10 @@ object Project {
         Some(ProjectInfo(json.name, rp, new java.util.Date, 
                          json.inputs.length, json.outputs.length))
       } catch {
-        case e:java.io.FileNotFoundException =>
+        case ple:ProjectLoadException 
+             if ple.getCause.isInstanceOf[java.io.FileNotFoundException] =>
+          println("warning: " + ple.getCause.getMessage)
+          println("removing project from recents")
           None
       }
     } toArray
