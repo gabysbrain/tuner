@@ -4,6 +4,8 @@ packSettings
 
 instrumentSettings
 
+coverallsSettings
+
 seq(Revolver.settings: _*)
 
 name := "Tuner"
