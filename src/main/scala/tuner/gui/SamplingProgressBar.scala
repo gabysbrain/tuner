@@ -25,6 +25,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
   //modal = true
   //width = 800
   //height = 75
+  var errors = false
 
   val progressBar = new ProgressBar {
     min = 0
@@ -82,7 +83,7 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
       console.text += line
       console.text += "\n"
     case ProgressComplete =>
-      dispose
+      if(!errors) dispose
   }
 
   this.pack
@@ -99,8 +100,10 @@ class SamplingProgressBar(project:InProgress) extends Window(project) {
         progressBar.indeterminate = true
       }
     } else {
+      errors = true
       progressLabel.foreground = java.awt.Color.red
       progressLabel.text = "Error: " + msg
+      console.text += msg + "\n"
       progressBar.indeterminate = true
     }
 

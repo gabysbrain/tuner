@@ -79,11 +79,12 @@ object Sampler {
     
     // Convert from the matrix to my table
     for(r <- 0 until res.rows) {
-      val row = res(r, ::).toDenseVector.data
-      val vals = sampleDims.zip(row.map(_.toFloat)).map {vs =>
-        val ((dimname, (dimMin, dimMax)), value) = vs
+      val row = res(r, ::)
+      val vals = sampleDims.zipWithIndex.map {
+                   case ((dimName,(dimMin,dimMax)),i) =>
+        val value = row(i).toFloat
         // Conveniently all the values from the lhs are on a 0->1 scale
-        (dimname, dimMin + value * (dimMax - dimMin))
+        (dimName, dimMin + value * (dimMax - dimMin))
       }
       f(vals.toList ++ slices)
     }

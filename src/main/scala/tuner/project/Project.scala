@@ -11,6 +11,7 @@ import akka.actor.{Actor, ActorRef}
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
+import scala.util.{Try,Success,Failure}
 
 import scala.swing.Publisher
 
@@ -72,7 +73,10 @@ object Project {
         Some(ProjectInfo(json.name, rp, new java.util.Date, 
                          json.inputs.length, json.outputs.length))
       } catch {
-        case e:java.io.FileNotFoundException =>
+        case ple:ProjectLoadException 
+             if ple.getCause.isInstanceOf[java.io.FileNotFoundException] =>
+          println("warning: " + ple.getCause.getMessage)
+          println("removing project from recents")
           None
       }
     } toArray
@@ -128,12 +132,12 @@ object Project {
   
   private def loadJson(path:String) : ProjConfig = {
     val configFilePath = Path.join(path, Config.projConfigFilename)
-    val json = parse(Source.fromFile(configFilePath).mkString)
     try {
+      val json = parse(Source.fromFile(configFilePath).mkString)
       json.extract[ProjConfig]
     } catch {
-      case me:net.liftweb.json.MappingException =>
-        throw new ProjectLoadException(me.msg, me)
+      case e:Exception =>
+        throw new ProjectLoadException(s"In file ${path}: ${e.getMessage}", e)
     }
   }
 }
@@ -340,19 +344,33 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     val newModels = buildFields.map({fld => 
       if(running) {
       println("building model for " + fld)
-      val m = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
-      if(!m.validateModel._1) {
-        publish(ProgressWarning(s"The model for ${fld} did not pass the CV test"))
-      }
-      (fld, m)
-      } else {
-        (null, null)
-      }
+      val tm = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
+      tm match {
+        case Success(m) =>
+          println("validating model for " + fld)
+          val (cvSuccess, cvStandardResid) = m.validateModel
+          if(!cvSuccess) {
+            //val stringSds = cvSD.mkString("{", ", ", "}")
+            val ttlTests = cvStandardResid.length
+            val failTests = cvStandardResid.toArray count {e => math.abs(e) >= 3.0}
+            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (${failTests}/${ttlTests} tests with sd > 3)."))
+          }
+          (fld, m)
+         case Failure(ex) =>
+           publish(Progress(0, 0, s"output ${fld}: ${ex.getMessage}", false))
+           running = false
+           (null, null)
+       }
+     } else {
+       (null, null)
+     }
     }).toMap
+    //println("here")
     if(running) {
       config.gpModels = newModels.values.map(_.toJson).toList
       save()
     }
+    //println("here2")
     publish(ProgressComplete)
   }
 

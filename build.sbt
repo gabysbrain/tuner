@@ -2,6 +2,10 @@
 
 packSettings
 
+instrumentSettings
+
+coverallsSettings
+
 seq(Revolver.settings: _*)
 
 name := "Tuner"
@@ -17,7 +21,7 @@ libraryDependencies ++= Seq(
   "org.prefuse" % "prefuse" % "beta-20060220",
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scalatest" %% "scalatest" % "2.0.M8" % "test",
-  "org.scalanlp" %% "breeze" % "0.5.2",
+  "org.scalanlp" %% "breeze" % "0.9",
   "com.typesafe.akka" %% "akka-actor" % "2.2.1",
   "org.jogamp.gluegen" % "gluegen-rt-main" % "2.0.2",
   "org.jogamp.jogl" % "jogl-all-main" % "2.0.2"
@@ -29,7 +33,15 @@ libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
 }
 
-scalacOptions := Seq("-deprecation", "-unchecked")
+// set the documentation config
+apiURL := Some(url("http://gabysbrain.github.io/tuner/api"))
+
+target in Compile in doc := baseDirectory.value / "doc" / "site" / "app" / "api"
+
+scalacOptions in (Compile, doc) := Seq("-deprecation", "-unchecked",
+                                       "-groups", "-implicits")
+
+autoAPIMappings := true
 
 javacOptions := Seq("-Xlint:deprecation")
 

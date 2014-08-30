@@ -9,7 +9,7 @@ import scala.util.Try
 import tuner.Table
 
 /**
- * Build the Gaussian Process model using the numberz package
+ * Build the Gaussian Process model using the breeze package
  */
 object ScalaGpBuilder extends GpBuilder {
 
@@ -17,7 +17,7 @@ object ScalaGpBuilder extends GpBuilder {
   def buildModel(dataFile:String,
                  paramFields:List[String],
                  responseField:String,
-                 errorField:String) : GpModel = {
+                 errorField:String) : Try[GpModel] = {
     buildModel(Table.fromCsv(dataFile), 
                paramFields, responseField, errorField)
   }
@@ -25,7 +25,7 @@ object ScalaGpBuilder extends GpBuilder {
   def buildModel(data:Table,
                  paramFields:List[String],
                  responseField:String,
-                 errorField:String) : GpModel = {
+                 errorField:String) : Try[GpModel] = {
 
     val locs = DenseMatrix.zeros[Double](data.numRows, paramFields.length)
     (0 until data.numRows).foreach { r =>
@@ -36,11 +36,57 @@ object ScalaGpBuilder extends GpBuilder {
     }
     val resps = DenseVector(data map {tpl => tpl(responseField).toDouble} toArray)
 
-    val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)
-    new GpModel(thetas, alphas, mean, sig2, locs, resps, rInv, 
-                paramFields, responseField, errorField)
+    Try({
+      val (minNegLogL, mean, sig2, rInv, thetas, alphas) = findParams(locs, resps)
+      //println("here")
+      new GpModel(thetas, alphas, mean, sig2, locs, resps, rInv, 
+                  paramFields, responseField, errorField)
+    })
   }
 
+  def minDist(samples:DenseMatrix[Double]) : Double = {
+    var md = Double.MaxValue
+    for(r1 <- 0 until (samples.rows-1)) {
+      val row1 = samples(r1, ::)
+      for(r2 <- (r1+1) until samples.rows) {
+        val row2 = samples(r2, ::)
+        val dist:Double = {
+          val diffs = row1-row2
+          sum((diffs :* diffs).inner)
+        }
+        //println("r1 " + row1 + " r2 " + row2 + " d " + dist)
+        if(dist < md) {md = dist}
+      }
+    }
+    math.sqrt(md)
+  }
+
+  /**
+    * find starting parameters for the GP optimization.
+    *
+    * This is based on the mlegp R function which finds the minimum
+    * euclidean distance between the points, then sets the minimum/maximum 
+    * initial parameters to -log(0.65)/mindist and -log(0.3)/mindist.  I'm
+    * not entirely sure why this is but then we generate a list
+    * of random numbers in this range.
+    */
+  def startParams(samples:DenseMatrix[Double], retries:Int=5) 
+      : List[DenseVector[Double]] = {
+    val md = minDist(samples)
+    val minCorr = -math.log(0.65) / md
+    val maxCorr = -math.log(0.30) / md
+    //println("md " + md + " mn " + minCorr + " mx " + maxCorr)
+    List.fill(retries) {
+      DenseVector.rand(samples.cols) * (maxCorr - minCorr) + minCorr
+      //DenseVector(0.50, 1.84, 3.54)
+      //DenseVector(1.65, 6.30, 34.49)
+    }
+  }
+
+  /**
+    * Run an optimization to find the GP parameters given the design
+    * samples and sampled responses.
+    */
   def findParams(samples:DenseMatrix[Double], responses:DenseVector[Double], 
                  retries:Int = 5) 
       : (Double, Double, Double, DenseMatrix[Double], DenseVector[Double], DenseVector[Double]) = {
@@ -55,36 +101,51 @@ object ScalaGpBuilder extends GpBuilder {
       val xx = x.map {math.exp(_)}
       -logLikelihood(samples, responses, xx, alphas)._1
     }
-    val f = new ApproximateGradientFunction(optimFunc)
+    val f = new ApproximateGradientFunction(optimFunc, 1e-10)
 
     // so in the spirit of the mlegp package do 
     //  a number of optimizations with random restart 
-    val results:List[Try[(Double,DenseVector[Double])]] = List.fill(retries) {
+    val results:List[Try[(Double,DenseVector[Double])]] = 
+          startParams(samples, retries) map {start =>
       val optim = new LBFGS[DenseVector[Double]](maxIter=100, m=3)
       //val optim = new breeze.optimize.StochasticGradientDescent.SimpleSGD[DenseVector[Double]]
       //val optim = new breeze.optimize.OWLQN[DenseVector[Double]](maxIter=100, m=3)
-      val start = DenseVector.rand(samples.cols)
-      //println("start: " + start)
+      //val start = DenseVector.rand(samples.cols)
+      //println("running optimization...")
+      //println("start pos: " + start)
       Try({
-        val pt = optim.minimize(f, start)
-        //val ll = optimFunc(pt)
-        (optimFunc(pt), pt)
-      })
+        val results = optim.minimizeAndReturnState(f, log(start))
+        val pt = results.x
         /*
-        println("optimization #" + i 
-             + " with log likelihood " + ll 
-             + " at point " + pt.map(math.exp(_))
-             + " starting at " + start.map(math.exp(_)))
+        if(results.iter == 0) {
+          throw new tuner.error.GpBuildException("start and end points of optimization are equal")
+        }
+        if(pt == start) {
+          throw new tuner.error.GpBuildException("start and end points of optimization are equal")
+        }
         */
+        //val ll = optimFunc(pt)
+        //println("optim result: " + pt + " " + results.value)
+        //println("took " + results.iter + " iterations")
+        //println("success? " + !results.searchFailed)
+        //println("reason: " + results.convergedReason)
+        (results.value, pt)
+      })
     }
+    //println("finished with optimizations")
 
+    //println("here2")
+    //println("all res " + results)
     val (minLL, minPt) = results.map {r => 
       r.getOrElse(Double.MaxValue, DenseVector.zeros[Double](samples.cols))
     } minBy {_._1}
+    //println("here3")
 
     // If there's no result from any of the attempts 
     // then the calibration has failed
     if(minLL == Double.MaxValue) {
+
+      //println("here4")
       throw new tuner.error.GpBuildException("could not find suitable parameters.  This is probably due to a singlar matrix")
     } else {
       /*
@@ -94,7 +155,9 @@ object ScalaGpBuilder extends GpBuilder {
       */
       
       // One more time to get the final versions of the values
+      //println("final value computation")
       val thetas = minPt map {math.exp(_)}
+      //println("m " + corrMatrix(samples, thetas, alphas)(0,::))
       val (ll, mu, sig2, rInv) = logLikelihood(samples, responses, 
                                                thetas, alphas)
       (ll, mu, sig2, rInv, thetas, alphas)
@@ -154,8 +217,8 @@ object ScalaGpBuilder extends GpBuilder {
     for(r1 <- 0 until samples.rows) {
       for(r2 <- 0 until samples.rows) {
         if(r1 != r2) { // don't need to compute corr for the same point
-          val corr = corrFunction(samples(r1,::).toDenseVector, 
-                                  samples(r2,::).toDenseVector, 
+          val corr = corrFunction(samples(r1,::).inner, 
+                                  samples(r2,::).inner, 
                                   thetas, alphas)
           mtx(r1, r2) = corr
         }
