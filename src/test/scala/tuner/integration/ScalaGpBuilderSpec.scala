@@ -90,14 +90,6 @@ class ScalaGpBuilderSpec extends WordSpec with TryValues {
       "return a valid model" in {
         assert(gp.success.value.validateModel._1, "CV test failed")
       }
-
-      "have theta values close to what mlegp in R gives" in {
-        val thetas = gp.success.value.thetas
-        thetas(0) should equal (0.02 +- 1e-2)
-        thetas(1) should equal (0.005 +- 1e-3)
-        thetas(2) should equal (0.002 +- 1e-3)
-        thetas(3) should equal (0.08 +- 1e-2)
-      }
     }
   }
 
