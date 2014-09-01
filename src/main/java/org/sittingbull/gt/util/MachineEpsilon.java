@@ -11,7 +11,7 @@ package org.sittingbull.gt.util;
  * floating-point value that, when added to 1, results in a value equal to 1 due to 
  * roundoff.
  * 
- * Reference: Java™ Number Cruncher 
+ * Reference: Java Number Cruncher 
  * 			  The Java Programmer's Guide to Numerical Computing (By Ronald Mak)
  * 			  Chapter 3.9: The Machine Epsilon
  * 
