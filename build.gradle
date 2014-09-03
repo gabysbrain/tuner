@@ -3,6 +3,7 @@ apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'application'
 apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 buildscript {
   repositories {
@@ -10,6 +11,7 @@ buildscript {
   }
 
   dependencies {
+    classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.0'
   }
 }
 
@@ -61,6 +63,7 @@ test {
 
 jacocoTestReport {
   reports {
+    xml.enabled = true // needed for coveralls
     html.enabled = true
   }
 }
