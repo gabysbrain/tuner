@@ -6,7 +6,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'rebel'
 
-version = 0.9
+version = "0.10.2"
 
 buildscript {
   repositories {
@@ -58,6 +58,12 @@ compileJava {
   options.deprecation = true
   options.compilerArgs << "-Xlint:unchecked"
 }
+
+applicationDefaultJvmArgs = [
+  "-Xmx1G", 
+  "-Dcom.github.fommil.netlib.BLAS=com.github.fommil.netlib.F2jBLAS", 
+  "-Dcom.github.fommil.netlib.LAPACK=com.github.fommil.netlib.F2jLAPACK", 
+  "-Dcom.github.fommil.netlib.ARPACK=com.github.fommil.netlib.F2jARPACK"]
 
 test {
   testLogging {
