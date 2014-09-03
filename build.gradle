@@ -49,7 +49,12 @@ test {
   }
 }
 
+scaladoc {
+  destinationDir = file("doc/site/app/api")
+}
+
 tasks.withType(ScalaCompile) {
+  // use incremental compilation with zinc
   scalaCompileOptions.useAnt = false
 }
 
