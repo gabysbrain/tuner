@@ -2,6 +2,16 @@
 apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'application'
+apply plugin: 'jacoco'
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+  }
+}
 
 ext {
   scalaVersion = '2.10'
@@ -46,6 +56,12 @@ compileJava {
 test {
   testLogging {
     exceptionFormat = 'full'
+  }
+}
+
+jacocoTestReport {
+  reports {
+    html.enabled = true
   }
 }
 
