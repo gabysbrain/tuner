@@ -1,8 +1,5 @@
 package tuner.test.integration
 
-import org.scalatest._
-import org.scalatest.Matchers._
-
 import scala.swing.Reactor
 import scala.swing.event.Event
 
@@ -12,6 +9,8 @@ import tuner.ProgressComplete
 import tuner.Region
 import tuner.Table
 import tuner.ViewInfo
+
+import scala.util.Try
 
 import tuner.test.Util._
 
@@ -25,12 +24,12 @@ class ProxyReactor(project:InProgress) extends Reactor {
   listenTo(project)
 }
 
-class RunningSamplesSpec extends WordSpec {
+class RunningSamplesSpec extends IntegrationTest {
 
   val normalConfig = createConfig(resource("/sims/run_sim_noisy.sh", true))
 
-  "A RunningSamples project" when {
-    "running a normal project" must {
+  "A RunningSamples project" should {
+    "running a normal project" should {
       val designSites = new Table
       val normalProj = new RunningSamples(normalConfig, resource("/sims"),
                                           testSamples, designSites)
@@ -42,29 +41,28 @@ class RunningSamplesSpec extends WordSpec {
       "send a Progress event with no progress when started" in {
         reactor.events should not be empty
         val e1 = reactor.events.head.asInstanceOf[Progress]
-        e1.currentTime should be (0)
-        e1.totalTime should be (testSamples.numRows)
-        e1.ok should be (true)
+        e1.currentTime must_== 0
+        e1.totalTime must_== testSamples.numRows
+        e1.ok must beTrue
       }
       "send a ProgressComplete event when finished" in {
         // One start, one finish, and one sampling finished message
-        reactor.events.size should be >= (3)
+        reactor.events.size must be_>=(3)
         // Make sure it's the right type of object
-        val e = reactor.events.last match {
-          case ProgressComplete => ProgressComplete
-          case _ => (fail)
-        }
+        val x = ProgressComplete
+        ProgressComplete == ProgressComplete
+        reactor.events.last must be_==(ProgressComplete)
       }
       "write all stdout and stderr output to a log" in {
-        logger.size should be > (0)
+        logger.size must be_>(0)
       }
       "send a Progress event with 100% progress when finished" in {
         val lastE = reactor.events(reactor.events.length-2).asInstanceOf[Progress]
-        lastE.currentTime should equal (lastE.totalTime)
-        lastE.ok should be (true)
+        lastE.currentTime must_== lastE.totalTime
+        lastE.ok must beTrue
       }
       "have all the new design sites written to the given table" in {
-        designSites.numRows should equal (testSamples.numRows)
+        designSites.numRows must_== testSamples.numRows
       }
     }
   }

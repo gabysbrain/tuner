@@ -1,12 +1,9 @@
 package tuner.test.unit
 
-import org.scalatest._
-import org.scalatest.Matchers._
-
 import tuner.Table
 import tuner.error.InvalidSamplingTableException
 
-class InvalidSamplingTableExceptionSpec extends WordSpec {
+class InvalidSamplingTableExceptionSpec extends UnitTest {
   
   val t1 = {
     val tblData = List(
@@ -29,11 +26,11 @@ class InvalidSamplingTableExceptionSpec extends WordSpec {
     tbl
   }
 
-  "An InvalidSamplingTableException" when {
-    "given non-matching tables" must {
+  "An InvalidSamplingTableException" should {
+    "given non-matching tables" should {
       "return a useful error message" in {
         val e = new InvalidSamplingTableException(t1, t2)
-        e.getMessage should not be (null)
+        e.getMessage must_!= null
       }
     }
   }

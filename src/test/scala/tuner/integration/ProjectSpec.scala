@@ -1,28 +1,27 @@
 package tuner.test.integration
 
-import org.scalatest._
-import org.scalatest.Matchers._
-
 import tuner.project.Project
+
+import scala.util.Try
 
 import tuner.test.Util._
 
-class ProjectSpec extends WordSpec {
+class ProjectSpec extends IntegrationTest {
 
-  "A Project" when {
-    "given a valid 8D project to load" must {
+  "A Project" should {
+    "given a valid 8D project to load" should {
       val projPath = resource("/8d_viewable.proj")
 
       "load the project without errors" in {
-        val proj = Project.fromFile(projPath)
+        Try(Project.fromFile(projPath)) must beSuccessfulTry
       }
     }
 
-    "given a valid 3D project to load" must {
+    "given a valid 3D project to load" should {
       val projPath = resource("/3d_viewable.proj")
 
       "load the project without errors" in {
-        val proj = Project.fromFile(projPath)
+        Try(Project.fromFile(projPath)) must beSuccessfulTry
       }
     }
   }

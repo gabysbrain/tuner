@@ -1,11 +1,8 @@
 package tuner.test.unit
 
-import org.scalatest._
-import org.scalatest.Matchers._
-
 import tuner.Table
 
-class TableSpec extends WordSpec {
+class TableSpec extends UnitTest {
   val tbl = {
     val tblData = List(
       List(("lambda1", 2.0f), ("lambda2", 0.2f), ("lambda3", 1.2f)),
@@ -17,14 +14,12 @@ class TableSpec extends WordSpec {
     tbl
   }
 
-  "A Table" must {
-    "return the same number of values as rows" when {
-      "queried for a field with all different values" in {
-        tbl.values("lambda1") should have size (tbl.numRows)
-      }
-      "queried for a field with all the same values" in {
-        tbl.values("lambda2") should have size (tbl.numRows)
-      }
+  "A Table must return the same number of values as rows" should {
+    "queried for a field with all different values" in {
+      tbl.values("lambda1") must have size (tbl.numRows)
+    }
+    "queried for a field with all the same values" in {
+      tbl.values("lambda2") must have size (tbl.numRows)
     }
   }
 

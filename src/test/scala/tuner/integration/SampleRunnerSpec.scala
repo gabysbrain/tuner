@@ -1,8 +1,5 @@
 package tuner.test.integration
 
-import org.scalatest._
-import org.scalatest.Matchers._
-
 import scala.io.Source
 
 import tuner.SampleRunner
@@ -10,7 +7,7 @@ import tuner.Table
 
 import tuner.test.Util._
 
-class SampleRunnerSpec extends WordSpec {
+class SampleRunnerSpec extends IntegrationTest {
 
   def testSamples : Table = {
     val tblData = List(
@@ -23,37 +20,34 @@ class SampleRunnerSpec extends WordSpec {
     tbl
   }
 
-  "A SampleRunner run" when  {
-    "given an empty table" must {
+  "A SampleRunner run" should  {
+    "given an empty table" should {
       "return an empty table" in {
         val tbl = SampleRunner.runSamples(new Table, resource("/sims/run_sim.sh", true), "/", None)
         tbl should be ('empty)
       }
     }
-    "given a missing scriptPath" must {
+    "given a missing scriptPath" should {
       "throw an exception" in {
-        a [java.io.IOException] should be thrownBy 
-          SampleRunner.runSamples(testSamples, resource("/sims/missing_script.sh", true), "/", None)
+        SampleRunner.runSamples(testSamples, resource("/sims/missing_script.sh", true), "/", None) must throwA[java.io.IOException]
       }
     }
-    "the sampling script fails" must {
+    "the sampling script fails" should {
       "throw a SamplingErrorException" in {
-        a [tuner.error.SamplingErrorException] should be thrownBy 
-          SampleRunner.runSamples(testSamples, resource("/sims/bad_script.sh", true), "/", None)
+        SampleRunner.runSamples(testSamples, resource("/sims/bad_script.sh", true), "/", None) must throwA[tuner.error.SamplingErrorException]
       }
     }
-    "a run succeeds" must {
+    "a run succeeds" should {
       "return a table w/ same number of rows as the input table" in {
         val inTbl = testSamples
         val outTbl = SampleRunner.runSamples(inTbl, resource("/sims/run_sim.sh", true), "/", None)
-        inTbl.numRows should equal (outTbl.numRows)
+        inTbl.numRows must_== outTbl.numRows
       }
       "throw an exception when the sample run table isn't the same size" in {
-        a [tuner.error.InvalidSamplingTableException] should be thrownBy
-          SampleRunner.runSamples(testSamples, resource("/sims/run_sim_bad_output.sh", true), "/", None)
+        SampleRunner.runSamples(testSamples, resource("/sims/run_sim_bad_output.sh", true), "/", None) must throwA [tuner.error.InvalidSamplingTableException]
       }
     }
-    "running the script" must {
+    "running the script" should {
       "log both the stdout and stderr of the script" in {
         val scriptOutput = new java.io.ByteArrayOutputStream
         SampleRunner.runSamples(testSamples, resource("/sims/run_sim_noisy.sh", true), "/", Some(scriptOutput))
@@ -63,7 +57,7 @@ class SampleRunnerSpec extends WordSpec {
 
         //recordedOutput should have length (stdout.length + stderr.length)
         //recordedOutput should be (stdout + stderr)
-        recordedOutput.size should be > (0)
+        recordedOutput.size must be_>(0)
       }
     }
     "run the sample script from the given directory" in {
@@ -74,7 +68,7 @@ class SampleRunnerSpec extends WordSpec {
       // need to actually check the files as the paths might be different due
       // to filesystem links
       val testFile = new java.io.File(scriptOutput.toString)
-      testFile === tmpdir
+      testFile must_== tmpdir
     }
   }
 }
