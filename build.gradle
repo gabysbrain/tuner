@@ -6,6 +6,8 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'rebel'
 
+version = 0.9
+
 buildscript {
   repositories {
     mavenCentral()
