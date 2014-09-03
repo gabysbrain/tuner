@@ -1,4 +1,5 @@
 
+apply plugin: 'java'
 apply plugin: 'scala'
 apply plugin: 'application'
 
@@ -35,6 +36,12 @@ dependencies {
 }
 
 mainClassName = "tuner.Tuner"
+
+// set javac compile options
+compileJava {
+  options.deprecation = true
+  options.compilerArgs << "-Xlint:unchecked"
+}
 
 tasks.withType(ScalaCompile) {
   scalaCompileOptions.useAnt = false
