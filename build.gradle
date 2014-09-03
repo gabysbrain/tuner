@@ -43,6 +43,12 @@ compileJava {
   options.compilerArgs << "-Xlint:unchecked"
 }
 
+test {
+  testLogging {
+    exceptionFormat = 'full'
+  }
+}
+
 tasks.withType(ScalaCompile) {
   scalaCompileOptions.useAnt = false
 }
