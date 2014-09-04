@@ -89,3 +89,9 @@ tasks.withType(ScalaCompile) {
 
 defaultTasks 'build'
 
+/*
+task wraper(type: Wrapper) {
+  gradleVersion = '2.0'
+}
+*/
+
