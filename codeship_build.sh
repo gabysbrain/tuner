@@ -1,5 +1,5 @@
 #!/bin/sh
 
-./gradlew clean test jacocoTestReport coveralls
+./gradlew --no-color clean test jacocoTestReport coveralls
 
 
