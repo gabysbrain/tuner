@@ -5,17 +5,20 @@ apply plugin: 'application'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'rebel'
+apply plugin: 'com.ofg.uptodate'
 
 version = "0.10.2"
 
 buildscript {
   repositories {
     mavenCentral()
+    jcenter()
   }
 
   dependencies {
     classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.0'
     classpath 'org.zeroturnaround:gradle-jrebel-plugin:1.1.2'
+    classpath 'com.ofg:uptodate-gradle-plugin:1.1.0'
   }
 }
 
