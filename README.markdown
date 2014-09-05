@@ -1,5 +1,6 @@
 # Tuner 
 [ ![Codeship Status](https://www.codeship.io/projects/298aa360-13d9-0132-1ad5-42d5c8e145a3/status?branch=master)](https://www.codeship.io/projects/33355)
+[![Coverage Status](https://coveralls.io/repos/gabysbrain/tuner/badge.png?branch=master)](https://coveralls.io/r/gabysbrain/tuner?branch=master)
 
 Tuner is an application for finding optimal parameter settings for complex
 algorithms.  It supports sampling, resampling, and optimizaing withing a 
