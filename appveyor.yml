@@ -1,0 +1,4 @@
+
+build_script: "gradlew.bat build"
+test_script: "gradlew.bat test"
+
