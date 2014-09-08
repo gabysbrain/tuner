@@ -86,11 +86,11 @@ object Tuner extends SimpleSwingApplication {
   reactions += {
     case WindowClosed(tw:tuner.gui.Window) =>
       handleWindowClose(tw)
-    case WindowClosing(tw:tuner.gui.Window) => 
+    case WindowClosing(tw:tuner.gui.Window) =>
       handleWindowClose(tw)
   }
 
-  def top = { 
+  def top = {
     ProjectChooser
   }
 
@@ -101,7 +101,7 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def openProject() : Unit = {
-    FileChooser.loadDirectory("Select project") foreach {projDir => 
+    FileChooser.loadDirectory("Select project") foreach {projDir =>
       openProject(new java.io.File(projDir))
     }
   }
@@ -124,11 +124,11 @@ object Tuner extends SimpleSwingApplication {
         ProjectChooser.close
         waitWindow.open
         future {ip.start}
-      case v:Viewable => 
+      case v:Viewable =>
         val projWindow = new ProjectViewer(v)
         ProjectChooser.close
         projWindow.open
-      case _ => 
+      case _ =>
     }
 
     //maybeShowProjectWindow
@@ -150,7 +150,7 @@ object Tuner extends SimpleSwingApplication {
 
   def saveProjectAs(project:Project) : Unit = {
     println("here")
-    FileChooser.loadDirectory("Select save path") foreach {projDir => 
+    FileChooser.loadDirectory("Select save path") foreach {projDir =>
       project.save(projDir)
     }
   }
@@ -170,13 +170,19 @@ object Tuner extends SimpleSwingApplication {
     //maybeShowProjectWindow
   }
 
+  def maybeQuit : Unit = {
+    if(openWindows.isEmpty) {
+      System.exit(0)
+    }
+  }
+
   protected def handleWindowClose(tw:tuner.gui.Window) = {
     openWindows -= tw
     WindowMenu.updateWindows
     deafTo(tw)
 
     if(!Config.testingMode) {
-      // If a project is moving to another stage then we 
+      // If a project is moving to another stage then we
       // should automatically open that window
       (tw.project, tw.project.next) match {
         case (p:Viewable, pn:Viewable) =>
@@ -185,6 +191,8 @@ object Tuner extends SimpleSwingApplication {
         case _ => Tuner.openProject(tw.project.next)
       }
 
+      println(openWindows.size)
+      println(openWindows)
       // If there are no more open windows open the project chooser again
       if(openWindows.isEmpty) ProjectChooser.open
     } else {
@@ -192,4 +200,3 @@ object Tuner extends SimpleSwingApplication {
     }
   }
 }
-

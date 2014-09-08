@@ -17,4 +17,3 @@ abstract class Window(val project:Project) extends Frame {
   }
 
 }
-

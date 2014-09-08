@@ -31,6 +31,10 @@ object ProjectChooser extends Frame {
   menuBar = myMenu
   centerOnScreen
 
+  override def closeOperation() {
+    Tuner.maybeQuit
+  }
+
   // All the buttons
   val newProjectButton = new Button("New Project")
   val openOtherButton = new Button("Open Other") {
@@ -103,7 +107,7 @@ object ProjectChooser extends Frame {
       if(row != -1) {
         val proj = projects(row)
         proj match {
-          case p:tuner.project.Sampler => 
+          case p:tuner.project.Sampler =>
             importSamplesItem.action = MainMenu.ImportSamplesAction(p)
             importSamplesItem.enabled = true
           case _ =>
@@ -128,4 +132,3 @@ object ProjectChooser extends Frame {
   }
 
 }
-
