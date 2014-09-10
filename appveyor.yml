@@ -1,12 +1,12 @@
 
 install: 
-  - choco install sbt
+  - ps: choco install sbt
 
 build_script: 
-  - sbt compile
+  - ps: sbt compile
 
 test_script: 
-  - sbt test
+  - ps: sbt test
 
 branches:
   except:
