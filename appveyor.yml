@@ -1,5 +1,5 @@
 
-before_build: 
+install: 
   - choco install sbt
 
 build_script: 
