@@ -4,10 +4,13 @@ install:
   - SET PATH=C:\Program Files (x86)\sbt\bin\;%PATH%
 
 build_script: 
-  - sbt compile
-
-test_script: 
   - sbt test
+
+test: OFF
+
+test_script: OFF
+
+deploy: OFF
 
 branches:
   except:
