@@ -1,6 +1,8 @@
 
 install: 
   - cinst sbt
+  - echo %PATH%
+  - dir C:\Program Files
 
 build_script: 
   - sbt compile
