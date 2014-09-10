@@ -1,8 +1,8 @@
 
 install: 
   - ps: cinst sbt
-  - PATH
-  - dir "C:\Program Files (x86)"
+  - SET PATH=C:\Program Files (x86)\sbt\bin\;%PATH%
+  - dir "C:\Program Files (x86)\sbt"
 
 build_script: 
   - sbt compile
