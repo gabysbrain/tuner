@@ -1,14 +1,13 @@
 
-install: 
+install:
   - ps: cinst sbt
   - SET PATH=C:\Program Files (x86)\sbt\bin\;%PATH%
 
-build_script: 
+build_script:
+  - sbt clean compile
+
+test_script:
   - sbt test
-
-test: OFF
-
-test_script: OFF
 
 deploy: OFF
 
@@ -24,4 +23,3 @@ notifications:
     auth_token:
       secure: cam875R7F30mlKx0bfNa8Boez4Gm3I+lX8mkNGt2P97Ud9W+qeT+Voaoj2qp9dMR
     channel: tuner
-
