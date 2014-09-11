@@ -68,7 +68,8 @@ class SampleRunnerSpec extends WordSpec {
     }
     "run the sample script from the given directory" in {
       val scriptOutput = new java.io.ByteArrayOutputStream
-      val tmpdir = new java.io.File("/tmp")
+      //val tmpdir = new java.io.File("/tmp")
+      val tmpdir = new java.io.File(System.getProperty("java.io.tmpdir"))
       SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/run_sim_pwd"), true), tmpdir.getAbsolutePath, Some(scriptOutput))
 
       // need to actually check the files as the paths might be different due
