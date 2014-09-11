@@ -26,37 +26,37 @@ class SampleRunnerSpec extends WordSpec {
   "A SampleRunner run" when  {
     "given an empty table" must {
       "return an empty table" in {
-        val tbl = SampleRunner.runSamples(new Table, resource("/sims/run_sim.sh", true), "/", None)
+        val tbl = SampleRunner.runSamples(new Table, resource(scriptPath("/sims/run_sim"), true), "/", None)
         tbl should be ('empty)
       }
     }
     "given a missing scriptPath" must {
       "throw an exception" in {
-        a [java.io.IOException] should be thrownBy 
-          SampleRunner.runSamples(testSamples, resource("/sims/missing_script.sh", true), "/", None)
+        a [java.io.IOException] should be thrownBy
+          SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/missing_script"), true), "/", None)
       }
     }
     "the sampling script fails" must {
       "throw a SamplingErrorException" in {
-        a [tuner.error.SamplingErrorException] should be thrownBy 
-          SampleRunner.runSamples(testSamples, resource("/sims/bad_script.sh", true), "/", None)
+        a [tuner.error.SamplingErrorException] should be thrownBy
+          SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/bad_script"), true), "/", None)
       }
     }
     "a run succeeds" must {
       "return a table w/ same number of rows as the input table" in {
         val inTbl = testSamples
-        val outTbl = SampleRunner.runSamples(inTbl, resource("/sims/run_sim.sh", true), "/", None)
+        val outTbl = SampleRunner.runSamples(inTbl, resource(scriptPath("/sims/run_sim"), true), "/", None)
         inTbl.numRows should equal (outTbl.numRows)
       }
       "throw an exception when the sample run table isn't the same size" in {
         a [tuner.error.InvalidSamplingTableException] should be thrownBy
-          SampleRunner.runSamples(testSamples, resource("/sims/run_sim_bad_output.sh", true), "/", None)
+          SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/run_sim_bad_output"), true), "/", None)
       }
     }
     "running the script" must {
       "log both the stdout and stderr of the script" in {
         val scriptOutput = new java.io.ByteArrayOutputStream
-        SampleRunner.runSamples(testSamples, resource("/sims/run_sim_noisy.sh", true), "/", Some(scriptOutput))
+        SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/run_sim_noisy"), true), "/", Some(scriptOutput))
         val stdout = Source.fromFile(new java.io.File(resource("/sims/sim_stdout.log"))).mkString.trim
         val stderr = Source.fromFile(new java.io.File(resource("/sims/sim_stderr.log"))).mkString.trim
         val recordedOutput:String = scriptOutput.toString
@@ -69,7 +69,7 @@ class SampleRunnerSpec extends WordSpec {
     "run the sample script from the given directory" in {
       val scriptOutput = new java.io.ByteArrayOutputStream
       val tmpdir = new java.io.File("/tmp")
-      SampleRunner.runSamples(testSamples, resource("/sims/run_sim_pwd.sh", true), tmpdir.getAbsolutePath, Some(scriptOutput))
+      SampleRunner.runSamples(testSamples, resource(scriptPath("/sims/run_sim_pwd"), true), tmpdir.getAbsolutePath, Some(scriptOutput))
 
       // need to actually check the files as the paths might be different due
       // to filesystem links
@@ -78,4 +78,3 @@ class SampleRunnerSpec extends WordSpec {
     }
   }
 }
-

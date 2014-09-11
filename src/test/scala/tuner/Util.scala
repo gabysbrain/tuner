@@ -1,10 +1,18 @@
 package tuner.test
 
 import tuner.Table
+import tuner.OS
 
 import breeze.linalg.DenseMatrix
 
 object Util {
+
+  def scriptPath(name:String) = OS.detect match {
+      case OS.Mac  => name + ".sh"
+      case OS.Win  => //name.replace("/", "\\") + ".bat"
+        name + ".bat"
+      case OS.Unix => name + ".sh"
+    }
 
   def resource(file:String, exec:Boolean=false) : String = {
     val r = getClass.getResource(file)

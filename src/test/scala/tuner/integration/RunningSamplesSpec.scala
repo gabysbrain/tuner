@@ -27,7 +27,7 @@ class ProxyReactor(project:InProgress) extends Reactor {
 
 class RunningSamplesSpec extends WordSpec {
 
-  val normalConfig = createConfig(resource("/sims/run_sim_noisy.sh", true))
+  val normalConfig = createConfig(resource(scriptPath("/sims/run_sim_noisy"), true))
 
   "A RunningSamples project" when {
     "running a normal project" must {
@@ -79,7 +79,7 @@ class RunningSamplesSpec extends WordSpec {
     tblData.foreach {row => tbl.addRow(row)}
     tbl
   }
-  
+
   def createConfig(script:String) : ProjConfig = ProjConfig(
     name="test",
     scriptPath=script,
@@ -93,4 +93,3 @@ class RunningSamplesSpec extends WordSpec {
     history=None
   )
 }
-
