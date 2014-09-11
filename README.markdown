@@ -67,5 +67,7 @@ Tuner is written in Scala.  For building it uses
 build script should take care of downloading all the required libraries.
 
 ## Build Status
-[ ![Codeship Status](https://www.codeship.io/projects/298aa360-13d9-0132-1ad5-42d5c8e145a3/status?branch=master)](https://www.codeship.io/projects/33355)
-[![Coverage Status](https://coveralls.io/repos/gabysbrain/tuner/badge.png?branch=master)](https://coveralls.io/r/gabysbrain/tuner?branch=master)
+
+* Linux: [ ![Codeship Status](https://www.codeship.io/projects/298aa360-13d9-0132-1ad5-42d5c8e145a3/status?branch=master)](https://www.codeship.io/projects/33355)
+* Windows: [![Appveyor status](https://ci.appveyor.com/api/projects/status/dxb77m7o62ru7511)](https://ci.appveyor.com/project/gabysbrain/tuner)
+* Code coverage: [![Coverage Status](https://coveralls.io/repos/gabysbrain/tuner/badge.png?branch=master)](https://coveralls.io/r/gabysbrain/tuner?branch=master)
