@@ -56,6 +56,8 @@ javaOptions := packJvmOpts.value("tuner")
 
 fork := true
 
+outputStrategy := Some(StdoutOutput)
+
 parallelExecution := false
 
 mainClass := Some(packMain.value("tuner"))
