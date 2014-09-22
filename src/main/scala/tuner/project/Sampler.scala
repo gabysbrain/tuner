@@ -6,11 +6,13 @@ import tuner.Region
 import tuner.Table
 import tuner.util.Path
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 /**
  * A type of project that can have additional sample points added to it
  */
-trait Sampler { self:Project =>
-  
+trait Sampler extends LazyLogging { self:Project =>
+
   // New samples to run through the simulation
   val newSamples:Table
   // Already run sample points (have outputs from simulation)
@@ -31,14 +33,14 @@ trait Sampler { self:Project =>
 
   /**
    * Information about the input dimension ranges for sampling
-   */ 
+   */
   def sampleRanges : DimRanges
 
   def addSamples(n:Int, range:DimRanges, method:tuner.Sampler.Method) : Unit = {
     // TODO: find a better solution than just ignoring the missing inputs
     if(n > 0) {
       method(range, n, {v => newSamples.addRow(v)})
-      //println(n + " samples generated")
+      logger.debug(n + " samples generated")
     }
   }
 
@@ -66,4 +68,3 @@ trait Sampler { self:Project =>
     }
   }
 }
-

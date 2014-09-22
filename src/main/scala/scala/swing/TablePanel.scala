@@ -6,6 +6,8 @@ import info.clearthought.layout.TableLayoutConstraints
 
 import scala.swing.event.UIElementResized
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 object TablePanel {
   object Size {
     val Fill = TableLayoutConstants.FILL
@@ -29,18 +31,19 @@ object TablePanel {
   }
 }
 
-class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel 
-                                                          with LayoutContainer {
+class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
+                                                          with LayoutContainer
+                                                          with LazyLogging {
   import TablePanel._
 
-  override lazy val peer = 
+  override lazy val peer =
     new javax.swing.JPanel(
-      new TableLayout(colSz0.toArray,rowSz0.toArray)) 
+      new TableLayout(colSz0.toArray,rowSz0.toArray))
       with SuperMixin
 
   private def layoutManager = peer.getLayout.asInstanceOf[TableLayout]
 
-  /** 
+  /**
    * Creates a table with the specified number of rows and columns equally
    * sized
    */
@@ -128,7 +131,7 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
   }
 
   def dropRow(r:Int) = {
-    println("dropping row " + r)
+    logger.debug("dropping row " + r)
     layoutManager.deleteRow(r)
     //layoutManager.layoutContainer(peer)
     //peer.repaint()
@@ -145,4 +148,3 @@ class TablePanel(colSz0:List[Double],rowSz0:List[Double]) extends Panel
     peer.add(c.peer, l.peer)
   }
 }
-

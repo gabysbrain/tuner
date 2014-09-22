@@ -21,6 +21,8 @@ import tuner.project.Viewable
 import tuner.gui.util.AxisTicks
 import tuner.util.ColorLib
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import scala.collection.mutable.Queue
 import scala.swing.event.UIElementMoved
 import scala.swing.event.UIElementResized
@@ -30,18 +32,18 @@ import processing.core.PConstants
 /**
  * A Hyperslice matrix implemented using the Processing API
  */
-class ProcessingMainPlotPanel(val project:Viewable) 
-    extends P5Panel(Config.mainPlotDims._1, 
-                    Config.mainPlotDims._2, 
-                    P5Panel.OpenGL) 
-    with MainPlotPanel {
+class ProcessingMainPlotPanel(val project:Viewable)
+    extends P5Panel(Config.mainPlotDims._1,
+                    Config.mainPlotDims._2,
+                    P5Panel.OpenGL)
+    with MainPlotPanel with LazyLogging {
 
   applet.paused = true
 
   type PlotInfoMap = Map[(String,String), ContinuousPlot]
   type AxisMap = Map[String,Axis]
 
-  // Everything response 1 needs 
+  // Everything response 1 needs
   val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Left)
   val resp1XAxes = createAxes(Axis.HorizontalBottom)
   val resp1YAxes = createAxes(Axis.VerticalLeft)
@@ -59,15 +61,15 @@ class ProcessingMainPlotPanel(val project:Viewable)
   applet.paused = false
 
   reactions += {
-    case UIElementMoved(_) => 
+    case UIElementMoved(_) =>
       clearFonts
-    case UIElementResized(_) => 
+    case UIElementResized(_) =>
       clearFonts
   }
 
   def plotData(model:GpModel,
-               xDim:(String,(Float,Float)), 
-               yDim:(String,(Float,Float)), 
+               xDim:(String,(Float,Float)),
+               yDim:(String,(Float,Float)),
                slice:Map[String,Float]) : Grid2D = {
     // Progressive rendering
     val idealSize = project.viewInfo.estimateSampleDensity
@@ -90,7 +92,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
   def draw = {
     loop = false
 
-    // Need to clear the font cache when resizing.  
+    // Need to clear the font cache when resizing.
     // Otherwise wakiness will ensue
     if((width, height) != Config.mainPlotDims) {
       clearFonts
@@ -113,16 +115,16 @@ class ProcessingMainPlotPanel(val project:Viewable)
     // Draw the colorbars
     val cbStartTime = System.currentTimeMillis
     project.viewInfo.response1View.foreach {r =>
-      resp1Colorbar.draw(this, leftColorbarBounds.minX, 
+      resp1Colorbar.draw(this, leftColorbarBounds.minX,
                                leftColorbarBounds.minY,
-                               leftColorbarBounds.width, 
+                               leftColorbarBounds.width,
                                leftColorbarBounds.height,
                                r, colormap(r, resp1Colormaps))
     }
     project.viewInfo.response2View.foreach {r =>
-      resp2Colorbar.draw(this, rightColorbarBounds.minX, 
+      resp2Colorbar.draw(this, rightColorbarBounds.minX,
                                rightColorbarBounds.minY,
-                               rightColorbarBounds.width, 
+                               rightColorbarBounds.width,
                                rightColorbarBounds.height,
                                r, colormap(r, resp2Colormaps))
     }
@@ -154,10 +156,10 @@ class ProcessingMainPlotPanel(val project:Viewable)
 
     List(bounds1, bounds2).foreach {bounds =>
       fill(0)
-      rect(bounds.minX-offset, bounds.minY-offset, 
+      rect(bounds.minX-offset, bounds.minY-offset,
            bounds.maxX+offset, bounds.maxY+offset)
       fill(255)
-      rect(bounds.minX-1, bounds.minY-1, 
+      rect(bounds.minX-1, bounds.minY-1,
            bounds.maxX+1, bounds.maxY+1)
     }
   }
@@ -174,12 +176,12 @@ class ProcessingMainPlotPanel(val project:Viewable)
         val yRange = (yFld, project.viewInfo.currentZoom.range(yFld))
 
         if(xFld < yFld) {
-          project.viewInfo.response1View.foreach {r1 => 
+          project.viewInfo.response1View.foreach {r1 =>
             val startTime = System.currentTimeMillis
             drawResponse(xRange, yRange, r1)
             drawResponseWidgets(xRange, yRange, closestSample)
             val endTime = System.currentTimeMillis
-            //println("r1 draw time: " + (endTime-startTime) + "ms")
+            logger.trace("r1 draw time: " + (endTime-startTime) + "ms")
           }
         } else if(xFld > yFld) {
           project.viewInfo.response2View.foreach {r2 =>
@@ -187,15 +189,15 @@ class ProcessingMainPlotPanel(val project:Viewable)
             drawResponse(xRange, yRange, r2)
             drawResponseWidgets(xRange, yRange, closestSample)
             val endTime = System.currentTimeMillis
-            //println("r2 draw time: " + (endTime-startTime) + "ms")
+            logger.trace("r2 draw time: " + (endTime-startTime) + "ms")
           }
         }
       }
     }
   }
 
-  protected def drawResponse(xRange:(String,(Float,Float)), 
-                             yRange:(String,(Float,Float)), 
+  protected def drawResponse(xRange:(String,(Float,Float)),
+                             yRange:(String,(Float,Float)),
                              response:String) = {
 
     val (xFld, yFld) = (xRange._1, yRange._1)
@@ -208,9 +210,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
        yFld, xFld, yRange, xRange)
     }
 
-    val data = project.sampleGrid2D(xr, yr, response, 
+    val data = project.sampleGrid2D(xr, yr, response,
                                     project.viewInfo.currentSlice.toList)
-    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf),
                             project.viewInfo.currentSlice(yf))
 
     // Draw the main plot
@@ -229,11 +231,11 @@ class ProcessingMainPlotPanel(val project:Viewable)
       (yFld, xFld, yRange, xRange)
     }
 
-    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf),
                             project.viewInfo.currentSlice(yf))
 
     // Crosshair showing current location
-    Widgets.crosshair(this, bounds.minX, bounds.minY, 
+    Widgets.crosshair(this, bounds.minX, bounds.minY,
                             bounds.width, bounds.height,
                             xSlice, ySlice, xr._2, yr._2)
 
@@ -241,7 +243,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
     if(project.viewInfo.showSampleLine) {
       Widgets.sampleLine(this, bounds.minX, bounds.minY,
                                bounds.width, bounds.height,
-                               xSlice, ySlice, 
+                               xSlice, ySlice,
                                closestSample(xf), closestSample(yf),
                                xr._2, yr._2)
     }
@@ -261,16 +263,16 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        axis.draw(this, sliceDim.minX, bottomAxisBounds.minY, 
-                        sliceDim.width, bottomAxisBounds.height, 
+        axis.draw(this, sliceDim.minX, bottomAxisBounds.minY,
+                        sliceDim.width, bottomAxisBounds.height,
                         fld, low, high)
       }
       // See if we draw the y axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
-        axis.draw(this, leftAxisBounds.minX, sliceDim.minY, 
-                        leftAxisBounds.width, sliceDim.height, 
+        axis.draw(this, leftAxisBounds.minX, sliceDim.minY,
+                        leftAxisBounds.width, sliceDim.height,
                         fld, low, high)
       }
     }
@@ -279,16 +281,16 @@ class ProcessingMainPlotPanel(val project:Viewable)
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
-        axis.draw(this, sliceDim.minX, topAxisBounds.minY, 
-                        sliceDim.width, topAxisBounds.height, 
+        axis.draw(this, sliceDim.minX, topAxisBounds.minY,
+                        sliceDim.width, topAxisBounds.height,
                         fld, low, high)
       }
       // See if we draw the y axis
       if(fld != firstField) {
         val sliceDim = sliceBounds((fld, firstField))
         val axis = resp2YAxes(fld)
-        axis.draw(this, rightAxisBounds.minX, sliceDim.minY, 
-                        rightAxisBounds.width, sliceDim.height, 
+        axis.draw(this, rightAxisBounds.minX, sliceDim.minY,
+                        rightAxisBounds.width, sliceDim.height,
                         fld, low, high)
       }
     }
@@ -329,7 +331,6 @@ class ProcessingMainPlotPanel(val project:Viewable)
       case _:BoxRegion =>
         rectMode(P5Panel.RectMode.Corners)
         rect(xxMin, yyMin, xxMax, yyMax)
-        //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
       case _:EllipseRegion =>
         ellipseMode(P5Panel.EllipseMode.Corners)
         ellipse(xxMin, yyMin, xxMax, yyMax)
@@ -359,19 +360,19 @@ class ProcessingMainPlotPanel(val project:Viewable)
       })
     }).toMap
   }
-  
+
   private def createAxes(position:Axis.Placement) = {
     val fields = position match {
-      case Axis.HorizontalTop | Axis.HorizontalBottom => 
+      case Axis.HorizontalTop | Axis.HorizontalBottom =>
         project.inputFields.init
-      case Axis.VerticalLeft | Axis.VerticalRight => 
+      case Axis.VerticalLeft | Axis.VerticalRight =>
         project.inputFields.tail
     }
     fields.map {fld => (fld, new Axis(position))} toMap
   }
 
-  override def mouseMoved(prevMouseX:Int, prevMouseY:Int, 
-                          mouseX:Int, mouseY:Int, 
+  override def mouseMoved(prevMouseX:Int, prevMouseY:Int,
+                          mouseX:Int, mouseY:Int,
                           button:P5Panel.MouseButton.Value) = {
     val pb = sliceBounds.find {case (_,b) => b.isInside(mouseX, mouseY)}
     val newPos = pb.map {tmp => tmp._1}
@@ -381,10 +382,10 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  override def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
+  override def mouseDragged(prevMouseX:Int, prevMouseY:Int,
                             mouseX:Int, mouseY:Int,
                             button:P5Panel.MouseButton.Value) = {
-    // Now figure out if we need to deal with any mouse 
+    // Now figure out if we need to deal with any mouse
     // movements in the colorbars
     if(mouseButton == P5Panel.MouseButton.Left) {
       //val (mouseX, mouseY) = mousePos
@@ -394,9 +395,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
     }
   }
 
-  override def mouseClicked(mouseX:Int, mouseY:Int, 
+  override def mouseClicked(mouseX:Int, mouseY:Int,
                             button:P5Panel.MouseButton.Value) = {
-    // Now figure out if we need to deal with any mouse 
+    // Now figure out if we need to deal with any mouse
     // movements in the colorbars
     if(button == P5Panel.MouseButton.Left) {
       handleBarMouse(mouseX, mouseY)
@@ -412,7 +413,7 @@ class ProcessingMainPlotPanel(val project:Viewable)
   }
 
   /**
-   * What to do when the mouse is clicked inside the bounds 
+   * What to do when the mouse is clicked inside the bounds
    * of the hyperslice matrix
    */
   def handlePlotMouse(mouseX:Int, mouseY:Int) = {
@@ -450,9 +451,9 @@ class ProcessingMainPlotPanel(val project:Viewable)
       project.viewInfo.response1View.foreach {r1 =>
         val cb = resp1Colorbar
         val cm = colormap(r1, resp1Colormaps)
-        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
-                                            cb.barBounds.minY, 
-                                            cm.minVal, 
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY,
+                                            cb.barBounds.minY,
+                                            cm.minVal,
                                             cm.maxVal)
         cm.filterVal = filterVal
       }
@@ -461,13 +462,12 @@ class ProcessingMainPlotPanel(val project:Viewable)
       project.viewInfo.response2View.foreach {r2 =>
         val cb = resp2Colorbar
         val cm = colormap(r2, resp2Colormaps)
-        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
-                                            cb.barBounds.minY, 
-                                            cm.minVal, 
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY,
+                                            cb.barBounds.minY,
+                                            cm.minVal,
                                             cm.maxVal)
         cm.filterVal = filterVal
       }
     }
   }
 }
-

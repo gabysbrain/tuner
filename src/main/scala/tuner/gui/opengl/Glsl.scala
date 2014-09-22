@@ -5,6 +5,8 @@ import javax.media.opengl.{GL,GL2,GL2ES2}
 import javax.media.opengl.GLAutoDrawable
 import javax.media.opengl.GLException
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 object Glsl {
   def readResource(name:String) = {
     val stream = getClass.getResourceAsStream(name)
@@ -34,20 +36,20 @@ object Glsl {
 }
 
 class Glsl(gl:GL,
-           vertexSource:String, 
-           geometrySource:Option[String], 
+           vertexSource:String,
+           geometrySource:Option[String],
            fragmentSource:String,
-           bindings:List[(String,Int)]) {
+           bindings:List[(String,Int)]) extends LazyLogging {
 
   val es2 = gl.getGL2ES2
   //val es2 = new DebugGL2ES2(gl.getGL2ES2)
 
-  val vertShaderId = 
+  val vertShaderId =
     createShader(GL2ES2.GL_VERTEX_SHADER, vertexSource)
-  val geomShaderId = geometrySource.map {gs => 
+  val geomShaderId = geometrySource.map {gs =>
     createShader(GL2.GL_GEOMETRY_PROGRAM_NV, gs)
   }
-  val fragShaderId = 
+  val fragShaderId =
     createShader(GL2ES2.GL_FRAGMENT_SHADER, fragmentSource)
   val programId = {
     val progId = es2.glCreateProgram
@@ -70,7 +72,7 @@ class Glsl(gl:GL,
   // Build up all the vertex attributes
   var attribIds = bindings.toMap
 
-  def this(gl:GL, vertexSource:String, fragmentSource:String) = 
+  def this(gl:GL, vertexSource:String, fragmentSource:String) =
         this(gl, vertexSource, None, fragmentSource, List())
 
   protected def createShader(typeId:Int, source:String) = {
@@ -81,7 +83,7 @@ class Glsl(gl:GL,
     if(!ok) {
       throw new javax.media.opengl.GLException(
         source.split("\n").zipWithIndex.map {case (ln:String, no:Int) =>
-          println((no+1) + ": " + ln)
+          logger.debug((no+1) + ": " + ln)
         }.reduceLeft(_ + "\n" + _) + "\n\n" +
         ShaderUtil.getShaderInfoLog(es2, shaderId))
     }
@@ -133,4 +135,3 @@ class Glsl(gl:GL,
   }
 
 }
-

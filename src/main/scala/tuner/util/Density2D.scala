@@ -3,10 +3,12 @@ package tuner.util
 import tuner.Grid2D
 import tuner.Table
 
-object Density2D {
-  
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
+object Density2D extends LazyLogging {
+
   def density(data:Table, n:Int,
-              rowFieldRange:(String,(Float,Float)), 
+              rowFieldRange:(String,(Float,Float)),
               colFieldRange:(String,(Float,Float))) : Grid2D = {
 
     val rowField = rowFieldRange._1
@@ -15,10 +17,9 @@ object Density2D {
     val mtx = tuner.Sampler.regularSlice(rowFieldRange, colFieldRange, n)
     val rowRadius = math.abs(mtx.rowIds(0) - mtx.rowIds(1)) / 2
     val colRadius = math.abs(mtx.colIds(0) - mtx.colIds(1)) / 2
-    /*
-    print("row radius: " + rowRadius)
-    println(" col radius: " + colRadius)
-    */
+
+    logger.debug("row radius: " + rowRadius)
+    logger.debug(" col radius: " + colRadius)
 
     for(r <- 0 until data.numRows) {
       val tpl = data.tuple(r)
@@ -33,13 +34,11 @@ object Density2D {
       val updateCol = updateIdx(minColPos, colVal, colRadius, mtx.colIds)
 
       (updateRow, updateCol) match {
-        case (Some(ur), Some(uc)) => 
-          /*
-          print(" ur: " + ur + " " + mtx.rowIds(ur))
-          println(" rv: " + rowVal)
-          print(" uc: " + uc + " " + mtx.colIds(uc))
-          println(" cv: " + colVal)
-          */
+        case (Some(ur), Some(uc)) =>
+          logger.debug(" ur: " + ur + " " + mtx.rowIds(ur))
+          logger.debug(" rv: " + rowVal)
+          logger.debug(" uc: " + uc + " " + mtx.colIds(uc))
+          logger.debug(" cv: " + colVal)
           mtx.set(ur, uc, mtx.get(ur, uc) + 1)
         case _ => // outside the bounds of the grid
       }
@@ -70,4 +69,3 @@ object Density2D {
     }
   }
 }
-

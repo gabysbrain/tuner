@@ -9,6 +9,8 @@ import scala.swing.TextField
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import tuner.Sampler
 
 /**
@@ -16,7 +18,8 @@ import tuner.Sampler
  * of generating samples from within Tuner
  */
 class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
-    extends TablePanel(2,4) {
+    extends TablePanel(2,4)
+    with LazyLogging {
   // regression parameters for later
   /*
   val tf = Array(7.001e-09, 6.855e-09, 7.759e-09, 7.690e-09, 7.656e-09, 7.629e-09)
@@ -69,9 +72,9 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
   var ttlTimeModTime:Long = System.currentTimeMillis
 
   var internalChange:Boolean = false
-  
+
   reactions += {
-    case SelectionChanged(`methodSelector`) => 
+    case SelectionChanged(`methodSelector`) =>
       handleSamplesChanged
     case ValueChanged(`sampleNumField`) =>
       handleSamplesChanged
@@ -97,7 +100,7 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
           internalChange = false
         }
       }
-    case ValueChanged(`ttlRunTimeField`) => 
+    case ValueChanged(`ttlRunTimeField`) =>
       if(lastTotalTime != ttlRunTimeField.millis) {
         lastTotalTime = ttlRunTimeField.millis
         if(!internalChange) {
@@ -128,7 +131,7 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
   def methodString = methodSelector.selection.item
 
   def method : Sampler.Method = {
-    //println(methodSelector.selection.item)
+    logger.debug(methodSelector.selection.item)
     methodSelector.selection.item match {
       case "LHS" => Sampler.lhc
       case "Random" => Sampler.random
@@ -147,7 +150,7 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
 
   private def updateNumSamples = {
     (sampleTimeField.millis, ttlRunTimeField.millis) match {
-      case (Some(st), Some(tt)) if(st > 0) => 
+      case (Some(st), Some(tt)) if(st > 0) =>
         sampleNumField.text = (tt/st).toInt.toString
       case _ =>
     }
@@ -176,7 +179,7 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
       sampleNumField.text = if(numSamp > 0) numSamp.toString
                             else            ""
     } catch {
-      case nfe:NumberFormatException => 
+      case nfe:NumberFormatException =>
         sampleNumField.text = ""
     }
     handleSamplesChanged
@@ -201,7 +204,7 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
   /*
   private def onePtTime(r:Float) : Float = {
     val d = project.sampleRanges.length
-    val m = math.exp(-(m1(d-3)*math.pow(r,3) + m2(d-3)*math.pow(r,2) + 
+    val m = math.exp(-(m1(d-3)*math.pow(r,3) + m2(d-3)*math.pow(r,2) +
                        m3(d-3)*r + m4(d-3)))
     val b = b1(d-3)*math.pow(r,3) + b2(d-3)*math.pow(r,2) + b3(d-3)*r + b4(d-3)
     val mytf = tf(d-3)
@@ -219,13 +222,13 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
         var pr = 1f
         for(k <- 0 until (i+1))
           pr += n + i - 2*k
-        var num = math.pow(2, i+1) * 
-                  math.pow(math.Pi, (n-i).toFloat/2f) * 
+        var num = math.pow(2, i+1) *
+                  math.pow(math.Pi, (n-i).toFloat/2f) *
                   math.pow(r, n+i)
         var den = gamma((n-1).toFloat/2f) * pr
         term1 += (math.pow(-1, i) * choose(n, i) * num / den).toFloat
       }
-      val term2:Float = math.pow(-1, n).toFloat * math.pow(r, 2*n).toFloat / 
+      val term2:Float = math.pow(-1, n).toFloat * math.pow(r, 2*n).toFloat /
                         factorial(n)
       val term3:Float = nsphereVol(d, r)
       term1 + term2 + term3
@@ -236,15 +239,14 @@ class SampleGenerationPanel(newSamples:((Int, Sampler.Method) => Unit))
     if(d == 1) {
       2 * r
     } else {
-      (math.pow(math.Pi, d.toFloat/2f) * math.pow(r, d) / 
+      (math.pow(math.Pi, d.toFloat/2f) * math.pow(r, d) /
         gamma(d.toFloat/2f + 1f)).toFloat
     }
   }
 
   val choose = org.apache.commons.math.util.MathUtils.binomialCoefficient _
   val factorial = org.apache.commons.math.util.MathUtils.factorial _
-  def gamma(x:Double) : Double = 
+  def gamma(x:Double) : Double =
     math.exp(org.apache.commons.math.special.Gamma.logGamma(x))
   */
 }
-

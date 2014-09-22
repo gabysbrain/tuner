@@ -23,18 +23,18 @@ object RawValueShader {
 
 class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
     extends Glsl(gl, vertSrc, None, fragSrc, List()) {
-  
+
   val pointVbo = {
     val tmp = Array(-1)
     es2.glGenBuffers(1, tmp, 0)
     tmp(0)
   }
 
-  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int, 
-                   trans:Matrix4, 
+  def draw(gl:GL2, textureId:Int, texWidth:Int, texHeight:Int,
+                   trans:Matrix4,
                    xRange:(String,(Float,Float)), yRange:(String,(Float,Float)),
                    xDim:Int, yDim:Int,
-                   response:String, 
+                   response:String,
                    focusPoint:List[(String,Float)]) = {
 
     val (xr, yr) = if(xRange._1 < yRange._1) {
@@ -109,19 +109,19 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
 
     // Make sure the framebuffer is ok
     gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) match {
-      case GL2ES3.GL_FRAMEBUFFER_UNDEFINED => 
+      case GL2ES3.GL_FRAMEBUFFER_UNDEFINED =>
         throw new Exception("framebuffer undefined")
-      case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT => 
+      case GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT =>
         throw new Exception("incomplete attachment")
-      case GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT => 
+      case GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT =>
         throw new Exception("missing attachment")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER => 
+      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER =>
         throw new Exception("incomplete draw buffer")
-      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER => 
+      case GL2GL3.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER =>
         throw new Exception("incomplete read buffer")
-      case GL.GL_FRAMEBUFFER_UNSUPPORTED => 
+      case GL.GL_FRAMEBUFFER_UNSUPPORTED =>
         throw new Exception("unsupported buffer")
-      case GL2ES3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE => 
+      case GL2ES3.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE =>
         throw new Exception("incomplete multisample")
       case GL.GL_FRAMEBUFFER_COMPLETE =>
         // all is well
@@ -148,7 +148,7 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
     for(c <- 0 until mtx.columns) {
       for(r <- 0 until mtx.rows) {
         out.append(mtx.rowVal(r), mtx.colVal(c), mtx.get(r, c))
-        //println(mtx.rowVal(r), mtx.colVal(c), mtx.get(r, c))
+        logger.debug(s"${mtx.rowVal(r)}, ${mtx.colVal(c)}, ${mtx.get(r, c)}")
       }
     }
 
@@ -162,7 +162,7 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
     val out = new ArrayBuffer[Int]
     val rows = mtx.rows
 
-    //println("slice")
+    logger.debug("slice")
     // Push 2 triangles per cell
     // In the data the rows are the x values...
     for(c <- 0 until mtx.columns-1) {
@@ -173,13 +173,11 @@ class RawValueShader(gl:GL2, vertSrc:String, fragSrc:String, project:Viewable)
         val lr = ll + 1
         out.append(ul, ur, ll)
         out.append(ur, ll, lr)
-        //println(ul, ur, ll)
-        //println(ur, ll, lr)
+        logger.debug(s"${ul}, ${ur}, ${ll}")
+        logger.debug(s"${ur}, ${ll}, ${lr}")
       }
     }
-    //println("done")
 
     out.toArray
   }
 }
-

@@ -25,7 +25,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.2.1",
   "org.jogamp.gluegen" % "gluegen-rt-main" % "2.0.2",
   "org.jogamp.jogl" % "jogl-all-main" % "2.0.2",
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
+  "org.slf4j" % "slf4j-simple" % "1.7.7"
 )
 
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"

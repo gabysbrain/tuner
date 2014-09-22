@@ -7,17 +7,18 @@ import scala.collection.immutable.SortedSet
 import scala.collection.immutable.TreeSet
 import scala.collection.mutable.ArrayBuffer
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import tuner.util.FileReader
 
-object Table {
+object Table extends LazyLogging {
   type Tuple = Map[String,Float]
   type Filter = Tuple => Tuple
 
   def fromCsv(filename:String) = {
-    //print("reading " + filename + "...")
+    logger.info("reading " + filename + "...")
     val tbl = new Table
 
-    //val file = Source.fromFile(filename).getLines
     val file = FileReader.read(filename)
 
     // First line is the header
@@ -41,12 +42,11 @@ object Table {
       })
     } catch {
       case nse:java.util.NoSuchElementException =>
-        println("can't find header")
+        logger.warn("can't find header")
     }
-    //println("done")
     tbl
   }
-  
+
   def fromLists(fieldNames:List[String], data:List[List[Float]]) = {
     val tbl = new Table
     data.foreach {dr =>
@@ -63,12 +63,12 @@ object Table {
   def rangeFilter(ranges:List[(String, (Float, Float))]) : Filter = {
     val mins:Map[String,Float] = ranges.map({r=>(r._1,r._2._1)}).toMap
     val maxes:Map[String,Float] = ranges.map({r=>(r._1,r._2._2)}).toMap
-    
-    {tpl => 
+
+    {tpl =>
       val minOk = mins.forall(mn => {tpl.getOrElse(mn._1, mn._2 + 1) >= mn._2})
       val maxOk = maxes.forall(mx => {tpl.getOrElse(mx._1, mx._2 - 1) <= mx._2})
-  
-      //println("mn: " + minOk + " mx: " + maxOk)
+
+      logger.debug("mn: " + minOk + " mx: " + maxOk)
       if(minOk && maxOk)
         tpl
       else
@@ -81,17 +81,17 @@ object Table {
       var out:Table.Tuple = null
       for(r <- 0 until tbl.numRows) {
         val tpl2 = tbl.tuple(r)
-        if(out == null && 
+        if(out == null &&
            (tpl.forall {case (fld,v) => tpl2.get(fld).forall(x=>x == v)})) {
           out = tpl
-        } 
+        }
       }
       out
     }
   }
 }
 
-class Table {
+class Table extends LazyLogging {
   val data:ArrayBuffer[Table.Tuple] = new ArrayBuffer
 
   def addRow(values:List[(String, Float)]) = {
@@ -101,7 +101,7 @@ class Table {
   def removeRow(row:Int) = data.remove(row)
 
   def clear = data.clear
-  
+
   def isEmpty = data.isEmpty
 
   def min(col:String) : Float = {
@@ -142,7 +142,7 @@ class Table {
     data.foreach(v => {
       // Only set the value if we have information at that point
       (v.get(rowField), v.get(colField), v.get(valField)) match {
-        case (Some(rowV), Some(colV), Some(value)) => 
+        case (Some(rowV), Some(colV), Some(value)) =>
           m.set(rowVals.takeWhile({_ < rowV}).size,
                 colVals.takeWhile({_ < colV}).size,
                 value)
@@ -211,14 +211,14 @@ class Table {
     "(empty table)"
   } else {
     val header = fieldNames.reduceLeft(_ + " " + _)
-    val rows = data.map {row => 
+    val rows = data.map {row =>
       fieldNames.map {fn => row(fn).toString} reduceLeft(_ + " " + _)
     }
     header + "\n" + rows.reduceLeft(_ + "\n" + _)
   }
 
   def toCsv(filename:String) = {
-    //print("writing " + filename + "...")
+    logger.info("writing " + filename + "...")
     val file = new java.io.FileWriter(filename)
 
     val header = if(numRows > 0) {
@@ -239,8 +239,6 @@ class Table {
     }
 
     file.close
-    //println("done")
   }
 
 }
-

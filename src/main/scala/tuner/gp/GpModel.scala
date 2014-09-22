@@ -7,6 +7,8 @@ import net.liftweb.json.JsonParser._
 import net.liftweb.json.JsonAST._
 import net.liftweb.json.JsonDSL._
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import tuner.Config
 import tuner.DimRanges
 import tuner.Grid2D
@@ -38,9 +40,7 @@ object GpModel {
     val resps = DenseVector(json.responses.toArray)
     val design = DenseMatrix(json.designMatrix.map(_.toArray):_*)
     val invCov = DenseMatrix(json.invCorMtx.map(_.toArray):_*)
-    //println(json.dimNames)
-    //println(design)
-    //println(resps)
+
     // Make sure the arrays are the proper size
     if(design.rows != resps.length) {
       throw new ProjectLoadException(s"design matrix has ${design.rows} rows but there are ${resps.length} responses", null)
@@ -54,32 +54,33 @@ object GpModel {
     if(invCov.cols != resps.length) {
       throw new ProjectLoadException(s"covariance matrix has ${invCov.cols} columns but there are ${resps.length} responses", null)
     }
-       
-    new GpModel(DenseVector(json.thetas.toArray), 
-                DenseVector(json.alphas.toArray), 
+
+    new GpModel(DenseVector(json.thetas.toArray),
+                DenseVector(json.alphas.toArray),
                 json.mean, json.sigma2,
                 design, resps, invCov,
                 json.dimNames, json.responseDim, Config.errorField)
   }
 }
 
-// A gp model takes a sampling density and returns 
+// A gp model takes a sampling density and returns
 // a filename from which to read the sampled data
 //type Model = Int => String
-class GpModel(val thetas:DenseVector[Double], 
-              val alphas:DenseVector[Double], 
-              val mean:Double, val sig2:Double, 
-              val design:DenseMatrix[Double], 
-              val responses:DenseVector[Double], 
-              val rInverse:DenseMatrix[Double], 
-              val dims:List[String], val respDim:String, val errDim:String) {
+class GpModel(val thetas:DenseVector[Double],
+              val alphas:DenseVector[Double],
+              val mean:Double, val sig2:Double,
+              val design:DenseMatrix[Double],
+              val responses:DenseVector[Double],
+              val rInverse:DenseMatrix[Double],
+              val dims:List[String], val respDim:String, val errDim:String)
+    extends LazyLogging {
 
   // Automatically compute sig2
-  def this(thetas:DenseVector[Double], alphas:DenseVector[Double], mean:Double, 
-           design:DenseMatrix[Double], responses:DenseVector[Double], 
-           rInverse:DenseMatrix[Double], 
+  def this(thetas:DenseVector[Double], alphas:DenseVector[Double], mean:Double,
+           design:DenseMatrix[Double], responses:DenseVector[Double],
+           rInverse:DenseMatrix[Double],
            dims:List[String], respDim:String, errDim:String) =
-    this(thetas, alphas, mean, 
+    this(thetas, alphas, mean,
          {
            val diff = responses - mean
            (diff dot (rInverse * diff)) / responses.length
@@ -87,33 +88,30 @@ class GpModel(val thetas:DenseVector[Double],
          design, responses, rInverse, dims, respDim, errDim)
 
   // Automatically compute mu and sig2
-  def this(thetas:DenseVector[Double], alphas:DenseVector[Double], 
-           design:DenseMatrix[Double], responses:DenseVector[Double], 
-           rInverse:DenseMatrix[Double], 
+  def this(thetas:DenseVector[Double], alphas:DenseVector[Double],
+           design:DenseMatrix[Double], responses:DenseVector[Double],
+           rInverse:DenseMatrix[Double],
            dims:List[String], respDim:String, errDim:String) =
-    this(thetas, alphas, 
+    this(thetas, alphas,
          (DenseVector.ones[Double](responses.length) dot (rInverse * responses)) /
            (DenseVector.ones[Double](responses.length) dot (rInverse * DenseVector.ones[Double](responses.length))),
          design, responses, rInverse, dims, respDim, errDim)
 
   // Also precompute rInverse . (responses - mean)
   val corrResponses = rInverse * (responses - mean)
-  //println("cr2: " + corrResponses)
-  //println("rs: " + responses)
-  //println("ri: " + rInverse)
 
   def toJson = {
     GpSpecification(
-      respDim, 
-      dims.toList, 
-      thetas.toArray.toList, 
-      alphas.toArray.toList, 
+      respDim,
+      dims.toList,
+      thetas.toArray.toList,
+      alphas.toArray.toList,
       mean, sig2,
-      (0 until design.rows).map {r => 
+      (0 until design.rows).map {r =>
         (0 until design.cols).map {c => design(r, c)} toList
       } toList,
-      responses.toArray.toList, 
-      (0 until rInverse.rows).map {r => 
+      responses.toArray.toList,
+      (0 until rInverse.rows).map {r =>
         (0 until rInverse.cols).map {c => rInverse(r, c)} toList
       } toList)
   }
@@ -134,12 +132,12 @@ class GpModel(val thetas:DenseVector[Double],
 
   def theta(dim:String) = thetas(dims.indexOf(dim))
 
-  def sampleSlice(rowDim:(String,(Float,Float)), 
+  def sampleSlice(rowDim:(String,(Float,Float)),
                   colDim:(String,(Float,Float)),
-                  slices:List[(String,Float)], 
+                  slices:List[(String,Float)],
                   numSamples:Int)
       : ((String, Grid2D), (String, Grid2D), (String, Grid2D)) = {
-    
+
     val arrSlice = Array.fill(dims.length)(0.0)
     val sliceMap = slices.toMap
     dims.zipWithIndex.foreach {case (fld, i) =>
@@ -173,8 +171,8 @@ class GpModel(val thetas:DenseVector[Double],
     }
 
     val endTime = System.currentTimeMillis
-    ((respDim, response), 
-     (Config.errorField, errors), 
+    ((respDim, response),
+     (Config.errorField, errors),
      (Config.gainField, gains))
   }
 
@@ -195,7 +193,7 @@ class GpModel(val thetas:DenseVector[Double],
     outTbl
   }
 
-  def runSample(pt:List[(String, Float)]) : (Double, Double) = 
+  def runSample(pt:List[(String, Float)]) : (Double, Double) =
     runSample(pt.toMap)
 
   def runSample(pt:Table.Tuple) : (Double, Double) = {
@@ -211,18 +209,18 @@ class GpModel(val thetas:DenseVector[Double],
     for(r <- 0 until design.rows) {
       ptCors.update(r, corrFunction(design(r, ::).inner, point))
     }
-    //println("pc: " + ptCors.toString)
-    //println("cr: " + corrResponses.toString)
+    logger.debug("pc: " + ptCors.toString)
+    logger.debug("cr: " + corrResponses.toString)
     val est = mean + (ptCors dot corrResponses)
     val err = sig2 * (1 - (ptCors dot (rInverse * ptCors)))
-    //println("s2: " + sig2)
-    //println("inner: " + (sig2 * (ptCors dot (rInverse * ptCors))))
-    //println("err: " + err)
+    logger.debug("s2: " + sig2)
+    logger.debug("inner: " + (sig2 * (ptCors dot (rInverse * ptCors))))
+    logger.debug("err: " + err)
     if(err < 0) (est, 0)
     else        (est, math.sqrt(err))
   }
 
-  private def corrFunction(p1:Vector[Double], 
+  private def corrFunction(p1:Vector[Double],
                            p2:Vector[Double]) : Double = {
     var sum:Double = 0
     for(d <- 0 until p1.length) {
@@ -231,7 +229,7 @@ class GpModel(val thetas:DenseVector[Double],
     math.exp(-sum)
   }
 
-  private def corrFunction(x1:Double, x2:Double, 
+  private def corrFunction(x1:Double, x2:Double,
                            theta:Double, alpha:Double) : Double = {
     theta * math.pow(math.abs(x1 - x2), alpha)
   }
@@ -268,7 +266,7 @@ class GpModel(val thetas:DenseVector[Double],
       val t1 = (est - curFuncMax)
       val t2 = cdf((est - curFuncMax) / stddev)
       val t3 = stddev * pdf((est - curFuncMax) / stddev)
-      //println(s"${t1} ${t2} ${t3} ${est} ${stddev}")
+      logger.debug(s"${t1} ${t2} ${t3} ${est} ${stddev}")
 
       math.abs(t1 * t2 + t3)
     }
@@ -277,7 +275,7 @@ class GpModel(val thetas:DenseVector[Double],
   def crossValidate : (Vector[Double], Vector[Double]) = {
     val predResps = DenseVector.zeros[Double](design.rows)
     val predErrs = DenseVector.zeros[Double](design.rows)
-    //println("cr " + this.corrResponses + " " + this.corrResponses.length)
+    logger.debug("cr " + this.corrResponses + " " + this.corrResponses.length)
 
     for(row <- 0 until design.rows) {
       val testSample = design(row, ::)
@@ -288,16 +286,16 @@ class GpModel(val thetas:DenseVector[Double],
       val newDesign = design(newModelRows, ::).toDenseMatrix
       val newResps = responses(newModelRows).toDenseVector
       val newRInv = inv(ScalaGpBuilder.corrMatrix(newDesign, thetas, alphas))
-      val newGp = new GpModel(thetas, alphas, 
+      val newGp = new GpModel(thetas, alphas,
                               mean, sig2,
-                              newDesign, newResps, 
-                              newRInv, 
+                              newDesign, newResps,
+                              newRInv,
                               dims, respDim, errDim)
 
-      //println("ts " + testSample.inner)
+      logger.debug("ts " + testSample.inner)
       val (predResp, predErr) = newGp.estimatePoint(testSample.inner)
-      //println("real y " + this.estimatePoint(testSample.inner))
-      //println("mu " + mean + " sig2 " + sig2)
+      logger.debug("real y " + this.estimatePoint(testSample.inner))
+      logger.debug("mu " + mean + " sig2 " + sig2)
       predResps.update(row, predResp)
       predErrs.update(row, predErr)
     }
@@ -307,12 +305,12 @@ class GpModel(val thetas:DenseVector[Double],
 
   def validateModel : (Boolean, Vector[Double]) = {
     val (preds, vars) = crossValidate
-    //println("preds resp: " + preds)
-    //println("pred err: " + vars)
-    //println("pred dist: " + (responses-preds))
+    logger.debug("preds resp: " + preds)
+    logger.debug("pred err: " + vars)
+    logger.debug("pred dist: " + (responses-preds))
     val standardResid = (responses - preds) / vars
     // This +- 3 comes from Jones:1998
-    //println("CV results: " + standardResid)
+    logger.info("CV results: " + standardResid)
     (standardResid.map {x => math.abs(x) < 3.0} all, standardResid)
   }
 

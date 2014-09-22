@@ -16,6 +16,8 @@ import scala.swing.FlowPanel
 import scala.swing.Orientation
 import scala.swing.Swing
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 object P5Panel {
   sealed trait Renderer {def name : String}
 
@@ -108,31 +110,32 @@ object P5Panel {
   def map(value:Float, low1:Float, high1:Float, low2:Float, high2:Float) =
     PApplet.map(value, low1, high1, low2, high2)
 
-  def constrain(value:Float, low:Float, high:Float) = 
+  def constrain(value:Float, low:Float, high:Float) =
     PApplet.constrain(value, low, high)
 
   def dist(x1:Float, y1:Float, x2:Float, y2:Float) =
     PApplet.dist(x1, y1, x2, y2)
 
-  def lerp(low:Float, high:Float, value:Float) = 
+  def lerp(low:Float, high:Float, value:Float) =
     PApplet.lerp(low, high, value)
-  
-  def norm(value:Float, low:Float, high:Float) = 
+
+  def norm(value:Float, low:Float, high:Float) =
     PApplet.norm(value, low, high)
-  
+
   def lerpColor(c1:Color, c2:Color, amt:Float, method:ColorSpace.Value) =
     PApplet.lerpColor(c1, c2, amt, method.id)
-  
+
   def nfs(num:Float, left:Int, right:Int) = PApplet.nfs(num, left, right)
 }
 
 abstract class P5Panel (
-    _width:Int, _height:Int, 
-    _renderer:P5Panel.Renderer=P5Panel.Java2D) 
-    extends FlowPanel {
+    _width:Int, _height:Int,
+    _renderer:P5Panel.Renderer=P5Panel.Java2D)
+    extends FlowPanel
+    with LazyLogging {
     //extends BoxPanel(Orientation.Vertical) {
     //extends BorderPanel {
-  
+
   import P5Panel._
 
   val applet = {
@@ -149,7 +152,7 @@ abstract class P5Panel (
       }
 
       override def mouseDragged = {
-        P5Panel.this.mouseDragged(pmouseX, pmouseY, 
+        P5Panel.this.mouseDragged(pmouseX, pmouseY,
                                   mouseX, mouseY,
                                   MouseButton(mouseButton))
       }
@@ -159,7 +162,7 @@ abstract class P5Panel (
       }
 
       override def mouseMoved = {
-        P5Panel.this.mouseMoved(pmouseX, pmouseY, 
+        P5Panel.this.mouseMoved(pmouseX, pmouseY,
                                 mouseX, mouseY,
                                 MouseButton(mouseButton))
       }
@@ -230,10 +233,10 @@ abstract class P5Panel (
     applet.createGraphics(xSize, ySize, renderer.name)
 
   def mouseClicked(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
-  def mouseDragged(prevMouseX:Int, prevMouseY:Int, 
+  def mouseDragged(prevMouseX:Int, prevMouseY:Int,
                    mouseX:Int, mouseY:Int,
                    mouseButton:MouseButton.Value) = {}
-  def mouseMoved(prevMouseX:Int, prevMouseY:Int, 
+  def mouseMoved(prevMouseX:Int, prevMouseY:Int,
                  mouseX:Int, mouseY:Int,
                  button:MouseButton.Value) = {}
   def mousePressed(mouseX:Int, mouseY:Int, button:MouseButton.Value) = {}
@@ -259,7 +262,7 @@ abstract class P5Panel (
     applet.textFont(font(path, size))
   }
   def textAlign(halign:TextHAlign.Value) = applet.textAlign(halign.id)
-  def textAlign(halign:TextHAlign.Value, valign:TextVAlign.Value) = 
+  def textAlign(halign:TextHAlign.Value, valign:TextVAlign.Value) =
     applet.textAlign(halign.id, valign.id)
   def textWidth(text:String) = applet.textWidth(text)
 
@@ -281,8 +284,8 @@ abstract class P5Panel (
   def rotateY(radians:Float) = applet.rotateY(radians)
   def rotateZ(radians:Float) = applet.rotateZ(radians)
 
-  def blend(srcImg:PImage, x:Int, y:Int, width:Int, height:Int, 
-                           dx:Int, dy:Int, dwidth:Int, dheight:Int, 
+  def blend(srcImg:PImage, x:Int, y:Int, width:Int, height:Int,
+                           dx:Int, dy:Int, dwidth:Int, dheight:Int,
                            mode:BlendMode.Value) = {
     applet.blend(srcImg, x, y, width, height, dx, dy, dwidth, dheight, mode.id)
   }
@@ -299,21 +302,21 @@ abstract class P5Panel (
   def endShape = applet.endShape
   def vertex(x:Float, y:Float) = applet.vertex(x, y)
 
-  def line(x1:Float, y1:Float, x2:Float, y2:Float) = 
+  def line(x1:Float, y1:Float, x2:Float, y2:Float) =
     applet.line(x1, y1, x2, y2)
 
   def triangle(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float) =
     applet.triangle(x1, y1, x2, y2, x3, y3)
-  
-  def rect(x1:Float, y1:Float, x2:Float, y2:Float) = 
+
+  def rect(x1:Float, y1:Float, x2:Float, y2:Float) =
     applet.rect(x1, y1, x2, y2)
 
-  def ellipse(x1:Float, y1:Float, x2:Float, y2:Float) = 
+  def ellipse(x1:Float, y1:Float, x2:Float, y2:Float) =
     applet.ellipse(x1, y1, x2, y2)
 
   def font(path:String, size:Int) : PFont = {
     loadedFonts.getOrElse((path, size), {
-      //println("loading font `" + path + "' (" + size + ")")
+      logger.debug("loading font `" + path + "' (" + size + ")")
       val f = applet.createFont(path, size)
       loadedFonts += (path, size) -> f
       f
@@ -335,4 +338,3 @@ abstract class P5Panel (
     pgl.endPGL
   }
 }
-

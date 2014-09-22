@@ -2,14 +2,16 @@ package tuner
 
 import scala.io.Source
 
-object DimRanges {
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
+object DimRanges extends LazyLogging {
   type Range = (Float, Float)
 
   // Unkown dims get a 0 to 1 range
   val defaultRange = (0f, 1f)
-  
+
   def fromCsv(filename:String) : DimRanges = {
-    print("reading " + filename + "...")
+    logger.info("reading " + filename + "...")
     val file = Source.fromFile(filename).getLines
 
     // dim range lines are dimname,low,high
@@ -17,20 +19,21 @@ object DimRanges {
       val tmp = line.split(",")
       (tmp(0), (tmp(1).toFloat, tmp(2).toFloat))
     }).toMap)
-  
-    println("done")
+
+    logger.info("done")
     dr
   }
 
-  def from2dSlice(d1:(String,(Float,Float)), 
+  def from2dSlice(d1:(String,(Float,Float)),
                   d2:(String,(Float,Float)),
                   slice:List[(String,Float)]) : DimRanges = {
     new DimRanges((d1 :: d2 :: slice.map {s => (s._1, (s._2, s._2))}).toMap)
   }
 }
 
-class DimRanges(r:Map[String,DimRanges.Range]) 
-    extends collection.mutable.HashMap[String,DimRanges.Range] {
+class DimRanges(r:Map[String,DimRanges.Range])
+    extends collection.mutable.HashMap[String,DimRanges.Range]
+    with LazyLogging {
 
   this ++= r
 
@@ -72,4 +75,3 @@ class DimRanges(r:Map[String,DimRanges.Range])
 
   def length : Int = size
 }
-

@@ -9,7 +9,9 @@ import org.sittingbull.gt.util.NiceStepSizeGenerator
 
 import scala.collection.JavaConverters._
 
-object AxisTicks {
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
+object AxisTicks extends LazyLogging {
 
   // Set up the labeling library
   val labeler = new XWilkinson(new NiceStepSizeGenerator)
@@ -43,7 +45,7 @@ object AxisTicks {
         val ticks = labeler.search(min, max, n)
         ticks.toList.asScala.map {_.toFloat} toList
       }) getOrElse {
-        println(s"wilkinson failed with (min,max,n) at ($min,$max,$n)")
+        logger.warn(s"wilkinson failed with (min,max,n) at ($min,$max,$n)")
         List(min, max)
       }
     }
