@@ -24,7 +24,8 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.9",
   "com.typesafe.akka" %% "akka-actor" % "2.2.1",
   "org.jogamp.gluegen" % "gluegen-rt-main" % "2.0.2",
-  "org.jogamp.jogl" % "jogl-all-main" % "2.0.2"
+  "org.jogamp.jogl" % "jogl-all-main" % "2.0.2",
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2"
 )
 
 libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
@@ -58,7 +59,6 @@ parallelExecution := false
 
 mainClass := Some(packMain.value("tuner"))
 
-// functional tests are really slow 
+// functional tests are really slow
 // plus they break the rest of the tests right now
 testOptions in Test := Seq(Tests.Filter(s => !s.startsWith("tuner.test.functional")), Tests.Argument("-oDF"))
-
