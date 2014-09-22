@@ -8,8 +8,11 @@ import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PImage
 
-class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
-  
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
+class PreviewImages(estModel:GpModel, imageDir:String, samples:Table)
+    extends LazyLogging {
+
   val FIELDFILEFORMAT = "dat-prop%03d.mhd"
 
   val fields = new Array[ProbabilityField](samples.numRows)
@@ -30,24 +33,23 @@ class PreviewImages(estModel:GpModel, imageDir:String, samples:Table) {
   def numFields : Int = fields(0).numFields
 
   def image(applet:PApplet, count:Int) : PImage = {
-    //println("loading image " + count)
+    logger.info("loading image " + count)
     fields(count).image(applet)
   }
 
   private def rebuildFields : List[List[GpModel]] = {
 
-    print("building image predictors...")
+    logger.info("building image predictors...")
     val gps = (0 until (xSize * ySize)).map({i =>
       val (x, y) = (i / xSize, i % xSize)
       (0 until numFields).map({fld =>
         val res = new DenseVector(fields.map({pf => pf.data(fld).get(x, y).toDouble}))
-        new GpModel(estModel.thetas, estModel.alphas, 
+        new GpModel(estModel.thetas, estModel.alphas,
                     estModel.design, res, estModel.rInverse,
                     estModel.dims, estModel.respDim, estModel.errDim)
       }).toList
     }).toList
-    println("done")
+    logger.info("done")
     gps
   }
 }
-

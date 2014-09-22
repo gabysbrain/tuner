@@ -10,10 +10,12 @@ import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PImage
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import scala.io.Source
 
-object ProbabilityField {
-  
+object ProbabilityField extends LazyLogging {
+
   def fromMhd(dirname:String, filename:String) : ProbabilityField = {
     val file = Source.fromFile(dirname + "/" + filename).getLines
     var xsize:Int = 0
@@ -34,7 +36,7 @@ object ProbabilityField {
     })
 
     val pf = new ProbabilityField(xsize, ysize, fields)
-    //print("reading image " + dataname + "...")
+    logger.debug("reading image " + dataname + "...")
     val in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(dirname + "/" + dataname)))
       for(x <- 0 until xsize) {
@@ -52,7 +54,6 @@ object ProbabilityField {
         }
       }
     }
-    //println("done")
 
     pf
   }
@@ -69,11 +70,12 @@ object ProbabilityField {
 
 }
 
-class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int) {
-  
-  val data = (0 until numFields).foldLeft(Nil:List[Grid2D]) {(lst:List[Grid2D], n:Int) => 
+class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int)
+    extends LazyLogging {
+
+  val data = (0 until numFields).foldLeft(Nil:List[Grid2D]) {(lst:List[Grid2D], n:Int) =>
     val newMtx = new Grid2D((0 until ySize).toList.map({_.toFloat}),
-                              (0 until xSize).toList.map({_.toFloat})) 
+                              (0 until xSize).toList.map({_.toFloat}))
     newMtx :: lst
   }
 
@@ -99,9 +101,8 @@ class ProbabilityField(val xSize:Int, val ySize:Int, val numFields:Int) {
       }
       myImage.updatePixels
       val endTime = System.currentTimeMillis
-      //println("Image time: " + (endTime - startTime) + "ms")
+      logger.debug("Image time: " + (endTime - startTime) + "ms")
     }
     myImage
   }
 }
-

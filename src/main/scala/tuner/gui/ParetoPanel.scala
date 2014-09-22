@@ -14,17 +14,20 @@ import tuner.gui.widgets.Scatterplot
 import tuner.project.Viewable
 import tuner.gui.util.AxisTicks
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 class ParetoPanel(project:Viewable)
-    extends P5Panel(Config.paretoDims._1, 
-                    Config.paretoDims._2, 
-                    P5Panel.Java2D) {
+    extends P5Panel(Config.paretoDims._1,
+                    Config.paretoDims._2,
+                    P5Panel.Java2D)
+    with LazyLogging {
 
   val models = project.gpModels
 
   val xAxis = new Axis(Axis.HorizontalBottom)
   val yAxis = new Axis(Axis.VerticalLeft)
   val activeSampleScatterplot = new Scatterplot(true)
-  val inactiveSampleScatterplot = 
+  val inactiveSampleScatterplot =
     new Scatterplot(false)
   val histogram = new Bars(Config.respHistogramBarStroke,
                            Config.respHistogramBarFill)
@@ -59,9 +62,9 @@ class ParetoPanel(project:Viewable)
     val plotHeight = (height - Config.plotSpacing * 2 -
                       Config.axisSize).toFloat
 
-    xAxisBox = Rectangle((plotStartX, plotStartY+plotHeight), 
+    xAxisBox = Rectangle((plotStartX, plotStartY+plotHeight),
                          plotWidth, Config.axisSize)
-    yAxisBox = Rectangle((Config.plotSpacing.toFloat, plotStartY), 
+    yAxisBox = Rectangle((Config.plotSpacing.toFloat, plotStartY),
                          Config.axisSize, plotHeight)
     plotBox = Rectangle((plotStartX, plotStartY), plotWidth, plotHeight)
 
@@ -86,7 +89,7 @@ class ParetoPanel(project:Viewable)
         pareto1dCounts = Histogram.countData(resp, data, Config.respHistogramBars)
       }
       val (yMin, yMax) = (pareto1dCounts.values.min, pareto1dCounts.values.max)
-      histogram.draw(this, plotBox.minX, plotBox.minY, 
+      histogram.draw(this, plotBox.minX, plotBox.minY,
                            plotBox.width, plotBox.height,
                            pareto1dCounts.values.map(_.toFloat).toList,
                            yMin, yMax)
@@ -114,24 +117,24 @@ class ParetoPanel(project:Viewable)
       val samp = project.randomSample2dResponse(r2Range, r1Range)
       // Put the counts on a log scale
       //pareto2dData = samp.map(x => if(x==0) x else math.log(x).toFloat)
-      cspColorMap = new SpecifiedColorMap(tuner.RedColorMap, 
-                                          pareto2dData.min, 
+      cspColorMap = new SpecifiedColorMap(tuner.RedColorMap,
+                                          pareto2dData.min,
                                           pareto2dData.max)
     }
       */
 
-    xAxis.draw(this, xAxisBox.minX, xAxisBox.minY, 
+    xAxis.draw(this, xAxisBox.minX, xAxisBox.minY,
                      xAxisBox.width, xAxisBox.height,
                      resp1, r1Model.funcMin, r1Model.funcMax)
-    yAxis.draw(this, yAxisBox.minX, yAxisBox.minY, 
+    yAxis.draw(this, yAxisBox.minX, yAxisBox.minY,
                      yAxisBox.width, yAxisBox.height,
                      resp2, r2Model.funcMin, r2Model.funcMax)
 
     // Now for the csp
     /*
-    csp.draw(this, plotBox.minX, plotBox.minY, 
+    csp.draw(this, plotBox.minX, plotBox.minY,
                    plotBox.width, plotBox.height,
-                   pareto2dData, 0, 0, 
+                   pareto2dData, 0, 0,
                    r1Range._2, r2Range._2,
                    cspColorMap)
     */
@@ -143,23 +146,23 @@ class ParetoPanel(project:Viewable)
 
     val (activeDesign, inactiveDesign) = project.viewFilterDesignSites
     // Draw the inactive samples first so they're behind
-    inactiveSampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
-                                         plotBox.width, plotBox.height, 
-                                         inactiveDesign, 
-                                         (resp1, xAxisRange), 
+    inactiveSampleScatterplot.draw(this, plotBox.minX, plotBox.minY,
+                                         plotBox.width, plotBox.height,
+                                         inactiveDesign,
+                                         (resp1, xAxisRange),
                                          (resp2, yAxisRange),
                             (_:Table.Tuple) => Config.paretoInactiveSampleColor)
-    activeSampleScatterplot.draw(this, plotBox.minX, plotBox.minY, 
-                                       plotBox.width, plotBox.height, 
-                                       activeDesign, 
-                                       (resp1, xAxisRange), 
+    activeSampleScatterplot.draw(this, plotBox.minX, plotBox.minY,
+                                       plotBox.width, plotBox.height,
+                                       activeDesign,
+                                       (resp1, xAxisRange),
                                        (resp2, yAxisRange),
                                     (_:Table.Tuple) => Config.paretoSampleColor)
   }
 
-  override def mouseClicked(mouseX:Int, mouseY:Int, 
+  override def mouseClicked(mouseX:Int, mouseY:Int,
                             button:P5Panel.MouseButton.Value) = {
-    
+
     (project.viewInfo.response1View, project.viewInfo.response2View) match {
       case (Some(r1), Some(r2)) =>
         mouseClick2d(mouseX, mouseY, button, r1, r2)
@@ -188,7 +191,7 @@ class ParetoPanel(project:Viewable)
         val xx = P5Panel.map(dataX, minX, maxX, plotBox.minX, plotBox.maxX)
         val yy = P5Panel.map(dataY, maxY, minY, plotBox.minY, plotBox.maxY)
         val dist = P5Panel.dist(mouseX, mouseY, xx, yy)
-  
+
         if(dist < minDist) {
           minDist = dist
           minInfo = (dataX, dataY)
@@ -196,13 +199,12 @@ class ParetoPanel(project:Viewable)
         }
       }
     }
-    //println("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
-    //println("mp: " + minInfo)
+    logger.debug("md: " + minDist + " " + tmp + " " + Config.scatterplotDotSize)
+    logger.debug("mp: " + minInfo)
     // Figure out if we're inside a point
     if(minDist < Config.scatterplotDotSize*2) {
-      publish(new CandidateChanged(this, 
+      publish(new CandidateChanged(this,
         List((response1, minInfo._1), (response2, minInfo._2))))
     }
   }
 }
-

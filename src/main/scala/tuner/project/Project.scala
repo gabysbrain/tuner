@@ -45,6 +45,8 @@ import tuner.gp.ScalaGpBuilder
 import tuner.util.Density2D
 import tuner.util.Path
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 // Internal config for matching with the json stuff
 case class InputSpecification(name:String, minRange:Float, maxRange:Float)
 case class OutputSpecification(name:String, minimize:Boolean)
@@ -61,7 +63,7 @@ case class ProjConfig(
   history:Option[HistorySpecification]
 )
 
-object Project {
+object Project extends LazyLogging {
 
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
@@ -70,20 +72,20 @@ object Project {
     Tuner.prefs.recentProjects flatMap {rp =>
       try {
         val json = loadJson(rp)
-        Some(ProjectInfo(json.name, rp, new java.util.Date, 
+        Some(ProjectInfo(json.name, rp, new java.util.Date,
                          json.inputs.length, json.outputs.length))
       } catch {
-        case ple:ProjectLoadException 
+        case ple:ProjectLoadException
              if ple.getCause.isInstanceOf[java.io.FileNotFoundException] =>
-          println("warning: " + ple.getCause.getMessage)
-          println("removing project from recents")
+          logger.warn(ple.getCause.getMessage)
+          logger.info("removing project from recents")
           None
       }
     } toArray
   }
 
   def fromFile(path:String) : Project = {
-    println("reading project from " + path)
+    logger.info("reading project from " + path)
     val config = loadJson(path)
 
     val sampleFilePath = Path.join(path, Config.sampleFilename)
@@ -106,9 +108,9 @@ object Project {
       case x   => x.min
     }
 
-    val specifiedFields:List[String] = 
-      config.inputs.map(_.name) ++ 
-      config.outputs.map(_.name) ++ 
+    val specifiedFields:List[String] =
+      config.inputs.map(_.name) ++
+      config.outputs.map(_.name) ++
       config.ignoreFields
 
     val proj = if(samples.numRows > 0) {
@@ -121,15 +123,14 @@ object Project {
       new Viewable(config, path, designSites)
     }
 
-    //println(proj)
     proj
   }
 
-  def mapInputs(inputs:List[(String,Float,Float)]) = 
+  def mapInputs(inputs:List[(String,Float,Float)]) =
     inputs.map {case (fld, mn, mx) =>
       InputSpecification(fld, mn, mx)
     }
-  
+
   private def loadJson(path:String) : ProjConfig = {
     val configFilePath = Path.join(path, Config.projConfigFilename)
     try {
@@ -142,18 +143,18 @@ object Project {
   }
 }
 
-case class ProjectInfo(name:String, path:String, 
-                       modificationDate:Date, 
+case class ProjectInfo(name:String, path:String,
+                       modificationDate:Date,
                        numInputs:Int, numOutputs:Int) {
 
   val statusString = "Ok"
 }
 
-sealed abstract class Project(config:ProjConfig) {
-  
+sealed abstract class Project(config:ProjConfig) extends LazyLogging {
+
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
-  
+
   def save(savePath:String) : Unit = {
     // Ensure that the project directory exists
     var pathDir = new File(savePath).mkdir
@@ -162,11 +163,11 @@ sealed abstract class Project(config:ProjConfig) {
     val outFile = new FileWriter(jsonPath)
     outFile.write(pretty(render(decompose(config))))
     outFile.close
-    
+
     // Try to save the sample tables
     this match {
       case s:Sampler => s.saveSampleTables(savePath)
-      case _         => 
+      case _         =>
     }
   }
 
@@ -209,11 +210,11 @@ abstract class InProgress(config:ProjConfig) extends Project(config) with Publis
   //protected def publish(o:Any) = eventListeners.foreach {a => a ! o}
 }
 
-class NewProject(name:String, 
+class NewProject(name:String,
                  basePath:String,
-                 scriptPath:String, 
-                 inputDims:List[(String,Float,Float)]) 
-    extends Project(ProjConfig(name, scriptPath, 
+                 scriptPath:String,
+                 inputDims:List[(String,Float,Float)])
+    extends Project(ProjConfig(name, scriptPath,
                                Project.mapInputs(inputDims),
                                Nil, Nil, Nil, false,
                                ViewInfo.Default,
@@ -236,9 +237,9 @@ class NewProject(name:String,
 
   def statusString = "New"
 
-  def sampleRanges = 
+  def sampleRanges =
     new DimRanges(inputDims.map(x => (x._1, (x._2, x._3))).toMap)
-  
+
   def next = {
     save(path)
     //Project.fromFile(path).asInstanceOf[RunningSamples]
@@ -246,19 +247,19 @@ class NewProject(name:String,
   }
 }
 
-class RunningSamples(config:ProjConfig, val path:String, 
+class RunningSamples(config:ProjConfig, val path:String,
                      val newSamples:Table, val designSites:Table)
     extends InProgress(config) with Saved {
-  
+
   var buildInBackground:Boolean = config.buildInBackground
   var logStream:Option[java.io.OutputStream] = None
 
   // See if we should start running some samples
-  //var sampleRunner:Option[SampleRunner] = None 
+  //var sampleRunner:Option[SampleRunner] = None
 
-  def statusString = 
+  def statusString =
     "Running Samples (%s/%s)".format(currentTime.toString, totalTime.toString)
-  
+
   val totalTime = newSamples.numRows
   var currentTime = 0
   var running = false
@@ -289,27 +290,25 @@ class RunningSamples(config:ProjConfig, val path:String,
     try {
       while(!newSamples.isEmpty && running) {
         val subsamples = newSamples.subsample(0, Config.samplingRowsPerReq)
-  
-        val newDesign = SampleRunner.runSamples(subsamples, scriptPath, 
+
+        val newDesign = SampleRunner.runSamples(subsamples, scriptPath,
                                                 path, logStream)
-  
+
         for(r <- 0 until newDesign.numRows) {
           designSites.addRow(newDesign.tuple(r).toList)
           newSamples.removeRow(0) // Always the first row
         }
-  
+
         currentTime += subsamples.numRows
-        //println("ct " + currentTime)
-        //save()
         publish(Progress(currentTime, totalTime, statusString, true))
       }
 
       publish(ProgressComplete)
     } catch {
-      case sae:SamplingErrorException => 
+      case sae:SamplingErrorException =>
         publish(Progress(currentTime, totalTime, sae.getMessage, false))
-      case ite:InvalidSamplingTableException => 
-        println(ite.getMessage)
+      case ite:InvalidSamplingTableException =>
+        logger.error(ite.getMessage)
         publish(Progress(currentTime, totalTime, ite.getMessage, false))
     } finally {
       running = false
@@ -321,12 +320,12 @@ class RunningSamples(config:ProjConfig, val path:String,
   }
 }
 
-class BuildingGp(config:ProjConfig, val path:String, designSites:Table) 
+class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
     extends InProgress(config) with Saved {
-  
+
   var buildInBackground:Boolean = config.buildInBackground
   var running = false
-  
+
   //val gps = responseFields.map(fld => (fld, loadGpModel(gp, fld))).toMap
 
   def statusString = "Building GP"
@@ -341,13 +340,13 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
     val buildFields = designSites.fieldNames.diff(inputFields++ignoreFields)
 
-    val newModels = buildFields.map({fld => 
+    val newModels = buildFields.map({fld =>
       if(running) {
-      println("building model for " + fld)
+      logger.info("building model for " + fld)
       val tm = ScalaGpBuilder.buildModel(designSiteFile, inputFields, fld, Config.errorField)
       tm match {
         case Success(m) =>
-          println("validating model for " + fld)
+          logger.info("validating model for " + fld)
           val (cvSuccess, cvStandardResid) = m.validateModel
           if(!cvSuccess) {
             //val stringSds = cvSD.mkString("{", ", ", "}")
@@ -365,12 +364,10 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
        (null, null)
      }
     }).toMap
-    //println("here")
     if(running) {
       config.gpModels = newModels.values.map(_.toJson).toList
       save()
     }
-    //println("here2")
     publish(ProgressComplete)
   }
 
@@ -396,7 +393,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
 
 class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
     extends Project(config) with Saved {
-  
+
   def statusString = "New Responses"
 
   def addResponse(field:String, minimize:Boolean) = {
@@ -412,7 +409,7 @@ class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
   }
 
   def newFields : List[String] = {
-    val knownFields : Set[String] = 
+    val knownFields : Set[String] =
       (responseFields ++ ignoreFields ++ inputFields).toSet
     allFields.filter {fn => !knownFields.contains(fn)}
   }
@@ -425,7 +422,7 @@ class NewResponses(config:ProjConfig, val path:String, allFields:List[String])
 
 }
 
-class Viewable(config:ProjConfig, val path:String, val designSites:Table) 
+class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     extends Project(config) with Saved with Sampler {
 
   import Project._
@@ -499,7 +496,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   }
 
   /**
-   * The number of sample points that are unclipped 
+   * The number of sample points that are unclipped
    * by the current zoom level
    */
   def numUnclippedPoints : Int = {
@@ -508,7 +505,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   }
 
   def newFields : List[String] = {
-    val knownFields : Set[String] = 
+    val knownFields : Set[String] =
       (responseFields ++ ignoreFields ++ inputFields).toSet
     designSites.fieldNames.filter {fn => !knownFields.contains(fn)}
   }
@@ -555,11 +552,11 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     (active, inactive)
   }
 
-  def estimatePoint(point:List[(String,Float)]) 
+  def estimatePoint(point:List[(String,Float)])
         : Map[String,(Float,Float,Float)] = {
     gpModels.map {case (fld, model) =>
       val (est, err) = model.runSample(point)
-      (fld -> (est.toFloat, err.toFloat, 
+      (fld -> (est.toFloat, err.toFloat,
                model.calcExpectedGain(est, err).toFloat))
     }
   }
@@ -586,8 +583,8 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     gpModels(response).runSample(point)._2.toFloat
   }
 
-  def expectedGain(point:List[(String,Float)]) : Map[String,Float] = 
-    estimatePoint(point) map {case (k,v) => 
+  def expectedGain(point:List[(String,Float)]) : Map[String,Float] =
+    estimatePoint(point) map {case (k,v) =>
       (k -> gpModels(k).calcExpectedGain(v._1, v._2).toFloat)
     }
 
@@ -596,7 +593,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     gpModels(response).calcExpectedGain(sample._1, sample._2).toFloat
   }
 
-  def randomSample2dResponse(resp1Dim:(String,(Float,Float)), 
+  def randomSample2dResponse(resp1Dim:(String,(Float,Float)),
                              resp2Dim:(String,(Float,Float))) = {
 
     val numSamples = viewInfo.estimateSampleDensity * 2
@@ -607,7 +604,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
                    yDim:(String,(Float,Float)),
                    response:String,
                    point:List[(String,Float)]) : Grid2D = {
-    val remainingPt = point.filter {case (fld,_) => 
+    val remainingPt = point.filter {case (fld,_) =>
       fld!=xDim._1 && fld!=yDim._1
     }
     val outData = tuner.Sampler.regularSlice(xDim, yDim, viewInfo.estimateSampleDensity)
@@ -624,7 +621,7 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
     outData
   }
 
-  def viewValueFunction : (List[(String,Float)],String)=>Float = 
+  def viewValueFunction : (List[(String,Float)],String)=>Float =
     viewInfo.currentMetric match {
       case ViewInfo.ValueMetric => value
       case ViewInfo.ErrorMetric => uncertainty
@@ -642,12 +639,12 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
         tmp
       }
     } catch {
-      case e:java.io.FileNotFoundException => 
+      case e:java.io.FileNotFoundException =>
         tuner.Sampler.lhc(inputs, Config.numericSampleDensity)
     }
     gpModels.foldLeft(samples) {case (tbl, (fld, model)) =>
       if(!tbl.fieldNames.contains(fld)) {
-        println("sampling response " + fld)
+        logger.info("sampling response " + fld)
         gpModels(fld).sampleTable(tbl)
       } else {
         tbl
@@ -662,9 +659,9 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
       try {
         Some(new PreviewImages(model, imagePath, designSites))
       } catch {
-        case e:java.io.FileNotFoundException => 
+        case e:java.io.FileNotFoundException =>
           //e.printStackTrace
-          println("Could not find images, disabling")
+          logger.info("Could not find images, disabling")
           None
       }
     } else {
@@ -673,4 +670,3 @@ class Viewable(config:ProjConfig, val path:String, val designSites:Table)
   }
 
 }
-

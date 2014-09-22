@@ -6,25 +6,27 @@ import breeze.numerics._
 import scala.util.Random
 import scala.collection.mutable.HashSet
 
-object LHS {
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
+object LHS extends LazyLogging {
 
   /**
    * Greedily finds the latin hypercube that maximizes the minimum
    * distance between sample points
-   * 
+   *
    * This is based on the R lhs sampling package
    * (http://cran.r-project.org/web/packages/lhs/) and
    * http://www.csit.fsu.edu/~burkardt/m_src/ihs/ihs.m
    *
    * The algorithm works as follows:
    * 1. Pick a random cell for the first point
-   * 1. Randomize the list of remaining cells 
+   * 1. Randomize the list of remaining cells
    *    (this is the new set of points)
    * 2. For each candidate point compute the minimum distance to the
    *    chosen points
    * 3. Select the candidate point with the maximum minimum distance
    * 4. remove the cells of this point from the candidate list
-   * 5. repeat 2-4 
+   * 5. repeat 2-4
    */
   def maximin(n:Int, d:Int) : DenseMatrix[Double] = {
 
@@ -40,7 +42,7 @@ object LHS {
       result.update(0, c, xx)
       candidates(c) -= xx
     }
-    //println("cand len: " + candidates(0).size)
+    logger.debug("cand len: " + candidates(0).size)
 
     // The middle points are more complicated
     for(r <- 1 until (n-1)) {
@@ -50,10 +52,8 @@ object LHS {
       for(c <- 0 until d) {
         candPts(::, c) := new DenseVector[Double](shuffled(c))
       }
-      //println(candPts)
-      //println("+++")
 
-      // find the minimum distance from the chosen 
+      // find the minimum distance from the chosen
       // points to the candidate points
       val minDists = DenseVector.fill[Double](candPts.rows) {Double.MaxValue}
       for(cpRow <- 0 until candPts.rows) {
@@ -81,7 +81,6 @@ object LHS {
       for(c <- 0 until d) {
         candidates(c) -= minPt(c)
       }
-      //println("cand len: " + candidates(0).size)
     }
 
     // Last point is whatever's left
@@ -92,7 +91,6 @@ object LHS {
       }
     }
 
-    //println(result)
     (result + DenseMatrix.rand(n, d)) / n.toDouble
   }
 

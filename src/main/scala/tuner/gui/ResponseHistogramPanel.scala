@@ -12,12 +12,15 @@ import tuner.gui.widgets.Bars
 import tuner.project.Viewable
 import tuner.gui.util.AxisTicks
 
-class ResponseHistogramPanel(project:Viewable, responseField:String) 
-    extends P5Panel(Config.respHistogramPanelDims._1, 
-                    Config.respHistogramPanelDims._2, 
-                    P5Panel.Java2D) {
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
-  val histogram = new Bars(Config.respHistogramBarStroke, 
+class ResponseHistogramPanel(project:Viewable, responseField:String)
+    extends P5Panel(Config.respHistogramPanelDims._1,
+                    Config.respHistogramPanelDims._2,
+                    P5Panel.Java2D)
+    with LazyLogging {
+
+  val histogram = new Bars(Config.respHistogramBarStroke,
                            Config.respHistogramBarFill)
   var counts:Map[Float,Float] = Map()
   var xAxisTicks:List[Float] = Nil
@@ -55,8 +58,8 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
 
     if(viewport.width >= width && viewport.height >= height) {
       val plotWidth = width - (Config.plotSpacing * 2) - Config.axisSize
-      val plotHeight = height - (Config.plotSpacing * 2) - 
-                                Config.axisSize - 
+      val plotHeight = height - (Config.plotSpacing * 2) -
+                                Config.axisSize -
                                 Config.respHistogramHandleSize._2
       yAxisBounds = Rectangle((Config.plotSpacing, Config.plotSpacing),
                               Config.axisSize, plotHeight)
@@ -66,10 +69,10 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
                               plotWidth, Config.axisSize)
       sliderBounds = Rectangle((xAxisBounds.minX, xAxisBounds.minY),
                                plotWidth, Config.respHistogramHandleSize._2)
-  
+
       applet.background(Config.backgroundColor)
-      histogram.draw(this, plotBounds.minX, plotBounds.minY, 
-                     plotBounds.width, plotBounds.height, 
+      histogram.draw(this, plotBounds.minX, plotBounds.minY,
+                     plotBounds.width, plotBounds.height,
                      counts.values.map(_.toFloat).toList,
                      yAxisTicks.min, yAxisTicks.max)
           // Figure out how to draw the y axis
@@ -88,21 +91,20 @@ class ResponseHistogramPanel(project:Viewable, responseField:String)
       visible = false
     }
     val endTime = System.currentTimeMillis
-    //println("hist draw time: " + (endTime - startTime) + "ms")
+    logger.debug("hist draw time: " + (endTime - startTime) + "ms")
   }
 
   def drawSlider = {
     val models = project.gpModels
     val model = models(responseField)
     val (est, _) = model.runSample(project.viewInfo.currentSlice.toList)
-    val xx = P5Panel.map(est.toFloat, xAxisTicks.min, xAxisTicks.max, 
+    val xx = P5Panel.map(est.toFloat, xAxisTicks.min, xAxisTicks.max,
                               sliderBounds.minX, sliderBounds.maxX)
 
     noStroke
     fill(Config.respHistogramBarFill.get)
-    triangle(xx, sliderBounds.minY, 
+    triangle(xx, sliderBounds.minY,
              xx + (Config.respHistogramHandleSize._1/2), sliderBounds.maxY,
              xx - (Config.respHistogramHandleSize._1/2), sliderBounds.maxY)
   }
 }
-

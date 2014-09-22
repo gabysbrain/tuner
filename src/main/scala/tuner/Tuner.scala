@@ -6,6 +6,8 @@ import scala.swing.KeyStroke._
 import scala.swing.event._
 import scala.io.Source
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
@@ -35,7 +37,7 @@ case class TunerPrefs(
 /**
  * The entry application object for Tuner
  */
-object Tuner extends SimpleSwingApplication {
+object Tuner extends SimpleSwingApplication with LazyLogging {
 
   // Serializers to get the json parser to work
   implicit val formats = net.liftweb.json.DefaultFormats
@@ -95,7 +97,7 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def startNewProject = {
-    println("Starting new project")
+    logger.info("Starting new project")
     val window = new NewProjectWindow
     window.open
   }
@@ -107,7 +109,7 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def openProject(proj:Project) : Unit = {
-    println("opening project")
+    logger.info("opening project")
     proj match {
       case p:Saved => prefs.recentProjects = prefs.recentProjects + p.path
                       savePrefs(prefs)
@@ -149,16 +151,15 @@ object Tuner extends SimpleSwingApplication {
   }
 
   def saveProjectAs(project:Project) : Unit = {
-    println("here")
     FileChooser.loadDirectory("Select save path") foreach {projDir =>
       project.save(projDir)
     }
   }
 
   def listenTo(tunerWin:tuner.gui.Window) : Unit = {
-    //println("listening to " + tunerWin)
+    logger.debug("listening to " + tunerWin)
     openWindows += tunerWin
-    //println(openWindows)
+    logger.debug(openWindows.toString)
     WindowMenu.updateWindows
     super.listenTo(tunerWin)
   }
@@ -191,8 +192,8 @@ object Tuner extends SimpleSwingApplication {
         case _ => Tuner.openProject(tw.project.next)
       }
 
-      println(openWindows.size)
-      println(openWindows)
+      logger.debug(openWindows.size.toString)
+      logger.debug(openWindows.toString)
       // If there are no more open windows open the project chooser again
       if(openWindows.isEmpty) ProjectChooser.open
     } else {

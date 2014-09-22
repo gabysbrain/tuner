@@ -5,6 +5,8 @@ import com.jogamp.opengl.util.awt.TextRenderer
 import javax.media.opengl.{GL,GL2,DebugGL2,GL2GL3,GL2ES1}
 import java.awt.Graphics2D
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import scala.swing.GL2Panel
 import scala.swing.event.{MouseClicked, MouseDragged, MouseMoved}
 
@@ -31,10 +33,11 @@ import tuner.gui.widgets.Widgets
 import tuner.project.Viewable
 import tuner.util.ColorLib
 
-class JoglMainPlotPanel(val project:Viewable) extends GL2Panel 
-                                              with MainPlotPanel {
+class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
+                                              with MainPlotPanel
+                                              with LazyLogging {
 
-  preferredSize = new java.awt.Dimension(Config.mainPlotDims._1, 
+  preferredSize = new java.awt.Dimension(Config.mainPlotDims._1,
                                          Config.mainPlotDims._2)
 
   val backgroundColor = Color(Config.backgroundColor)
@@ -65,7 +68,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   // Save the highlighted plot
   var mousedPlot:Option[(String,String)] = None
 
-  // Everything response 1 needs 
+  // Everything response 1 needs
   val resp1Colorbar:Colorbar = new Colorbar(Colorbar.Left)
   val resp1XAxes = createAxes(Axis.HorizontalBottom)
   val resp1YAxes = createAxes(Axis.VerticalLeft)
@@ -105,14 +108,14 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   })
 
   reactions += {
-    case MouseClicked(_, pt, _, _, _) => 
-      //println("here")
+    case MouseClicked(_, pt, _, _, _) =>
+      logger.debug("mouse clicked")
       handleBarMouse(pt.x, pt.y)
       handlePlotMouse(pt.x, pt.y)
     case MouseDragged(_, pt, _) =>
       handleBarMouse(pt.x, pt.y)
       handlePlotMouse(pt.x, pt.y)
-    case MouseMoved(_, pt, _) => 
+    case MouseMoved(_, pt, _) =>
       val pb = sliceBounds.find {case (_,b) => b.isInside(pt.x, pt.y)}
       val newPos = pb.map {tmp => tmp._1}
       if(newPos != mousedPlot) {
@@ -129,7 +132,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       valueShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
         val estShader = ValueShader.fromResource(
-            gl2, project.inputFields.size, 
+            gl2, project.inputFields.size,
             "/shaders/est.plot.frag.glsl",
             model.mean, model.sig2,
             model.thetas,
@@ -141,10 +144,10 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       rawValueShaders = project.responseFields.map {resFld =>
         val model = project.gpModels(resFld)
         val shader = RawValueShader.fromResource(
-            gl2, 
+            gl2,
             "/shaders/raw.value.vert.glsl", "/shaders/raw.value.frag.glsl",
             project)
-        //println(estShader.attribIds)
+        logger.debug(shader.attribIds.toString)
         (resFld -> shader)
       } toMap
     }
@@ -158,9 +161,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
     if(!colormapShader.isDefined) {
       colormapShader = Some(Glsl.fromResource(
-        gl2, "/shaders/cmap.vert.glsl", 
+        gl2, "/shaders/cmap.vert.glsl",
              "/shaders/cmap.frag.glsl"))
-      //println(colormapShader.get.attribIds)
+      logger.debug(colormapShader.get.attribIds.toString)
     }
     textRenderer = new TextRenderer(
       new java.awt.Font("SansSerif", java.awt.Font.PLAIN, Config.smallFontSize))
@@ -177,7 +180,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     // Make sure there are no remaining errors
     var errCode = gl2.glGetError
     while(errCode != GL.GL_NONE) {
-      println("err: " + errCode)
+      logger.error("gl error: " + errCode)
       errCode = gl2.glGetError
     }
 
@@ -205,7 +208,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   override def reshape(ggl2:GL2, x:Int, y:Int, width:Int, height:Int) = {
     val gl2 = new DebugGL2(ggl2)
 
-    //println(x + " " + y + " " + width + " " + height)
+    logger.debug(x + " " + y + " " + width + " " + height)
     screenWidth = width
     screenHeight = height
 
@@ -228,11 +231,11 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
     gl2.glBindTexture(GL.GL_TEXTURE_2D, 0)
     gl2.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0)
-    
+
     // The clear color gets reset by the plot drawings
-    gl2.glClearColor(backgroundColor.r, 
-                     backgroundColor.g, 
-                     backgroundColor.b, 
+    gl2.glClearColor(backgroundColor.r,
+                     backgroundColor.g,
+                     backgroundColor.b,
                      1f)
     gl2.glClear(GL.GL_COLOR_BUFFER_BIT)
 
@@ -249,16 +252,16 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
     // Draw the colorbars
     project.viewInfo.response1View.foreach {r =>
-      resp1Colorbar.draw(j2d, leftColorbarBounds.minX, 
+      resp1Colorbar.draw(j2d, leftColorbarBounds.minX,
                               leftColorbarBounds.minY,
-                              leftColorbarBounds.width, 
+                              leftColorbarBounds.width,
                               leftColorbarBounds.height,
                               r, colormap(r, resp1Colormaps))
     }
     project.viewInfo.response2View.foreach {r =>
-      resp2Colorbar.draw(j2d, rightColorbarBounds.minX, 
+      resp2Colorbar.draw(j2d, rightColorbarBounds.minX,
                               rightColorbarBounds.minY,
-                              rightColorbarBounds.width, 
+                              rightColorbarBounds.width,
                               rightColorbarBounds.height,
                               r, colormap(r, resp2Colormaps))
     }
@@ -308,25 +311,25 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST)
       val fakeBuffer = Buffers.newDirectFloatBuffer(Array.fill(4*texWidth*texHeight)(0f))
       fakeBuffer.rewind
-      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA32F, 
-                      texWidth, texHeight, 0, 
+      gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA32F,
+                      texWidth, texHeight, 0,
                       GL.GL_BGRA, GL.GL_FLOAT, fakeBuffer)
       //gl.glGenerateMipmap(GL.GL_TEXTURE_2D)
-      //println("tex: " + texWidth + " " + texHeight)
+      logger.debug("tex: " + texWidth + " " + texHeight)
     }
   }
 
   def updatePlotTransforms = {
-    plotTransforms = computePlotTransforms(sliceBounds, 
+    plotTransforms = computePlotTransforms(sliceBounds,
                                            screenWidth, screenHeight)
   }
 
   /**
-   * The plots themselves will be drawn in data space so these 
+   * The plots themselves will be drawn in data space so these
    * move everything into the proper coordinate system
    */
   def computePlotTransforms(
-        sb:Map[(String,String),Rectangle], 
+        sb:Map[(String,String),Rectangle],
         width:Float, height:Float) = sb.map {case ((xFld,yFld),bounds) =>
     val (minX,maxX) = project.viewInfo.currentZoom.range(xFld)
     val (minY,maxY) = project.viewInfo.currentZoom.range(yFld)
@@ -352,7 +355,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val plotScale = Matrix4.scale(pctBounds.width, pctBounds.height, 1)
 
     // The final transformations
-    val ttlProj = projectionMatrix dot dataScale dot dataTrans 
+    val ttlProj = projectionMatrix dot dataScale dot dataTrans
     val ttlPlot = projectionMatrix dot plotTrans dot plotScale
     (xFld,yFld) -> (ttlProj, ttlPlot)
   }
@@ -393,7 +396,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       if(fld != lastField) {
         val sliceDim = sliceBounds((fld, lastField))
         val axis = resp1XAxes(fld)
-        axis.draw(glAxis.get, textRenderer, 
+        axis.draw(glAxis.get, textRenderer,
                   sliceDim.minX, bottomAxisBounds.minY,
                   sliceDim.width, bottomAxisBounds.height,
                   screenWidth, screenHeight,
@@ -403,7 +406,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       if(fld != firstField) {
         val sliceDim = sliceBounds((firstField, fld))
         val axis = resp1YAxes(fld)
-        axis.draw(glAxis.get, textRenderer, 
+        axis.draw(glAxis.get, textRenderer,
                   leftAxisBounds.minX, sliceDim.minY,
                   leftAxisBounds.width, sliceDim.height,
                   screenWidth, screenHeight,
@@ -420,7 +423,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       if(fld != lastField) {
         val sliceDim = sliceBounds((lastField, fld))
         val axis = resp2XAxes(fld)
-        axis.draw(glAxis.get, textRenderer, 
+        axis.draw(glAxis.get, textRenderer,
                   sliceDim.minX, topAxisBounds.minY,
                   sliceDim.width, topAxisBounds.height,
                   screenWidth, screenHeight,
@@ -430,7 +433,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       if(fld != firstField) {
         val sliceDim = sliceBounds((fld, firstField))
         val axis = resp2YAxes(fld)
-        axis.draw(glAxis.get, textRenderer, 
+        axis.draw(glAxis.get, textRenderer,
                   rightAxisBounds.minX, sliceDim.minY,
                   rightAxisBounds.width, sliceDim.height,
                   screenWidth, screenHeight,
@@ -442,7 +445,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   }
 
   /**
-   * Does opengl setup and takedown 
+   * Does opengl setup and takedown
    */
   protected def drawResponses(gl2:GL2, j2d:Graphics2D) = {
 
@@ -457,7 +460,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         val yRange = (yFld, project.viewInfo.currentZoom.range(yFld))
 
         if(xFld < yFld) {
-          project.viewInfo.response1View.foreach {r1 => 
+          project.viewInfo.response1View.foreach {r1 =>
             drawResponse(gl2, xRange, yRange, r1)
             drawResponseWidgets(gl2, j2d, xRange, yRange, closestSample)
           }
@@ -474,15 +477,14 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   /**
    * Draw a single continuous plot
    */
-  protected def drawResponse(gl2:GL2, 
+  protected def drawResponse(gl2:GL2,
                              xRange:(String,(Float,Float)),
                              yRange:(String,(Float,Float)),
                              response:String) = {
 
     val (texTrans, plotTrans) = plotTransforms((xRange._1, yRange._1))
-    //println(texTrans)
-    //println("===")
-    //println(plotTrans)
+    logger.debug(texTrans.toString)
+    logger.debug(plotTrans.toString)
 
     // First draw to the texture
     project.viewInfo.currentVis match {
@@ -525,11 +527,11 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
     val minVals = fields.map(project.viewInfo.currentZoom.min(_)).toArray
     val maxVals = fields.map(project.viewInfo.currentZoom.max(_)).toArray
-    shader.draw(gl, valueFbo.get, valueTex.get, 
+    shader.draw(gl, valueFbo.get, valueTex.get,
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
-                    xRange, yRange, 
-                    xi, yi, 
+                    xRange, yRange,
+                    xi, yi,
                     minVals, maxVals)
   }
 
@@ -554,11 +556,11 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
     val slice = fields.map(project.viewInfo.currentSlice(_)).toArray
 
-    shader.draw(gl, valueFbo.get, valueTex.get, 
+    shader.draw(gl, valueFbo.get, valueTex.get,
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
-                    xRange, yRange, 
-                    xi, yi, 
+                    xRange, yRange,
+                    xi, yi,
                     slice)
   }
 
@@ -581,21 +583,21 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       (fields.indexOf(yRange._1), fields.indexOf(xRange._1))
     }
 
-    shader.draw(gl, valueTex.get, 
+    shader.draw(gl, valueTex.get,
                     plotRect.width.toInt, plotRect.height.toInt,
                     trans,
-                    xRange, yRange, 
-                    xi, yi, 
+                    xRange, yRange,
+                    xi, yi,
                     response,
                     project.viewInfo.currentSlice.toList)
   }
 
   /**
-   * Processes the texture through the filtered colormap 
+   * Processes the texture through the filtered colormap
    * and draws everything on screen
    */
-  def drawResponseTexturedQuad(gl:GL2, 
-                               colormap:SpecifiedColorMap, 
+  def drawResponseTexturedQuad(gl:GL2,
+                               colormap:SpecifiedColorMap,
                                trans:Matrix4) = {
     val es2 = gl.getGL2ES2
 
@@ -610,24 +612,24 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     es2.glUniform1i(colormapShader.get.uniformId("values"), 0)
 
     // Set the colormap properties
-    gl.glUniform1f(colormapShader.get.uniformId("filterLevel"), 
+    gl.glUniform1f(colormapShader.get.uniformId("filterLevel"),
                    colormap.filterVal)
-    gl.glUniform1i(colormapShader.get.uniformId("invert"), 
+    gl.glUniform1i(colormapShader.get.uniformId("invert"),
                    if(colormap.isInverted) 1 else 0)
     gl.glUniform1f(colormapShader.get.uniformId("minVal"), colormap.minVal)
     gl.glUniform1f(colormapShader.get.uniformId("maxVal"), colormap.maxVal)
     gl.glUniform4f(colormapShader.get.uniformId("minColor"),
-                   colormap.minColor.r, 
-                   colormap.minColor.g, 
-                   colormap.minColor.b, 
+                   colormap.minColor.r,
+                   colormap.minColor.g,
+                   colormap.minColor.b,
                    1f)
     gl.glUniform4f(colormapShader.get.uniformId("maxColor"),
-                   colormap.maxColor.r, 
-                   colormap.maxColor.g, 
-                   colormap.maxColor.b, 
+                   colormap.maxColor.r,
+                   colormap.maxColor.g,
+                   colormap.maxColor.b,
                    1f)
     gl.glUniform4f(colormapShader.get.uniformId("filterColor"),
-                   colormap.filterColor.r, 
+                   colormap.filterColor.r,
                    colormap.filterColor.g,
                    colormap.filterColor.b,
                    1f)
@@ -635,7 +637,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     // Enable the texture
     gl.glBindTexture(GL.GL_TEXTURE_2D, valueTex.get)
 
-    gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"), 
+    gl.glUniformMatrix4fv(colormapShader.get.uniformId("trans"),
                           1, false, trans.toOpenGl, 0)
 
     gl.glBegin(GL2GL3.GL_QUADS)
@@ -664,22 +666,22 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       (yFld, xFld, yRange, xRange)
     }
 
-    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf), 
+    val (xSlice, ySlice) = (project.viewInfo.currentSlice(xf),
                             project.viewInfo.currentSlice(yf))
 
     // Crosshair showing current location
     val t21 = System.currentTimeMillis
-    Widgets.crosshair(gl2, bounds.minX, bounds.minY, 
+    Widgets.crosshair(gl2, bounds.minX, bounds.minY,
                            bounds.width, bounds.height,
                            Config.mainPlotDims._1, Config.mainPlotDims._2,
                            xSlice, ySlice, xr._2, yr._2)
-    //println("crosshair draw: " + (System.currentTimeMillis-t21))
+    logger.debug("crosshair draw: " + (System.currentTimeMillis-t21))
 
     // Line to the nearest sample
     if(project.viewInfo.showSampleLine) {
       Widgets.sampleLine(j2d, bounds.minX, bounds.minY,
                               bounds.width, bounds.height,
-                              xSlice, ySlice, 
+                              xSlice, ySlice,
                               closestSample(xf), closestSample(yf),
                               xr._2, yr._2)
     }
@@ -723,7 +725,6 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
         j2d.fillRect(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
         j2d.setPaint(ColorLib.darker(Config.regionColor))
         j2d.drawRect(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
-        //println(xSlice + " " + ySlice + " " + xRad + " " + yRad)
       case _:EllipseRegion =>
         j2d.setPaint(Config.regionColor)
         j2d.fillOval(xxMin, yyMax, xxMax-xxMin, yyMin-yyMax)
@@ -735,7 +736,7 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
   }
 
   /**
-   * What to do when the mouse is clicked inside the bounds 
+   * What to do when the mouse is clicked inside the bounds
    * of the hyperslice matrix
    */
   def handlePlotMouse(mouseX:Int, mouseY:Int) = {
@@ -773,9 +774,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       project.viewInfo.response1View.foreach {r1 =>
         val cb = resp1Colorbar
         val cm = colormap(r1, resp1Colormaps)
-        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
-                                            cb.barBounds.minY, 
-                                            cm.minVal, 
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY,
+                                            cb.barBounds.minY,
+                                            cm.minVal,
                                             cm.maxVal)
         cm.filterVal = filterVal
       }
@@ -784,9 +785,9 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
       project.viewInfo.response2View.foreach {r2 =>
         val cb = resp2Colorbar
         val cm = colormap(r2, resp2Colormaps)
-        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY, 
-                                            cb.barBounds.minY, 
-                                            cm.minVal, 
+        val filterVal = P5Panel.map(mouseY, cb.barBounds.maxY,
+                                            cb.barBounds.minY,
+                                            cm.minVal,
                                             cm.maxVal)
         cm.filterVal = filterVal
       }
@@ -797,14 +798,12 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
 
   private def createAxes(position:Axis.Placement) = {
     val fields = position match {
-      case Axis.HorizontalTop | Axis.HorizontalBottom => 
+      case Axis.HorizontalTop | Axis.HorizontalBottom =>
         project.inputFields.init
-      case Axis.VerticalLeft | Axis.VerticalRight => 
+      case Axis.VerticalLeft | Axis.VerticalRight =>
         project.inputFields.tail
     }
     fields.map {fld => (fld, new Axis(position))} toMap
   }
-  
+
 }
-
-
