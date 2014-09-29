@@ -18,7 +18,7 @@ object OSDetector {
 }
 
 object TunerBuild extends Build {
-  
+
   import OSDetector._
 
   //val javaLibPathKey = SettingKey[Seq[String]]("java-library-path", "The full java library path we want to use")
@@ -27,8 +27,7 @@ object TunerBuild extends Build {
     resolvers := Seq()
   )
 
-  lazy val root = Project(id="tuner", 
-                          base=file("."), 
+  lazy val root = Project(id="tuner",
+                          base=file("."),
                           settings=Project.defaultSettings)
 }
-

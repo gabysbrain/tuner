@@ -1,4 +1,5 @@
 
+import net.ceedubs.sbtctags.CtagsKeys
 
 packSettings
 
@@ -44,6 +45,8 @@ scalacOptions in (Compile, doc) := Seq("-deprecation", "-unchecked",
                                        "-groups", "-implicits")
 
 autoAPIMappings := true
+
+CtagsKeys.ctagsParams ~= (default => default.copy(tagFileName = "tags"))
 
 javacOptions := Seq("-Xlint:deprecation")
 
