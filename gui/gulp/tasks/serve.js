@@ -23,5 +23,5 @@ gulp.task('connect', function () {
 });
 
 gulp.task('serve', ['connect', 'styles'], function () {
-  require('opn')('http://localhost:' + config.port);
+  require('opn')('http://localhost:' + config.port, 'google chrome');
 });
