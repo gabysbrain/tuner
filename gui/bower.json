@@ -2,8 +2,8 @@
   "name": "gui",
   "version": "0.0.0",
   "dependencies": {
-    "foundation": ">=5.2.3",
     "modernizr": "~2.8.2",
-    "holderjs": "~2.4.1"
+    "holderjs": "~2.4.1",
+    "foundation-apps": "~1.0.0"
   }
 }
