@@ -11,281 +11,182 @@
 </head>
 
 <body>
-  <header class="top-bar" data-topbar>
-    <!-- <img data-src="holder.js/100%x40/text:Menu bar" alt=""> -->
-    <ul class="title-area">
-      <li class="name">
-        <h1 class="subheader"><a href="">project name</a></h1>
-      </li>
-    </ul>
-    <!-- the response selectors and sample adder -->
-    <section class="top-bar-section">
-      <ul class="left">
-        <li class="divider"></li>
-        <li class="has-dropdown">
-          <a>response 1: y2</a>
-          <ul class="dropdown">
-            <li><a>y1</a></li>
-            <li class="active"><a>y2</a></li>
-            <li><a>y3</a></li>
-            <li><a>y4</a></li>
-          </ul>
-        </li>
-        <li class="has-dropdown">
-          <a>response 2: y4</a>
-          <ul class="dropdown">
-            <li><a>y1</a></li>
-            <li><a>y2</a></li>
-            <li><a>y3</a></li>
-            <li class="active"><a>y4</a></li>
-          </ul>
-        </li>
-        
-      </ul>
-      <ul class="right">
-        <li><button>Add samples</button></li>
-        <!-- history module needs work... -->
-        <li class="has-dropdown">
-          <a>History</a>
-          <ul class="dropdown">
-            <li>
-              <img data-src="holder.js/300x400/text:History display" alt="">
-            </li>
-          </ul>
-        </li>
-        <!-- sampling progress also needs work -->
-        <li class="has-dropdown">
-          <a>Progress</a>
-          <ul class="dropdown">
-            <li>
-              <img data-src="holder.js/300x400/text:Progress display" alt="">
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </section>
-  </header>
+  <div class="app-frame">
+    <nav>
+      <img data-src="holder.js/100%x40/text:Menu bar" alt="">
+    </nav>
 
-  <!-- the main visualization section -->
-  <main class="row">
-    <section class="small-4 columns">
-      <img data-src="holder.js/300x300/text:pareto" alt="">
-      <aside>
-        <img data-src="holder.js/120x120/text:preview" alt="">
-        <!-- info table -->
-        <section class="row">
-          <label>Info</label>
-          <table role="grid">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Estimate</th>
-                <th>Closest sample</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>x1</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x2</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x3</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x4</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x5</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x6</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x7</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-              <tr>
-                <td>x8</td>
-                <td>0.456</td>
-                <td>0.456</td>
-              </tr>
-            </tbody>
-            <tbody>
-              <tr>
-                <td>y1</td>
-                <td>0.325</td>
-                <td>0.654</td>
-              </tr>
-              <tr>
-                <td>y2</td>
-                <td>0.325</td>
-                <td>0.654</td>
-              </tr>
-              <tr>
-                <td>y3</td>
-                <td>0.325</td>
-                <td>0.654</td>
-              </tr>
-              <tr>
-                <td>y4</td>
-                <td>0.325</td>
-                <td>0.654</td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- the main visualization section -->
+    <main>
+      <section class="left-area">
+        <section class="pareto">
+          <label class="section-title">Pareto</label>
+          <img data-src="holder.js/300x300/text:pareto" alt="">
         </section>
-        <!-- slice controls -->
-        <section class="row">
-          <label>Slice</label>
-          <div class="row">
-            <label>x1</label>
-            <input type="range">
-            <input type="text">
+        <section class="info-table">
+          <label class="section-title">Info</label>
+          <div class="preview-img">
+            <label class="info-title">Closest sample</label>
+            <img data-src="holder.js/120x120/text: preview" alt="">
           </div>
-          <div class="row">
-            <label>x2</label>
-            <input type="range">
-            <input type="text">
+<!--           <div class="position-detail">
+            <label class="info-title">Detail</label>
+            <table role="grid">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Estimate</th>
+                  <th>Closest sample</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>x1</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x2</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x3</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x4</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x5</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x6</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x7</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+                <tr>
+                  <td>x8</td>
+                  <td>0.456</td>
+                  <td>0.456</td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                  <td>y1</td>
+                  <td>0.325</td>
+                  <td>0.654</td>
+                </tr>
+                <tr>
+                  <td>y2</td>
+                  <td>0.325</td>
+                  <td>0.654</td>
+                </tr>
+                <tr>
+                  <td>y3</td>
+                  <td>0.325</td>
+                  <td>0.654</td>
+                </tr>
+                <tr>
+                  <td>y4</td>
+                  <td>0.325</td>
+                  <td>0.654</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div class="row">
-            <label>x3</label>
-            <input type="range">
-            <input type="text">
+ -->
+          <!-- slice control sliders -->
+          <div class="slice-controls">
+            <label class="info-title">Position</label>
+            <div class="slice-control">
+              <label class="param-name" for="slice-1">x1</label>
+              <input id="slice-1" type="range">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-2">x2</label>
+              <input type="range" id="slice-2">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-3">x3</label>
+              <input type="range" id="slice-3">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-4">x4</label>
+              <input type="range" id="slice-4">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-5">x5</label>
+              <input type="range" id="slice-5">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-6">x6</label>
+              <input type="range" id="slice-6">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-7">x7</label>
+              <input type="range" id="slice-7">
+            </div>
+            <div class="slice-control">
+              <label class="param-name" for="slice-8">x8</label>
+              <input type="range" id="slice-8">
+            </div>
           </div>
-          <div class="row">
-            <label>x4</label>
-            <input type="range">
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x5</label>
-            <input type="range">
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x6</label>
-            <input type="range">
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x7</label>
-            <input type="range">
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x8</label>
-            <input type="range">
-            <input type="text">
+          
+
+          <!-- zoom control sliders -->
+          <div class="zoom-controls">
+            <label class="info-title">Zoom</label>
+            <div class="zoom-control">
+              <label for="zoom-1" class="param-name">x1</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-1">
+            <div class="zoom-control">
+              <label for="zoom-2" class="param-name">x2</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-2">
+            <div class="zoom-control">
+              <label for="zoom-3" class="param-name">x3</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-3">
+            <div class="zoom-control">
+              <label for="zoom-4" class="param-name">x4</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-4">
+            <div class="zoom-control">
+              <label for="zoom-5" class="param-name">x5</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-5">
+            <div class="zoom-control">
+              <label for="zoom-6" class="param-name">x6</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-6">
+            <div class="zoom-control">
+              <label for="zoom-7" class="param-name">x7</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-7">
+            <div class="zoom-control">
+              <label for="zoom-8" class="param-name">x8</label>
+              <img data-src="holder.js/100%x16/text:range slider" id="zoom-8">
+            </div>
           </div>
         </section>
-
-        <!-- zoom controls -->
-        <section class="row">
-          <label>Zoom</label>
-          <div class="row">
-            <label>x1</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x2</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x3</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x4</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x5</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x6</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x7</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-          <div class="row">
-            <label>x8</label>
-            <input type="text">
-            <div class="slider-range"></div>
-            <input type="text">
-          </div>
-        </section>
-      </aside>
-    </section>
-    <section class="small-8 columns">
-      <!-- Things that control the HS/splom view below -->
-      <section class="row">
-        
-        <div class="row collapse">
-          <div class="small-4 columns">
-            <label>Visualization</label>
-            <label>Hyperslice
-              <input type="radio">
-            </label>
-            <label>SPLOM
-              <input type="radio">
-            </label>
-          </div>
-
-          <div class="small-4 columns">
-            <label>View</label>
-            <label>Value<input type="radio"></label>
-            <label>Error<input type="radio"></label>
-            <label>Gain<input type="radio"></label>
-          </div>
-
-          <div class="small-4 columns">
-            <label>Glyphs</label>
-            <label>Region
-              <input type="checkbox">
-            </label>
-            <label>Line to sample
-              <input type="checkbox">
-            </label>
-          </div>
-        </div>
       </section>
-      <section class="row">
-        <img data-src="holder.js/100%x600/text:hs" alt="">
+      <section class="main-area">
+        <!-- Things that control the HS/splom view below -->
+        <section class="ps-controls">
+          <img data-src="holder.js/100%x40/text:ps controls" alt="">
+        </section>
+        <section class="ps-view">
+          <img data-src="holder.js/100%x600/text:hs" alt="">
+        </section>
       </section>
-    </section>
-  </main>
+    </main>
+    
+  </div>
 
   <!--
   Scripts

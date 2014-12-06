@@ -1,0 +1,12 @@
+
+.pareto {
+
+  @include grid-block(shrink, $vertical: vertical);
+
+
+  // These should be in global classes once we're done with images
+  img {
+    @include grid-content(shrink);
+    @include grid-collapse();
+  }
+}

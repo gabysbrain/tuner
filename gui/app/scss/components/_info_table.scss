@@ -1,0 +1,66 @@
+
+.info-table {
+
+  @include grid-block($vertical: vertical);
+  overflow-y: auto;
+
+  // These should be in global classes once we're done with images
+  div {
+    @include grid-block(shrink, $vertical: vertical);
+    //@include grid-collapse();
+  }
+}
+
+.preview-img {
+  @include grid-block(shrink, $vertical: vertical);
+  img {
+    @include grid-container();
+  }
+}
+
+.slice-controls {
+  //@include grid-block(shrink, $vertical: vertical);
+
+  .slice-control {
+    @include grid-block(expand);
+
+    label {
+      @include grid-content(shrink);
+    }
+
+    input[type=range] {
+      @include grid-content();
+    }
+  }
+}
+
+.zoom-controls {
+  //@include grid-block(shrink, $vertical: vertical);
+
+  .slice-control {
+    @include grid-block(expand);
+
+    label {
+      @include grid-content(shrink);
+    }
+
+    img {
+      @include grid-content();
+    }
+  }
+}
+
+/*
+          <div class="position-detail">
+            <label class="info-title"
+            <img data-src="holder.js/100%x300/text:info" alt="">
+          </div>
+          <div class="slice-controls">
+            <label class="info-title">Position</label>
+            <img data-src="holder.js/100%x300/text:slice controls" alt="">
+          </div>
+          <div class="zoom-controls">
+            <label class="info-title">Zoom</label>
+            <img data-src="holder.js/100%x300/text:zoom controls" alt="">
+          </div>
+*/

@@ -2,3 +2,7 @@
    Base Stylesheet
    _base.scss
    ========================================================================== */
+
+.section-title {
+  @include grid-content(shrink);
+}

@@ -1,0 +1,26 @@
+
+// Main layout elements
+
+.app-frame {
+  @include grid-frame($vertical: vertical);
+}
+
+nav {
+  @include grid-block(shrink);
+}
+
+main {
+  @include grid-block();
+}
+
+.left-area {
+  @include grid-block($vertical: vertical, $align: center);
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 300px;
+}
+
+.main-area {
+  @include grid-block($vertical: vertical);
+
+}
