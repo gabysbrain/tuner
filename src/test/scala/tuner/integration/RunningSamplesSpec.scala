@@ -6,6 +6,7 @@ import org.scalatest.Matchers._
 import scala.swing.Reactor
 import scala.swing.event.Event
 
+import tuner.Config
 import tuner.project._
 import tuner.Progress
 import tuner.ProgressComplete
@@ -90,6 +91,7 @@ class RunningSamplesSpec extends WordSpec {
     buildInBackground=false,
     currentVis=ViewInfo.Default,
     currentRegion=Region.Default,
-    history=None
+    history=None,
+    version=Some(Config.maxProjectVersion)
   )
 }

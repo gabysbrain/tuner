@@ -10,6 +10,8 @@ import tuner.util.ResourceLoader
 
 object Config {
   
+  val maxProjectVersion = 1
+  
   var testingMode = false
 
   val projConfigFilename = "config.json"
