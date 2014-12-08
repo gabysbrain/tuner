@@ -1,5 +1,22 @@
 
  .ps-controls {
-    @include grid-block(shrink);
+    @include grid-block(shrink, $align: justify);
+
+    section {
+      @include grid-block(shrink, $vertical: vertical);
+      .controls {
+        @include grid-block(shrink);
+
+        li {
+          @include grid-block(shrink);
+          label {
+            @include grid-content();
+          }
+          input {
+            @include grid-content();
+          }
+        }
+      }
+    }
   } 
 

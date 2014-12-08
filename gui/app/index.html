@@ -13,7 +13,28 @@
 <body>
   <div class="app-frame">
     <nav>
-      <img data-src="holder.js/100%x40/text:Menu bar" alt="">
+      <section class="left-menu">
+        <!-- <img data-src="holder.js/100%x40/text:Menu bar" alt=""> -->
+      </section>
+      <section class="center-menu">
+        <select name="response-1" id="response-1">
+          <option value="y1" selected>y1</option>
+          <option value="y2">y2</option>
+          <option value="y3">y3</option>
+          <option value="y4">y4</option>
+        </select>
+        <select name="response-2" id="response-2">
+          <option value="y1">y1</option>
+          <option value="y2">y2</option>
+          <option value="y3" selected>y3</option>
+          <option value="y4">y4</option>
+        </select>
+      </section>
+      <section class="right-menu">
+        <button id="add-samples">Add samples</button>
+        <button id="history">History</button>
+        <button id="in-progress">In progress</button>
+      </section>
     </nav>
 
     <!-- the main visualization section -->
@@ -29,7 +50,7 @@
             <label class="info-title">Closest sample</label>
             <img data-src="holder.js/120x120/text: preview" alt="">
           </div>
-<!--           <div class="position-detail">
+          <div class="position-detail">
             <label class="info-title">Detail</label>
             <table role="grid">
               <thead>
@@ -105,7 +126,6 @@
               </tbody>
             </table>
           </div>
- -->
           <!-- slice control sliders -->
           <div class="slice-controls">
             <label class="info-title">Position</label>
@@ -178,7 +198,49 @@
       <section class="main-area">
         <!-- Things that control the HS/splom view below -->
         <section class="ps-controls">
-          <img data-src="holder.js/100%x40/text:ps controls" alt="">
+          <section class="visualization-method">
+            <label class="section-title">Vis method</label>
+            <ul class="controls">
+              <li>
+                <label for="hyperslice-vis">Hyperslice</label>
+                <input type="radio" id="hyperslice-vis" name="vis-method">
+              </li>
+              <li>
+                <label for="splom-vis">SPLOM</label>
+                <input type="radio" id="splom-vis" name="vis-method">
+              </li>
+            </ul>
+          </section>
+          <section class="metric-view">
+            <label class="section-title">Metric</label>
+            <ul class="controls">
+              <li>
+                <label for="value-view">Value</label>
+                <input type="radio" id="value-view" name="metric">
+              </li>
+              <li>
+                <label for="error-view">Error</label>
+                <input type="radio" id="error-view" name="metric">
+              </li>
+              <li>
+                <label for="gain-view">Gain</label>
+                <input type="radio" id="gain-view" name="metric">
+              </li>
+            </ul>
+          </section>
+          <section class="glyph-selctions">
+            <label class="section-title">Glyphs</label>
+            <ul class="controls">
+              <li>
+                <label for="region-view">Region</label>
+                <input type="checkbox" id="region-view" name="region-view">
+              </li>
+              <li>
+                <label for="nearest-pt-view">Nearest&nbsp;sample</label>
+                <input type="checkbox" id="nearest-pt-view" name="nearest-pt-view">
+              </li>
+            </ul>
+          </section>
         </section>
         <section class="ps-view">
           <img data-src="holder.js/100%x600/text:hs" alt="">

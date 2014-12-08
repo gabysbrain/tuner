@@ -1,4 +1,15 @@
 
 nav {
-  @extend .menu-bar;
+  //@extend .menu-bar;
+  .left-menu {
+    @include grid-block($align: left);
+  }
+
+  .center-menu {
+    @include grid-block($align: center);
+  }
+
+  .right-menu {
+    @include grid-block($align: right);
+  }
 }
