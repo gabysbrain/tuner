@@ -60,6 +60,8 @@ trait Sampler extends LazyLogging { self:Project =>
     newSamples(n, inputs, method)
   }
 
+  def clearSamples : Unit = newSamples.clear
+
   def importSamples(file:java.io.File) = {
     val newDesTbl = Table.fromCsv(file.getAbsolutePath)
     for(r <- 0 until newDesTbl.numRows) {

@@ -12,6 +12,7 @@ import scala.swing.event.ValueChanged
 
 import tuner.Sampler
 import tuner.project.Viewable
+import tuner.util.Path
 
 /**
  * The dialog for adding samples
@@ -27,16 +28,25 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
   }
   //val okButton = new Button("
   val mainPanel = new SamplerPanel(project, newSamples)
+  val saveButton = new Button("Save for cluster")
   val okButton = new Button("Run")
   val cancelButton = new Button("Cancel")
 
   listenTo(mainPanel)
+  listenTo(saveButton)
   listenTo(okButton)
   listenTo(cancelButton)
 
   reactions += {
     case ButtonClicked(`okButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Ok))
+      dispose
+    case ButtonClicked(`saveButton`) =>
+      mainPanel.saveSamples
+      //project.save()
+      project.clearSamples
+      publish(new DialogClosing(this, Dialog.Result.Ok))
+      //owner.close
       dispose
     case ButtonClicked(`cancelButton`) =>
       publish(new DialogClosing(this, Dialog.Result.Cancel))
@@ -46,6 +56,7 @@ class SamplerDialog(project:Viewable, owner:scala.swing.Window)
   contents = new BorderPanel {
     val buttonPanel = new BoxPanel(Orientation.Horizontal) {
       contents += Swing.HGlue
+      contents += saveButton
       contents += okButton
       contents += cancelButton
     }
