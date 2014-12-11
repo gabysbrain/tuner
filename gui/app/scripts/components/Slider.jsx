@@ -13,7 +13,7 @@ var Slider = React.createClass({
     min: PropTypes.number,
     max: PropTypes.number,
     step: PropTypes.number,
-    initialValue: PropTypes.number,
+    value: PropTypes.number.isRequired,
     onChange: PropTypes.func
   },
 
@@ -21,28 +21,22 @@ var Slider = React.createClass({
     return {
       min: 0,
       max: 1,
-      step: 0.01,
-      initialValue: 0
+      step: 0.01
     }
-  },
-
-  getInitialState: function() {
-    return {
-      value: this.props.initialValue
-    };
   },
 
   componentDidMount: function() {
     $(this.getDOMNode()).slider(this.props);
-    $(this.getDOMNode()).slider("value", this.state.value);
+    $(this.getDOMNode()).slider("value", this.props.value);
 
     // Only need to bind the event handler here
-    $(this.getDOMNode()).on("slidechange", this._onChange);
+    $(this.getDOMNode()).on("change", this._onChange);
+    $(this.getDOMNode()).on("slide", this._onChange);
   },
 
   componentDidUpdate: function(prevProps, prevState) {
     $(this.getDOMNode()).slider(this.props);
-    $(this.getDOMNode()).slider("value", this.state.value);
+    $(this.getDOMNode()).slider("value", this.props.value);
   },
 
   render: function() {
@@ -52,12 +46,10 @@ var Slider = React.createClass({
   },
 
   _onChange: function(event, ui) {
-    var prevVal = this.state.value;
-    if(prevVal !== ui.value) {
-      this.setState({value: ui.value});
-      if(this.props.onChange) {
-        this.props.onChange(event, this.state.value);
-      }
+    console.log('here');
+    var prevVal = this.props.value;
+    if(prevVal !== ui.value && this.props.onChange) {
+      this.props.onChange(event, ui.value);
     }
   }
 
