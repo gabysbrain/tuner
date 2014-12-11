@@ -5,7 +5,8 @@
     "node": ">=0.10.22"
   },
   "scripts": {
-    "dist": "NODE_ENV=production gulp dist"
+    "dist": "NODE_ENV=production gulp dist",
+    "test": "jest app/scripts"
   },
   "devDependencies": {
     "browserify": "^5.12.1",
@@ -32,16 +33,24 @@
     "gulp-size": "^1.1.0",
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.1",
+    "jest-cli": "^0.2.0",
     "jshint-stylish": "^0.4.0",
-    "mocha": "^1.21.4",
     "opn": "^1.0.0",
     "partialify": "^3.1.1",
-    "should": "^4.0.4",
+    "react-tools": "^0.12.1",
     "vinyl-source-stream": "^0.1.1"
   },
   "dependencies": {
     "backbone": "^1.1.2",
     "jquery": "^2.1.1",
-    "lodash": "^2.4.1"
+    "jquery-ui": "^1.10.5",
+    "lodash": "^2.4.1",
+    "react": "^0.12.1"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/jest_preprocessor.js",
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react"
+    ]
   }
 }
