@@ -32,6 +32,18 @@ describe('Slider', function() {
     expect($(slider.getDOMNode()).hasClass('ui-slider')).toBeTruthy();
   });
 
+  it('properly updates the value', function() {
+    var slider = TestUtils.renderIntoDocument(
+      <Slider value={0.5} />
+    );
+
+    // Sanity check on the value
+    expect($(slider.getDOMNode()).slider("value")).toEqual(0.5);
+
+    slider.setProps({value: 0.7});
+    expect($(slider.getDOMNode()).slider("value")).toEqual(0.7);
+  });
+
   xit('generates an event when changed', function() {
     var changeListener = jest.genMockFunction();
 

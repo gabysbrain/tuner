@@ -26,17 +26,27 @@ var Slider = React.createClass({
   },
 
   componentDidMount: function() {
-    $(this.getDOMNode()).slider(this.props);
-    $(this.getDOMNode()).slider("value", this.props.value);
+    $(this.getDOMNode()).slider({
+      min: this.props.min,
+      max: this.props.max,
+      step: this.props.step,
+      value: this.props.value
+    });
 
-    // Only need to bind the event handler here
     $(this.getDOMNode()).on("change", this._onChange);
     $(this.getDOMNode()).on("slide", this._onChange);
   },
 
   componentDidUpdate: function(prevProps, prevState) {
-    $(this.getDOMNode()).slider(this.props);
-    $(this.getDOMNode()).slider("value", this.props.value);
+    $(this.getDOMNode()).slider({
+      min: this.props.min,
+      max: this.props.max,
+      step: this.props.step,
+      value: this.props.value
+    });
+
+    $(this.getDOMNode()).on("change", this._onChange);
+    $(this.getDOMNode()).on("slide", this._onChange);
   },
 
   render: function() {
