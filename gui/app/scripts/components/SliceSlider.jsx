@@ -3,16 +3,16 @@
 'use strict';
 
 var React = require('react');
-var ReactPropTypes = React.PropTypes;
+var PropTypes = React.PropTypes;
 
 var Slider = require('./Slider.jsx');
 
 var SliceSlider = React.createClass({
   propTypes: {
-    inputName: ReactPropTypes.string.isRequired,
-    value: ReactPropTypes.number.isRequired,
-    id: ReactPropTypes.string,
-    onChange: ReactPropTypes.func
+    inputName: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+    id: PropTypes.string,
+    onChange: PropTypes.func
   },
 
   render: function() {
