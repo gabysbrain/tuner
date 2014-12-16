@@ -1,18 +1,19 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../Slider.jsx')
-    .dontMock('jquery')
-    .dontMock('jquery-ui');
+var jsdom = require('mocha-jsdom');
 
-var React, Slider, $, TestUtils;
+var React = require('react/addons');
+
+var Slider, $, TestUtils;
 
 describe('Slider', function() {
+  jsdom();
+
   beforeEach(function() {
-    React = require('react/addons');
-    Slider = require('../Slider.jsx');
     $ = require('jquery');
     require('jquery-ui');
     TestUtils = React.addons.TestUtils;
+    Slider = require('../../app/scripts/components/Slider.jsx');
   });
 
   it('begins with the correct value', function() {

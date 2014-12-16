@@ -1,0 +1,3 @@
+--compilers jsx:jsx-require-extension
+--require chai
+--recursive
