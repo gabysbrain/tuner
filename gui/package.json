@@ -5,7 +5,7 @@
     "node": ">=0.10.22"
   },
   "scripts": {
-    "test": "jest app/scripts"
+    "test": "mocha test"
   },
   "devDependencies": {
     "browserify": "^5.12.1",
