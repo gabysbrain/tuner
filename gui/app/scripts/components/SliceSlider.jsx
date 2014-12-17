@@ -10,35 +10,30 @@ var sliderStep = require('./utils').sliderStep;
 
 var SliceSlider = React.createClass({
   propTypes: {
-    slice: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      value: PropTypes.number.isRequired
-    }).isRequired,
-    zoom: PropTypes.shape({
-      //name: PropTypes.string.isRequired,
-      lowValue: PropTypes.number.isRequired,
-      highValue: PropTypes.number.isRequired
-    }).isRequired,
+    name: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+    lowValue: PropTypes.number.isRequired,
+    highValue: PropTypes.number.isRequired,
     id: PropTypes.string
   },
 
   changeSlice: function(e, name, newVal) {
-    Actions.changeSlice(this.props.slice.name, newVal, e);
+    Actions.changeSlice(this.props.name, newVal, e);
   },
 
   render: function() {
-    var step = sliderStep(this.props.zoom.highValue,
-                          this.props.zoom.lowValue);
+    var step = sliderStep(this.props.highValue,
+                          this.props.lowValue);
     return (
       <div className="slice-control">
         <label for={this.props.id}>
-          {this.props.slice.name} 
+          {this.props.name} 
         </label>
         <Slider
           id={this.props.id}
-          value={this.props.slice.value}
-          min={this.props.zoom.lowValue}
-          max={this.props.zoom.highValue}
+          value={this.props.value}
+          min={this.props.lowValue}
+          max={this.props.highValue}
           step={step}
           onChange={this.changeSlice} />
       </div>

@@ -24,7 +24,7 @@ describe('SliceSlider', function() {
       highValue: 1.0
     };
     var slider = TestUtils.renderIntoDocument(
-      <SliceSlider slice={slice} zoom={zoom} />
+      <SliceSlider name={'x1'} value={0.5} lowValue={0.0} highValue={1.0} />
     );
 
     // Make sure the label has the correct value
