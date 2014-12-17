@@ -5,28 +5,21 @@
     "node": ">=0.10.22"
   },
   "scripts": {
-    "test": "mocha test"
+    "test": "jest app/scripts"
   },
   "devDependencies": {
     "browserify": "^5.12.1",
     "browserify-shim": "^3.7.0",
-    "chai": "*",
     "connect": "^2.25.9",
     "connect-livereload": "^0.4.0",
     "debowerify": "^0.8.1",
     "istanbul": "^0.3.5",
     "jest-cli": "^0.2.0",
-    "jsdom": "^1.5.0",
     "jshint-stylish": "^0.4.0",
-    "jsx-require-extension": "^0.2.0",
-    "mocha": "*",
-    "mocha-istanbul": "^0.2.0",
-    "mocha-jsdom": "*",
-    "mocha-sinon": "*",
     "opn": "^1.0.0",
     "partialify": "^3.1.1",
     "react-tools": "^0.12.1",
-    "sinon": "*"
+    "vinyl-source-stream": "^0.1.1"
   },
   "dependencies": {
     "atom-shell": "^1.2.0",
@@ -36,5 +29,11 @@
     "jquery-ui": "^1.10.5",
     "lodash": "^2.4.1",
     "react": "^0.12.1"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/jest_preprocessor.js",
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react"
+    ]
   }
 }

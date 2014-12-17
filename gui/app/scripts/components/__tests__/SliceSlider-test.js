@@ -1,16 +1,15 @@
 /** @jsx React.DOM */
 
-var jsdom = require('mocha-jsdom');
+jest.dontMock('../SliceSlider.jsx')
+    .dontMock('jquery')
+    .dontMock('jquery-ui');
 
-var React = require('react/addons');
-
-var SliceSlider, $, TestUtils;
+var React, SliceSlider, $, TestUtils;
 
 describe('SliceSlider', function() {
-  jsdom();
-
-  before(function() {
-    SliceSlider = require('../../app/scripts/components/SliceSlider.jsx');
+  beforeEach(function() {
+    React = require('react/addons');
+    SliceSlider = require('../SliceSlider.jsx');
     //$ = require('jquery');
     //require('jquery-ui');
     TestUtils = React.addons.TestUtils;
