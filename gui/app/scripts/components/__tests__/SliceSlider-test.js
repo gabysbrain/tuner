@@ -15,14 +15,6 @@ describe('SliceSlider', function() {
 
   it('renders the correct parameter name', function() {
 
-    var slice = {
-      name: 'x1',
-      value: 0.5
-    };
-    var zoom = {
-      lowValue: 0.0,
-      highValue: 1.0
-    };
     var slider = TestUtils.renderIntoDocument(
       <SliceSlider name={'x1'} value={0.5} lowValue={0.0} highValue={1.0} />
     );
