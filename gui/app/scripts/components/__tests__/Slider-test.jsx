@@ -25,7 +25,7 @@ describe('Slider', function() {
       <Slider value={0.5} />
     );
 
-    expect($(slider.getDOMNode()).hasClass('ui-slider')).to.be;
+    expect($(slider.getDOMNode()).hasClass('ui-slider')).to.be.true;
   });
 
   it('properly updates the value', function() {

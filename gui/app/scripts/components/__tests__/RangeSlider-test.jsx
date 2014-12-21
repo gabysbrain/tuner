@@ -27,7 +27,7 @@ describe('RangeSlider', function() {
       <RangeSlider lowValue={0.5} highValue={0.7} />
     );
 
-    expect($(slider.getDOMNode()).hasClass('ui-slider')).to.be;
+    expect($(slider.getDOMNode()).hasClass('ui-slider')).to.be.true;
   });
 
   it('properly updates the value', function() {
