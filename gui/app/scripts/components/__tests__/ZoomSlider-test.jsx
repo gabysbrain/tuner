@@ -1,16 +1,12 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../ZoomSlider.jsx')
-    .dontMock('jquery')
-    .dontMock('jquery-ui');
+require('./react_helper');
 
-var Cortex, React, ZoomSlider, TestUtils;
+var ZoomSlider;
 
 describe('ZoomSlider', function() {
   beforeEach(function() {
-    React = require('react/addons');
     ZoomSlider = require('../ZoomSlider.jsx');
-    TestUtils = React.addons.TestUtils;
   });
 
   it('renders the correct parameter name', function() {
@@ -22,7 +18,7 @@ describe('ZoomSlider', function() {
 
     // Make sure the label has the correct value
     var label = TestUtils.findRenderedDOMComponentWithTag(slider, 'label');
-    expect(label.getDOMNode().textContent).toEqual('x1');
+    expect(label.getDOMNode().textContent).to.equal('x1');
   });
   
 });

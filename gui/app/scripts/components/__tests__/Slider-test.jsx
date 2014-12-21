@@ -1,18 +1,14 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../Slider.jsx')
-    .dontMock('jquery')
-    .dontMock('jquery-ui');
+require('./react_helper');
 
-var React, Slider, $, TestUtils;
+var Slider, $;
 
 describe('Slider', function() {
   beforeEach(function() {
-    React = require('react/addons');
     Slider = require('../Slider.jsx');
     $ = require('jquery');
     require('jquery-ui');
-    TestUtils = React.addons.TestUtils;
   });
 
   it('begins with the correct value', function() {
@@ -21,7 +17,7 @@ describe('Slider', function() {
     );
 
     // Make sure the initial value is correct
-    expect($(slider.getDOMNode()).slider("value")).toEqual(0.5);
+    expect($(slider.getDOMNode()).slider("value")).to.equal(0.5);
   });
 
   it('runs the proper javascript setup code', function() {
@@ -29,7 +25,7 @@ describe('Slider', function() {
       <Slider value={0.5} />
     );
 
-    expect($(slider.getDOMNode()).hasClass('ui-slider')).toBeTruthy();
+    expect($(slider.getDOMNode()).hasClass('ui-slider')).to.be;
   });
 
   it('properly updates the value', function() {
@@ -38,10 +34,10 @@ describe('Slider', function() {
     );
 
     // Sanity check on the value
-    expect($(slider.getDOMNode()).slider("value")).toEqual(0.5);
+    expect($(slider.getDOMNode()).slider("value")).to.equal(0.5);
 
     slider.setProps({value: 0.7});
-    expect($(slider.getDOMNode()).slider("value")).toEqual(0.7);
+    expect($(slider.getDOMNode()).slider("value")).to.equal(0.7);
   });
 
   xit('generates an event when changed', function() {
@@ -52,7 +48,7 @@ describe('Slider', function() {
     );
 
     // Sanity check on the value
-    expect($(slider.getDOMNode()).slider("value")).toEqual(0.5);
+    expect($(slider.getDOMNode()).slider("value")).to.equal(0.5);
 
     // Make sure that we send an event when the value changes
     // FIXME: sending drag events would be better...
@@ -63,7 +59,7 @@ describe('Slider', function() {
     //TestUtils.Simulate.drag(dragHandle, {dx: 10, dy: 10});
     $(dragHandle).trigger('drag', {dx: 10, dy: 10});
 
-    expect(changeListener.mock.calls.length).toEqual(1);
-    expect(changeListener.mock.calls[0][1]).toEqual(0.7);
+    expect(changeListener.mock.calls.length).to.equal(1);
+    expect(changeListener.mock.calls[0][1]).to.equal(0.7);
   });
 });

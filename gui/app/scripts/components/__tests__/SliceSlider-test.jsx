@@ -1,10 +1,6 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../SliceSlider.jsx')
-    .dontMock('jquery')
-    .dontMock('jquery-ui');
-
-var Cortex, React, SliceSlider, TestUtils;
+var SliceSlider;
 
 describe('SliceSlider', function() {
   beforeEach(function() {
@@ -21,7 +17,7 @@ describe('SliceSlider', function() {
 
     // Make sure the label has the correct value
     var label = TestUtils.findRenderedDOMComponentWithTag(slider, 'label');
-    expect(label.getDOMNode().textContent).toEqual('x1');
+    expect(label.getDOMNode().textContent).to.equal('x1');
   });
   
 });

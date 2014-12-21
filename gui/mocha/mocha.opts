@@ -1,0 +1,2 @@
+--compilers jsx:./mocha/jsx_compiler.js
+--require ./mocha/globals
