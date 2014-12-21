@@ -40,8 +40,8 @@ describe('Slider', function() {
     expect($(slider.getDOMNode()).slider("value")).to.equal(0.7);
   });
 
-  xit('generates an event when changed', function() {
-    var changeListener = jest.genMockFunction();
+  it('generates an event when changed', function() {
+    var changeListener = sinon.spy();
 
     var slider = TestUtils.renderIntoDocument(
       <Slider value={0.5} onChange={changeListener} />
@@ -59,7 +59,7 @@ describe('Slider', function() {
     //TestUtils.Simulate.drag(dragHandle, {dx: 10, dy: 10});
     $(dragHandle).trigger('drag', {dx: 10, dy: 10});
 
-    expect(changeListener.mock.calls.length).to.equal(1);
-    expect(changeListener.mock.calls[0][1]).to.equal(0.7);
+    expect(changeListener.called).to.be.true;
+    expect(changeListener.getCall(0).args[1]).to.equal(0.7);
   });
 });
