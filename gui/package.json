@@ -5,6 +5,7 @@
     "node": ">=0.10.22"
   },
   "scripts": {
+    "postinstall": "bower install",
     "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.*"
   },
   "devDependencies": {
