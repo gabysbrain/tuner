@@ -60,8 +60,11 @@ case class ProjConfig(
   buildInBackground:Boolean,
   var currentVis:VisInfo,
   currentRegion:RegionSpecification,
-  history:Option[HistorySpecification]
-)
+  history:Option[HistorySpecification],
+  private val version:Option[Int]
+) {
+  def versionNumber : Int = version getOrElse 1
+}
 
 object Project extends LazyLogging {
 
@@ -219,7 +222,8 @@ class NewProject(name:String,
                                Nil, Nil, Nil, false,
                                ViewInfo.Default,
                                Region.Default,
-                               None)) with Sampler {
+                               None, 
+                               version=Some(Config.maxProjectVersion))) with Sampler {
 
   val path = Path.join(basePath, name)
 
