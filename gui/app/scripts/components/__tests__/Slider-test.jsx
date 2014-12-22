@@ -40,7 +40,7 @@ describe('Slider', function() {
     expect($(slider.getDOMNode()).slider("value")).to.equal(0.7);
   });
 
-  it('generates an event when changed', function() {
+  xit('generates an event when changed', function() {
     var changeListener = sinon.spy();
 
     var slider = TestUtils.renderIntoDocument(

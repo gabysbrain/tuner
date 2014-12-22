@@ -44,7 +44,7 @@ describe('RangeSlider', function() {
     expect($(slider.getDOMNode()).slider("values")[1]).to.equal(0.75);
   });
 
-  it('generates an event when changed', function() {
+  xit('generates an event when changed', function() {
     var changeListener = sinon.spy();
 
     var slider = TestUtils.renderIntoDocument(
