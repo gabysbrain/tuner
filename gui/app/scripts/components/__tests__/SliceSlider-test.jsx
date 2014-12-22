@@ -11,8 +11,13 @@ describe('SliceSlider', function() {
 
   it('renders the correct parameter name', function() {
 
+    var actions = {
+      changeSlice: sinon.spy()
+    };
     var slider = TestUtils.renderIntoDocument(
-      <SliceSlider name={'x1'} value={0.5} lowValue={0.0} highValue={1.0} />
+      <SliceSlider name={'x1'} value={0.5} 
+                   lowValue={0.0} highValue={1.0} 
+                   actions={actions} />
     );
 
     // Make sure the label has the correct value
