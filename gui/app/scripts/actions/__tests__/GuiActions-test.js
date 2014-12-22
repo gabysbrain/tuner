@@ -59,6 +59,8 @@ describe('Gui actions', function() {
   });
 
   it('show history');
+  
+  it('show pending tasks');
 
   it('start add samples');
 

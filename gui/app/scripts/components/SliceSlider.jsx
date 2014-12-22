@@ -14,11 +14,12 @@ var SliceSlider = React.createClass({
     value: PropTypes.number.isRequired,
     lowValue: PropTypes.number.isRequired,
     highValue: PropTypes.number.isRequired,
+    actions: PropTypes.object.isRequired,
     id: PropTypes.string
   },
 
   changeSlice: function(e, name, newVal) {
-    Actions.changeSlice(this.props.name, newVal, e);
+    actions.changeSlice(this.props.name, newVal, e);
   },
 
   render: function() {

@@ -15,11 +15,12 @@ var ZoomSlider = React.createClass({
     highValue: PropTypes.number.isRequired,
     paramMin: PropTypes.number.isRequired,
     paramMax: PropTypes.number.isRequired,
+    actions: PropTypes.object.isRequired,
     id: PropTypes.string
   },
 
   changeZoom: function(e, newLow, newHigh) {
-    Actions.changeZoom(this.props.zoom, newLow, newHigh, e);
+    actions.changeZoom(this.props.zoom, newLow, newHigh, e);
   },
 
   render: function() {
