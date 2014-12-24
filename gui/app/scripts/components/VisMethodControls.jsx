@@ -18,7 +18,7 @@ var VisMethodControls = React.createClass({
     return (
       <ul className="controls">
         <li>
-          <label for="hyperslice-vis">
+          <label>
             Hyperslice
             <input type="radio" id="hyperslice-vis" name="vis-method"
                    value="hyperslice"
@@ -27,7 +27,7 @@ var VisMethodControls = React.createClass({
           </label>
         </li>
         <li>
-          <label for="splom-vis">
+          <label>
             SPLOM
             <input type="radio" id="splom-vis" name="vis-method"
                    value="splom"
