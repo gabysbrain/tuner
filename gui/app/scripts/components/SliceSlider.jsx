@@ -27,16 +27,16 @@ var SliceSlider = React.createClass({
                           this.props.lowValue);
     return (
       <div className="slice-control">
-        <label for={this.props.id}>
+        <label>
           {this.props.name} 
+          <Slider
+            id={this.props.id}
+            value={this.props.value}
+            min={this.props.lowValue}
+            max={this.props.highValue}
+            step={step}
+            onChange={this.changeSlice} />
         </label>
-        <Slider
-          id={this.props.id}
-          value={this.props.value}
-          min={this.props.lowValue}
-          max={this.props.highValue}
-          step={step}
-          onChange={this.changeSlice} />
       </div>
     );
   }

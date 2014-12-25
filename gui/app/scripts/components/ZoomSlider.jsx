@@ -28,17 +28,17 @@ var ZoomSlider = React.createClass({
                           this.props.paramMax);
     return (
       <div className="zoom-control">
-        <label for={this.props.id}>
+        <label>
           {this.props.name} 
+          <RangeSlider
+            id={this.props.id}
+            lowValue={this.props.lowValue}
+            highValue={this.props.highValue}
+            min={this.props.paramMin}
+            max={this.props.paramMax}
+            step={step}
+            onChange={this.changeZoom} />
         </label>
-        <RangeSlider
-          id={this.props.id}
-          lowValue={this.props.lowValue}
-          highValue={this.props.highValue}
-          min={this.props.paramMin}
-          max={this.props.paramMax}
-          step={step}
-          onChange={this.changeZoom} />
       </div>
     );
   }
