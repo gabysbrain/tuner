@@ -20,6 +20,9 @@ Factory.define('zoom')
   .attr('lowValue', 0.2)
   .attr('highValue', 0.8);
 
+/**
+ * Default has 4 inputs and 2 outputs
+ */
 Factory.define('viewableProject')
   .attr('name', 'test')
   .attr('inputs', ['inputs'], function(inputs) {
