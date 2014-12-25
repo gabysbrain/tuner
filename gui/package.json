@@ -6,7 +6,11 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.*"
+    "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.*",
+    "prebuild": "mkdir -p build",
+    "build": "npm run build:js && npm run build:html",
+    "build:js": "browserify --debug -t reactify app/scripts/app.js -o build/main.js",
+    "build:html": "cp app/index.html build/index.html"
   },
   "devDependencies": {
     "bower": "^1.3.12",
@@ -22,6 +26,7 @@
     "mocha": "*",
     "partialify": "^3.1.1",
     "react-tools": "^0.12.1",
+    "reactify": "^0.17.1",
     "rosie": "*",
     "sinon": "*"
   },
