@@ -1,18 +1,28 @@
 /**
- * scripts/app.js
- *
- * This is a sample CommonJS module.
- * Take a look at http://browserify.org/ for more info
+ * The entry point for the project viewer
  */
 
 'use strict';
 
-function App() {
-  console.log('app initialized');
+var fs = require('fs');
+var React = require('react');
+var Cortex = require('cortexjs');
+var GuiActions = require('./actions/GuiActions');
+var data = require('../../proj.json');
+
+var cortex = new Cortex(data);
+var actions = new GuiActions(cortex);
+var ProjectViewer = require('./components/ProjectViewer.jsx');
+
+function renderApp() {
+  React.render(
+    React.createElement(ProjectViewer, {actions: actions, project: data}),
+    document.getElementById('app-frame')
+  );
 }
 
-module.exports = App;
+cortex.on('update', renderApp);
 
-App.prototype.beep = function () {
-  console.log('boop');
-};
+//window.onload(function() {
+  renderApp(); // Initial render
+//});
