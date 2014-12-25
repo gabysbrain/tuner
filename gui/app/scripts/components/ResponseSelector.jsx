@@ -14,7 +14,7 @@ var ResponseSelector = React.createClass({
   },
 
   changeResponse: function(e) {
-    actions.changeResponse(this.props.responseId, e.input.value, e);
+    this.props.actions.changeResponse(this.props.responseId, e.target.value, e);
   },
 
   render: function() {
