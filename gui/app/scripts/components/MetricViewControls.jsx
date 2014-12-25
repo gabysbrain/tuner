@@ -15,6 +15,12 @@ var MetricViewControls = React.createClass({
   },
 
   render: function() {
+    if(this.props.value !== "value" &&
+       this.props.value !== "error" &&
+       this.props.value !== "gain") {
+      throw "'" + this.props.value + "' is not an acceptable metric"
+    }
+
     return (
       <ul className="controls">
         <li>

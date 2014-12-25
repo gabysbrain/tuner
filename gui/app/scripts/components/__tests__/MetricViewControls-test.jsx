@@ -74,5 +74,15 @@ describe('Metric view controls', function() {
     expect(actions.changePSMetric.getCall(0).args[0]).to.equal('gain');
   });
 
+  it('throws an exception on invalid value', function() {
+    var testFun = function() {
+      TestUtils.renderIntoDocument(
+        <Controls value="blah"
+                  actions={actions} />
+      );
+    };
+
+    expect(testFun).to.throw();
+  });
 
 });

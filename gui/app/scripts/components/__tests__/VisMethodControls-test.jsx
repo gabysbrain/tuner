@@ -60,4 +60,15 @@ describe('Vis method controls', function() {
     expect(actions.changePSView.getCall(0).args[0]).to.equal('splom');
   });
 
+  it('throws an exception on invalid value', function() {
+    var testFun = function() {
+      TestUtils.renderIntoDocument(
+        <Controls value="blah"
+                  actions={actions} />
+      );
+    };
+
+    expect(testFun).to.throw();
+  });
+
 });

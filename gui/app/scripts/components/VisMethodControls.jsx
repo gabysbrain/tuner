@@ -15,6 +15,9 @@ var VisMethodControls = React.createClass({
   },
 
   render: function() {
+    if(this.props.value !== "hyperslice" && this.props.value !== "splom") {
+      throw "'" + this.props.value + "' is not an acceptable method"
+    }
     return (
       <ul className="controls">
         <li>
