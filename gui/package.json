@@ -1,5 +1,5 @@
 {
-  "name": "gui",
+  "name": "tuner",
   "version": "0.0.0",
   "engines": {
     "node": ">=0.10.22"
@@ -8,9 +8,13 @@
     "postinstall": "bower install",
     "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.*",
     "prebuild": "mkdir -p build",
-    "build": "npm run build:js && npm run build:html",
-    "build:js": "browserify --debug -t reactify app/scripts/app.js -o build/main.js",
-    "build:html": "cp app/index.html build/index.html"
+    "build": "npm run build:css && npm run build:js && npm run build:html",
+    "build:css": "sass app/scss/app.scss build/app.css",
+    "build:js": "npm run build:js:project_viewer && npm run build:js:shell",
+    "build:js:project_viewer": "browserify --debug -t reactify app/scripts/app.js -o build/main.js",
+    "build:js:shell": "cp app/scripts/shell.js build/shell.js",
+    "build:html": "cp app/index.html build/index.html",
+    "build:watch": "watch 'npm run build' app/"
   },
   "devDependencies": {
     "bower": "^1.3.12",
@@ -24,11 +28,13 @@
     "jsdom": "*",
     "jshint-stylish": "^0.4.0",
     "mocha": "*",
+    "node-sass": "^2.0.0-beta",
     "partialify": "^3.1.1",
     "react-tools": "^0.12.1",
     "reactify": "^0.17.1",
     "rosie": "*",
-    "sinon": "*"
+    "sinon": "*",
+    "watch": "^0.13.0"
   },
   "dependencies": {
     "atom-shell": "^1.2.0",
