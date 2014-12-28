@@ -1,7 +1,7 @@
 
 .pareto {
 
-  @include grid-block(shrink, $vertical: vertical);
+  @include grid-block(shrink, $orientation: vertical);
 
 
   // These should be in global classes once we're done with images

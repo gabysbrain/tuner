@@ -1,25 +1,25 @@
 
 .info-table {
 
-  @include grid-block($vertical: vertical);
+  @include grid-block($orientation: vertical);
   overflow-y: auto;
 
   // These should be in global classes once we're done with images
   div {
-    @include grid-block(shrink, $vertical: vertical);
+    @include grid-block(shrink, $orientation: vertical);
     //@include grid-collapse();
   }
 }
 
 .preview-img {
-  @include grid-block(shrink, $vertical: vertical);
+  @include grid-block(shrink, $orientation: vertical);
   img {
     @include grid-container();
   }
 }
 
 .slice-controls {
-  //@include grid-block(shrink, $vertical: vertical);
+  //@include grid-block(shrink, $orientation: vertical);
 
   .slice-control {
     @include grid-block(expand);
@@ -35,7 +35,7 @@
 }
 
 .zoom-controls {
-  //@include grid-block(shrink, $vertical: vertical);
+  //@include grid-block(shrink, $orientation: vertical);
 
   .slice-control {
     @include grid-block(expand);

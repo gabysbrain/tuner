@@ -2,7 +2,7 @@
 // Main layout elements
 
 .app-frame {
-  @include grid-frame($vertical: vertical);
+  @include grid-frame($orientation: vertical);
 }
 
 nav {
@@ -14,13 +14,13 @@ main {
 }
 
 .left-area {
-  @include grid-block($vertical: vertical, $align: center);
+  @include grid-block($orientation: vertical, $align: center);
   flex-grow: 0;
   flex-shrink: 0;
   flex-basis: 300px;
 }
 
 .main-area {
-  @include grid-block($vertical: vertical);
+  @include grid-block($orientation: vertical);
 
 }

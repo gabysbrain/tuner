@@ -3,7 +3,7 @@
     @include grid-block(shrink, $align: justify);
 
     section {
-      @include grid-block(shrink, $vertical: vertical);
+      @include grid-block(shrink, $orientation: vertical);
       .controls {
         @include grid-block(shrink);
 
