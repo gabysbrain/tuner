@@ -19,7 +19,7 @@ var SliceSlider = React.createClass({
   },
 
   changeSlice: function(e, name, newVal) {
-    actions.changeSlice(this.props.name, newVal, e);
+    this.props.actions.changeSlice(this.props.name, newVal, e);
   },
 
   render: function() {

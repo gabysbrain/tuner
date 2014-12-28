@@ -20,7 +20,7 @@ var ZoomSlider = React.createClass({
   },
 
   changeZoom: function(e, newLow, newHigh) {
-    actions.changeZoom(this.props.zoom, newLow, newHigh, e);
+    this.props.actions.changeZoom(this.props.zoom, newLow, newHigh, e);
   },
 
   render: function() {
