@@ -1,6 +1,16 @@
 
   .ps-view {
     @include grid-block();
+
+    &:after {
+      padding-top: 56.25%; // 16x9 ratio
+      display: block;
+      content: '';
+    }
+
+    canvas {
+      width: 100%;
+    }
   }
 
 
