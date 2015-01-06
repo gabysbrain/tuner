@@ -6,7 +6,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.*",
+    "test": "mocha --opts mocha/mocha.opts app/scripts/**/__tests__/*-test.* app/scripts/components/webgl/__tests__/*-test.js",
     "prebuild": "mkdir -p build",
     "build": "npm run build:css && npm run build:js && npm run build:html",
     "build:css": "sass app/scss/app.scss build/app.css",
