@@ -32,4 +32,4 @@ gulp.task('js:app', function() {
     .pipe(gulp.dest(config.dest.scripts));
 });
 
-gulp.task('js', ['js:vendor', 'js:app']);
+gulp.task('js', ['js:app']);
