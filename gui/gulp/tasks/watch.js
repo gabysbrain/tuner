@@ -6,7 +6,7 @@ gulp.task('watch', ['build'], function() {
   var reload = require('browser-sync').reload;
 
   // watch .scss files
-  gulp.watch(config.src.scss + '/**/*.scss', ['scss']);
+  gulp.watch(config.src.scss + '/**/*.scss', ['sass']);
 
   // watch js files
   gulp.watch(config.src.scripts + '/**/*', ['js', reload]);
