@@ -14,12 +14,12 @@ Tuner requires Java (version 6 and 7 tested).
 
 ## Installation
 
-A tar.gz file of the Tuner package is located 
-[here](https://github.com/gabysbrain/tuner/releases/latest).
-Download this and unpack it.
+The Tuner package needs to be built from source using the sbt build tool.
+Clone the repo and then run
+    
+    bin/sbt
 
-    tar xzf Tuner-0.10.2.tar.gz
-    cd Tuner-0.10.2
+from the repository directory.
 
 ## Usage
 
