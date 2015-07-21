@@ -97,7 +97,7 @@ class GpModel(val thetas:DenseVector[Double],
            (DenseVector.ones[Double](responses.length) dot (rInverse * DenseVector.ones[Double](responses.length))),
          design, responses, rInverse, dims, respDim, errDim)
 
-  // Also precompute rInverse . (responses - mean)
+  // Also precompute the normalized response vector
   val corrResponses = rInverse * (responses - mean)
 
   def toJson = {
@@ -212,7 +212,7 @@ class GpModel(val thetas:DenseVector[Double],
     logger.debug("pc: " + ptCors.toString)
     logger.debug("cr: " + corrResponses.toString)
     val est = mean + (ptCors dot corrResponses)
-    val err = sig2 * (1 - (ptCors dot (rInverse * ptCors)))
+    val err = 1 - sig2 * (ptCors dot (rInverse * ptCors))
     logger.debug("s2: " + sig2)
     logger.debug("inner: " + (sig2 * (ptCors dot (rInverse * ptCors))))
     logger.debug("err: " + err)
