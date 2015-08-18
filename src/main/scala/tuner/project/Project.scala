@@ -356,7 +356,7 @@ class BuildingGp(config:ProjConfig, val path:String, designSites:Table)
             //val stringSds = cvSD.mkString("{", ", ", "}")
             val ttlTests = cvStandardResid.length
             val failTests = cvStandardResid.toArray count {e => math.abs(e) >= 3.0}
-            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (${failTests}/${ttlTests} tests with sd > 3)."))
+            publish(ProgressWarning(s"The model for ${fld} did not pass the CV test (${failTests}/${ttlTests} tests with sd > 3). Denser sampling may be needed."))
           }
           (fld, m)
          case Failure(ex) =>
