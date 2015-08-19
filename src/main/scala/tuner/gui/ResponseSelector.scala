@@ -8,10 +8,9 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.Swing
-import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
-import scala.swing.event.DialogClosing
+import tuner.gui.event.DialogClosing
 
 import tuner.Tuner
 import tuner.project.NewResponses

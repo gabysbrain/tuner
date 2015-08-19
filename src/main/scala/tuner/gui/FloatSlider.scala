@@ -1,4 +1,6 @@
-package scala.swing
+package tuner.gui
+
+import scala.swing.Slider
 
 class FloatSlider(minVal:Float, maxVal:Float, numSteps:Int) extends Slider {
   

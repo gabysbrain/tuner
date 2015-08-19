@@ -4,10 +4,8 @@ import scala.swing.BoxPanel
 import scala.swing.ComboBox
 import scala.swing.Label
 import scala.swing.Orientation
-import scala.swing.FloatRangeSlider
 import scala.swing.ScrollPane
 import scala.swing.Swing
-import scala.swing.TablePanel
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 

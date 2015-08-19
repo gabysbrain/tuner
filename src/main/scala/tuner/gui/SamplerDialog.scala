@@ -7,8 +7,8 @@ import scala.swing.Dialog
 import scala.swing.Orientation
 import scala.swing.Swing
 import scala.swing.event.ButtonClicked
-import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
+import tuner.gui.event.DialogClosing
 
 import tuner.Sampler
 import tuner.project.Viewable

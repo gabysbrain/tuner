@@ -2,7 +2,6 @@ package tuner
 
 import scala.swing._
 import scala.swing.Dialog
-import scala.swing.KeyStroke._
 import scala.swing.event._
 import scala.io.Source
 
@@ -18,6 +17,7 @@ import java.io.FileWriter
 
 import tuner.error.ProjectLoadException
 import tuner.gui.FileChooser
+import tuner.gui.KeyStroke._
 import tuner.gui.NewProjectWindow
 import tuner.gui.ProjectChooser
 import tuner.gui.ProjectViewer

@@ -1,9 +1,7 @@
 package tuner.gui
 
 import scala.swing.BoxPanel
-import scala.swing.FloatRangeSlider
 import scala.swing.Orientation
-import scala.swing.Spinner
 import scala.swing.event.ValueChanged
 
 import javax.swing.BoundedRangeModel

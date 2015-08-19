@@ -1,4 +1,8 @@
-package scala.swing
+package tuner.gui
+
+import scala.swing.Component
+import scala.swing.Panel
+import scala.swing.LayoutContainer
 
 import info.clearthought.layout.TableLayout
 import info.clearthought.layout.TableLayoutConstants

@@ -11,9 +11,7 @@ import scala.swing.Orientation
 import scala.swing.RadioButton
 import scala.swing.SplitPane
 import scala.swing.Swing
-import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
-import scala.swing.event.DialogClosing
 import scala.swing.event.ValueChanged
 import scala.swing.event.WindowClosing
 
@@ -21,6 +19,7 @@ import tuner.Config
 import tuner.ViewInfo
 import tuner.gui.event.AddSamples
 import tuner.gui.event.CandidateChanged
+import tuner.gui.event.DialogClosing
 import tuner.gui.event.HistoryAdd
 import tuner.gui.event.SliceChanged
 import tuner.gui.event.ViewChanged

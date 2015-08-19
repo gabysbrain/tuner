@@ -1,5 +1,6 @@
-package scala.swing
+package tuner.gui
 
+import scala.swing.{Component, Publisher}
 import scala.swing.event.ValueChanged
 
 import javax.swing.JSpinner

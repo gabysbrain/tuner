@@ -1,4 +1,6 @@
-package scala.swing
+package tuner.gui
+
+import scala.swing.Action
 
 import KeyStroke._
 

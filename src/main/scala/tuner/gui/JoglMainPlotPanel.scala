@@ -7,7 +7,6 @@ import java.awt.Graphics2D
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
-import scala.swing.GL2Panel
 import scala.swing.event.{Key, KeyReleased, MouseClicked, MouseDragged, MouseMoved}
 
 import tuner.BoxRegion
