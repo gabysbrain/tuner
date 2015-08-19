@@ -2,10 +2,8 @@ package tuner.gui
 
 import scala.swing.ComboBox
 import scala.swing.Label
-import scala.swing.TablePanel
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
-
 import tuner.gui.event.NewDesignSelected
 import tuner.gui.event.NewResponseSelected
 

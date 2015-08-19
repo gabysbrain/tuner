@@ -1,7 +1,6 @@
 package tuner.gui
 
 import scala.swing.BoxPanel
-import scala.swing.CollapsiblePanel
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 

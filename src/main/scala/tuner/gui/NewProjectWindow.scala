@@ -8,7 +8,6 @@ import scala.swing.Frame
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
-import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.ButtonClicked
 import scala.swing.event.UIElementResized

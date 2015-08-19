@@ -5,14 +5,11 @@ import scala.collection.mutable.ListBuffer
 
 import scala.swing.Action
 import scala.swing.Component
-import scala.swing.CutAction
-import scala.swing.CopyAction
-import scala.swing.KeyStroke._
 import scala.swing.Menu
 import scala.swing.MenuBar
 import scala.swing.MenuItem
-import scala.swing.PasteAction
 import scala.swing.Separator
+import tuner.gui.KeyStroke._
 
 import tuner.Tuner
 import tuner.project.Project

@@ -1,4 +1,4 @@
-package scala.swing
+package tuner.gui
 
 import javax.swing.BoundedRangeModel
 import javax.swing.event.ChangeEvent

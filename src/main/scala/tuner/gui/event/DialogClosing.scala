@@ -1,4 +1,6 @@
-package scala.swing.event
+package tuner.gui.event
+
+import scala.swing.event.WindowEvent
 
 import scala.swing.Dialog
 import scala.swing.Window

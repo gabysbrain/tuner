@@ -8,15 +8,14 @@ import scala.swing.Label
 import scala.swing.Orientation
 import scala.swing.ScrollPane
 import scala.swing.Swing
-import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
-import scala.swing.event.DialogClosing
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged
 
 import tuner.Config
 import tuner.Region
 import tuner.gui.event.AddSamples
+import tuner.gui.event.DialogClosing
 import tuner.project.Viewable
 
 import java.awt.Dimension

@@ -56,15 +56,15 @@
       "value":0.5
     }],
     "currentZoom":[{
-      "name":"orientation",
-      "lowValue":0.0,
-      "highValue":1.0
-    },{
       "name":"similThreshold",
       "lowValue":0.0,
       "highValue":1.0
     },{
       "name":"minCorrelation",
+      "lowValue":0.0,
+      "highValue":1.0
+    },{
+      "name":"orientation",
       "lowValue":0.0,
       "highValue":1.0
     }],

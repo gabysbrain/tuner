@@ -4,7 +4,6 @@ import scala.swing.Action
 import scala.swing.Button
 import scala.swing.Component
 import scala.swing.Label
-import scala.swing.TablePanel
 import scala.swing.event.ButtonClicked
 import scala.swing.event.ComponentEvent
 

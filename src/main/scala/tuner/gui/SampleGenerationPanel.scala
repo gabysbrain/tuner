@@ -4,7 +4,6 @@ import com.tomtorsneyweir.datescala.swing.TimeField
 
 import scala.swing.ComboBox
 import scala.swing.Label
-import scala.swing.TablePanel
 import scala.swing.TextField
 import scala.swing.event.SelectionChanged
 import scala.swing.event.ValueChanged

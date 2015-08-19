@@ -1,4 +1,7 @@
-package scala.swing
+package tuner.gui
+
+import scala.swing.Panel
+import scala.swing.SequentialContainer
 
 import org.japura.gui.CollapsibleRootPanel
 
