@@ -10,6 +10,7 @@ class GpModelSpec extends WordSpec {
   "estimating a point" when {
     "estimating at a sample point" must {
       "have an error of 0" in (pending)
+      "return the value of the sample point" in (pending)
     }
 
     "estimating away from a sample point" must {

@@ -3,6 +3,7 @@ package tuner.test.integration
 import org.scalatest._
 import org.scalatest.Matchers._
 
+import tuner.Table
 import tuner.gp.ScalaGpBuilder
 
 import tuner.test.Util._
@@ -11,11 +12,12 @@ class ScalaGpBuilderSpec extends WordSpec with TryValues {
 
   "A ScalaGpBuilder class" when {
     "given a 3D test data set" must {
-      val dataset = resource("/datasets/3d.csv")
+      val datasetFile = resource("/datasets/3d.csv")
       val params = List("x1", "x2", "x3")
       val resp = "y1"
+      val dataset = Table.fromCsv(datasetFile)
 
-      val gp = ScalaGpBuilder.buildModel(dataset, params, resp, "sd")
+      val gp = ScalaGpBuilder.buildModel(datasetFile, params, resp, "sd")
 
       "not have thrown an exception" in {
         gp should be a 'success
@@ -27,11 +29,16 @@ class ScalaGpBuilderSpec extends WordSpec with TryValues {
         thetas(1) should equal (6.3 +- 1e-1)
         thetas(2) should equal (34.4 +- 1e-1)
       }
-      /*
+
+      "have a mean close to mlegp in R gives" in {
+        val ys = dataset.values("y1")
+        val sampleMean = (ys.sum / ys.length).toDouble
+        gp.success.value.mean should equal (sampleMean +- 1e-2)
+      }
+      
       "return a valid model" in {
         assert(gp.success.value.validateModel._1, "CV test failed")
       }
-      */
 
       "save a model that can be reloaded" in {
         val gpJson = gp.success.value.toJson
