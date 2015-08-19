@@ -8,7 +8,7 @@ import java.awt.Graphics2D
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 import scala.swing.GL2Panel
-import scala.swing.event.{MouseClicked, MouseDragged, MouseMoved}
+import scala.swing.event.{Key, KeyReleased, MouseClicked, MouseDragged, MouseMoved}
 
 import tuner.BoxRegion
 import tuner.Color
@@ -107,22 +107,14 @@ class JoglMainPlotPanel(val project:Viewable) extends GL2Panel
     }
   })
 
-  reactions += {
-    case MouseClicked(_, pt, _, _, _) =>
-      logger.debug("mouse clicked")
-      handleBarMouse(pt.x, pt.y)
-      handlePlotMouse(pt.x, pt.y)
-    case MouseDragged(_, pt, _) =>
-      handleBarMouse(pt.x, pt.y)
-      handlePlotMouse(pt.x, pt.y)
-    case MouseMoved(_, pt, _) =>
-      val pb = sliceBounds.find {case (_,b) => b.isInside(pt.x, pt.y)}
-      val newPos = pb.map {tmp => tmp._1}
-      if(newPos != mousedPlot) {
-        mousedPlot = newPos
-        redraw
+  // The keyboard events also never make it to the panel
+  canvas.addKeyListener(new java.awt.event.KeyAdapter() {
+    override def keyTyped(e:java.awt.event.KeyEvent) = {
+      if(e.getKeyChar == 'H' || e.getKeyChar == 'h') {
+        publishHistoryAdd(JoglMainPlotPanel.this)
       }
-  }
+    }
+  })
 
   override def init(ggl2:GL2) = {
     val gl2 = new DebugGL2(ggl2)

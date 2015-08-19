@@ -47,24 +47,24 @@
   "currentVis":{
     "currentSlice":[{
       "name":"orientation",
-      "value":0.5
+      "value":0.48000001907348633
     },{
       "name":"similThreshold",
-      "value":0.5
+      "value":0.30300000309944153
     },{
       "name":"minCorrelation",
-      "value":0.5
+      "value":0.6840000152587891
     }],
     "currentZoom":[{
-      "name":"orientation",
-      "lowValue":0.0,
-      "highValue":1.0
-    },{
       "name":"similThreshold",
       "lowValue":0.0,
       "highValue":1.0
     },{
       "name":"minCorrelation",
+      "lowValue":0.0,
+      "highValue":1.0
+    },{
+      "name":"orientation",
       "lowValue":0.0,
       "highValue":1.0
     }],
