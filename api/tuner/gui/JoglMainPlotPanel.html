@@ -35,13 +35,13 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">JoglMainPlotPanel</span><span class="result"> extends <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a> with <a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></span>
+        <span class="name">JoglMainPlotPanel</span><span class="result"> extends <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a> with <a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a> with <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a>, <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Proxy" class="extype" target="_top">Proxy</a>, <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span>, <span class="extype" name="com.typesafe.scalalogging.Logging">Logging</span>, <a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a>, <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a>, <span class="extype" name="scala.Proxy">Proxy</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="tuner.gui.JoglMainPlotPanel"><span>JoglMainPlotPanel</span></li><li class="in" name="tuner.gui.MainPlotPanel"><span>MainPlotPanel</span></li><li class="in" name="scala.swing.GL2Panel"><span>GL2Panel</span></li><li class="in" name="scala.swing.Component"><span>Component</span></li><li class="in" name="scala.swing.UIElement"><span>UIElement</span></li><li class="in" name="scala.swing.LazyPublisher"><span>LazyPublisher</span></li><li class="in" name="scala.swing.Publisher"><span>Publisher</span></li><li class="in" name="scala.swing.Reactor"><span>Reactor</span></li><li class="in" name="scala.Proxy"><span>Proxy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="tuner.gui.JoglMainPlotPanel"><span>JoglMainPlotPanel</span></li><li class="in" name="com.typesafe.scalalogging.slf4j.LazyLogging"><span>LazyLogging</span></li><li class="in" name="com.typesafe.scalalogging.Logging"><span>Logging</span></li><li class="in" name="tuner.gui.MainPlotPanel"><span>MainPlotPanel</span></li><li class="in" name="tuner.gui.GL2Panel"><span>GL2Panel</span></li><li class="in" name="scala.swing.Component"><span>Component</span></li><li class="in" name="scala.swing.UIElement"><span>UIElement</span></li><li class="in" name="scala.swing.LazyPublisher"><span>LazyPublisher</span></li><li class="in" name="scala.swing.Publisher"><span>Publisher</span></li><li class="in" name="scala.swing.Reactor"><span>Reactor</span></li><li class="in" name="scala.Proxy"><span>Proxy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
                 <span class="filtertype">Implicitly<br />
@@ -144,7 +144,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -157,7 +157,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -170,7 +170,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -188,7 +188,7 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
             This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
     </li><li name="scala.Predef.any2ArrowAssoc#-&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -220,7 +220,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -233,7 +233,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -259,7 +259,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">background</span><span class="result">: <a href="../../scala/swing/package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">scala.swing.Color</a></span>
+        <span class="name">background</span><span class="result">: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -285,7 +285,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: background_$eq" class="name">background_=</span><span class="params">(<span name="c">c: <a href="../../scala/swing/package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">scala.swing.Color</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: background_$eq" class="name">background_=</span><span class="params">(<span name="c">c: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -311,7 +311,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: border_$eq" class="name">border_=</span><span class="params">(<span name="b">b: <span class="extype" name="javax.swing.border.Border">Border</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: border_$eq" class="name">border_=</span><span class="params">(<span name="b">b: <span class="extype" name="javax.swing.border.Border">Border</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -341,7 +341,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.GL2Panel#canvas" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="tuner.gui.GL2Panel#canvas" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="canvas:javax.media.opengl.awt.GLCanvas"></a>
       <a id="canvas:GLCanvas"></a>
       <h4 class="signature">
@@ -353,8 +353,8 @@
         <span class="name">canvas</span><span class="result">: <span class="extype" name="javax.media.opengl.awt.GLCanvas">GLCanvas</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
-    </li><li name="scala.swing.GL2Panel#capabilities" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
+    </li><li name="tuner.gui.GL2Panel#capabilities" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="capabilities:javax.media.opengl.GLCapabilities"></a>
       <a id="capabilities:GLCapabilities"></a>
       <h4 class="signature">
@@ -366,7 +366,7 @@
         <span class="name">capabilities</span><span class="result">: <span class="extype" name="javax.media.opengl.GLCapabilities">GLCapabilities</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -376,7 +376,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -408,7 +408,7 @@
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">colormapShader</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="opengl/Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a>]</span>
+        <span class="name">colormapShader</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="opengl/Glsl.html" class="extype" name="tuner.gui.opengl.Glsl">Glsl</a>]</span>
       </span>
       </h4>
       
@@ -421,7 +421,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">computePlotTransforms</span><span class="params">(<span name="sb">sb: <span class="extype" name="scala.Predef.Map">Map</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>), <a href="../geom/Rectangle.html" class="extype" name="tuner.geom.Rectangle">Rectangle</a>]</span>, <span name="width">width: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <span class="extype" name="scala.collection.immutable.Map">Map</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>), (<a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a>, <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a>)]</span>
+        <span class="name">computePlotTransforms</span><span class="params">(<span name="sb">sb: <span class="extype" name="scala.Predef.Map">Map</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>), <a href="../geom/Rectangle.html" class="extype" name="tuner.geom.Rectangle">Rectangle</a>]</span>, <span name="width">width: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <span class="extype" name="scala.collection.immutable.Map">Map</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>), (<a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a>, <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">The plots themselves will be drawn in data space so these
@@ -462,7 +462,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: cursor_$eq" class="name">cursor_=</span><span class="params">(<span name="c">c: <span class="extype" name="java.awt.Cursor">Cursor</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: cursor_$eq" class="name">cursor_=</span><span class="params">(<span name="c">c: <span class="extype" name="java.awt.Cursor">Cursor</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -475,7 +475,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">deafTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">deafTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
@@ -488,10 +488,10 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">display</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">display</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="scala.swing.UIElement#displayable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="displayable:Boolean"></a>
       <a id="displayable:Boolean"></a>
@@ -501,7 +501,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">displayable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">displayable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -514,10 +514,10 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">dispose</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">dispose</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="tuner.gui.JoglMainPlotPanel#drawEstimationToTexture" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="drawEstimationToTexture(gl:javax.media.opengl.GL2,xRange:(String,(Float,Float)),yRange:(String,(Float,Float)),response:String,trans:tuner.gui.util.Matrix4):Unit"></a>
       <a id="drawEstimationToTexture(GL2,(String,(Float,Float)),(String,(Float,Float)),String,Matrix4):Unit"></a>
@@ -527,7 +527,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawEstimationToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawEstimationToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">This puts the estimated value in a texture
@@ -541,7 +541,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawProsectionToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawProsectionToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">This draws the prosection matrix
@@ -555,7 +555,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawRawValueToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawRawValueToTexture</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">This puts the estimated value in a texture
@@ -569,7 +569,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawResponse</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawResponse</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="response">response: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Draw a single continuous plot
@@ -584,7 +584,7 @@ move everything into the proper coordinate system
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawResponseTexturedQuad</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="colormap">colormap: <a href="../SpecifiedColorMap.html" class="extype" name="tuner.SpecifiedColorMap">SpecifiedColorMap</a></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawResponseTexturedQuad</span><span class="params">(<span name="gl">gl: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="colormap">colormap: <a href="../SpecifiedColorMap.html" class="extype" name="tuner.SpecifiedColorMap">SpecifiedColorMap</a></span>, <span name="trans">trans: <a href="util/Matrix4.html" class="extype" name="tuner.gui.util.Matrix4">Matrix4</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Processes the texture through the filtered colormap
@@ -599,7 +599,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawResponseWidgets</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="j2d">j2d: <span class="extype" name="java.awt.Graphics2D">Graphics2D</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="closestSample">closestSample: <a href="../Table$.html#Tuple=Map[String,Float]" class="extmbr" name="tuner.Table.Tuple">Tuple</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawResponseWidgets</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="j2d">j2d: <span class="extype" name="java.awt.Graphics2D">Graphics2D</span></span>, <span name="xRange">xRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="yRange">yRange: (<span class="extype" name="scala.Predef.String">String</span>, (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>))</span>, <span name="closestSample">closestSample: <a href="../Table$.html#Tuple=Map[String,Float]" class="extmbr" name="tuner.Table.Tuple">Tuple</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
@@ -612,7 +612,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">drawResponses</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="j2d">j2d: <span class="extype" name="java.awt.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">drawResponses</span><span class="params">(<span name="gl2">gl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="j2d">j2d: <span class="extype" name="java.awt.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Does opengl setup and takedown
@@ -627,7 +627,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">enabled</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">enabled</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -640,7 +640,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: enabled_$eq" class="name">enabled_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: enabled_$eq" class="name">enabled_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -653,7 +653,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
@@ -670,7 +670,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
@@ -687,7 +687,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
@@ -704,7 +704,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
@@ -721,7 +721,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -734,7 +734,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="that">that: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="that">that: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Proxy → Any</dd></dl></div>
@@ -747,7 +747,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -766,7 +766,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">focusable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">focusable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -779,7 +779,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: focusable_$eq" class="name">focusable_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: focusable_$eq" class="name">focusable_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -792,7 +792,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">font</span><span class="result">: <a href="../../scala/swing/package.html#Font=java.awt.Font" class="extmbr" name="scala.swing.Font">Font</a></span>
+        <span class="name">font</span><span class="result">: <span class="extype" name="scala.swing.Font">Font</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -805,7 +805,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: font_$eq" class="name">font_=</span><span class="params">(<span name="f">f: <a href="../../scala/swing/package.html#Font=java.awt.Font" class="extmbr" name="scala.swing.Font">Font</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: font_$eq" class="name">font_=</span><span class="params">(<span name="f">f: <span class="extype" name="scala.swing.Font">Font</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -818,7 +818,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">foreground</span><span class="result">: <a href="../../scala/swing/package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">scala.swing.Color</a></span>
+        <span class="name">foreground</span><span class="result">: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -831,7 +831,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: foreground_$eq" class="name">foreground_=</span><span class="params">(<span name="c">c: <a href="../../scala/swing/package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">scala.swing.Color</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: foreground_$eq" class="name">foreground_=</span><span class="params">(<span name="c">c: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -849,7 +849,7 @@ and draws everything on screen
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
             This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>StringFormat</dd><dt>Annotations</dt><dd>
                 <span class="name">@inline</span><span class="args">()</span>
@@ -877,7 +877,7 @@ and draws everything on screen
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">glAxis</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="widgets/OpenGLAxis.html" class="extype" name="tuner.gui.widgets.OpenGLAxis">OpenGLAxis</a>]</span>
+        <span class="name">glAxis</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="widgets/OpenGLAxis.html" class="extype" name="tuner.gui.widgets.OpenGLAxis">OpenGLAxis</a>]</span>
       </span>
       </h4>
       
@@ -890,7 +890,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">handleBarMouse</span><span class="params">(<span name="mouseX">mouseX: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="mouseY">mouseY: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">handleBarMouse</span><span class="params">(<span name="mouseX">mouseX: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="mouseY">mouseY: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       
@@ -903,7 +903,7 @@ and draws everything on screen
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">handlePlotMouse</span><span class="params">(<span name="mouseX">mouseX: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="mouseY">mouseY: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">handlePlotMouse</span><span class="params">(<span name="mouseX">mouseX: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="mouseY">mouseY: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">What to do when the mouse is clicked inside the bounds
@@ -918,7 +918,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hasFocus</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">hasFocus</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -931,7 +931,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Proxy → Any</dd></dl></div>
@@ -944,7 +944,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ignoreRepaint</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ignoreRepaint</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -957,7 +957,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: ignoreRepaint_$eq" class="name">ignoreRepaint_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: ignoreRepaint_$eq" class="name">ignoreRepaint_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -970,10 +970,10 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">init</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">init</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="scala.swing.Component#initP" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initP:javax.swing.JComponent"></a>
       <a id="initP:JComponent"></a>
@@ -996,7 +996,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">inputVerifier</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">inputVerifier</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1009,7 +1009,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: inputVerifier_$eq" class="name">inputVerifier_=</span><span class="params">(<span name="v">v: (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: inputVerifier_$eq" class="name">inputVerifier_=</span><span class="params">(<span name="v">v: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1022,7 +1022,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -1061,7 +1061,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">listenTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">listenTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
@@ -1117,6 +1117,19 @@ of the hyperslice matrix
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
+    </li><li name="com.typesafe.scalalogging.slf4j.LazyLogging#logger" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:com.typesafe.scalalogging.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="com.typesafe.scalalogging.slf4j.Logger">Logger</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging → Logging</dd></dl></div>
     </li><li name="scala.swing.UIElement#maximumSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="maximumSize:java.awt.Dimension"></a>
       <a id="maximumSize:Dimension"></a>
@@ -1139,7 +1152,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: maximumSize_$eq" class="name">maximumSize_=</span><span class="params">(<span name="x">x: <a href="../../scala/swing/package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: maximumSize_$eq" class="name">maximumSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1165,7 +1178,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: minimumSize_$eq" class="name">minimumSize_=</span><span class="params">(<span name="x">x: <a href="../../scala/swing/package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: minimumSize_$eq" class="name">minimumSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1178,7 +1191,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">mousedPlot</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>)]</span>
+        <span class="name">mousedPlot</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Option" class="extype" target="_top">Option</a>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>)]</span>
       </span>
       </h4>
       
@@ -1204,7 +1217,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: name_$eq" class="name">name_=</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: name_$eq" class="name">name_=</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1217,7 +1230,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1230,7 +1243,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1243,7 +1256,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1256,7 +1269,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onFirstSubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">onFirstSubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component → UIElement → LazyPublisher</dd></dl></div>
@@ -1269,7 +1282,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onLastUnsubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">onLastUnsubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>UIElement → LazyPublisher</dd></dl></div>
@@ -1282,7 +1295,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">opaque</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">opaque</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1295,11 +1308,11 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: opaque_$eq" class="name">opaque_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: opaque_$eq" class="name">opaque_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
-    </li><li name="scala.swing.GL2Panel#overlay" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="tuner.gui.GL2Panel#overlay" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="overlay:com.jogamp.opengl.util.awt.Overlay"></a>
       <a id="overlay:Overlay"></a>
       <h4 class="signature">
@@ -1311,7 +1324,7 @@ of the hyperslice matrix
         <span class="name">overlay</span><span class="result">: <span class="extype" name="com.jogamp.opengl.util.awt.Overlay">Overlay</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="scala.swing.Component#paint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="paint(g:scala.swing.Graphics2D):Unit"></a>
       <a id="paint(Graphics2D):Unit"></a>
@@ -1321,7 +1334,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paint</span><span class="params">(<span name="g">g: <a href="../../scala/swing/package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paint</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1334,7 +1347,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintBorder</span><span class="params">(<span name="g">g: <a href="../../scala/swing/package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintBorder</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1347,7 +1360,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintChildren</span><span class="params">(<span name="g">g: <a href="../../scala/swing/package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintChildren</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1360,11 +1373,11 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintComponent</span><span class="params">(<span name="g">g: <a href="../../scala/swing/package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintComponent</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
-    </li><li name="scala.swing.GL2Panel#peer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="tuner.gui.GL2Panel#peer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="peer:javax.swing.JPanelwithGL2Panel.this.SuperMixin"></a>
       <a id="peer:JPanelwithSuperMixin"></a>
       <h4 class="signature">
@@ -1376,7 +1389,7 @@ of the hyperslice matrix
         <span class="name">peer</span><span class="result">: <span class="extype" name="javax.swing.JPanel">JPanel</span> with <a href="#SuperMixinextendsJComponent" class="extmbr" name="tuner.gui.JoglMainPlotPanel.SuperMixin">SuperMixin</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a> → Component → UIElement</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a> → Component → UIElement</dd></dl></div>
     </li><li name="tuner.gui.MainPlotPanel#plotBounds" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="plotBounds:tuner.geom.Rectangle"></a>
       <a id="plotBounds:Rectangle"></a>
@@ -1425,11 +1438,11 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: preferredSize_$eq" class="name">preferredSize_=</span><span class="params">(<span name="x">x: <a href="../../scala/swing/package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: preferredSize_$eq" class="name">preferredSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.GL2Panel#profile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="tuner.gui.GL2Panel#profile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="profile:javax.media.opengl.GLProfile"></a>
       <a id="profile:GLProfile"></a>
       <h4 class="signature">
@@ -1441,7 +1454,7 @@ of the hyperslice matrix
         <span class="name">profile</span><span class="result">: <span class="extype" name="javax.media.opengl.GLProfile">GLProfile</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="tuner.gui.JoglMainPlotPanel#project" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="project:tuner.project.Viewable"></a>
       <a id="project:Viewable"></a>
@@ -1490,7 +1503,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">publish</span><span class="params">(<span name="e">e: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.event.Event" class="extype" target="_top">Event</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">publish</span><span class="params">(<span name="e">e: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.event.Event" class="extype" target="_top">Event</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Publisher</dd></dl></div>
@@ -1503,7 +1516,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">publishHistoryAdd</span><span class="params">(<span name="sender">sender: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">publishHistoryAdd</span><span class="params">(<span name="sender">sender: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></dd></dl></div>
@@ -1516,7 +1529,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">publishSliceChanged</span><span class="params">(<span name="sender">sender: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>, <span name="xChange">xChange: (<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>)</span>, <span name="yChange">yChange: (<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a>)</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">publishSliceChanged</span><span class="params">(<span name="sender">sender: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>, <span name="xChange">xChange: (<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>)</span>, <span name="yChange">yChange: (<span class="extype" name="scala.Predef.String">String</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a>)</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></dd></dl></div>
@@ -1542,7 +1555,7 @@ of the hyperslice matrix
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">reactions</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactions" class="extype" target="_top">Reactions</a></span>
+        <span class="name">reactions</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactions" class="extype" target="_top">Reactions</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
@@ -1555,7 +1568,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">redraw</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">redraw</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></dd></dl></div>
@@ -1568,7 +1581,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">repaint</span><span class="params">(<span name="rect">rect: <a href="../../scala/swing/package.html#Rectangle=java.awt.Rectangle" class="extmbr" name="scala.swing.Rectangle">Rectangle</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">repaint</span><span class="params">(<span name="rect">rect: <span class="extype" name="scala.swing.Rectangle">Rectangle</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1581,7 +1594,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">repaint</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">repaint</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1594,7 +1607,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestFocus</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">requestFocus</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1607,7 +1620,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestFocusInWindow</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">requestFocusInWindow</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1620,10 +1633,10 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">reshape</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="x">x: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="y">y: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="width">width: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">reshape</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="x">x: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="y">y: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="width">width: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> → <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></dd></dl></div>
     </li><li name="tuner.gui.JoglMainPlotPanel#resp1Colorbar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="resp1Colorbar:tuner.gui.widgets.Colorbar"></a>
       <a id="resp1Colorbar:Colorbar"></a>
@@ -1737,7 +1750,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">revalidate</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">revalidate</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1776,7 +1789,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">screenHeight</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">screenHeight</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       
@@ -1789,7 +1802,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">screenWidth</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">screenWidth</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       
@@ -1815,7 +1828,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">setupTextureTarget</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="texWidth">texWidth: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texHeight">texHeight: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">setupTextureTarget</span><span class="params">(<span name="ggl2">ggl2: <span class="extype" name="javax.media.opengl.GL2">GL2</span></span>, <span name="texWidth">texWidth: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="texHeight">texHeight: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <p class="shortcomment cmt">Create the texture and framebuffer objects
@@ -1829,7 +1842,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">showing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">showing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1868,7 +1881,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">sliceSize</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>
+        <span class="name">sliceSize</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></dd></dl></div>
@@ -1881,7 +1894,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">subscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">subscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LazyPublisher → Publisher</dd></dl></div>
@@ -1959,7 +1972,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: tooltip_$eq" class="name">tooltip_=</span><span class="params">(<span name="t">t: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: tooltip_$eq" class="name">tooltip_=</span><span class="params">(<span name="t">t: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1985,7 +1998,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">unsubscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">unsubscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LazyPublisher → Publisher</dd></dl></div>
@@ -1998,7 +2011,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">updateBounds</span><span class="params">(<span name="width">width: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">updateBounds</span><span class="params">(<span name="width">width: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="height">height: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></dd></dl></div>
@@ -2011,7 +2024,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">updatePlotTransforms</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">updatePlotTransforms</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       
@@ -2024,7 +2037,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">valueFbo</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
+        <span class="name">valueFbo</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
       </span>
       </h4>
       
@@ -2050,7 +2063,7 @@ of the hyperslice matrix
         <span class="kind">var</span>
       </span>
       <span class="symbol">
-        <span class="name">valueTex</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
+        <span class="name">valueTex</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>]</span>
       </span>
       </h4>
       
@@ -2063,7 +2076,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">visible</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">visible</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -2076,7 +2089,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: visible_$eq" class="name">visible_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: visible_$eq" class="name">visible_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -2089,7 +2102,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -2108,7 +2121,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -2127,7 +2140,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -2146,7 +2159,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">xLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+        <span class="name">xLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -2159,7 +2172,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: xLayoutAlignment_$eq" class="name">xLayoutAlignment_=</span><span class="params">(<span name="x">x: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: xLayoutAlignment_$eq" class="name">xLayoutAlignment_=</span><span class="params">(<span name="x">x: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -2172,7 +2185,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">yLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+        <span class="name">yLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -2185,7 +2198,7 @@ of the hyperslice matrix
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: yLayoutAlignment_$eq" class="name">yLayoutAlignment_=</span><span class="params">(<span name="y">y: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: yLayoutAlignment_$eq" class="name">yLayoutAlignment_=</span><span class="params">(<span name="y">y: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -2220,12 +2233,12 @@ of the hyperslice matrix
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
             This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
             
           </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(joglMainPlotPanel: StringAdd).self</pre></div></dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
     </li><li name="scala.Predef.any2stringfmt#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -2237,12 +2250,12 @@ of the hyperslice matrix
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
             This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
             
           </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(joglMainPlotPanel: StringFormat).self</pre></div></dd><dt>Definition Classes</dt><dd>StringFormat</dd></dl></div>
     </li></ol>
@@ -2295,34 +2308,38 @@ of the hyperslice matrix
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="tuner.gui.MainPlotPanel">
+        <div class="parent" name="com.typesafe.scalalogging.slf4j.LazyLogging">
+              <h3>Inherited from <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></h3>
+            </div><div class="parent" name="com.typesafe.scalalogging.Logging">
+              <h3>Inherited from <span class="extype" name="com.typesafe.scalalogging.Logging">Logging</span></h3>
+            </div><div class="parent" name="tuner.gui.MainPlotPanel">
               <h3>Inherited from <a href="MainPlotPanel.html" class="extype" name="tuner.gui.MainPlotPanel">MainPlotPanel</a></h3>
-            </div><div class="parent" name="scala.swing.GL2Panel">
-              <h3>Inherited from <a href="../../scala/swing/GL2Panel.html" class="extype" name="scala.swing.GL2Panel">GL2Panel</a></h3>
+            </div><div class="parent" name="tuner.gui.GL2Panel">
+              <h3>Inherited from <a href="GL2Panel.html" class="extype" name="tuner.gui.GL2Panel">GL2Panel</a></h3>
             </div><div class="parent" name="scala.swing.Component">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></h3>
             </div><div class="parent" name="scala.swing.UIElement">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a></h3>
             </div><div class="parent" name="scala.swing.LazyPublisher">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a></h3>
             </div><div class="parent" name="scala.swing.Publisher">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a></h3>
             </div><div class="parent" name="scala.swing.Reactor">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a></h3>
             </div><div class="parent" name="scala.Proxy">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Proxy" class="extype" target="_top">Proxy</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.Proxy">Proxy</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         <div class="conversion" name="scala.Predef.any2stringadd">
               <h3>Inherited by implicit conversion any2stringadd from
-                <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a>
+                <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a>
               </h3>
             </div><div class="conversion" name="scala.Predef.any2stringfmt">
               <h3>Inherited by implicit conversion any2stringfmt from
-                <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a>
+                <a href="" class="extype" name="tuner.gui.JoglMainPlotPanel">JoglMainPlotPanel</a> to <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a>
               </h3>
             </div><div class="conversion" name="scala.Predef.any2ArrowAssoc">
               <h3>Inherited by implicit conversion any2ArrowAssoc from

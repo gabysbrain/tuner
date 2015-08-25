@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>FloatSlider - scala.swing.FloatSlider</title>
-          <meta name="description" content="FloatSlider - scala.swing.FloatSlider" />
-          <meta name="keywords" content="FloatSlider scala.swing.FloatSlider" />
+          <title>TablePanel - tuner.gui.TablePanel</title>
+          <meta name="description" content="TablePanel - tuner.gui.TablePanel" />
+          <meta name="keywords" content="TablePanel tuner.gui.TablePanel" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../index.html';
-            var hash = 'scala.swing.FloatSlider';
+            var hash = 'tuner.gui.TablePanel';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../lib/class_big.png" />
-        <p id="owner"><a href="../package.html" class="extype" name="scala">scala</a>.<a href="package.html" class="extype" name="scala.swing">swing</a></p>
-        <h1>FloatSlider</h1>
+        <a href="TablePanel$.html" title="Go to companion"><img src="../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../package.html" class="extype" name="tuner">tuner</a>.<a href="package.html" class="extype" name="tuner.gui">gui</a></p>
+        <h1><a href="TablePanel$.html" title="Go to companion">TablePanel</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,13 +35,16 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">FloatSlider</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Slider" class="extype" target="_top">Slider</a></span>
+        <span class="name">TablePanel</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Panel" class="extype" target="_top">Panel</a> with <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LayoutContainer" class="extype" target="_top">LayoutContainer</a> with <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Slider" class="extype" target="_top">Slider</a>, <span class="extype" name="scala.swing.Orientable.Wrapper">Wrapper</span>, <span class="extype" name="scala.swing.Orientable">Orientable</span>, <span class="extype" name="scala.swing.Oriented.Wrapper">Wrapper</span>, <span class="extype" name="scala.swing.Oriented">Oriented</span>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Proxy" class="extype" target="_top">Proxy</a>, <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span>, <span class="extype" name="com.typesafe.scalalogging.Logging">Logging</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LayoutContainer" class="extype" target="_top">LayoutContainer</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Panel" class="extype" target="_top">Panel</a>, <span class="extype" name="scala.swing.Container.Wrapper">Wrapper</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Container" class="extype" target="_top">Container</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a>, <span class="extype" name="scala.Proxy">Proxy</span>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a href="ControlTable.html" class="extype" name="tuner.gui.ControlTable">ControlTable</a>, <a href="SampleGenerationPanel.html" class="extype" name="tuner.gui.SampleGenerationPanel">SampleGenerationPanel</a>, <a href="SampleImportPanel.html" class="extype" name="tuner.gui.SampleImportPanel">SampleImportPanel</a></div>
         </div></div>
         
 
@@ -59,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="scala.swing.FloatSlider"><span>FloatSlider</span></li><li class="in" name="scala.swing.Slider"><span>Slider</span></li><li class="in" name="scala.swing.Orientable.Wrapper"><span>Wrapper</span></li><li class="in" name="scala.swing.Orientable"><span>Orientable</span></li><li class="in" name="scala.swing.Oriented.Wrapper"><span>Wrapper</span></li><li class="in" name="scala.swing.Oriented"><span>Oriented</span></li><li class="in" name="scala.swing.Component"><span>Component</span></li><li class="in" name="scala.swing.UIElement"><span>UIElement</span></li><li class="in" name="scala.swing.LazyPublisher"><span>LazyPublisher</span></li><li class="in" name="scala.swing.Publisher"><span>Publisher</span></li><li class="in" name="scala.swing.Reactor"><span>Reactor</span></li><li class="in" name="scala.Proxy"><span>Proxy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="tuner.gui.TablePanel"><span>TablePanel</span></li><li class="in" name="com.typesafe.scalalogging.slf4j.LazyLogging"><span>LazyLogging</span></li><li class="in" name="com.typesafe.scalalogging.Logging"><span>Logging</span></li><li class="in" name="scala.swing.LayoutContainer"><span>LayoutContainer</span></li><li class="in" name="scala.swing.Panel"><span>Panel</span></li><li class="in" name="scala.swing.Container.Wrapper"><span>Wrapper</span></li><li class="in" name="scala.swing.Container"><span>Container</span></li><li class="in" name="scala.swing.Component"><span>Component</span></li><li class="in" name="scala.swing.UIElement"><span>UIElement</span></li><li class="in" name="scala.swing.LazyPublisher"><span>LazyPublisher</span></li><li class="in" name="scala.swing.Publisher"><span>Publisher</span></li><li class="in" name="scala.swing.Reactor"><span>Reactor</span></li><li class="in" name="scala.Proxy"><span>Proxy</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
                 <span class="filtertype">Implicitly<br />
@@ -84,16 +87,31 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="scala.swing.FloatSlider#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(minVal:Float,maxVal:Float,numSteps:Int):scala.swing.FloatSlider"></a>
-      <a id="&lt;init&gt;:FloatSlider"></a>
+              <ol><li name="tuner.gui.TablePanel#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(nCol:Int,nRow:Int):tuner.gui.TablePanel"></a>
+      <a id="&lt;init&gt;:TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">FloatSlider</span><span class="params">(<span name="minVal">minVal: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="maxVal">maxVal: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>, <span name="numSteps">numSteps: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span>
+        <span class="name">TablePanel</span><span class="params">(<span name="nCol">nCol: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="nRow">nRow: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Creates a table with the specified number of rows and columns equally
+sized
+</p>
+    </li><li name="tuner.gui.TablePanel#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(colSz0:List[Double],rowSz0:List[Double]):tuner.gui.TablePanel"></a>
+      <a id="&lt;init&gt;:TablePanel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">TablePanel</span><span class="params">(<span name="colSz0">colSz0: <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="rowSz0">rowSz0: <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>)</span>
       </span>
       </h4>
       
@@ -102,16 +120,29 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="scala.swing.Oriented.Wrapper.OrientedMixin" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="OrientedMixin=AnyRef{defgetOrientation():Int;defsetOrientation(n:Int):Unit}"></a>
-      <a id="OrientedMixin:OrientedMixin"></a>
+              <ol><li name="tuner.gui.TablePanel.Constraints" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ConstraintsextendsProxy"></a>
+      <a id="Constraints:Constraints"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">type</span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">OrientedMixin</span><span class="result"> = <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a> { ... /* 2 definitions in type refinement */ }</span>
+        <a href="TablePanel$Constraints.html"><span class="name">Constraints</span></a><span class="result"> extends <span class="extype" name="scala.Proxy">Proxy</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> → LayoutContainer</dd></dl></div>
+    </li><li name="scala.swing.Container.Wrapper.Content" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ContentextendsBufferWrapper[scala.swing.Component]"></a>
+      <a id="Content:Content"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Content</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.BufferWrapper" class="extype" target="_top">BufferWrapper</a>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>]</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Wrapper</dd></dl></div>
@@ -144,7 +175,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -157,7 +188,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -170,7 +201,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -187,25 +218,25 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
     </li><li name="scala.Predef.any2ArrowAssoc#-&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="-&gt;[B](y:B):(A,B)"></a>
-      <a id="-&gt;[B](B):(FloatSlider,B)"></a>
+      <a id="-&gt;[B](B):(TablePanel,B)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $minus$greater" class="implicit">-&gt;</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>, <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span>)</span>
+        <span title="gt4s: $minus$greater" class="implicit">-&gt;</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>, <span class="extype" name="scala.Predef.ArrowAssoc.-&gt;.B">B</span>)</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2ArrowAssoc in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2ArrowAssoc in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd><dt>Annotations</dt><dd>
                 <span class="name">@inline</span><span class="args">()</span>
@@ -220,7 +251,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -233,23 +264,62 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="scala.swing.Slider#adjusting" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="adjusting:Boolean"></a>
-      <a id="adjusting:Boolean"></a>
+    </li><li name="scala.swing.Container.Wrapper#_contents" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="_contents:Wrapper.this.Content"></a>
+      <a id="_contents:Content"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">_contents</span><span class="result">: <a href="#ContentextendsBufferWrapper[scala.swing.Component]" class="extmbr" name="tuner.gui.TablePanel.Content">Content</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Wrapper</dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#add" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="add(c:scala.swing.Component,l:TablePanel.this.Constraints):Unit"></a>
+      <a id="add(Component,Constraints):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">adjusting</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">add</span><span class="params">(<span name="c">c: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>, <span name="l">l: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> → LayoutContainer</dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#addRow" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="addRow(sz:Double):Unit"></a>
+      <a id="addRow(Double):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">addRow</span><span class="params">(<span name="sz">sz: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.gui.TablePanel#areValid" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="areValid(c:TablePanel.this.Constraints):(Boolean,String)"></a>
+      <a id="areValid(Constraints):(Boolean,String)"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">areValid</span><span class="params">(<span name="c">c: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>)</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>, <span class="extype" name="scala.Predef.String">String</span>)</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> → LayoutContainer</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -265,27 +335,27 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="scala.swing.UIElement#background" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="background:scala.swing.Color"></a>
-      <a id="background:Color"></a>
+      <a id="background:scala.swing.Color"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">background</span><span class="result">: <a href="package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">Color</a></span>
+        <span class="name">background</span><span class="result">: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#background_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="background_=(c:scala.swing.Color):Unit"></a>
-      <a id="background_=(Color):Unit"></a>
+      <a id="background_=(scala.swing.Color):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: background_$eq" class="name">background_=</span><span class="params">(<span name="c">c: <a href="package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">Color</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: background_$eq" class="name">background_=</span><span class="params">(<span name="c">c: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -311,20 +381,20 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: border_$eq" class="name">border_=</span><span class="params">(<span name="b">b: <span class="extype" name="javax.swing.border.Border">Border</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: border_$eq" class="name">border_=</span><span class="params">(<span name="b">b: <span class="extype" name="javax.swing.border.Border">Border</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
     </li><li name="scala.swing.UIElement#bounds" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bounds:java.awt.Rectangle"></a>
-      <a id="bounds:java.awt.Rectangle"></a>
+      <a id="bounds:Rectangle"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">bounds</span><span class="result">: <span class="extype" name="java.awt.Rectangle">java.awt.Rectangle</span></span>
+        <span class="name">bounds</span><span class="result">: <span class="extype" name="java.awt.Rectangle">Rectangle</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -337,7 +407,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -347,6 +417,45 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#cols" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="cols:Int"></a>
+      <a id="cols:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cols</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="tuner.gui.TablePanel#constraintsFor" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="constraintsFor(comp:scala.swing.Component):TablePanel.this.Constraints"></a>
+      <a id="constraintsFor(Component):Constraints"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">constraintsFor</span><span class="params">(<span name="comp">comp: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>)</span><span class="result">: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> → LayoutContainer</dd></dl></div>
+    </li><li name="scala.swing.Container.Wrapper#contents" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="contents:Seq[scala.swing.Component]"></a>
+      <a id="contents:Seq[Component]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">contents</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Wrapper → Container</dd></dl></div>
     </li><li name="scala.swing.UIElement#cursor" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cursor:java.awt.Cursor"></a>
       <a id="cursor:Cursor"></a>
@@ -369,7 +478,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: cursor_$eq" class="name">cursor_=</span><span class="params">(<span name="c">c: <span class="extype" name="java.awt.Cursor">Cursor</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: cursor_$eq" class="name">cursor_=</span><span class="params">(<span name="c">c: <span class="extype" name="java.awt.Cursor">Cursor</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -382,7 +491,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">deafTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">deafTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
@@ -395,10 +504,23 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">displayable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">displayable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#dropRow" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dropRow(r:Int):Unit"></a>
+      <a id="dropRow(Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dropRow</span><span class="params">(<span name="r">r: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.swing.Component#enabled" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="enabled:Boolean"></a>
       <a id="enabled:Boolean"></a>
@@ -408,7 +530,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">enabled</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">enabled</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -421,76 +543,76 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: enabled_$eq" class="name">enabled_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: enabled_$eq" class="name">enabled_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
     </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ensuring(cond:A=&gt;Boolean,msg:=&gt;Any):A"></a>
-      <a id="ensuring((FloatSlider)⇒Boolean,⇒Any):FloatSlider"></a>
+      <a id="ensuring((TablePanel)⇒Boolean,⇒Any):TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2Ensuring in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2Ensuring in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
     </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ensuring(cond:A=&gt;Boolean):A"></a>
-      <a id="ensuring((FloatSlider)⇒Boolean):FloatSlider"></a>
+      <a id="ensuring((TablePanel)⇒Boolean):TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: (<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2Ensuring in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2Ensuring in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
     </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ensuring(cond:Boolean,msg:=&gt;Any):A"></a>
-      <a id="ensuring(Boolean,⇒Any):FloatSlider"></a>
+      <a id="ensuring(Boolean,⇒Any):TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="msg">msg: ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2Ensuring in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2Ensuring in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
     </li><li name="scala.Predef.any2Ensuring#ensuring" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ensuring(cond:Boolean):A"></a>
-      <a id="ensuring(Boolean):FloatSlider"></a>
+      <a id="ensuring(Boolean):TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit">ensuring</span><span class="params">(<span name="cond">cond: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2Ensuring in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2Ensuring in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>Ensuring</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -502,7 +624,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -515,36 +637,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="that">that: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="that">that: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Proxy → Any</dd></dl></div>
-    </li><li name="scala.swing.Slider#extent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="extent:Int"></a>
-      <a id="extent:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">extent</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#extent_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="extent_=(v:&lt;?&gt;):Unit"></a>
-      <a id="extent_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: extent_$eq" class="name">extent_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -554,7 +650,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -564,32 +660,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="scala.swing.FloatSlider#floatVal" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="floatVal:Float"></a>
-      <a id="floatVal:Float"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">floatVal</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.FloatSlider#floatVal_=" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="floatVal_=(v:Float):Unit"></a>
-      <a id="floatVal_=(Float):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: floatVal_$eq" class="name">floatVal_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.swing.Component#focusable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="focusable:Boolean"></a>
       <a id="focusable:Boolean"></a>
@@ -599,7 +669,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">focusable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">focusable</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -612,7 +682,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: focusable_$eq" class="name">focusable_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: focusable_$eq" class="name">focusable_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -625,7 +695,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">font</span><span class="result">: <a href="package.html#Font=java.awt.Font" class="extmbr" name="scala.swing.Font">Font</a></span>
+        <span class="name">font</span><span class="result">: <span class="extype" name="scala.swing.Font">Font</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -638,33 +708,33 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: font_$eq" class="name">font_=</span><span class="params">(<span name="f">f: <a href="package.html#Font=java.awt.Font" class="extmbr" name="scala.swing.Font">Font</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: font_$eq" class="name">font_=</span><span class="params">(<span name="f">f: <span class="extype" name="scala.swing.Font">Font</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#foreground" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="foreground:scala.swing.Color"></a>
-      <a id="foreground:Color"></a>
+      <a id="foreground:scala.swing.Color"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">foreground</span><span class="result">: <a href="package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">Color</a></span>
+        <span class="name">foreground</span><span class="result">: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#foreground_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="foreground_=(c:scala.swing.Color):Unit"></a>
-      <a id="foreground_=(Color):Unit"></a>
+      <a id="foreground_=(scala.swing.Color):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: foreground_$eq" class="name">foreground_=</span><span class="params">(<span name="c">c: <a href="package.html#Color=java.awt.Color" class="extmbr" name="scala.swing.Color">Color</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: foreground_$eq" class="name">foreground_=</span><span class="params">(<span name="c">c: <span class="extype" name="scala.swing.Color">scala.swing.Color</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -681,13 +751,26 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>StringFormat</dd><dt>Annotations</dt><dd>
                 <span class="name">@inline</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#fs2c" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="fs2c(p:(Int,Int,tuner.gui.TablePanel.HorizAlign.Value,tuner.gui.TablePanel.VertAlign.Value)):TablePanel.this.Constraints"></a>
+      <a id="fs2c((Int,Int,TablePanel.HorizAlign.Value,TablePanel.VertAlign.Value)):Constraints"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fs2c</span><span class="params">(<span name="p">p: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="TablePanel$HorizAlign$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="tuner.gui.TablePanel.HorizAlign.Value">TablePanel.HorizAlign.Value</a>, <a href="TablePanel$VertAlign$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="tuner.gui.TablePanel.VertAlign.Value">TablePanel.VertAlign.Value</a>)</span>)</span><span class="result">: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -710,7 +793,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hasFocus</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">hasFocus</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -723,7 +806,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Proxy → Any</dd></dl></div>
@@ -736,7 +819,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ignoreRepaint</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ignoreRepaint</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -749,7 +832,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: ignoreRepaint_$eq" class="name">ignoreRepaint_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: ignoreRepaint_$eq" class="name">ignoreRepaint_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -775,7 +858,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">inputVerifier</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">inputVerifier</span><span class="result">: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -788,7 +871,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: inputVerifier_$eq" class="name">inputVerifier_=</span><span class="params">(<span name="v">v: (<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: inputVerifier_$eq" class="name">inputVerifier_=</span><span class="params">(<span name="v">v: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>) ⇒ <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -801,36 +884,23 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="scala.swing.Slider#labels" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="labels:scala.collection.Map[Int,scala.swing.Label]"></a>
-      <a id="labels:Map[Int,Label]"></a>
+    </li><li name="scala.swing.LayoutContainer#layout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="layout:scala.collection.mutable.Map[scala.swing.Component,LayoutContainer.this.Constraints]"></a>
+      <a id="layout:Map[Component,Constraints]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">labels</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.collection.Map" class="extype" target="_top">Map</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Label" class="extype" target="_top">Label</a>]</span>
+        <span class="name">layout</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.collection.mutable.Map" class="extype" target="_top">Map</a>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a>, <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#labels_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="labels_=(l:&lt;?&gt;):Unit"></a>
-      <a id="labels_=(Map[Int,Label]):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: labels_$eq" class="name">labels_=</span><span class="params">(<span name="l">l: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.collection.Map" class="extype" target="_top">Map</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Label" class="extype" target="_top">Label</a>]</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LayoutContainer</dd></dl></div>
     </li><li name="scala.swing.Reactor#listenTo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="listenTo(ps:scala.swing.Publisher*):Unit"></a>
       <a id="listenTo(Publisher*):Unit"></a>
@@ -840,7 +910,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">listenTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">listenTo</span><span class="params">(<span name="ps">ps: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a>*</span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
@@ -872,118 +942,53 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#location" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="location:java.awt.Point"></a>
-      <a id="location:java.awt.Point"></a>
+      <a id="location:Point"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">location</span><span class="result">: <span class="extype" name="java.awt.Point">java.awt.Point</span></span>
+        <span class="name">location</span><span class="result">: <span class="extype" name="java.awt.Point">Point</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#locationOnScreen" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="locationOnScreen:java.awt.Point"></a>
-      <a id="locationOnScreen:java.awt.Point"></a>
+      <a id="locationOnScreen:Point"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">locationOnScreen</span><span class="result">: <span class="extype" name="java.awt.Point">java.awt.Point</span></span>
+        <span class="name">locationOnScreen</span><span class="result">: <span class="extype" name="java.awt.Point">Point</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.Slider#majorTickSpacing" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="majorTickSpacing:Int"></a>
-      <a id="majorTickSpacing:Int"></a>
+    </li><li name="com.typesafe.scalalogging.slf4j.LazyLogging#logger" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:com.typesafe.scalalogging.slf4j.Logger"></a>
+      <a id="logger:Logger"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">majorTickSpacing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+        <span class="name">logger</span><span class="result">: <span class="extype" name="com.typesafe.scalalogging.slf4j.Logger">Logger</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#majorTickSpacing_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="majorTickSpacing_=(v:&lt;?&gt;):Unit"></a>
-      <a id="majorTickSpacing_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: majorTickSpacing_$eq" class="name">majorTickSpacing_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#max" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="max:Int"></a>
-      <a id="max:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">max</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.FloatSlider#maxFloat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="maxFloat:Float"></a>
-      <a id="maxFloat:Float"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">maxFloat</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.FloatSlider#maxFloat_=" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="maxFloat_=(v:Float):Unit"></a>
-      <a id="maxFloat_=(Float):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: maxFloat_$eq" class="name">maxFloat_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.Slider#max_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="max_=(v:&lt;?&gt;):Unit"></a>
-      <a id="max_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: max_$eq" class="name">max_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging → Logging</dd></dl></div>
     </li><li name="scala.swing.UIElement#maximumSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="maximumSize:java.awt.Dimension"></a>
-      <a id="maximumSize:java.awt.Dimension"></a>
+      <a id="maximumSize:Dimension"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">maximumSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">java.awt.Dimension</span></span>
+        <span class="name">maximumSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">Dimension</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -996,72 +1001,20 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: maximumSize_$eq" class="name">maximumSize_=</span><span class="params">(<span name="x">x: <a href="package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: maximumSize_$eq" class="name">maximumSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.Slider#min" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="min:Int"></a>
-      <a id="min:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">min</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.FloatSlider#minFloat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="minFloat:Float"></a>
-      <a id="minFloat:Float"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">minFloat</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.FloatSlider#minFloat_=" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="minFloat_=(v:Float):Unit"></a>
-      <a id="minFloat_=(Float):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: minFloat_$eq" class="name">minFloat_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.Slider#min_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="min_=(v:&lt;?&gt;):Unit"></a>
-      <a id="min_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: min_$eq" class="name">min_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
     </li><li name="scala.swing.UIElement#minimumSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="minimumSize:java.awt.Dimension"></a>
-      <a id="minimumSize:java.awt.Dimension"></a>
+      <a id="minimumSize:Dimension"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">minimumSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">java.awt.Dimension</span></span>
+        <span class="name">minimumSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">Dimension</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1074,36 +1027,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: minimumSize_$eq" class="name">minimumSize_=</span><span class="params">(<span name="x">x: <a href="package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: minimumSize_$eq" class="name">minimumSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.Slider#minorTickSpacing" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="minorTickSpacing:Int"></a>
-      <a id="minorTickSpacing:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">minorTickSpacing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#minorTickSpacing_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="minorTickSpacing_=(v:&lt;?&gt;):Unit"></a>
-      <a id="minorTickSpacing_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: minorTickSpacing_$eq" class="name">minorTickSpacing_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
     </li><li name="scala.swing.Component#name" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="name:String"></a>
       <a id="name:String"></a>
@@ -1126,7 +1053,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: name_$eq" class="name">name_=</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: name_$eq" class="name">name_=</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1139,7 +1066,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1152,7 +1079,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1165,7 +1092,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -1178,7 +1105,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onFirstSubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">onFirstSubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component → UIElement → LazyPublisher</dd></dl></div>
@@ -1191,7 +1118,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">onLastUnsubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">onLastUnsubscribe</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>UIElement → LazyPublisher</dd></dl></div>
@@ -1204,7 +1131,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">opaque</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">opaque</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1217,36 +1144,24 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: opaque_$eq" class="name">opaque_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: opaque_$eq" class="name">opaque_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
-    </li><li name="scala.swing.Oriented.Wrapper#orientation" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="orientation:scala.swing.Orientation.Value"></a>
-      <a id="orientation:Orientation.Value"></a>
+    </li><li name="tuner.gui.TablePanel#p2c" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="p2c(p:(Int,Int)):TablePanel.this.Constraints"></a>
+      <a id="p2c((Int,Int)):Constraints"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">implicit </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">orientation</span><span class="result">: <span class="extype" name="scala.Enumeration.Value">Orientation.Value</span></span>
+        <span class="name">p2c</span><span class="params">(<span name="p">p: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>)</span>)</span><span class="result">: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Wrapper → Oriented</dd></dl></div>
-    </li><li name="scala.swing.Orientable.Wrapper#orientation_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="orientation_=(o:scala.swing.Orientation.Value):Unit"></a>
-      <a id="orientation_=(Orientation.Value):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: orientation_$eq" class="name">orientation_=</span><span class="params">(<span name="o">o: <span class="extype" name="scala.Enumeration.Value">Orientation.Value</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Wrapper → Orientable</dd></dl></div>
+      <p class="shortcomment cmt">Default empty table layout
+</p>
     </li><li name="scala.swing.Component#paint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="paint(g:scala.swing.Graphics2D):Unit"></a>
       <a id="paint(Graphics2D):Unit"></a>
@@ -1256,7 +1171,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paint</span><span class="params">(<span name="g">g: <a href="package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paint</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1269,7 +1184,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintBorder</span><span class="params">(<span name="g">g: <a href="package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintBorder</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1282,7 +1197,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintChildren</span><span class="params">(<span name="g">g: <a href="package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintChildren</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1295,111 +1210,46 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">paintComponent</span><span class="params">(<span name="g">g: <a href="package.html#Graphics2D=java.awt.Graphics2D" class="extmbr" name="scala.swing.Graphics2D">Graphics2D</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">paintComponent</span><span class="params">(<span name="g">g: <span class="extype" name="scala.swing.Graphics2D">Graphics2D</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Component</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintLabels" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintLabels:Boolean"></a>
-      <a id="paintLabels:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">paintLabels</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintLabels_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintLabels_=(v:&lt;?&gt;):Unit"></a>
-      <a id="paintLabels_=(Boolean):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: paintLabels_$eq" class="name">paintLabels_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintTicks" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintTicks:Boolean"></a>
-      <a id="paintTicks:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">paintTicks</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintTicks_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintTicks_=(v:&lt;?&gt;):Unit"></a>
-      <a id="paintTicks_=(Boolean):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: paintTicks_$eq" class="name">paintTicks_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintTrack" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintTrack:Boolean"></a>
-      <a id="paintTrack:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">paintTrack</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#paintTrack_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="paintTrack_=(v:&lt;?&gt;):Unit"></a>
-      <a id="paintTrack_=(Boolean):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: paintTrack_$eq" class="name">paintTrack_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#peer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="peer:javax.swing.JSlider"></a>
-      <a id="peer:JSlider"></a>
+    </li><li name="tuner.gui.TablePanel#peer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="peer:javax.swing.JPanelwithTablePanel.this.SuperMixin"></a>
+      <a id="peer:JPanelwithSuperMixin"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">peer</span><span class="result">: <span class="extype" name="javax.swing.JSlider">JSlider</span></span>
+        <span class="name">peer</span><span class="result">: <span class="extype" name="javax.swing.JPanel">JPanel</span> with <a href="#SuperMixinextendsJComponent" class="extmbr" name="tuner.gui.TablePanel.SuperMixin">SuperMixin</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider → Wrapper → Component → UIElement</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> → Panel → Wrapper → Component → UIElement</dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#ph2c" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ph2c(p:(Int,Int,tuner.gui.TablePanel.HorizAlign.Value)):TablePanel.this.Constraints"></a>
+      <a id="ph2c((Int,Int,TablePanel.HorizAlign.Value)):Constraints"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ph2c</span><span class="params">(<span name="p">p: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="TablePanel$HorizAlign$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="tuner.gui.TablePanel.HorizAlign.Value">TablePanel.HorizAlign.Value</a>)</span>)</span><span class="result">: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.swing.UIElement#preferredSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="preferredSize:java.awt.Dimension"></a>
-      <a id="preferredSize:java.awt.Dimension"></a>
+      <a id="preferredSize:Dimension"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">preferredSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">java.awt.Dimension</span></span>
+        <span class="name">preferredSize</span><span class="result">: <span class="extype" name="java.awt.Dimension">Dimension</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1412,7 +1262,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: preferredSize_$eq" class="name">preferredSize_=</span><span class="params">(<span name="x">x: <a href="package.html#Dimension=java.awt.Dimension" class="extmbr" name="scala.swing.Dimension">Dimension</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: preferredSize_$eq" class="name">preferredSize_=</span><span class="params">(<span name="x">x: <span class="extype" name="scala.swing.Dimension">Dimension</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1425,20 +1275,20 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">publish</span><span class="params">(<span name="e">e: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.event.Event" class="extype" target="_top">Event</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">publish</span><span class="params">(<span name="e">e: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.event.Event" class="extype" target="_top">Event</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Publisher</dd></dl></div>
-    </li><li name="scala.swing.FloatSlider#rangeModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="rangeModel:scala.swing.FloatRangeModel"></a>
-      <a id="rangeModel:FloatRangeModel"></a>
+    </li><li name="tuner.gui.TablePanel#pv2c" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="pv2c(p:(Int,Int,tuner.gui.TablePanel.VertAlign.Value)):TablePanel.this.Constraints"></a>
+      <a id="pv2c((Int,Int,TablePanel.VertAlign.Value)):Constraints"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">rangeModel</span><span class="result">: <a href="FloatRangeModel.html" class="extype" name="scala.swing.FloatRangeModel">FloatRangeModel</a></span>
+        <span class="name">pv2c</span><span class="params">(<span name="p">p: (<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a>, <a href="TablePanel$VertAlign$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="tuner.gui.TablePanel.VertAlign.Value">TablePanel.VertAlign.Value</a>)</span>)</span><span class="result">: <a href="TablePanel$Constraints.html" class="extype" name="tuner.gui.TablePanel.Constraints">Constraints</a></span>
       </span>
       </h4>
       
@@ -1451,10 +1301,23 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">reactions</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactions" class="extype" target="_top">Reactions</a></span>
+        <span class="name">reactions</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactions" class="extype" target="_top">Reactions</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Reactor</dd></dl></div>
+    </li><li name="tuner.gui.TablePanel#remove" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="remove(c:scala.swing.Component):Unit"></a>
+      <a id="remove(Component):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">remove</span><span class="params">(<span name="c">c: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.swing.UIElement#repaint" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="repaint(rect:scala.swing.Rectangle):Unit"></a>
       <a id="repaint(Rectangle):Unit"></a>
@@ -1464,7 +1327,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">repaint</span><span class="params">(<span name="rect">rect: <a href="package.html#Rectangle=java.awt.Rectangle" class="extmbr" name="scala.swing.Rectangle">Rectangle</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">repaint</span><span class="params">(<span name="rect">rect: <span class="extype" name="scala.swing.Rectangle">Rectangle</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1477,7 +1340,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">repaint</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">repaint</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1490,7 +1353,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestFocus</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">requestFocus</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1503,7 +1366,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">requestFocusInWindow</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">requestFocusInWindow</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1516,20 +1379,33 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">revalidate</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">revalidate</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
-    </li><li name="scala.swing.UIElement#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="self:java.awt.Component"></a>
-      <a id="self:java.awt.Component"></a>
+    </li><li name="tuner.gui.TablePanel#rows" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="rows:Int"></a>
+      <a id="rows:Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">self</span><span class="result">: <span class="extype" name="java.awt.Component">java.awt.Component</span></span>
+        <span class="name">rows</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="scala.swing.UIElement#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="self:java.awt.Component"></a>
+      <a id="self:Component"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">self</span><span class="result">: <span class="extype" name="java.awt.Component">Component</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement → Proxy</dd></dl></div>
@@ -1542,88 +1418,23 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">showing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">showing</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
     </li><li name="scala.swing.UIElement#size" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="size:java.awt.Dimension"></a>
-      <a id="size:java.awt.Dimension"></a>
+      <a id="size:Dimension"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">size</span><span class="result">: <span class="extype" name="java.awt.Dimension">java.awt.Dimension</span></span>
+        <span class="name">size</span><span class="result">: <span class="extype" name="java.awt.Dimension">Dimension</span></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
-    </li><li name="scala.swing.Slider#snapToTicks" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="snapToTicks:Boolean"></a>
-      <a id="snapToTicks:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">snapToTicks</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#snapToTicks_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="snapToTicks_=(v:&lt;?&gt;):Unit"></a>
-      <a id="snapToTicks_=(Boolean):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: snapToTicks_$eq" class="name">snapToTicks_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.FloatSlider#step" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="step:Float"></a>
-      <a id="step:Float"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">step</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Float" class="extype" target="_top">Float</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.FloatSlider#steps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="steps:Int"></a>
-      <a id="steps:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">steps</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="scala.swing.FloatSlider#steps_=" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="steps_=(s:Int):Unit"></a>
-      <a id="steps_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: steps_$eq" class="name">steps_=</span><span class="params">(<span name="s">s: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.swing.LazyPublisher#subscribe" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="subscribe(listener:scala.swing.Reactions.Reaction):Unit"></a>
       <a id="subscribe(Reaction):Unit"></a>
@@ -1633,7 +1444,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">subscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">subscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LazyPublisher → Publisher</dd></dl></div>
@@ -1698,7 +1509,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: tooltip_$eq" class="name">tooltip_=</span><span class="params">(<span name="t">t: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: tooltip_$eq" class="name">tooltip_=</span><span class="params">(<span name="t">t: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1711,36 +1522,10 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">unsubscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">unsubscribe</span><span class="params">(<span name="listener">listener: <span class="extype" name="scala.swing.Reactions.Reaction">Reaction</span></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>LazyPublisher → Publisher</dd></dl></div>
-    </li><li name="scala.swing.Slider#value" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="value:Int"></a>
-      <a id="value:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">value</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
-    </li><li name="scala.swing.Slider#value_=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="value_=(v:&lt;?&gt;):Unit"></a>
-      <a id="value_=(Int):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span title="gt4s: value_$eq" class="name">value_=</span><span class="params">(<span name="v">v: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Slider</dd></dl></div>
     </li><li name="scala.swing.UIElement#visible" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="visible:Boolean"></a>
       <a id="visible:Boolean"></a>
@@ -1750,7 +1535,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">visible</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">visible</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1763,7 +1548,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: visible_$eq" class="name">visible_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: visible_$eq" class="name">visible_=</span><span class="params">(<span name="b">b: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UIElement</dd></dl></div>
@@ -1776,7 +1561,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -1795,7 +1580,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -1814,7 +1599,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -1833,7 +1618,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">xLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+        <span class="name">xLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1846,7 +1631,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: xLayoutAlignment_$eq" class="name">xLayoutAlignment_=</span><span class="params">(<span name="x">x: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: xLayoutAlignment_$eq" class="name">xLayoutAlignment_=</span><span class="params">(<span name="x">x: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1859,7 +1644,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">yLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+        <span class="name">yLayoutAlignment</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
@@ -1872,25 +1657,25 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: yLayoutAlignment_$eq" class="name">yLayoutAlignment_=</span><span class="params">(<span name="y">y: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span title="gt4s: yLayoutAlignment_$eq" class="name">yLayoutAlignment_=</span><span class="params">(<span name="y">y: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Component</dd></dl></div>
     </li><li name="scala.Predef.any2ArrowAssoc#→" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="→[B](y:B):(A,B)"></a>
-      <a id="→[B](B):(FloatSlider,B)"></a>
+      <a id="→[B](B):(TablePanel,B)"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $u2192" class="implicit">→</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>, <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span>)</span>
+        <span title="gt4s: $u2192" class="implicit">→</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="y">y: <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span></span>)</span><span class="result">: (<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>, <span class="extype" name="scala.Predef.ArrowAssoc.→.B">B</span>)</span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2ArrowAssoc in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2ArrowAssoc in scala.Predef.
             
           </dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd></dl></div>
     </li></ol>
@@ -1907,14 +1692,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a> performed by method any2stringadd in scala.Predef.
             
-          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(floatSlider: StringAdd).self</pre></div></dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(tablePanel: StringAdd).self</pre></div></dd><dt>Definition Classes</dt><dd>StringAdd</dd></dl></div>
     </li><li name="scala.Predef.any2stringfmt#self" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="self:Any"></a>
       <a id="self:Any"></a>
@@ -1924,14 +1709,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="implicit shadowed">self</span><span class="result">: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a> performed by method any2stringfmt in scala.Predef.
             
-          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(floatSlider: StringFormat).self</pre></div></dd><dt>Definition Classes</dt><dd>StringFormat</dd></dl></div>
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is shadowed by one or more members in this class.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(tablePanel: StringFormat).self</pre></div></dd><dt>Definition Classes</dt><dd>StringFormat</dd></dl></div>
     </li></ol>
             </div>
 
@@ -1939,41 +1724,41 @@
               <h3>Deprecated Value Members</h3>
               <ol><li name="scala.Predef.any2ArrowAssoc#x" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="x:A"></a>
-      <a id="x:FloatSlider"></a>
+      <a id="x:TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use leftOfArrow instead">x</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use leftOfArrow instead">x</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2ArrowAssoc in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2ArrowAssoc in scala.Predef.
             
-          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(floatSlider: ArrowAssoc[FloatSlider]).x</pre></div></dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd><dt>Annotations</dt><dd>
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(tablePanel: ArrowAssoc[TablePanel]).x</pre></div></dd><dt>Definition Classes</dt><dd>ArrowAssoc</dd><dt>Annotations</dt><dd>
                 <span class="name">@deprecated</span>
               
         </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.10.0)</i> Use <code><u>leftOfArrow<code> instead</code></u></code></p></dd></dl></div>
     </li><li name="scala.Predef.any2Ensuring#x" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="x:A"></a>
-      <a id="x:FloatSlider"></a>
+      <a id="x:TablePanel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use resultOfEnsuring instead">x</span><span class="result">: <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a></span>
+        <span class="implicit shadowed deprecated" title="Deprecated: (Since version 2.10.0) Use resultOfEnsuring instead">x</span><span class="result">: <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a></span>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt class="implicit">Implicit information</dt><dd>
-            This member is added by an implicit conversion from <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to
-            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>] performed by method any2Ensuring in scala.Predef.
+            This member is added by an implicit conversion from <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to
+            <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>] performed by method any2Ensuring in scala.Predef.
             
-          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(floatSlider: Ensuring[FloatSlider]).x</pre></div></dd><dt>Definition Classes</dt><dd>Ensuring</dd><dt>Annotations</dt><dd>
+          </dd><dt class="implicit">Shadowing</dt><dd>This implicitly inherited member is ambiguous. One or more implicitly inherited members have similar signatures, so calling this member may produce an ambiguous implicit conversion compiler error.<br />To access this member you can use a <a href="http://stackoverflow.com/questions/2087250/what-is-the-purpose-of-type-ascription-in-scala" target="_blank">type ascription</a>:<br /><div class="cmt"><pre>(tablePanel: Ensuring[TablePanel]).x</pre></div></dd><dt>Definition Classes</dt><dd>Ensuring</dd><dt>Annotations</dt><dd>
                 <span class="name">@deprecated</span>
               
         </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version 2.10.0)</i> Use <code><u>resultOfEnsuring<code> instead</code></u></code></p></dd></dl></div>
@@ -1982,48 +1767,50 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.swing.Slider">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Slider" class="extype" target="_top">Slider</a></h3>
-            </div><div class="parent" name="scala.swing.Orientable.Wrapper">
-              <h3>Inherited from <span class="extype" name="scala.swing.Orientable.Wrapper">Wrapper</span></h3>
-            </div><div class="parent" name="scala.swing.Orientable">
-              <h3>Inherited from <span class="extype" name="scala.swing.Orientable">Orientable</span></h3>
-            </div><div class="parent" name="scala.swing.Oriented.Wrapper">
-              <h3>Inherited from <span class="extype" name="scala.swing.Oriented.Wrapper">Wrapper</span></h3>
-            </div><div class="parent" name="scala.swing.Oriented">
-              <h3>Inherited from <span class="extype" name="scala.swing.Oriented">Oriented</span></h3>
+        <div class="parent" name="com.typesafe.scalalogging.slf4j.LazyLogging">
+              <h3>Inherited from <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></h3>
+            </div><div class="parent" name="com.typesafe.scalalogging.Logging">
+              <h3>Inherited from <span class="extype" name="com.typesafe.scalalogging.Logging">Logging</span></h3>
+            </div><div class="parent" name="scala.swing.LayoutContainer">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LayoutContainer" class="extype" target="_top">LayoutContainer</a></h3>
+            </div><div class="parent" name="scala.swing.Panel">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Panel" class="extype" target="_top">Panel</a></h3>
+            </div><div class="parent" name="scala.swing.Container.Wrapper">
+              <h3>Inherited from <span class="extype" name="scala.swing.Container.Wrapper">Wrapper</span></h3>
+            </div><div class="parent" name="scala.swing.Container">
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Container" class="extype" target="_top">Container</a></h3>
             </div><div class="parent" name="scala.swing.Component">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Component" class="extype" target="_top">Component</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Component" class="extype" target="_top">Component</a></h3>
             </div><div class="parent" name="scala.swing.UIElement">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.UIElement" class="extype" target="_top">UIElement</a></h3>
             </div><div class="parent" name="scala.swing.LazyPublisher">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.LazyPublisher" class="extype" target="_top">LazyPublisher</a></h3>
             </div><div class="parent" name="scala.swing.Publisher">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Publisher" class="extype" target="_top">Publisher</a></h3>
             </div><div class="parent" name="scala.swing.Reactor">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.swing.Reactor" class="extype" target="_top">Reactor</a></h3>
             </div><div class="parent" name="scala.Proxy">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Proxy" class="extype" target="_top">Proxy</a></h3>
+              <h3>Inherited from <span class="extype" name="scala.Proxy">Proxy</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <a href="../package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
+              <h3>Inherited from <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Any" class="extype" target="_top">Any</a></h3>
             </div>
         <div class="conversion" name="scala.Predef.any2stringadd">
               <h3>Inherited by implicit conversion any2stringadd from
-                <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a>
+                <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringAdd" class="extype" target="_top">StringAdd</a>
               </h3>
             </div><div class="conversion" name="scala.Predef.any2stringfmt">
               <h3>Inherited by implicit conversion any2stringfmt from
-                <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a>
+                <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.runtime.StringFormat" class="extype" target="_top">StringFormat</a>
               </h3>
             </div><div class="conversion" name="scala.Predef.any2ArrowAssoc">
               <h3>Inherited by implicit conversion any2ArrowAssoc from
-                <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>]
+                <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to <span class="extype" name="scala.Predef.ArrowAssoc">ArrowAssoc</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>]
               </h3>
             </div><div class="conversion" name="scala.Predef.any2Ensuring">
               <h3>Inherited by implicit conversion any2Ensuring from
-                <a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a> to <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="scala.swing.FloatSlider">FloatSlider</a>]
+                <a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a> to <span class="extype" name="scala.Predef.Ensuring">Ensuring</span>[<a href="" class="extype" name="tuner.gui.TablePanel">TablePanel</a>]
               </h3>
             </div>
         </div>

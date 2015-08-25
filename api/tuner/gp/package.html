@@ -67,12 +67,12 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="GpBuilder.html"><span class="name">GpBuilder</span></a><span class="result"> extends <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <a href="GpBuilder.html"><span class="name">GpBuilder</span></a><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       
     </li><li name="tuner.gp.GpModel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="GpModelextendsAnyRef"></a>
+      <a id="GpModelextendsLazyLogging"></a>
       <a id="GpModel:GpModel"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -80,7 +80,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="GpModel.html"><span class="name">GpModel</span></a><span class="result"> extends <a href="../../scala/package.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+        <a href="GpModel.html"><span class="name">GpModel</span></a><span class="result"> extends <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></span>
       </span>
       </h4>
       
@@ -93,7 +93,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="GpSpecification.html"><span class="name">GpSpecification</span></a><span class="params">(<span name="responseDim">responseDim: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dimNames">dimNames: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="thetas">thetas: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="alphas">alphas: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="mean">mean: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="sigma2">sigma2: <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="designMatrix">designMatrix: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>, <span name="responses">responses: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="invCorMtx">invCorMtx: <a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="../../scala/package.html#List[+A]=List[A]" class="extmbr" name="scala.List">List</a>[<a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="GpSpecification.html"><span class="name">GpSpecification</span></a><span class="params">(<span name="responseDim">responseDim: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dimNames">dimNames: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="thetas">thetas: <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="alphas">alphas: <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="mean">mean: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="sigma2">sigma2: <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="designMatrix">designMatrix: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>, <span name="responses">responses: <span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>, <span name="invCorMtx">invCorMtx: <span class="extype" name="scala.List">List</span>[<span class="extype" name="scala.List">List</span>[<a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>)</span><span class="result"> extends <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://www.scala-lang.org/api/2.10.4/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
@@ -126,7 +126,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="ScalaGpBuilder$.html"><span class="name">ScalaGpBuilder</span></a><span class="result"> extends <a href="GpBuilder.html" class="extype" name="tuner.gp.GpBuilder">GpBuilder</a></span>
+        <a href="ScalaGpBuilder$.html"><span class="name">ScalaGpBuilder</span></a><span class="result"> extends <a href="GpBuilder.html" class="extype" name="tuner.gp.GpBuilder">GpBuilder</a> with <span class="extype" name="com.typesafe.scalalogging.slf4j.LazyLogging">LazyLogging</span></span>
       </span>
       </h4>
       <p class="comment cmt">Build the Gaussian Process model using the breeze package
