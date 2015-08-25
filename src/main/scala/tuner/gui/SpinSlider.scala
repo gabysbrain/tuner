@@ -6,10 +6,10 @@ import scala.swing.event.ValueChanged
 
 import javax.swing.BoundedRangeModel
 
-class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int) 
+class SpinSlider(minv:Float, maxv:Float, numSteps:Int) 
     extends BoxPanel(Orientation.Horizontal) {
   
-  val spinner = new Spinner(minVal, maxVal, numSteps) {
+  val spinner = new Spinner(minv, maxv, numSteps) {
     minimumSize = new java.awt.Dimension(70, 25)
     preferredSize = new java.awt.Dimension(70, 25)
     maximumSize = new java.awt.Dimension(70, 25)
@@ -37,5 +37,11 @@ class SpinSlider(minVal:Float, maxVal:Float, numSteps:Int)
 
   def value : Float = spinner.value
   def value_=(v:Float) = spinner.value = v
+
+  def minVal : Float = spinner.min
+  def minVal_=(v:Float) = spinner.min = v
+
+  def maxVal : Float = spinner.max
+  def maxVal_=(v:Float) = spinner.max = v
 }
 
