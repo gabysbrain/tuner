@@ -22,13 +22,26 @@ class Spinner(minVal:Float, maxVal:Float, step:Float)
 
   override lazy val peer:JSpinner = new JSpinner(model) with SuperMixin
 
+  // the number model doesn't do bounds checking
   def value : Float = peer.getValue.asInstanceOf[Number].floatValue
-  def value_=(v:Float) = peer.setValue(v)
+  def value_=(v:Float) = {
+    val mx = this.max
+    val mn = this.min
+    peer.setValue(math.min(math.max(this.min, v), this.max))
+  }
 
-  def min_=(v:Float) = model.setMinimum(float2Float(v))
+  // the number model doesn't do bounds checking
+  def min_=(v:Float) = {
+    model.setMinimum(float2Float(v))
+    this.value = this.value // recheck bounds
+  }
   def min : Float = model.getMinimum.asInstanceOf[Number].floatValue
 
-  def max_=(v:Float) = model.setMaximum(float2Float(v))
+  // the number model doesn't do bounds checking
+  def max_=(v:Float) = {
+    model.setMaximum(float2Float(v))
+    this.value = this.value // recheck bounds
+  }
   def max : Float = model.getMaximum.asInstanceOf[Number].floatValue
 
   override def maximumSize = preferredSize
