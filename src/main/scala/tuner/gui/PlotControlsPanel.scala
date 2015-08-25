@@ -19,6 +19,27 @@ import tuner.project.Viewable
 class PlotControlsPanel(project:Viewable) 
     extends BoxPanel(Orientation.Vertical) {
   
+  // Create zoom sliders for each input dimension
+  val zoomSliders = project.inputFields.map {fld =>
+    val (minVal, maxVal) = project.inputs.range(fld)
+    val slider = new SpinRangeSlider(minVal, maxVal, Config.sliderResolution)
+    slider.value = project.viewInfo.currentZoom.range(fld)
+    listenTo(slider)
+    reactions += {
+      case ValueChanged(`slider`) =>
+        project.viewInfo.updateZoom(fld, slider.lowValue, slider.highValue)
+        publish(new ValueChanged(PlotControlsPanel.this))
+        // we also need to update the corresponding slice slider
+        /*
+        sliceSliders.get(fld) foreach {sliceSlider =>
+          sliceSlider.minVal = slider.lowValue
+          sliceSlider.maxVal = slider.highValue
+        }
+        */
+    }
+    (fld, slider)
+  } toMap
+
   // Create dim sliders for each input dimension
   val sliceSliders = project.inputFields.map {fld =>
     val (minVal, maxVal) = project.inputs.range(fld)
@@ -32,19 +53,13 @@ class PlotControlsPanel(project:Viewable)
           publish(new ValueChanged(PlotControlsPanel.this))
         }
     }
-    (fld, slider)
-  } toMap
-
-  // Create zoom sliders for each input dimension
-  val zoomSliders = project.inputFields.map {fld =>
-    val (minVal, maxVal) = project.inputs.range(fld)
-    val slider = new SpinRangeSlider(minVal, maxVal, Config.sliderResolution)
-    slider.value = project.viewInfo.currentZoom.range(fld)
-    listenTo(slider)
-    reactions += {
-      case ValueChanged(`slider`) =>
-        project.viewInfo.updateZoom(fld, slider.lowValue, slider.highValue)
-        publish(new ValueChanged(PlotControlsPanel.this))
+    zoomSliders.get(fld) foreach {zoomSlider =>
+      slider.listenTo(zoomSlider)
+      slider.reactions += {
+        case ValueChanged(`zoomSlider`) =>
+          slider.minVal = zoomSlider.lowValue
+          slider.maxVal = zoomSlider.highValue
+      }
     }
     (fld, slider)
   } toMap
