@@ -19,9 +19,6 @@
     "maxRange":5.0
   }],
   "outputs":[{
-    "name":"sphere",
-    "minimize":true
-  },{
     "name":"rosenbrock",
     "minimize":true
   },{
