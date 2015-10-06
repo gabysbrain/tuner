@@ -17,7 +17,7 @@ Tuner requires Java (version 6 and 7 tested).
 The Tuner package needs to be built from source using the sbt build tool.
 Clone the repo and then run
     
-    bin/sbt build
+    bin/sbt compile
     bin/sbt run
 
 from the repository directory. The first line builds tuner and the second
