@@ -13,7 +13,8 @@
     "bower": "*",
     "browser-sync": "*",
     "mocha": "*",
-    "node-sass": "*"
+    "node-sass": "*",
+    "watch": "^0.16.0"
   },
   "dependencies": {
     "color": "*",
