@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "modernizr": "~2.8.2",
-    "holderjs": "~2.4.1",
-    "foundation-apps": "~1.0.0"
+    "holderjs": "*",
+    "foundation-apps": "*"
   }
 }
