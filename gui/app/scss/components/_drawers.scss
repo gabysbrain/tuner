@@ -1,0 +1,40 @@
+
+$drawer-width: rem-calc(25);
+$drawer-border: 1px solid black;
+$drawer-border-radius: 3px;
+
+.drawers {
+  //width: $drawer-width;
+}
+
+.drawer {
+  @extend .right;
+  @extend .grid-block;
+
+  h1 {
+    @extend .grid-content;
+    width: $drawer-width;
+    height: rem-calc(120);
+    font-size: $paragraph-font-size;
+    border-left: $drawer-border;
+    border-top: $drawer-border;
+    border-bottom: $drawer-border;
+    border-top-left-radius: $drawer-border-radius;
+    border-bottom-left-radius: $drawer-border-radius;
+    //transform: rotate(-90deg);
+    //-webkit-transform: rotate(90deg);
+    //-moz-transform: rotate(90deg);
+    //-o-transform: rotate(90deg);
+    //-ms-transform: rotate(90deg);
+	  //transform-origin: left top 0;
+  }
+
+  .drawer-content {
+    @extend .grid-content;
+    border-left: $drawer-border;
+    border-top: $drawer-border;
+    border-bottom: $drawer-border;
+    border-bottom-left-radius: $drawer-border-radius;
+  }
+}
+
