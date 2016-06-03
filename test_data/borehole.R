@@ -1,5 +1,7 @@
 #!/usr/bin/Rscript
 
+# from http://www.sfu.ca/~ssurjano/borehole.html
+
 args <- commandArgs(TRUE)
 in.file <- args[1]
 out.file <- args[2]
