@@ -27,10 +27,9 @@ libraryDependencies ++= Seq(
   "org.jogamp.gluegen" % "gluegen-rt-main" % "2.0.2",
   "org.jogamp.jogl" % "jogl-all-main" % "2.0.2",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-  "org.slf4j" % "slf4j-simple" % "1.7.7"
+  "org.slf4j" % "slf4j-simple" % "1.7.7",
+  "org.japura" % "japura" % "1.18.3"
 )
-
-libraryDependencies += "org.japura" % "japura" % "1.15.1" from "http://downloads.sourceforge.net/project/japura/Japura/Japura%20v1.15.1/japura-1.15.1.jar"
 
 libraryDependencies <<= (scalaVersion, libraryDependencies) {(sv, deps) =>
   deps :+ ("org.scala-lang" % "scala-swing" % sv)
