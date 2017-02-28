@@ -37,7 +37,10 @@ object ViewInfo {
     v._currentZoom = new DimRanges(vi.currentZoom.map {x => 
       (x.name, (x.lowValue, x.highValue))
     } toMap)
-    v.response1View = vi.response1
+    v.response1View = (vi.response1, vi.response2) match {
+      case (None,None) => Some(project.responses.head._1)
+      case _           => vi.response1
+    }
     v.response2View = vi.response2
     v.currentVis = vi.currentVis match {
       case Some("hyperslice") => Hyperslice
